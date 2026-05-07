@@ -1,8 +1,8 @@
 name: ACQ SMS Follow-Up + Dashboard
 
 on:
-  # schedule:
-  #   - cron: '*/30 * * * *'   # every 30 min — DISABLED during reply-check hotfix
+  schedule:
+    - cron: '*/30 * * * *'   # every 30 min
   workflow_dispatch:
 
 permissions:
