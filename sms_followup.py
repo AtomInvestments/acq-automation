@@ -233,21 +233,17 @@ def get_contact(cid):
     return r.json().get('contact')
 
 
-def has_inbound_since(contact_id, after_iso):
-    """Look for any inbound message from contact after the given timestamp.
-
-    Returns (replied: bool, when_iso: str|None, text: str|None) so the caller
-    can classify the reply (negative/positive/wrong-number) before flagging Jeff.
-    """
-    after = parse_iso(after_iso)
-    if not after:
-        return False, None, None
+def _scan_messages(contact_id):
+    """Return all messages across this contact's conversations (most recent N
+    per conversation). Centralized so reply-detection and outbound-dedupe
+    share a single GHL fetch path."""
     r = http('GET', 'https://services.leadconnectorhq.com/conversations/search',
              headers=GHL_H,
              params={'locationId': GHL_LOCATION, 'contactId': contact_id, 'limit': 5})
     if r.status_code != 200:
-        return False, None, None
+        return []
     convs = r.json().get('conversations', [])
+    out = []
     for conv in convs:
         cid = conv.get('id')
         if not cid:
@@ -257,12 +253,71 @@ def has_inbound_since(contact_id, after_iso):
         if rm.status_code != 200:
             continue
         msgs = (rm.json().get('messages') or {}).get('messages', [])
-        for m in msgs:
-            if m.get('direction') == 'inbound':
-                msg_dt = parse_iso(m.get('dateAdded', ''))
-                if msg_dt and msg_dt > after:
-                    return True, msg_dt.isoformat(), (m.get('body') or m.get('message') or '').strip()
+        out.extend(msgs)
+    return out
+
+
+def has_inbound_since(contact_id, after_iso):
+    """Look for any inbound message from contact after the given timestamp.
+
+    Returns (replied: bool, when_iso: str|None, text: str|None) so the caller
+    can classify the reply (negative/positive/wrong-number) before flagging Jeff.
+
+    Defense-in-depth: callers should invoke this for EVERY contact (not just
+    those with sms_count > 0). State persistence has bitten us before — if
+    a fresh-looking state file claims sms_count == 0 but the conversation
+    has inbound traffic, we still want to bail out before re-messaging.
+    """
+    after = parse_iso(after_iso)
+    if not after:
+        return False, None, None
+    for m in _scan_messages(contact_id):
+        if m.get('direction') == 'inbound':
+            msg_dt = parse_iso(m.get('dateAdded', ''))
+            if msg_dt and msg_dt > after:
+                return True, msg_dt.isoformat(), (m.get('body') or m.get('message') or '').strip()
     return False, None, None
+
+
+def has_any_inbound(contact_id):
+    """True if the contact has ANY inbound SMS in their conversation history.
+    Used as a hard gate independent of stage_entered_at — even if state has
+    been wiped, an existing inbound is reason to never re-message.
+
+    Returns (replied: bool, when_iso: str|None, text: str|None).
+    """
+    latest_dt = None
+    latest_text = None
+    for m in _scan_messages(contact_id):
+        if m.get('direction') != 'inbound':
+            continue
+        msg_dt = parse_iso(m.get('dateAdded', ''))
+        if msg_dt and (latest_dt is None or msg_dt > latest_dt):
+            latest_dt = msg_dt
+            latest_text = (m.get('body') or m.get('message') or '').strip()
+    if latest_dt:
+        return True, latest_dt.isoformat(), latest_text
+    return False, None, None
+
+
+def last_outbound_within(contact_id, hours):
+    """Returns True if there is an outbound SMS to this contact within the
+    last `hours` hours. Used as a "did we already text them recently?" guard
+    so a state-file regression can't double-send within a single window."""
+    cutoff = now_utc() - timedelta(hours=hours)
+    for m in _scan_messages(contact_id):
+        if m.get('direction') != 'outbound':
+            continue
+        # GHL message types: SMS=1, Email=3, ... we only care about SMS.
+        # The `messageType` field is sometimes absent on older records, so
+        # fall back to checking `type` too.
+        mtype = m.get('messageType') or m.get('type') or ''
+        if 'SMS' not in str(mtype).upper() and str(mtype) != '1':
+            continue
+        msg_dt = parse_iso(m.get('dateAdded', ''))
+        if msg_dt and msg_dt > cutoff:
+            return True, msg_dt.isoformat()
+    return False, None
 
 
 # ── Reply classifier ─────────────────────────────────────────────────────────
@@ -340,15 +395,6 @@ def set_dnd(contact_id, reason):
              headers=GHL_H, json=payload)
     except Exception as e:
         print(f'  set_dnd failed: {e}')
-
-
-# Append TCPA opt-out language on touches 1, 4, and 6 (every 3rd touch) so we
-# stay compliant without making every message look like spam.
-def with_tcpa(message, touch_index_zero_based, max_touches):
-    one_based = touch_index_zero_based + 1
-    if one_based == 1 or one_based == 4 or one_based == max_touches:
-        return f'{message}\n\nReply STOP to opt out.'
-    return message
 
 
 def send_sms(contact_id, message, from_number):
@@ -438,51 +484,63 @@ def process_lead(entry, contact, state):
     name  = f"{contact.get('firstName','')} {contact.get('lastName','')}".strip()
     addr1 = (contact.get('address1') or '').strip()
 
-    # Reply detection — only if at least one SMS sent
-    if cs.get('sms_count', 0) > 0:
-        anchor = cs.get('last_sms_at') or cs.get('stage_entered_at')
+    # Reply detection — DEFENSE IN DEPTH.
+    # Previously this was gated on sms_count > 0 (i.e. "only check for replies
+    # if we think we've sent something"). That was unsafe: when sms_state.json
+    # was lost between runs (cache miss), every contact looked like sms_count=0
+    # and the reply check was skipped, so we re-messaged people who had already
+    # replied days ago.
+    #
+    # New behaviour: always look for inbound traffic. If anchored, check from
+    # the anchor; if no anchor (fresh state), check the entire conversation
+    # history for ANY inbound — ANY prior reply means hands off.
+    anchor = cs.get('last_sms_at') or cs.get('stage_entered_at')
+    if cs.get('sms_count', 0) > 0 and anchor:
         replied, when, reply_text = has_inbound_since(cid, anchor)
-        if replied:
-            cs['replied']      = True
-            cs['replied_at']   = when
-            cs['reply_text']   = (reply_text or '')[:500]
-            verdict = classify_reply(reply_text or '')
-            cs['reply_class']  = verdict
+    else:
+        # No reliable anchor — fall back to "have they ever replied to us at all"
+        replied, when, reply_text = has_any_inbound(cid)
+    if replied:
+        cs['replied']      = True
+        cs['replied_at']   = when
+        cs['reply_text']   = (reply_text or '')[:500]
+        verdict = classify_reply(reply_text or '')
+        cs['reply_class']  = verdict
 
-            if verdict in ('HARD_STOP', 'HOSTILE'):
-                # Legal-protection path: stop forever, no Jeff task, no Mike review
-                set_dnd(cid, verdict.lower())
-                add_tag(cid, 'dnd-opt-out')
-                add_tag(cid, f'replied-{verdict.lower()}-{stage_name}')
-                slack_post(f'🚫 *{name}* opted out ({verdict}) — DND set, no callback. {addr1}')
-                return f'replied-{verdict.lower()}'
-
-            if verdict == 'WRONG':
-                set_dnd(cid, 'wrong-number')
-                add_tag(cid, 'wrong-number')
-                add_tag(cid, f'replied-wrong-{stage_name}')
-                slack_post(f'☎️ *{name}* — wrong number, DND set. {addr1}')
-                return 'replied-wrong'
-
-            if verdict == 'NEGATIVE':
-                # Polite no — don't waste Jeff's time, but no DND (still allowed to outreach later)
-                add_tag(cid, 'not-interested')
-                add_tag(cid, f'replied-negative-{stage_name}')
-                slack_post(f'👎 *{name}* — declined politely, no callback task. {addr1}')
-                return 'replied-negative'
-
-            # POSITIVE or NEUTRAL → real lead, Jeff handles
-            add_tag(cid, f'replied-stage-{stage_name}')
-            create_task(cid, USER_JEFF,
-                        f'Call back: {name} ({addr1})',
-                        f'Seller replied to {stage_name.upper()} SMS. Reply: "{(reply_text or "")[:200]}". Call back today.',
-                        due_in_days=0)
-            create_task(cid, USER_MIKE,
-                        f'REVIEW: Did Jeff call {name} back?',
-                        f'Verify Jeff completed the callback. Reply text: "{(reply_text or "")[:200]}"',
-                        due_in_days=1)
-            slack_post(f'💬 *{name}* replied ({verdict}) to {stage_name.upper()} — {addr1}. Jeff has callback task.')
+        if verdict in ('HARD_STOP', 'HOSTILE'):
+            # Legal-protection path: stop forever, no Jeff task, no Mike review
+            set_dnd(cid, verdict.lower())
+            add_tag(cid, 'dnd-opt-out')
+            add_tag(cid, f'replied-{verdict.lower()}-{stage_name}')
+            slack_post(f'🚫 *{name}* opted out ({verdict}) — DND set, no callback. {addr1}')
             return f'replied-{verdict.lower()}'
+
+        if verdict == 'WRONG':
+            set_dnd(cid, 'wrong-number')
+            add_tag(cid, 'wrong-number')
+            add_tag(cid, f'replied-wrong-{stage_name}')
+            slack_post(f'☎️ *{name}* — wrong number, DND set. {addr1}')
+            return 'replied-wrong'
+
+        if verdict == 'NEGATIVE':
+            # Polite no — don't waste Jeff's time, but no DND (still allowed to outreach later)
+            add_tag(cid, 'not-interested')
+            add_tag(cid, f'replied-negative-{stage_name}')
+            slack_post(f'👎 *{name}* — declined politely, no callback task. {addr1}')
+            return 'replied-negative'
+
+        # POSITIVE or NEUTRAL → real lead, Jeff handles
+        add_tag(cid, f'replied-stage-{stage_name}')
+        create_task(cid, USER_JEFF,
+                    f'Call back: {name} ({addr1})',
+                    f'Seller replied to {stage_name.upper()} SMS. Reply: "{(reply_text or "")[:200]}". Call back today.',
+                    due_in_days=0)
+        create_task(cid, USER_MIKE,
+                    f'REVIEW: Did Jeff call {name} back?',
+                    f'Verify Jeff completed the callback. Reply text: "{(reply_text or "")[:200]}"',
+                    due_in_days=1)
+        slack_post(f'💬 *{name}* replied ({verdict}) to {stage_name.upper()} — {addr1}. Jeff has callback task.')
+        return f'replied-{verdict.lower()}'
 
     sms_count = cs.get('sms_count', 0)
     cfg = STAGE_CONFIG[stage_name]
@@ -524,10 +582,21 @@ def process_lead(entry, contact, state):
     first = (contact.get('firstName') or 'there').strip() or 'there'
     template = TEMPLATES[stage_name][sms_count]
     message  = template.format(first_name=first, address1=addr1)
-    # TCPA: append "Reply STOP to opt out." on touches 1, 4, and the final touch
-    message  = with_tcpa(message, sms_count, cfg['max_touches'])
     state_code = (contact.get('state') or '').strip().upper()
     from_num   = from_number_for(state_code, sms_count, stage_name)
+
+    # Defense-in-depth: even if state file says we should send, check the live
+    # GHL conversation for an outbound SMS in the last 4 hours. If something
+    # else (a previous run with a stale state file, a manual send by Jeff, an
+    # accidental retry) has already messaged this contact recently, skip and
+    # don't double-tap them.
+    sent_recently, recent_when = last_outbound_within(cid, hours=4)
+    if sent_recently:
+        print(f'  skip {cid}: outbound SMS already sent within last 4h at {recent_when}')
+        # Best-effort: align our state with reality so we don't keep retrying
+        # the same touch on every cron tick.
+        cs['last_sms_at'] = cs.get('last_sms_at') or recent_when
+        return 'skip-recent-outbound'
 
     ok, info = send_sms(cid, message, from_num)
     if ok:

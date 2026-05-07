@@ -19,24 +19,19 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Cache SMS state + last-run statuses
-        uses: actions/cache@v4
-        with:
-          path: |
-            sms_state.json
-            last_run_sms.json
-            last_run_dashboard.json
-            last_run_html.json
-            last_run_deals.json
-            last_run_acq.json
-            last_run_slack.json
-          key: sms-state-${{ github.ref }}
-          restore-keys: sms-state-
+      # NOTE: We previously used actions/cache@v4 to persist sms_state.json
+      # between runs. That was unreliable: the cache key is per-ref and cache
+      # eviction / per-job isolation meant some runs read a stale or empty
+      # state file, so contacts were re-messaged because sms_count looked
+      # like 0. State is now committed back to the repo at the end of the
+      # job (see "Persist sms_state.json" step below), which is durable and
+      # versioned.
 
       - name: Install dependencies
         run: pip install -r requirements.txt
 
       - name: Send SMS follow-ups
+        id: sms_send
         env:
           GHL_TOKEN: ${{ secrets.GHL_TOKEN }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
@@ -44,6 +39,37 @@ jobs:
           DASHBOARD_SHEET_ID: ${{ secrets.DASHBOARD_SHEET_ID }}
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
         run: python sms_followup.py
+
+      - name: Persist sms_state.json back to main
+        if: always()
+        run: |
+          set -e
+          if [ ! -f sms_state.json ]; then
+            echo "No sms_state.json present — nothing to persist."
+            exit 0
+          fi
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          # Stage only the state file. We don't want to drag in any other
+          # incidental working-tree changes from the run.
+          git add sms_state.json
+          if git diff --cached --quiet; then
+            echo "sms_state.json unchanged — no commit needed."
+            exit 0
+          fi
+          git commit -m "chore: update sms_state [skip ci]"
+          # Pull --rebase in case another scheduled run landed first; retry
+          # a couple of times before giving up.
+          for i in 1 2 3; do
+            if git pull --rebase origin main && git push origin HEAD:main; then
+              echo "Pushed sms_state.json (attempt $i)."
+              exit 0
+            fi
+            echo "Push attempt $i failed; sleeping then retrying..."
+            sleep 3
+          done
+          echo "ERROR: failed to push sms_state.json after 3 attempts." >&2
+          exit 1
 
       - name: Update Google Sheet dashboard
         env:
