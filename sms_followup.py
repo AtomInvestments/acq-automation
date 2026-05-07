@@ -279,25 +279,57 @@ def has_inbound_since(contact_id, after_iso):
     return False, None, None
 
 
-def has_any_inbound(contact_id):
-    """True if the contact has ANY inbound SMS in their conversation history.
-    Used as a hard gate independent of stage_entered_at — even if state has
-    been wiped, an existing inbound is reason to never re-message.
+def latest_outbound_at(contact_id):
+    """Return ISO timestamp of the most recent outbound SMS to this contact,
+    or None if no outbound SMS exists in their conversation history.
 
-    Returns (replied: bool, when_iso: str|None, text: str|None).
+    Used to anchor reply detection when our local state file has no
+    last_sms_at: GHL is the source of truth for "did we ever message them",
+    and any inbound message AFTER our last outbound is a real reply.
     """
     latest_dt = None
-    latest_text = None
     for m in _scan_messages(contact_id):
-        if m.get('direction') != 'inbound':
+        if m.get('direction') != 'outbound':
+            continue
+        mtype = m.get('messageType') or m.get('type') or ''
+        if 'SMS' not in str(mtype).upper() and str(mtype) != '1':
             continue
         msg_dt = parse_iso(m.get('dateAdded', ''))
         if msg_dt and (latest_dt is None or msg_dt > latest_dt):
             latest_dt = msg_dt
-            latest_text = (m.get('body') or m.get('message') or '').strip()
-    if latest_dt:
-        return True, latest_dt.isoformat(), latest_text
-    return False, None, None
+    return latest_dt.isoformat() if latest_dt else None
+
+
+# Tag prefixes that indicate a reply has already been routed (Jeff has been
+# tasked, the contact has been DND'd, etc.). If the live GHL contact already
+# carries any of these, we MUST NOT recreate tasks, even if our state file
+# disagrees. This is the round-2 hotfix tag-dedupe guard.
+REPLIED_TAG_PREFIXES = (
+    'replied-stage-',
+    'replied-positive',
+    'replied-neutral',
+    'replied-negative',
+    'replied-wrong',
+    'replied-hard_stop',
+    'replied-hostile',
+    'replied-stop',
+    'dnd-opt-out',
+    'not-interested',
+    'wrong-number',
+)
+
+
+def already_routed_reply(contact):
+    """True if the live GHL contact already has any tag indicating that an
+    earlier reply has been processed (Jeff tasked, DND'd, marked wrong-number,
+    etc.). Used to suppress duplicate task creation."""
+    tags = contact.get('tags') or []
+    for t in tags:
+        tl = (t or '').lower()
+        for prefix in REPLIED_TAG_PREFIXES:
+            if tl.startswith(prefix):
+                return True
+    return False
 
 
 def last_outbound_within(contact_id, hours):
@@ -484,28 +516,55 @@ def process_lead(entry, contact, state):
     name  = f"{contact.get('firstName','')} {contact.get('lastName','')}".strip()
     addr1 = (contact.get('address1') or '').strip()
 
-    # Reply detection — DEFENSE IN DEPTH.
-    # Previously this was gated on sms_count > 0 (i.e. "only check for replies
-    # if we think we've sent something"). That was unsafe: when sms_state.json
-    # was lost between runs (cache miss), every contact looked like sms_count=0
-    # and the reply check was skipped, so we re-messaged people who had already
-    # replied days ago.
+    # Reply detection — DEFENSE IN DEPTH, time-bounded.
     #
-    # New behaviour: always look for inbound traffic. If anchored, check from
-    # the anchor; if no anchor (fresh state), check the entire conversation
-    # history for ANY inbound — ANY prior reply means hands off.
-    anchor = cs.get('last_sms_at') or cs.get('stage_entered_at')
-    if cs.get('sms_count', 0) > 0 and anchor:
+    # Round-1 fix (PR #1) made this run for EVERY contact regardless of
+    # sms_count, to survive a wiped state file. But the fallback used
+    # has_any_inbound() — i.e. "any inbound message ever" — which flagged
+    # contacts who had replied weeks ago and were already triaged by Jeff.
+    # That dumped ~96 duplicate tasks in one run.
+    #
+    # Round-2 fix (this hotfix):
+    #   1. Always require a time anchor. Build it as the most recent of
+    #      (state.last_sms_at, state.stage_entered_at, live GHL last
+    #      outbound SMS). Inbound only counts if it's strictly newer than
+    #      the anchor — i.e. a reply to *our most recent outreach*.
+    #   2. If no anchor exists at all (no prior outreach in state OR in
+    #      GHL), do NOT classify as replied. We cannot tell a fresh reply
+    #      from a years-old historical message; the safe default is to
+    #      let normal cadence run (which will set an anchor on the first
+    #      send) and check on the next tick.
+    #   3. Even after a positive classification, if the live contact
+    #      already carries any replied-* / dnd-opt-out / not-interested /
+    #      wrong-number tag, suppress task creation — Jeff has already
+    #      been routed to this person. Update state and move on.
+    candidates = [cs.get('last_sms_at'), cs.get('stage_entered_at')]
+    ghl_last_out = latest_outbound_at(cid)
+    if ghl_last_out:
+        candidates.append(ghl_last_out)
+    candidate_dts = [parse_iso(c) for c in candidates if c]
+    candidate_dts = [d for d in candidate_dts if d]
+    if candidate_dts:
+        anchor_dt = max(candidate_dts)
+        anchor = anchor_dt.isoformat()
         replied, when, reply_text = has_inbound_since(cid, anchor)
     else:
-        # No reliable anchor — fall back to "have they ever replied to us at all"
-        replied, when, reply_text = has_any_inbound(cid)
+        # No anchor — no prior outreach we can confirm. Don't classify.
+        replied, when, reply_text = False, None, None
     if replied:
         cs['replied']      = True
         cs['replied_at']   = when
         cs['reply_text']   = (reply_text or '')[:500]
         verdict = classify_reply(reply_text or '')
         cs['reply_class']  = verdict
+
+        # Tag-dedupe guard: if the live contact already carries a replied-*
+        # tag, an earlier run (or a human) already routed this. Mark replied
+        # in our state so we stop re-checking, but DO NOT create new tasks
+        # or fire slack notifications.
+        if already_routed_reply(contact):
+            print(f'  skip {cid}: contact already has replied-* tag — task creation suppressed')
+            return f'replied-{verdict.lower()}-already-routed'
 
         if verdict in ('HARD_STOP', 'HOSTILE'):
             # Legal-protection path: stop forever, no Jeff task, no Mike review
