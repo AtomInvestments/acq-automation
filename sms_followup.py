@@ -105,7 +105,10 @@ STATE_SECONDARY = {
 }
 
 # SMS templates: 6 per stage. Index 0-2 = primary number, 3-5 = secondary.
-TEMPLATES = {
+# `TEMPLATES` is the live (possibly Sheet-overridden) set; `HARDCODED_TEMPLATES`
+# stays as the immutable shipping defaults so W6 fallback can recover when
+# either a Sheet row or a per-send format() blows up.
+HARDCODED_TEMPLATES = {
     'qualified': [
         "Hey {first_name}, this is Jeff with APG — circling back on {address1}. Still thinking about selling, or did things shift on your end?",
         "Hey {first_name}, checking back on {address1}. Anything you wanted to think over before we kept the conversation going?",
@@ -155,6 +158,7 @@ TEMPLATES = {
         "{first_name} — last reach-out on {address1}. If anything's in the air, you know where to find me.",
     ],
 }
+TEMPLATES = {k: list(v) for k, v in HARDCODED_TEMPLATES.items()}
 
 
 def load_state():
@@ -257,7 +261,7 @@ def _scan_messages(contact_id):
     return out
 
 
-def has_inbound_since(contact_id, after_iso):
+def has_inbound_since(contact_id, after_iso, messages=None):
     """Look for any inbound message from contact after the given timestamp.
 
     Returns (replied: bool, when_iso: str|None, text: str|None) so the caller
@@ -267,11 +271,15 @@ def has_inbound_since(contact_id, after_iso):
     those with sms_count > 0). State persistence has bitten us before — if
     a fresh-looking state file claims sms_count == 0 but the conversation
     has inbound traffic, we still want to bail out before re-messaging.
+
+    `messages` may be supplied to avoid re-fetching the conversation; if
+    omitted, falls back to a fresh scan.
     """
     after = parse_iso(after_iso)
     if not after:
         return False, None, None
-    for m in _scan_messages(contact_id):
+    msgs = messages if messages is not None else _scan_messages(contact_id)
+    for m in msgs:
         if m.get('direction') == 'inbound':
             msg_dt = parse_iso(m.get('dateAdded', ''))
             if msg_dt and msg_dt > after:
@@ -279,16 +287,20 @@ def has_inbound_since(contact_id, after_iso):
     return False, None, None
 
 
-def latest_outbound_at(contact_id):
+def latest_outbound_at(contact_id, messages=None):
     """Return ISO timestamp of the most recent outbound SMS to this contact,
     or None if no outbound SMS exists in their conversation history.
 
     Used to anchor reply detection when our local state file has no
     last_sms_at: GHL is the source of truth for "did we ever message them",
     and any inbound message AFTER our last outbound is a real reply.
+
+    `messages` may be supplied to avoid re-fetching the conversation; if
+    omitted, falls back to a fresh scan.
     """
     latest_dt = None
-    for m in _scan_messages(contact_id):
+    msgs = messages if messages is not None else _scan_messages(contact_id)
+    for m in msgs:
         if m.get('direction') != 'outbound':
             continue
         mtype = m.get('messageType') or m.get('type') or ''
@@ -332,12 +344,17 @@ def already_routed_reply(contact):
     return False
 
 
-def last_outbound_within(contact_id, hours):
+def last_outbound_within(contact_id, hours, messages=None):
     """Returns True if there is an outbound SMS to this contact within the
     last `hours` hours. Used as a "did we already text them recently?" guard
-    so a state-file regression can't double-send within a single window."""
+    so a state-file regression can't double-send within a single window.
+
+    `messages` may be supplied to avoid re-fetching the conversation; if
+    omitted, falls back to a fresh scan.
+    """
     cutoff = now_utc() - timedelta(hours=hours)
-    for m in _scan_messages(contact_id):
+    msgs = messages if messages is not None else _scan_messages(contact_id)
+    for m in msgs:
         if m.get('direction') != 'outbound':
             continue
         # GHL message types: SMS=1, Email=3, ... we only care about SMS.
@@ -379,7 +396,11 @@ Be strict on POSITIVE — only if there's clear interest. Default ambiguity to N
 
 
 def classify_reply(text):
-    """Returns one of: HARD_STOP, WRONG, HOSTILE, NEGATIVE, POSITIVE, NEUTRAL.
+    """Returns one of: HARD_STOP, WRONG, HOSTILE, NEGATIVE, POSITIVE, NEUTRAL,
+    or None on transient Anthropic API failure (429/5xx/exception). The caller
+    is expected to distinguish None ("API hiccup, try again next tick") from a
+    concrete verdict.
+
     Free regex check first; falls back to Claude only when ambiguous."""
     if not text:
         return 'NEUTRAL'
@@ -390,7 +411,7 @@ def classify_reply(text):
     if WRONG_NUMBER_RE.search(text):
         return 'WRONG'
     if not ANTHROPIC_KEY:
-        # No LLM — be conservative: treat as POSITIVE so Jeff sees it
+        # No LLM configured — treat as POSITIVE so Jeff sees it.
         return 'POSITIVE'
     try:
         r = http('POST', 'https://api.anthropic.com/v1/messages',
@@ -402,14 +423,24 @@ def classify_reply(text):
                        'system': CLASSIFY_SYSTEM,
                        'messages': [{'role': 'user', 'content': text[:500]}]},
                  timeout=20)
+        if r.status_code == 429 or r.status_code >= 500:
+            print(f'  classify_reply: Anthropic transient {r.status_code}; deferring')
+            return None
         if r.status_code != 200:
-            return 'POSITIVE'  # fail-safe to flag for human
+            # 4xx other than 429: treat as ambiguous-positive (don't infinitely defer
+            # on auth errors, etc.) so Jeff still sees the reply.
+            print(f'  classify_reply: Anthropic non-200 {r.status_code}; falling back POSITIVE')
+            return 'POSITIVE'
         token = r.json()['content'][0]['text'].strip().upper().split()[0]
         if token in ('NEGATIVE', 'WRONG', 'POSITIVE', 'NEUTRAL', 'HOSTILE'):
             return token
         return 'POSITIVE'
-    except Exception:
-        return 'POSITIVE'
+    except Exception as e:
+        print(f'  classify_reply: exception {e!r}; deferring')
+        return None
+
+
+REPLY_ATTEMPT_LIMIT = 3
 
 
 def set_dnd(contact_id, reason):
@@ -538,8 +569,14 @@ def process_lead(entry, contact, state):
     #      already carries any replied-* / dnd-opt-out / not-interested /
     #      wrong-number tag, suppress task creation — Jeff has already
     #      been routed to this person. Update state and move on.
+    # W1/W2: fetch the contact's messages once per lead and reuse the result
+    # across latest_outbound_at / has_inbound_since / last_outbound_within. The
+    # GHL conversations API is the slowest hop in this loop, so collapsing
+    # three round trips into one materially shortens each tick.
+    messages = _scan_messages(cid)
+
     candidates = [cs.get('last_sms_at'), cs.get('stage_entered_at')]
-    ghl_last_out = latest_outbound_at(cid)
+    ghl_last_out = latest_outbound_at(cid, messages=messages)
     if ghl_last_out:
         candidates.append(ghl_last_out)
     candidate_dts = [parse_iso(c) for c in candidates if c]
@@ -547,15 +584,31 @@ def process_lead(entry, contact, state):
     if candidate_dts:
         anchor_dt = max(candidate_dts)
         anchor = anchor_dt.isoformat()
-        replied, when, reply_text = has_inbound_since(cid, anchor)
+        replied, when, reply_text = has_inbound_since(cid, anchor, messages=messages)
     else:
         # No anchor — no prior outreach we can confirm. Don't classify.
         replied, when, reply_text = False, None, None
     if replied:
+        # W5: distinguish a real ambiguous-NEUTRAL verdict from a transient
+        # Anthropic failure. classify_reply now returns None for 429/5xx/
+        # exception. We retry up to REPLY_ATTEMPT_LIMIT ticks; after that we
+        # fall back to POSITIVE so Jeff still sees the reply.
+        verdict = classify_reply(reply_text or '')
+        if verdict is None:
+            attempts = (cs.get('reply_attempts') or 0) + 1
+            cs['reply_attempts'] = attempts
+            if attempts < REPLY_ATTEMPT_LIMIT:
+                print(f'  defer reply classification for {cid} (attempt {attempts}/{REPLY_ATTEMPT_LIMIT})')
+                # Do NOT mark replied=True — we want this tick's anchor preserved
+                # so the next run picks up the same inbound and re-classifies.
+                return 'reply-classify-deferred'
+            print(f'  reply classify failed {attempts}x for {cid}; falling back POSITIVE')
+            verdict = 'POSITIVE'
+        # Successful classification — clear retry counter
+        cs['reply_attempts'] = 0
         cs['replied']      = True
         cs['replied_at']   = when
         cs['reply_text']   = (reply_text or '')[:500]
-        verdict = classify_reply(reply_text or '')
         cs['reply_class']  = verdict
 
         # Tag-dedupe guard: if the live contact already carries a replied-*
@@ -565,6 +618,14 @@ def process_lead(entry, contact, state):
         if already_routed_reply(contact):
             print(f'  skip {cid}: contact already has replied-* tag — task creation suppressed')
             return f'replied-{verdict.lower()}-already-routed'
+
+        # W7: empty NEUTRAL reply — GHL occasionally surfaces inbound rows with
+        # no body (likely MMS-without-text or stripped delivery receipts). Don't
+        # waste Jeff/Mike on a blank task. We still mark replied=True so future
+        # ticks bail out, but no tag/task/Slack noise.
+        if verdict == 'NEUTRAL' and not (reply_text or '').strip():
+            print(f'  skip {cid}: empty NEUTRAL reply — no task created, replied=True for bailout')
+            return 'replied-neutral-empty'
 
         if verdict in ('HARD_STOP', 'HOSTILE'):
             # Legal-protection path: stop forever, no Jeff task, no Mike review
@@ -640,7 +701,17 @@ def process_lead(entry, contact, state):
         addr1 = (contact.get('city') or 'your property').strip() or 'your property'
     first = (contact.get('firstName') or 'there').strip() or 'there'
     template = TEMPLATES[stage_name][sms_count]
-    message  = template.format(first_name=first, address1=addr1)
+    try:
+        message = template.format(first_name=first, address1=addr1)
+    except (KeyError, IndexError, ValueError) as exc:
+        # Sheet override slipped through validation OR a hardcoded template was
+        # edited badly: fall back to the immutable HARDCODED_TEMPLATES for the
+        # same stage/index so we still send something sensible. W6 belt-and-
+        # braces.
+        print(f'  template format error stage={stage_name} idx={sms_count}: {exc!r}; using hardcoded')
+        fallback_stage = HARDCODED_TEMPLATES.get(stage_name) or HARDCODED_TEMPLATES['qualified']
+        fallback_idx   = min(sms_count, len(fallback_stage) - 1)
+        message = fallback_stage[fallback_idx].format(first_name=first, address1=addr1)
     state_code = (contact.get('state') or '').strip().upper()
     from_num   = from_number_for(state_code, sms_count, stage_name)
 
@@ -649,7 +720,7 @@ def process_lead(entry, contact, state):
     # else (a previous run with a stale state file, a manual send by Jeff, an
     # accidental retry) has already messaged this contact recently, skip and
     # don't double-tap them.
-    sent_recently, recent_when = last_outbound_within(cid, hours=4)
+    sent_recently, recent_when = last_outbound_within(cid, hours=4, messages=messages)
     if sent_recently:
         print(f'  skip {cid}: outbound SMS already sent within last 4h at {recent_when}')
         # Best-effort: align our state with reality so we don't keep retrying
@@ -676,12 +747,12 @@ def in_business_hours_et():
 def read_sheet_config():
     """Read kill switch and live templates from Google Sheet.
     Returns (kill_switch_on: bool, templates: dict).
-    Falls back to hardcoded TEMPLATES if anything fails."""
+    Falls back to HARDCODED_TEMPLATES if anything fails."""
     if not SHEET_ID:
-        return True, TEMPLATES
+        return True, {k: list(v) for k, v in HARDCODED_TEMPLATES.items()}
     token_json = os.environ.get('GOOGLE_TOKEN_JSON', '')
     if not token_json:
-        return True, TEMPLATES
+        return True, {k: list(v) for k, v in HARDCODED_TEMPLATES.items()}
     try:
         from google.oauth2.credentials import Credentials
         from google.auth.transport.requests import Request
@@ -705,8 +776,9 @@ def read_sheet_config():
         except Exception:
             pass
 
-        # Templates — Templates!A2:C200
-        templates = dict(TEMPLATES)
+        # Templates — Templates!A2:C200. Start from the immutable hardcoded
+        # set so a half-filled sheet can never partially-clobber what we ship.
+        templates = {k: list(v) for k, v in HARDCODED_TEMPLATES.items()}
         try:
             r = svc.spreadsheets().values().get(
                 spreadsheetId=SHEET_ID, range="Templates!A2:C200"
@@ -729,17 +801,33 @@ def read_sheet_config():
                     built[stage].append('')
                 built[stage][idx] = msg
             # Merge: only override stages where the sheet has all required slots
+            # AND every slot contains the {first_name} and {address1} placeholders
+            # we render at send-time. Otherwise the format() call in process_lead
+            # silently drops the values and we ship a template variable to the
+            # seller. W6 hardening.
+            REQUIRED_PLACEHOLDERS = ('{first_name}', '{address1}')
             for stage, msgs in built.items():
-                expected = len(TEMPLATES.get(stage, []))
-                if expected and len(msgs) >= expected and all(msgs[:expected]):
-                    templates[stage] = msgs[:expected]
+                expected = len(HARDCODED_TEMPLATES.get(stage, []))
+                if not (expected and len(msgs) >= expected and all(msgs[:expected])):
+                    continue
+                bad = [
+                    i for i, m in enumerate(msgs[:expected])
+                    if not all(p in m for p in REQUIRED_PLACEHOLDERS)
+                ]
+                if bad:
+                    print(
+                        f'  Sheet template override REJECTED for stage={stage}: '
+                        f'slots {bad} missing {REQUIRED_PLACEHOLDERS}; using hardcoded.'
+                    )
+                    continue
+                templates[stage] = msgs[:expected]
         except Exception:
             pass
 
         return kill_on, templates
     except Exception as e:
         print(f'  Sheet config read failed: {e}; using defaults.')
-        return True, TEMPLATES
+        return True, {k: list(v) for k, v in HARDCODED_TEMPLATES.items()}
 
 
 def process_call_needed_cadence(state):
@@ -751,18 +839,28 @@ def process_call_needed_cadence(state):
     processed = 0
     transitioned = 0
     while True:
-        r = http('GET', 'https://services.leadconnectorhq.com/contacts/search',
+        # NOTE: GHL's contact search endpoint expects POST despite the URL.
+        # We pass the tag filter in the body — the OLD behavior here used a
+        # GET with a query string that fell back to a *location-wide* fetch
+        # of every contact (~1357 in this account) any time the POST 404'd,
+        # which then triggered the call-needed branch on every contact and
+        # could create thousands of stray tasks. W8: just bail loudly.
+        r = http('POST', 'https://services.leadconnectorhq.com/contacts/search',
                  headers=GHL_H,
                  json={'locationId': GHL_LOCATION,
-                       'query': '',
                        'pageLimit': 100,
                        'page': page,
                        'filters': [{'field': 'tags', 'operator': 'contains', 'value': 'from-call-needed'}]})
-        # Some GHL versions need GET — fall back if POST is rejected
-        if r.status_code in (404, 405):
-            r = http('GET', f'https://services.leadconnectorhq.com/contacts/?locationId={GHL_LOCATION}&query=',
-                     headers=GHL_H)
         if r.status_code != 200:
+            print(
+                f'  call-needed search failed (status={r.status_code}); '
+                f'aborting this tick — no location-wide fallback. '
+                f'body={r.text[:200] if hasattr(r, "text") else ""!r}'
+            )
+            slack_post(
+                f':warning: SMS follow-up: call-needed search returned '
+                f'{r.status_code}. Cadence skipped this tick.'
+            )
             break
         contacts = r.json().get('contacts', []) or []
         if not contacts:
