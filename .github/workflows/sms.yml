@@ -40,21 +40,25 @@ jobs:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
         run: python sms_followup.py
 
-      - name: Persist sms_state.json back to main
+      - name: Persist sms_state.json + cadence_health.json back to main
         if: always()
         run: |
           set -e
-          if [ ! -f sms_state.json ]; then
-            echo "No sms_state.json present — nothing to persist."
+          # Track which state files were produced this run.
+          present=()
+          [ -f sms_state.json ]      && present+=("sms_state.json")
+          [ -f cadence_health.json ] && present+=("cadence_health.json")
+          if [ ${#present[@]} -eq 0 ]; then
+            echo "No state files present — nothing to persist."
             exit 0
           fi
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          # Stage only the state file. We don't want to drag in any other
+          # Stage only the state files. We don't want to drag in any other
           # incidental working-tree changes from the run.
-          git add sms_state.json
+          git add "${present[@]}"
           if git diff --cached --quiet; then
-            echo "sms_state.json unchanged — no commit needed."
+            echo "State unchanged — no commit needed."
             exit 0
           fi
           git commit -m "chore: update sms_state [skip ci]"
@@ -62,13 +66,13 @@ jobs:
           # a couple of times before giving up.
           for i in 1 2 3; do
             if git pull --rebase origin main && git push origin HEAD:main; then
-              echo "Pushed sms_state.json (attempt $i)."
+              echo "Pushed state (attempt $i)."
               exit 0
             fi
             echo "Push attempt $i failed; sleeping then retrying..."
             sleep 3
           done
-          echo "ERROR: failed to push sms_state.json after 3 attempts." >&2
+          echo "ERROR: failed to push state after 3 attempts." >&2
           exit 1
 
       - name: Update Google Sheet dashboard
@@ -126,3 +130,18 @@ jobs:
           publish_branch: gh-pages
           force_orphan: true
           commit_message: 'Auto: dashboard refresh'
+
+      # Slack alert on any failure in this job. Gated on SLACK_WEBHOOK_URL
+      # so a missing secret degrades silently rather than crashing the
+      # workflow. TODO(slack-secret): once SLACK_WEBHOOK_URL is wired up
+      # in repo secrets, remove the empty-string guard from the if:
+      # condition so missing webhook becomes an actionable warning.
+      - name: Notify Slack on failure
+        if: failure() && env.SLACK_WEBHOOK_URL != ''
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          curl -sS -X POST -H 'Content-Type: application/json' \
+            --data "{\"text\":\":rotating_light: ACQ SMS Follow-Up FAILED — ${RUN_URL}\"}" \
+            "$SLACK_WEBHOOK_URL" || true
