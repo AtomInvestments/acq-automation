@@ -22,6 +22,12 @@ PIPELINE_ID   = 'O8wzIa6E3SgD8HLg6gh9'
 STATE_FILE    = 'sms_state.json'
 CONTACTS_CACHE = 'contacts_cache.json'
 STATUS_FILE   = 'last_run_sms.json'
+CADENCE_HEALTH_FILE = 'cadence_health.json'
+# Number of consecutive in-business-hours days with zero successful sends
+# before we escalate to Slack as a "cadence is stuck" alert. Days where
+# the workflow only ran outside 9 AM - 8 PM ET don't count toward the
+# streak (we never send then).
+CADENCE_STUCK_DAYS = 7
 SHEET_ID      = os.environ.get('DASHBOARD_SHEET_ID', '')
 SLACK_WEBHOOK = os.environ.get('SLACK_WEBHOOK_URL', '')
 
@@ -940,6 +946,85 @@ def write_status(success, summary='', error=''):
         pass
 
 
+def _count_sent(counts):
+    """Return the total number of successful sends across all stages.
+
+    `counts` is the per-result dict built up in main(); successful sends
+    show up as `sent#1`, `sent#2`, ... `sent#6`.
+    """
+    return sum(v for k, v in (counts or {}).items() if k.startswith('sent#'))
+
+
+def update_cadence_health(counts):
+    """Update cadence_health.json with today's send count and post a Slack
+    alert if the last CADENCE_STUCK_DAYS in-business-hours days all had
+    zero sends. Safe to call from any tick: outside-business-hours runs
+    are recorded but don't count toward the streak."""
+    today_et = datetime.now(ET).date().isoformat()
+    in_bh = in_business_hours_et()
+    sends = _count_sent(counts)
+
+    try:
+        with open(CADENCE_HEALTH_FILE) as f:
+            health = json.load(f)
+    except Exception:
+        health = {}
+    days = health.get('days') or []
+
+    # Find or append today's entry.
+    today_entry = next((d for d in days if d.get('date') == today_et), None)
+    if today_entry is None:
+        today_entry = {'date': today_et, 'sends': 0, 'had_business_hour_run': False}
+        days.append(today_entry)
+    today_entry['sends'] = (today_entry.get('sends') or 0) + sends
+    if in_bh:
+        today_entry['had_business_hour_run'] = True
+
+    # Keep last 30 days only.
+    days = sorted(days, key=lambda d: d.get('date') or '')[-30:]
+    health['days'] = days
+
+    # Compute the streak of consecutive in-business-hours days with zero
+    # sends, ignoring today (still in progress) and ignoring days that
+    # never had a business-hour run (e.g. workflow disabled, holidays).
+    streak = 0
+    for d in reversed(days[:-1]):  # exclude today
+        if not d.get('had_business_hour_run'):
+            continue
+        if (d.get('sends') or 0) > 0:
+            break
+        streak += 1
+
+    last_alerted = health.get('last_alerted_at')
+    last_alerted_dt = parse_iso(last_alerted) if last_alerted else None
+    suppress_window_days = CADENCE_STUCK_DAYS  # don't alert more than once per streak window
+
+    if streak >= CADENCE_STUCK_DAYS:
+        already_alerted_recently = (
+            last_alerted_dt is not None
+            and (now_utc() - last_alerted_dt).days < suppress_window_days
+        )
+        if not already_alerted_recently:
+            slack_post(
+                f':warning: ACQ SMS cadence looks STUCK — '
+                f'{streak} consecutive in-business-hours days with zero sends. '
+                f'Check sms_state.json, kill switch (Settings!B2), '
+                f'and pipeline stage assignments.'
+            )
+            health['last_alerted_at'] = now_utc().isoformat()
+        else:
+            print(
+                f'  cadence health: streak={streak} days zero sends, '
+                f'but already alerted at {last_alerted}; suppressing.'
+            )
+
+    try:
+        with open(CADENCE_HEALTH_FILE, 'w') as f:
+            json.dump(health, f, indent=2, sort_keys=True)
+    except Exception as e:
+        print(f'  cadence_health write failed: {e}')
+
+
 def main():
     et_now = datetime.now(ET)
     print(f'[{et_now.strftime("%Y-%m-%d %I:%M %p ET")}] SMS Follow-Up starting...')
@@ -951,6 +1036,8 @@ def main():
         if not kill_on:
             print('!! KILL SWITCH IS OFF — Settings!B2 in dashboard sheet says OFF. Skipping all SMS sends.')
             print('   (Dashboard will still update.)')
+            # Don't update cadence_health when the kill switch is OFF — that's
+            # a deliberate human action, not a "stuck" state.
             write_status(True, 'kill-switch off; no sends')
             return
         global TEMPLATES
@@ -959,6 +1046,10 @@ def main():
 
         if not in_business_hours_et():
             print(f'Outside business hours (9 AM - 8 PM ET); current ET hour: {et_now.hour}. Skipping sends.')
+            # Outside-hours runs still record (so an all-day-quiet day shows
+            # `had_business_hour_run=False` and doesn't count toward the
+            # streak), but no Slack alert here.
+            update_cadence_health(counts)
             write_status(True, f'outside business hours (hour={et_now.hour} ET)')
             return
 
@@ -990,6 +1081,7 @@ def main():
             print(f'Call-needed cadence: {cn_processed} retry tasks created, {cn_transitioned} graduated to SMS')
 
         save_state(state)
+        update_cadence_health(counts)
         print('\nSummary:', json.dumps(counts, indent=2))
         write_status(True, json.dumps(counts))
     except Exception as e:
