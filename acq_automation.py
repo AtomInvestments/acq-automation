@@ -379,10 +379,21 @@ Be honest. Don't inflate Warm to Hot just because the seller was friendly. The c
 def analyze_with_claude(transcript):
     if not transcript or not ANTHROPIC_KEY:
         return None
+    # Sonnet 4.6 + prompt caching: the system prompt is large and identical on
+    # every call this run, so mark the only block ephemeral and let Anthropic
+    # cache it for the 5-min TTL window. First call pays full input tokens;
+    # the rest of the run hits the cache. (We're calling raw HTTP, not the
+    # SDK — the cache_control field has been GA since 2023-06-01.)
     body = {
-        'model': 'claude-sonnet-4-5',
+        'model': 'claude-sonnet-4-6',
         'max_tokens': 1500,
-        'system': CLAUDE_SYSTEM,
+        'system': [
+            {
+                'type': 'text',
+                'text': CLAUDE_SYSTEM,
+                'cache_control': {'type': 'ephemeral'},
+            }
+        ],
         'messages': [{'role': 'user', 'content': transcript[:15000]}],
     }
     headers = {
@@ -607,8 +618,15 @@ Year Built: {subject.get('year_built','')}
 NEARBY SOLD PROPERTIES (candidates):
 {json.dumps(comps, indent=2)}"""
     body = {
-        'model': 'claude-sonnet-4-5', 'max_tokens': 2000,
-        'system': COMPS_SYSTEM,
+        'model': 'claude-sonnet-4-6', 'max_tokens': 2000,
+        # Sonnet 4.6 + prompt caching for the static appraiser instructions.
+        'system': [
+            {
+                'type': 'text',
+                'text': COMPS_SYSTEM,
+                'cache_control': {'type': 'ephemeral'},
+            }
+        ],
         'messages': [{'role':'user','content':user_msg}],
     }
     headers = {'x-api-key': ANTHROPIC_KEY, 'anthropic-version':'2023-06-01', 'content-type':'application/json'}
