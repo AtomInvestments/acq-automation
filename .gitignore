@@ -1,1 +1,13 @@
 __pycache__/
+
+# One-off triage / cleanup artifacts (dated scripts and their JSON outputs).
+# Anything dated 2026_* in the filename, or prefixed cleanup_/triage_ at repo
+# root, is treated as ephemeral and stays out of git.
+*_2026_*.py
+*_2026_*.json
+cleanup_*.py
+cleanup_*.json
+cleanup_*.log.json
+triage_*.py
+triage_*.json
+sms_state.bak.*.json
