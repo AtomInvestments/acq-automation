@@ -237,6 +237,7 @@
   },
   "ENJxwA2hMvDZ2yDJsdOj": {
     "cn_attempts": 2,
+    "cn_done": true,
     "cn_last_at": "2026-05-10T14:36:07.050426+00:00",
     "cn_started": "2026-05-08T13:06:14.678260+00:00",
     "dormant": false,
@@ -354,6 +355,7 @@
   },
   "Oz33ntCSku5lC67kMHkb": {
     "cn_attempts": 2,
+    "cn_done": true,
     "cn_last_at": "2026-05-10T14:35:42.812175+00:00",
     "cn_started": "2026-05-08T13:05:49.109616+00:00",
     "dormant": false,
@@ -417,6 +419,7 @@
   },
   "VGnv3yBtLmUzNCZJwIcj": {
     "cn_attempts": 2,
+    "cn_done": true,
     "cn_last_at": "2026-05-10T14:36:02.213584+00:00",
     "cn_started": "2026-05-08T13:06:09.271106+00:00",
     "dormant": false,
@@ -440,6 +443,7 @@
   },
   "VsDw5eUt6dCuz62U4EQR": {
     "cn_attempts": 2,
+    "cn_done": true,
     "cn_last_at": "2026-05-10T14:35:52.566539+00:00",
     "cn_started": "2026-05-08T13:05:59.433818+00:00",
     "dormant": false,
@@ -512,6 +516,7 @@
   },
   "baenJO5ISTGhCtEhnuJM": {
     "cn_attempts": 2,
+    "cn_done": true,
     "cn_last_at": "2026-05-10T14:35:47.797925+00:00",
     "cn_started": "2026-05-08T13:05:54.132892+00:00",
     "dormant": false,
@@ -545,6 +550,7 @@
   },
   "chuULOY0q8H6AaKiYNwP": {
     "cn_attempts": 2,
+    "cn_done": true,
     "cn_last_at": "2026-05-10T14:36:26.265945+00:00",
     "cn_started": "2026-05-08T13:06:40.157234+00:00",
     "dormant": false,
@@ -608,6 +614,7 @@
   },
   "gDqGEpnvgGJKDtpxtmK6": {
     "cn_attempts": 2,
+    "cn_done": true,
     "cn_last_at": "2026-05-10T14:36:31.357882+00:00",
     "cn_started": "2026-05-08T13:06:45.002527+00:00",
     "dormant": false,
@@ -706,6 +713,7 @@
   },
   "ueIo6e4QtyElCLNMEDAz": {
     "cn_attempts": 2,
+    "cn_done": true,
     "cn_last_at": "2026-05-10T14:36:16.675137+00:00",
     "cn_started": "2026-05-08T13:06:25.029679+00:00",
     "dormant": false,
@@ -739,6 +747,7 @@
   },
   "w5vdgtrOfVh3JIRObgeZ": {
     "cn_attempts": 2,
+    "cn_done": true,
     "cn_last_at": "2026-05-10T14:36:11.838206+00:00",
     "cn_started": "2026-05-08T13:06:20.237018+00:00",
     "dormant": false,
@@ -785,6 +794,7 @@
   },
   "zEK0tsqCBpZz5pNDQXNU": {
     "cn_attempts": 2,
+    "cn_done": true,
     "cn_last_at": "2026-05-10T14:36:21.457656+00:00",
     "cn_started": "2026-05-08T13:06:29.858849+00:00",
     "dormant": false,
@@ -798,6 +808,7 @@
   },
   "zOgmMtqGqZHOC8pC4rY6": {
     "cn_attempts": 2,
+    "cn_done": true,
     "cn_last_at": "2026-05-10T14:35:57.389066+00:00",
     "cn_started": "2026-05-08T13:06:04.238275+00:00",
     "dormant": false,
