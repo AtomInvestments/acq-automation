@@ -877,6 +877,17 @@ def process_call_needed_cadence(state):
                 continue
             cid = c.get('id')
             if not cid: continue
+            # Tag-dedupe guard (mirrors PR #2 for the SMS reply path): if any
+            # replied-* / dnc / not-interested / wrong-number tag is already on
+            # the contact, an earlier run (or a human) routed this lead. Stop
+            # the cadence immediately — no new CALL/REVIEW task pair.
+            if already_routed_reply(c):
+                print(f'  skip {cid}: call-needed contact already has replied-* tag — cadence suppressed')
+                http('DELETE', f'https://services.leadconnectorhq.com/contacts/{cid}/tags',
+                     headers=GHL_H, json={'tags': ['from-call-needed']})
+                cs = state.setdefault(cid, {})
+                cs['cn_done'] = True
+                continue
             cs = state.setdefault(cid, {})
 
             # Has the seller replied? (any inbound message in last 6 days)
@@ -915,12 +926,13 @@ def process_call_needed_cadence(state):
             addr  = (c.get('address1') or c.get('city') or '').strip()
             jeff_title = f'CALL: {name} ({addr})'
             jeff_body  = 'Lead has not been reached yet. Try again.'
-            mike_title = f'REVIEW: Did Jeff call {name}? ({addr})'
-            mike_body  = 'Verify Jeff attempted the call. Mark complete after confirming.'
 
+            # Note: previously we also created a Mike-side REVIEW task here to
+            # verify Jef called. That generated parallel verification tasks
+            # every 30 min and spammed Mike's queue (see PR notes). Jef owns
+            # the call follow-up; no parallel review task is needed.
             j_made = create_task(cid, USER_JEFF, jeff_title, jeff_body, due_in_days=0)
-            m_made = create_task(cid, USER_MIKE, mike_title, mike_body, due_in_days=1)
-            if j_made or m_made:
+            if j_made:
                 cs['cn_attempts'] = (cs.get('cn_attempts') or 0) + 1
                 cs['cn_last_at'] = now_utc().isoformat()
                 processed += 1
