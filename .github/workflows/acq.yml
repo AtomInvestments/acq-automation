@@ -19,6 +19,7 @@ on:
 
 permissions:
   contents: write    # commit processed_contacts.json back to main
+  issues:   write    # open an auto-alert issue when this workflow fails
 
 jobs:
   run:
@@ -85,11 +86,39 @@ jobs:
           echo "ERROR: failed to push processed_contacts.json after 3 attempts." >&2
           exit 1
 
-      # Slack alert on any failure in this job. Gated on SLACK_WEBHOOK_URL
-      # so a missing secret degrades silently rather than crashing the
-      # workflow. TODO(slack-secret): once SLACK_WEBHOOK_URL is wired up
-      # in repo secrets, remove the empty-string guard from the if:
-      # condition so missing webhook becomes an actionable warning.
+      # Belt-and-suspenders failure notifications:
+      #   1. Open a GitHub Issue (works TODAY using the built-in GITHUB_TOKEN
+      #      — no external secret required). Mido's notification surface is
+      #      GitHub email + mobile push from issue creation.
+      #   2. Slack ping, gated on SLACK_WEBHOOK_URL so missing-secret degrades
+      #      silently. See SLACK_WEBHOOK_SETUP.md for how to wire it up.
+      - name: Create issue on failure
+        if: failure()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RUN_URL:  ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          WORKFLOW: ${{ github.workflow }}
+          REPO:     ${{ github.repository }}
+        run: |
+          set -e
+          TS=$(date -u +'%Y-%m-%dT%H:%MZ')
+          TITLE="[auto-alert] ${WORKFLOW} failed at ${TS}"
+          BODY=$(cat <<EOF
+          Workflow **${WORKFLOW}** failed.
+
+          - Run: ${RUN_URL}
+          - Repo: ${REPO}
+          - Time: ${TS}
+
+          This issue was opened automatically by the workflow's failure
+          alert step. Close it once the failure is acknowledged or fixed.
+          EOF
+          )
+          gh issue create --repo "${REPO}" \
+            --title "${TITLE}" \
+            --body  "${BODY}" \
+            --label "auto-alert" || true
+
       - name: Notify Slack on failure
         if: failure() && env.SLACK_WEBHOOK_URL != ''
         env:
