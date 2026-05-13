@@ -877,6 +877,19 @@ def process_call_needed_cadence(state):
                 continue
             cid = c.get('id')
             if not cid: continue
+            cs = state.setdefault(cid, {})
+
+            # Issue #8 defense: if a prior tick already finished this cadence
+            # (replied / graduated / already-routed), don't reprocess. The tag
+            # DELETE on GHL may have failed transiently, leaving the contact
+            # with the tag and us repeatedly hammering the same paths.
+            if cs.get('cn_done'):
+                # Belt-and-suspenders: retry the tag strip so the contact
+                # eventually drops out of this search next tick.
+                http('DELETE', f'https://services.leadconnectorhq.com/contacts/{cid}/tags',
+                     headers=GHL_H, json={'tags': ['from-call-needed']})
+                continue
+
             # Tag-dedupe guard (mirrors PR #2 for the SMS reply path): if any
             # replied-* / dnc / not-interested / wrong-number tag is already on
             # the contact, an earlier run (or a human) routed this lead. Stop
@@ -885,10 +898,8 @@ def process_call_needed_cadence(state):
                 print(f'  skip {cid}: call-needed contact already has replied-* tag — cadence suppressed')
                 http('DELETE', f'https://services.leadconnectorhq.com/contacts/{cid}/tags',
                      headers=GHL_H, json={'tags': ['from-call-needed']})
-                cs = state.setdefault(cid, {})
                 cs['cn_done'] = True
                 continue
-            cs = state.setdefault(cid, {})
 
             # Has the seller replied? (any inbound message in last 6 days)
             anchor = cs.get('cn_started') or cs.get('stage_entered_at') or now_utc().isoformat()
@@ -900,11 +911,16 @@ def process_call_needed_cadence(state):
                 cs['cn_done'] = True
                 continue
 
-            # Init cadence start tracker
+            # Init cadence start tracker. Only seed cn_last_at to None if it
+            # isn't already present — clobbering an existing timestamp would
+            # bypass the 48h gate on the next tick (this was a real persistence
+            # hole: any path that wiped cn_started — e.g. a future migration —
+            # would also re-null cn_last_at and make every tick look like the
+            # contact's first run, exactly the Issue #8 symptom).
             if 'cn_started' not in cs:
                 cs['cn_started'] = now_utc().isoformat()
-                cs['cn_attempts'] = 0
-                cs['cn_last_at'] = None
+            cs.setdefault('cn_attempts', 0)
+            cs.setdefault('cn_last_at', None)
 
             elapsed = days_since(cs['cn_started']) or 0
             if elapsed >= 6:
@@ -915,7 +931,11 @@ def process_call_needed_cadence(state):
                 transitioned += 1
                 continue
 
-            # Time for the next task pair? Every 48h.
+            # Time for the next task pair? Every 48h. The gate now ALSO trips
+            # immediately after the first task (whether the GHL POST succeeded
+            # or not) because we stamp cn_last_at unconditionally below — that
+            # way a transient GHL 5xx can't cause us to hammer the create_task
+            # endpoint every 30 min for the same contact.
             last = cs.get('cn_last_at')
             if last:
                 d = days_since(last) or 0
@@ -932,9 +952,13 @@ def process_call_needed_cadence(state):
             # every 30 min and spammed Mike's queue (see PR notes). Jef owns
             # the call follow-up; no parallel review task is needed.
             j_made = create_task(cid, USER_JEFF, jeff_title, jeff_body, due_in_days=0)
+            # Stamp cn_last_at BEFORE checking j_made: this is the load-bearing
+            # write for the 48h gate. If GHL returned 5xx, we still wait 48h
+            # before retrying (the contact will see a task on the next
+            # successful tick — better than hammering on a degraded API).
+            cs['cn_last_at'] = now_utc().isoformat()
             if j_made:
                 cs['cn_attempts'] = (cs.get('cn_attempts') or 0) + 1
-                cs['cn_last_at'] = now_utc().isoformat()
                 processed += 1
                 slack_post(f'📞 Manual call retry queued: *{name}* ({addr}) — attempt {cs["cn_attempts"]}/3')
         if len(contacts) < 100:
