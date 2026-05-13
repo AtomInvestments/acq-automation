@@ -1,0 +1,66 @@
+name: One-off cleanup (REVIEW-Mike spam)
+
+# Manual-only trigger. Runs cleanup_review_tasks.py against the GHL
+# location to delete the REVIEW-Mike tasks created during the pre-PR-#7
+# call-needed cadence bug. Dry-run by default — pass mode=execute to
+# actually delete.
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'dry-run (default, just logs) OR execute (actually delete)'
+        required: false
+        default: 'dry-run'
+        type: choice
+        options: ['dry-run', 'execute']
+
+permissions:
+  contents: read
+  issues:   write    # for the shared failure-alert step
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run cleanup script
+        env:
+          GHL_TOKEN:     ${{ secrets.GHL_TOKEN }}
+          CLEANUP_MODE:  ${{ inputs.mode || 'dry-run' }}
+        run: python cleanup_review_tasks.py
+
+      - name: Create issue on failure
+        if: failure()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RUN_URL:  ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          WORKFLOW: ${{ github.workflow }}
+          REPO:     ${{ github.repository }}
+        run: |
+          set -e
+          TS=$(date -u +'%Y-%m-%dT%H:%MZ')
+          TITLE="[auto-alert] ${WORKFLOW} failed at ${TS}"
+          BODY=$(cat <<EOF
+          Workflow **${WORKFLOW}** failed.
+
+          - Run: ${RUN_URL}
+          - Repo: ${REPO}
+          - Time: ${TS}
+
+          This issue was opened automatically by the workflow's failure
+          alert step. Close it once the failure is acknowledged or fixed.
+          EOF
+          )
+          gh issue create --repo "${REPO}" \
+            --title "${TITLE}" \
+            --body  "${BODY}" \
+            --label "auto-alert" || true
