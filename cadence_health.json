@@ -34,6 +34,11 @@
       "date": "2026-05-13",
       "had_business_hour_run": true,
       "sends": 0
+    },
+    {
+      "date": "2026-05-14",
+      "had_business_hour_run": false,
+      "sends": 0
     }
   ]
 }
