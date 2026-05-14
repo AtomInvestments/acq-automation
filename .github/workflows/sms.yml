@@ -1,8 +1,12 @@
 name: ACQ SMS Follow-Up + Dashboard
 
 on:
-  schedule:
-    - cron: '*/30 * * * *'   # every 30 min
+  # schedule:
+  #   - cron: '*/30 * * * *'   # every 30 min
+  #   DISABLED 2026-05-08 — reply-check regression: 3 contacts (Bryan
+  #   Carestia, Adam Shun, Steven Dadura) re-messaged today AFTER they
+  #   replied on May 7. PR #2's has_inbound_since() is not catching the
+  #   May 7 inbound messages. Cron stays off until root cause is fixed.
   workflow_dispatch:
 
 permissions:
