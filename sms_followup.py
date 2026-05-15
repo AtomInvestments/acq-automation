@@ -533,6 +533,23 @@ def process_lead(entry, contact, state):
             'dormant':          False,
         })
 
+    # UNCONDITIONAL TAG-PREBAIL (round-3 hotfix, 2026-05-08).
+    #
+    # Before we touch anchor calculation or reply detection, check the live
+    # GHL contact for any replied-* / dnd-opt-out / not-interested /
+    # wrong-number tag. If Jeff (or an earlier run, or a human) has already
+    # routed this lead, NEVER send another SMS regardless of what our state
+    # file claims. This is the load-bearing safety net: even if the anchor
+    # math is wrong, even if last_sms_at got cleared, even if state was
+    # nuked, the tags survive on GHL and stop the cadence cold.
+    if already_routed_reply(contact):
+        cs['replied']      = True
+        cs['skip_reason']  = 'tag-already-routed'
+        # Don't overwrite replied_at if we already had one; otherwise stamp
+        # the bail-out time so downstream dashboards can see when we noticed.
+        cs.setdefault('replied_at', now_utc().isoformat())
+        return 'skipped-tag-prebail'
+
     # Skip if already replied or dormant
     if cs.get('replied') or cs.get('dormant'):
         return 'skipped'
@@ -561,27 +578,38 @@ def process_lead(entry, contact, state):
     # contacts who had replied weeks ago and were already triaged by Jeff.
     # That dumped ~96 duplicate tasks in one run.
     #
-    # Round-2 fix (this hotfix):
+    # Round-2 fix (PR #2):
     #   1. Always require a time anchor. Build it as the most recent of
     #      (state.last_sms_at, state.stage_entered_at, live GHL last
     #      outbound SMS). Inbound only counts if it's strictly newer than
     #      the anchor — i.e. a reply to *our most recent outreach*.
-    #   2. If no anchor exists at all (no prior outreach in state OR in
-    #      GHL), do NOT classify as replied. We cannot tell a fresh reply
-    #      from a years-old historical message; the safe default is to
-    #      let normal cadence run (which will set an anchor on the first
-    #      send) and check on the next tick.
-    #   3. Even after a positive classification, if the live contact
-    #      already carries any replied-* / dnd-opt-out / not-interested /
-    #      wrong-number tag, suppress task creation — Jeff has already
-    #      been routed to this person. Update state and move on.
+    #
+    # Round-3 fix (2026-05-08 hotfix, THIS file):
+    #   Bug: including `stage_entered_at` in the anchor poisoned the
+    #   check whenever state was reset (stage change, manual cleanup,
+    #   first-time entry). stage_entered_at gets stamped to "now" at
+    #   that moment, which is AFTER any prior inbound — so legitimate
+    #   replies (e.g. Bryan / Adam / Steven on May 7) became invisible
+    #   and the cadence happily re-messaged them on May 8.
+    #
+    #   Fix: drop stage_entered_at from the anchor. The only thing that
+    #   defines "has the seller replied to our outreach?" is the most
+    #   recent OUTBOUND timestamp. Use the latest of
+    #   (state.last_sms_at, ghl_latest_outbound_at). Only fall back to
+    #   stage_entered_at if there is no outbound at all (so we don't
+    #   classify ancient inbound on a fresh contact as a reply).
+    #
     # W1/W2: fetch the contact's messages once per lead and reuse the result
     # across latest_outbound_at / has_inbound_since / last_outbound_within. The
     # GHL conversations API is the slowest hop in this loop, so collapsing
     # three round trips into one materially shortens each tick.
     messages = _scan_messages(cid)
 
-    candidates = [cs.get('last_sms_at'), cs.get('stage_entered_at')]
+    # Anchor: the most recent OUTBOUND signal. Do NOT use stage_entered_at
+    # here — it's set to "now" on state reset and would mask any prior
+    # inbound. Stage-entry timing is unrelated to whether the seller has
+    # replied to our messages.
+    candidates = [cs.get('last_sms_at')]
     ghl_last_out = latest_outbound_at(cid, messages=messages)
     if ghl_last_out:
         candidates.append(ghl_last_out)
@@ -592,8 +620,16 @@ def process_lead(entry, contact, state):
         anchor = anchor_dt.isoformat()
         replied, when, reply_text = has_inbound_since(cid, anchor, messages=messages)
     else:
-        # No anchor — no prior outreach we can confirm. Don't classify.
-        replied, when, reply_text = False, None, None
+        # No outbound anchor exists. Fall back to stage_entered_at so a
+        # truly fresh contact (no prior outreach) isn't flagged as
+        # "replied" off ancient historical inbound. If THAT's also
+        # missing, no anchor is possible — skip classification.
+        fallback = parse_iso(cs.get('stage_entered_at') or '')
+        if fallback:
+            anchor = fallback.isoformat()
+            replied, when, reply_text = has_inbound_since(cid, anchor, messages=messages)
+        else:
+            replied, when, reply_text = False, None, None
     if replied:
         # W5: distinguish a real ambiguous-NEUTRAL verdict from a transient
         # Anthropic failure. classify_reply now returns None for 429/5xx/
