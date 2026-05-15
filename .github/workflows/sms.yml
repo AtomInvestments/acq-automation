@@ -1,12 +1,13 @@
 name: ACQ SMS Follow-Up + Dashboard
 
 on:
-  # schedule:
-  #   - cron: '*/30 * * * *'   # every 30 min
-  #   DISABLED 2026-05-08 — reply-check regression: 3 contacts (Bryan
-  #   Carestia, Adam Shun, Steven Dadura) re-messaged today AFTER they
-  #   replied on May 7. PR #2's has_inbound_since() is not catching the
-  #   May 7 inbound messages. Cron stays off until root cause is fixed.
+  schedule:
+    - cron: '*/30 * * * *'   # every 30 min
+  # Re-enabled 2026-05-14 after PR #12 (anchor + tag-prebail hotfix) +
+  # Phase-2 remediation sweep of the 47 SAFE cohort (commit d1aff6a).
+  # Original disable was the 2026-05-08 reply-check regression: Bryan
+  # Carestia / Adam Shun / Steven Dadura were re-messaged on May 8 after
+  # replying May 7 because stage_entered_at-in-anchor masked the inbound.
   workflow_dispatch:
 
 permissions:
