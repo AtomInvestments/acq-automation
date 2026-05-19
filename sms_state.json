@@ -253,6 +253,16 @@
     "stage_entered_at": "2026-05-07T23:09:16.282836+00:00",
     "stage_name": "dead"
   },
+  "EC8xucDNsgf0rPBW0Be4": {
+    "dormant": false,
+    "last_from_number": null,
+    "last_sms_at": null,
+    "replied": false,
+    "replied_at": null,
+    "sms_count": 0,
+    "stage_entered_at": "2026-05-19T22:42:25.614540+00:00",
+    "stage_name": "dead"
+  },
   "ENJxwA2hMvDZ2yDJsdOj": {
     "cn_attempts": 2,
     "cn_done": true,
@@ -372,14 +382,14 @@
   },
   "OwUhHkPvP2NOYZTlBgaD": {
     "dormant": false,
-    "last_from_number": "+12676197270",
-    "last_sms_at": "2026-05-14T23:50:01.636792+00:00",
+    "last_from_number": null,
+    "last_sms_at": null,
     "replied": true,
     "replied_at": null,
     "skip_reason": "tag-already-routed",
-    "sms_count": 1,
-    "stage_entered_at": "2026-05-07T23:07:57.384050+00:00",
-    "stage_name": "mao"
+    "sms_count": 0,
+    "stage_entered_at": "2026-05-19T22:42:22.831485+00:00",
+    "stage_name": "dead"
   },
   "Oz33ntCSku5lC67kMHkb": {
     "cn_attempts": 2,
@@ -642,14 +652,14 @@
   },
   "eTzIi5tOxMam2J1RJuUV": {
     "dormant": false,
-    "last_from_number": "+16094388996",
-    "last_sms_at": "2026-05-14T23:49:59.841080+00:00",
+    "last_from_number": null,
+    "last_sms_at": null,
     "replied": true,
     "replied_at": null,
     "skip_reason": "tag-already-routed",
-    "sms_count": 1,
-    "stage_entered_at": "2026-05-07T23:07:51.562459+00:00",
-    "stage_name": "mao"
+    "sms_count": 0,
+    "stage_entered_at": "2026-05-19T22:42:08.347408+00:00",
+    "stage_name": "fu15mo"
   },
   "feVgr9ChZKFVGHQClO1j": {
     "dormant": false,
@@ -679,16 +689,16 @@
   },
   "iAJpHjbb4ddTTF1UJMOv": {
     "dormant": false,
-    "last_from_number": "+12568006289",
-    "last_sms_at": "2026-05-14T23:50:07.362729+00:00",
+    "last_from_number": null,
+    "last_sms_at": null,
     "replied": true,
-    "replied_at": "2026-05-14T23:51:37.962Z",
+    "replied_at": null,
     "reply_class": "POSITIVE",
     "reply_text": "Actually we are going to list with an agent but thanks anyway.",
     "skip_reason": "tag-already-routed",
-    "sms_count": 1,
-    "stage_entered_at": "2026-05-07T23:08:14.172701+00:00",
-    "stage_name": "mao"
+    "sms_count": 0,
+    "stage_entered_at": "2026-05-19T22:42:11.936038+00:00",
+    "stage_name": "fu15mo"
   },
   "jjW5FuSXm3eePGjmw1HV": {
     "dormant": false,
