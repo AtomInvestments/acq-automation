@@ -639,6 +639,7 @@ section h2, h2 {
     <a href="weekly.html">Weekly</a>
     <a href="priorities.html">Priority</a>
     <a href="markets.html">Markets</a>
+    <a href="ai-agents-plan.html">AI Agents Plan</a>
     <a href="about.html">About</a>
   </nav>
 
