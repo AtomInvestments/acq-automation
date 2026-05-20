@@ -389,17 +389,25 @@ def find_blake_agent(api_key: str) -> str | None:
 
 
 def apply_tools(api_key: str, agent_id: str, tools: list[dict]) -> None:
-    """PATCH the agent with the new tool list."""
-    payload = {
-        "conversation_config": {
-            "agent": {
-                "prompt": {
-                    "tools": tools,
-                }
-            }
-        }
-    }
-    el_request("PATCH", f"/convai/agents/{agent_id}", api_key, body=payload)
+    """Read-modify-write: fetch the agent, replace ONLY the tools array, PATCH the
+    full conversation_config back so we don't accidentally null out the system
+    prompt, first message, voice settings, etc."""
+    agent = el_request("GET", f"/convai/agents/{agent_id}", api_key)
+
+    config = (agent.get("conversation_config") or {})
+    agent_section = (config.get("agent") or {})
+    prompt = (agent_section.get("prompt") or {})
+
+    existing_tools = prompt.get("tools") or []
+    existing_names = [t.get("name", "(unnamed)") for t in existing_tools]
+    print(f"  Current tools on agent {agent_id}: {existing_names or '<none>'}")
+    print(f"  Replacing with: {[t['name'] for t in tools]}")
+
+    prompt["tools"] = tools
+    agent_section["prompt"] = prompt
+    config["agent"] = agent_section
+
+    el_request("PATCH", f"/convai/agents/{agent_id}", api_key, body={"conversation_config": config})
     print(f"✓ Patched agent {agent_id} with {len(tools)} tools.")
 
 
