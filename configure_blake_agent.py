@@ -72,8 +72,33 @@ def shared_headers(pit: str) -> dict:
     }
 
 
+def _prop(description: str | None = None, constant_value=None, prop_type: str = "string") -> dict:
+    """Build a single property dict in ElevenLabs' tool-schema shape.
+
+    Exactly one of `description` or `constant_value` must be provided. ElevenLabs
+    rejects properties that have neither (and JSON-Schema patterns like
+    `const`, `enum`, `default` are not honored — must use `constant_value` or
+    `description` instead).
+    """
+    out: dict = {"type": prop_type}
+    if constant_value is not None:
+        out["constant_value"] = constant_value
+    if description is not None:
+        out["description"] = description
+    return out
+
+
 def build_tools(pit: str) -> list[dict]:
-    """Return the eight GHL-backed tool definitions for Blake."""
+    """Return the eight GHL-backed tool definitions for Blake.
+
+    ElevenLabs Conversational AI schema notes (learned via 400 responses):
+      - `request_headers` is a flat {name: value} dict, not a list of objects.
+      - Each property in `request_body_schema.properties` must use
+        `description` (LLM fills it) or `constant_value` (hardcoded).
+        `const` / `enum` / `default` from JSON Schema are not honored.
+      - Path params are described in `path_params_schema` (list of property
+        dicts, same shape as body properties).
+    """
     h = shared_headers(pit)
 
     return [
@@ -84,7 +109,7 @@ def build_tools(pit: str) -> list[dict]:
             "description": (
                 "Look up the seller's GHL contact record by their phone number. "
                 "Call this at the start of every conversation. Returns contact id, "
-                "name, address, current stage, prior call notes."
+                "name, address, current stage."
             ),
             "api_schema": {
                 "url": f"{GHL_BASE}/contacts/search",
@@ -93,26 +118,11 @@ def build_tools(pit: str) -> list[dict]:
                 "request_body_schema": {
                     "type": "object",
                     "properties": {
-                        "locationId": {"type": "string", "const": APG_LOCATION_ID},
-                        "filters": {
-                            "type": "array",
-                            "items": {"type": "object"},
-                            "default": [
-                                {"field": "phone", "operator": "contains", "value": "PHONE_PLACEHOLDER"}
-                            ],
-                        },
-                        "pageLimit": {"type": "number", "const": 1},
+                        "locationId": _prop(constant_value=APG_LOCATION_ID),
+                        "query": _prop("The caller's phone number (any common format works; E.164 like +16095551234 is best)."),
                     },
-                    "required": ["locationId", "filters"],
+                    "required": ["locationId", "query"],
                 },
-                "request_parameters": [
-                    {
-                        "id": "phone",
-                        "type": "string",
-                        "description": "Caller's phone number, E.164 format preferred (e.g. +16095551234).",
-                        "required": True,
-                    }
-                ],
             },
         },
         # 2. Read recent notes
@@ -128,14 +138,9 @@ def build_tools(pit: str) -> list[dict]:
                 "url": f"{GHL_BASE}/contacts/{{contact_id}}/notes",
                 "method": "GET",
                 "request_headers": h,
-                "path_params_schema": [
-                    {
-                        "id": "contact_id",
-                        "type": "string",
-                        "description": "GHL contact id from lookup_contact_by_phone.",
-                        "required": True,
-                    }
-                ],
+                "path_params_schema": {
+                    "contact_id": _prop("GHL contact id from lookup_contact_by_phone."),
+                },
             },
         },
         # 3. Update seller data (custom fields)
@@ -145,61 +150,56 @@ def build_tools(pit: str) -> list[dict]:
             "type": "webhook",
             "name": "update_seller_data",
             "description": (
-                "Write the seller's property details and motivation to GHL custom "
-                "fields. Send only the fields you confirmed in the conversation; "
-                "leave others null. Beds, baths, sqft are numbers as strings. "
-                "Asking price is a number as string. Motivation and timeline are "
-                "short phrases. Call as soon as each field is confirmed."
+                "Write the seller's property details to GHL. Build the customFields "
+                "array using these field IDs, including only fields the seller actually "
+                f"confirmed:\n  beds={CF_BEDS}\n  baths={CF_BATHS}\n  sqft={CF_SQFT}\n  "
+                f"asking_price={CF_ASKING}\n  motivation={CF_MOTIVATION}\n  timeline={CF_TIMELINE}\n"
+                "Example: customFields = [{\"id\":\"xXEm77wvbxEbiqsw3lAz\",\"value\":\"3\"},"
+                "{\"id\":\"rbYZAdhvuvX1NQgexhxy\",\"value\":\"divorce, wants out fast\"}]"
             ),
             "api_schema": {
                 "url": f"{GHL_BASE}/contacts/{{contact_id}}",
                 "method": "PUT",
                 "request_headers": h,
-                "path_params_schema": [
-                    {"id": "contact_id", "type": "string", "required": True}
-                ],
+                "path_params_schema": {
+                    "contact_id": _prop("GHL contact id."),
+                },
                 "request_body_schema": {
                     "type": "object",
                     "properties": {
-                        "customFields": {
-                            "type": "array",
-                            "description": "Array of {id, value} pairs. Field IDs: "
-                                f"beds={CF_BEDS}, baths={CF_BATHS}, sqft={CF_SQFT}, "
-                                f"asking_price={CF_ASKING}, motivation={CF_MOTIVATION}, "
-                                f"timeline={CF_TIMELINE}",
-                        },
+                        "customFields": _prop(
+                            "JSON-stringified array of {id, value} pairs. Numbers like beds/baths/sqft/asking_price go as numeric strings. Motivation and timeline are short text.",
+                            prop_type="string",
+                        ),
                     },
                     "required": ["customFields"],
                 },
             },
         },
-        # 4. Set lead temp
+        # 4. Set lead temp via tag
         {
             "type": "webhook",
             "name": "set_lead_temp",
             "description": (
-                "Set the lead temperature based on call outcome. Use 'hot-lead' if "
-                "motivated and ready to move soon. 'warm-lead' if interested but "
-                "not urgent. 'nurture-lead' if interested with 6+ month timeline. "
-                "'cold-lead' if they're not really sellers."
+                "Tag the contact with the lead-temperature based on call outcome. "
+                "Use 'hot-lead' if motivated and ready to move soon. 'warm-lead' if "
+                "interested but not urgent. 'nurture-lead' if interested with 6+ month "
+                "timeline. 'cold-lead' if they're not really sellers."
             ),
             "api_schema": {
-                "url": f"{GHL_BASE}/contacts/{{contact_id}}",
-                "method": "PUT",
+                "url": f"{GHL_BASE}/contacts/{{contact_id}}/tags",
+                "method": "POST",
                 "request_headers": h,
-                "path_params_schema": [
-                    {"id": "contact_id", "type": "string", "required": True}
-                ],
+                "path_params_schema": {
+                    "contact_id": _prop("GHL contact id."),
+                },
                 "request_body_schema": {
                     "type": "object",
                     "properties": {
-                        "tags": {
-                            "type": "array",
-                            "items": {
-                                "type": "string",
-                                "enum": ["hot-lead", "warm-lead", "nurture-lead", "cold-lead"],
-                            },
-                        }
+                        "tags": _prop(
+                            "JSON-stringified array containing exactly one of: hot-lead, warm-lead, nurture-lead, cold-lead. Example: [\"hot-lead\"]",
+                            prop_type="string",
+                        ),
                     },
                     "required": ["tags"],
                 },
@@ -212,33 +212,29 @@ def build_tools(pit: str) -> list[dict]:
             "description": (
                 "Write a structured 'APG Lead Summary' note to the contact in GHL. "
                 "ALWAYS call this at the end of every call — this is the canonical "
-                "record. Dashboard call rating + summary fields parse this note. "
-                "The body MUST start with 'APG Lead Summary' and include Lead Temp, "
-                "Rating, Summary, and Next step lines."
+                "record the dashboard reads. Body MUST start with 'APG Lead Summary' "
+                "and include Lead Temp, Rating, Reason, summary, and Next step lines."
             ),
             "api_schema": {
                 "url": f"{GHL_BASE}/contacts/{{contact_id}}/notes",
                 "method": "POST",
                 "request_headers": h,
-                "path_params_schema": [
-                    {"id": "contact_id", "type": "string", "required": True}
-                ],
+                "path_params_schema": {
+                    "contact_id": _prop("GHL contact id."),
+                },
                 "request_body_schema": {
                     "type": "object",
                     "properties": {
-                        "userId": {"type": "string", "const": USER_MIKE},
-                        "body": {
-                            "type": "string",
-                            "description": (
-                                "Multi-line note body. Format:\n"
-                                "APG Lead Summary (Blake call · YYYY-MM-DD)\n\n"
-                                "Lead Temp: Hot|Warm|Nurture|Cold\n"
-                                "Rating: N/10\n"
-                                "Reason: <one sentence>\n\n"
-                                "What they said: <3-5 sentence summary>\n\n"
-                                "Next step: <concrete action — RJ callback in 4h, FU 1.5mo, DNC>"
-                            ),
-                        },
+                        "userId": _prop(constant_value=USER_MIKE),
+                        "body": _prop(
+                            "Multi-line note. Format:\n"
+                            "APG Lead Summary (Blake call · YYYY-MM-DD)\n\n"
+                            "Lead Temp: Hot|Warm|Nurture|Cold\n"
+                            "Rating: N/10\n"
+                            "Reason: <one sentence>\n\n"
+                            "What they said: <3-5 sentence summary>\n\n"
+                            "Next step: <RJ callback in 4h, FU 1.5mo, DNC, etc>"
+                        ),
                     },
                     "required": ["userId", "body"],
                 },
@@ -250,34 +246,24 @@ def build_tools(pit: str) -> list[dict]:
             "name": "create_callback_task_for_rj",
             "description": (
                 "Create a callback task for RJ (the human acquisitions partner). "
-                "ONLY call this when the lead is HOT — they confirmed they want "
-                "to talk to a human about selling soon. Due time = ISO timestamp "
-                "4 hours from call end."
+                "ONLY call this when the lead is HOT — they confirmed they want to "
+                "talk to a human about selling soon. Due time = ISO 8601 timestamp 4 "
+                "hours from call end."
             ),
             "api_schema": {
                 "url": f"{GHL_BASE}/contacts/{{contact_id}}/tasks",
                 "method": "POST",
                 "request_headers": h,
-                "path_params_schema": [
-                    {"id": "contact_id", "type": "string", "required": True}
-                ],
+                "path_params_schema": {
+                    "contact_id": _prop("GHL contact id."),
+                },
                 "request_body_schema": {
                     "type": "object",
                     "properties": {
-                        "title": {
-                            "type": "string",
-                            "description": "Short task title, e.g. 'Hot lead from Blake — call back'",
-                        },
-                        "body": {
-                            "type": "string",
-                            "description": "Multi-line context: summary one-liner, asking price, timeline, motivation",
-                        },
-                        "dueDate": {
-                            "type": "string",
-                            "description": "ISO 8601 timestamp, default = call end time + 4 hours",
-                        },
-                        "completed": {"type": "boolean", "const": False},
-                        "assignedTo": {"type": "string", "const": USER_RJ},
+                        "title": _prop("Short task title, e.g. 'Hot lead from Blake — call back'."),
+                        "body": _prop("Multi-line context: one-line summary, asking price, timeline, motivation."),
+                        "dueDate": _prop("ISO 8601 timestamp 4 hours from now."),
+                        "assignedTo": _prop(constant_value=USER_RJ),
                     },
                     "required": ["title", "body", "dueDate", "assignedTo"],
                 },
@@ -288,36 +274,27 @@ def build_tools(pit: str) -> list[dict]:
             "type": "webhook",
             "name": "move_to_stage",
             "description": (
-                "Move the opportunity to a different pipeline stage based on the call "
-                "outcome. Hot lead ready for an offer call → Stage 2 LAO. Cold lead → "
-                "Stage 0 Unqualified. Wants to be left alone → Dead Deals. Interested "
-                "but not now → Follow Up 1.5 mo."
+                "Move the opportunity to a different pipeline stage based on call "
+                "outcome. Use the EXACT stage_id strings below:\n"
+                f"  qualified (Stage 1)        = {STAGE_QUALIFIED}\n"
+                f"  LAO (Stage 2)              = {STAGE_LAO}\n"
+                f"  unqualified (Stage 0)      = {STAGE_UNQUALIFIED}\n"
+                f"  dead_deals                 = {STAGE_DEAD}\n"
+                f"  follow_up_1_5mo            = {STAGE_FU_15}\n"
+                "Hot lead ready for an offer call → LAO. Cold lead → unqualified. "
+                "STOP/DND → dead_deals. Interested but not now → follow_up_1_5mo."
             ),
             "api_schema": {
                 "url": f"{GHL_BASE}/opportunities/{{opportunity_id}}",
                 "method": "PUT",
                 "request_headers": h,
-                "path_params_schema": [
-                    {"id": "opportunity_id", "type": "string", "required": True}
-                ],
+                "path_params_schema": {
+                    "opportunity_id": _prop("GHL opportunity id (NOT the contact id)."),
+                },
                 "request_body_schema": {
                     "type": "object",
                     "properties": {
-                        "pipelineStageId": {
-                            "type": "string",
-                            "enum": [
-                                STAGE_QUALIFIED,
-                                STAGE_LAO,
-                                STAGE_UNQUALIFIED,
-                                STAGE_DEAD,
-                                STAGE_FU_15,
-                            ],
-                            "description": (
-                                f"Stage IDs: qualified={STAGE_QUALIFIED}, "
-                                f"LAO={STAGE_LAO}, unqualified={STAGE_UNQUALIFIED}, "
-                                f"dead={STAGE_DEAD}, follow_up_1_5mo={STAGE_FU_15}"
-                            ),
-                        }
+                        "pipelineStageId": _prop("One of the stage_id strings listed in the tool description."),
                     },
                     "required": ["pipelineStageId"],
                 },
@@ -328,26 +305,22 @@ def build_tools(pit: str) -> list[dict]:
             "type": "webhook",
             "name": "set_dnd",
             "description": (
-                "Mark this contact as Do Not Disturb. Call immediately if the seller "
-                "asks to be removed, says STOP, is hostile, or it's clearly a wrong "
-                "number. DND is permanent — never call this on a soft 'not interested' "
-                "(use set_lead_temp with 'cold-lead' instead)."
+                "Mark contact as Do Not Disturb. Call this immediately if the seller "
+                "says STOP, asks to be removed, is hostile, or it's a wrong number. "
+                "DND is permanent — for soft 'not interested', use set_lead_temp with "
+                "'cold-lead' instead."
             ),
             "api_schema": {
                 "url": f"{GHL_BASE}/contacts/{{contact_id}}",
                 "method": "PUT",
                 "request_headers": h,
-                "path_params_schema": [
-                    {"id": "contact_id", "type": "string", "required": True}
-                ],
+                "path_params_schema": {
+                    "contact_id": _prop("GHL contact id."),
+                },
                 "request_body_schema": {
                     "type": "object",
                     "properties": {
-                        "dnd": {"type": "boolean", "const": True},
-                        "tags": {
-                            "type": "array",
-                            "items": {"type": "string", "const": "dnd-opt-out"},
-                        },
+                        "dnd": _prop(constant_value=True, prop_type="boolean"),
                     },
                     "required": ["dnd"],
                 },
