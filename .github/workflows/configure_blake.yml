@@ -1,0 +1,45 @@
+name: Configure Blake Agent (ElevenLabs <-> GHL)
+
+# One-shot configurator for the Blake ElevenLabs Conversational AI agent.
+# Builds the 8 GHL-backed tools and PATCHes them into the agent.
+#
+# Manual trigger only — there's no schedule. Run from the Actions tab when
+# you want to (re)sync the agent's tools with configure_blake_agent.py.
+
+on:
+  workflow_dispatch:
+    inputs:
+      agent_id:
+        description: 'ElevenLabs agent_id to update (optional; otherwise searches by name "Blake")'
+        required: false
+        default: ''
+      apply:
+        description: 'Set to "yes" to actually PATCH. Default is dry-run.'
+        required: true
+        default: 'no'
+
+permissions:
+  contents: read
+
+jobs:
+  configure:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Run configurator
+        env:
+          ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
+          BLAKE_GHL_PIT: ${{ secrets.BLAKE_GHL_PIT }}
+          BLAKE_AGENT_ID: ${{ inputs.agent_id }}
+        run: |
+          set -e
+          if [ "${{ inputs.apply }}" = "yes" ]; then
+            python configure_blake_agent.py --apply
+          else
+            python configure_blake_agent.py
+          fi
