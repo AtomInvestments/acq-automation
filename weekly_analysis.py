@@ -920,7 +920,7 @@ a:hover { color: var(--ink); }
 <script>
 const GHL_BASE = 'https://app.gohighlevel.com/v2/location/RCkiUmWqXX4BYQ39JXmm/contacts/detail';
 const ROOT = 'weekly/';
-const REPO = 'Mid0117/acq-automation';
+const REPO = 'AtomInvestments/acq-automation';
 const PAT_KEY = 'apg_gh_pat_v1';
 
 let stageFilter = 'all';
@@ -1348,7 +1348,7 @@ async function dispatchWorkflow(workflowFile, ref='main', inputs={}) {
     pat = prompt(
       'Refreshing requires a GitHub fine-grained personal access token (one-time setup).\\n\\n' +
       '1. https://github.com/settings/tokens?type=beta\\n' +
-      '2. Repo: Mid0117/acq-automation · Permissions: Actions = Read+Write\\n' +
+      '2. Repo: AtomInvestments/acq-automation · Permissions: Actions = Read+Write\\n' +
       '3. Paste token here. Stored only in your browser.'
     );
     if (!pat) throw new Error('No token provided');

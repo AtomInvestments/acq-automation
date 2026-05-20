@@ -28,18 +28,18 @@ Issue path.
    ```sh
    gh secret set SLACK_WEBHOOK_URL \
      --body "https:// hooks.slack.com /services/ T<TEAM_ID> / B<BOT_ID> / <TOKEN>" \
-     --repo Mid0117/acq-automation
+     --repo AtomInvestments/acq-automation
    ```
 
    Or set it manually at
-   <https://github.com/Mid0117/acq-automation/settings/secrets/actions>
+   <https://github.com/AtomInvestments/acq-automation/settings/secrets/actions>
    -> *New repository secret* -> Name `SLACK_WEBHOOK_URL`, paste the
    URL as the value.
 
 3. **Verify the secret is wired** — without leaking the URL itself:
 
    ```sh
-   gh secret list --repo Mid0117/acq-automation | grep SLACK_WEBHOOK_URL
+   gh secret list --repo AtomInvestments/acq-automation | grep SLACK_WEBHOOK_URL
    ```
 
    Should show `SLACK_WEBHOOK_URL  Updated YYYY-MM-DD`.
@@ -77,7 +77,7 @@ To rotate the webhook URL (e.g. if it's leaked):
 If you ever want to drop Slack alerts and rely only on GitHub Issues:
 
 ```sh
-gh secret remove SLACK_WEBHOOK_URL --repo Mid0117/acq-automation
+gh secret remove SLACK_WEBHOOK_URL --repo AtomInvestments/acq-automation
 ```
 
 The Slack step's `env.SLACK_WEBHOOK_URL != ''` guard will then skip it

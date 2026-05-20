@@ -321,7 +321,7 @@ h2 .sec-count { margin-left: auto; font-size: 11px; letter-spacing: 0.18em; text
 </div>
 
 <script>
-const REPO        = 'Mid0117/acq-automation';
+const REPO        = 'AtomInvestments/acq-automation';
 const PAT_KEY     = 'apg_gh_pat_v1';
 const GHL_BASE    = 'https://app.gohighlevel.com/v2/location/RCkiUmWqXX4BYQ39JXmm/contacts/detail';
 const PRIORITIES_URL = 'priorities.json';
@@ -543,7 +543,7 @@ async function dispatchAddNote(cid, who, body) {
   if (!pat) {
     pat = prompt('Saving feedback to GHL needs a GitHub PAT (one-time setup, same as the Refresh button on the Weekly page).\n\n' +
                  '1. https://github.com/settings/tokens?type=beta\n' +
-                 '2. Repo: Mid0117/acq-automation, Permissions: Actions = Read+Write\n' +
+                 '2. Repo: AtomInvestments/acq-automation, Permissions: Actions = Read+Write\n' +
                  '3. Paste it here.');
     if (!pat) throw new Error('No token');
     localStorage.setItem(PAT_KEY, pat.trim());

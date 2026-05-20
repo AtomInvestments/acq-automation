@@ -62,7 +62,7 @@ def collect_run_status():
     out = []
     # 1. GitHub Actions API — most authoritative for "did the cron run + succeed"
     gh_token = os.environ.get('GITHUB_TOKEN', '')
-    repo     = os.environ.get('GITHUB_REPOSITORY', 'Mid0117/acq-automation')
+    repo     = os.environ.get('GITHUB_REPOSITORY', 'AtomInvestments/acq-automation')
     if gh_token:
         try:
             r = http('GET', f'https://api.github.com/repos/{repo}/actions/runs',
@@ -1029,7 +1029,7 @@ def _main_inner():
             failure_banner = (
                 '<div class="status-banner failure">'
                 f'<div class="status-text">⚠ <strong>{len(failed)} cron job(s) failed on their last run</strong> — automation is partially down.</div>'
-                '<a class="btn btn-edit" href="https://github.com/Mid0117/acq-automation/actions" target="_blank">VIEW LOGS</a>'
+                '<a class="btn btn-edit" href="https://github.com/AtomInvestments/acq-automation/actions" target="_blank">VIEW LOGS</a>'
                 '</div>'
                 f'<div class="run-grid">{rows}</div>'
             )
