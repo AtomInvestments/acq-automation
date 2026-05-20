@@ -57,14 +57,19 @@ USER_MIKE = "Vj4WwH1ovxGN5Hv5Kq17"
 USER_RJ = os.environ.get("RJ_GHL_USER_ID", USER_MIKE)
 
 
-def shared_headers(pit: str) -> list[dict]:
-    """Auth + version + content-type headers attached to every GHL call."""
-    return [
-        {"type": "value", "name": "Authorization", "value": f"Bearer {pit}"},
-        {"type": "value", "name": "Version", "value": "2021-07-28"},
-        {"type": "value", "name": "Content-Type", "value": "application/json"},
-        {"type": "value", "name": "Accept", "value": "application/json"},
-    ]
+def shared_headers(pit: str) -> dict:
+    """Auth + version + content-type headers attached to every GHL call.
+
+    ElevenLabs Conversational AI expects `request_headers` as a flat dict
+    {header_name: value}, not a list of objects. Confirmed by 400 error:
+    "Input should be a valid dictionary" at agent.prompt.tools.0.webhook.api_schema.request_headers.
+    """
+    return {
+        "Authorization": f"Bearer {pit}",
+        "Version": "2021-07-28",
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+    }
 
 
 def build_tools(pit: str) -> list[dict]:
