@@ -156,6 +156,16 @@ export default {
       return handleAudioProxy(convId, env);
     }
 
+    // /debug/last-init — returns the most recent payload ElevenLabs sent to
+    // /conversation-init. Used to diagnose why caller phone extraction missed.
+    if (req.method === "GET" && url.pathname === "/debug/last-init") {
+      const snapshot = await env.DIAL_STATE.get("debug:last_init_payload");
+      return new Response(snapshot || JSON.stringify({ none: true }), {
+        status: 200,
+        headers: { "content-type": "application/json" },
+      });
+    }
+
     return new Response("Not Found", { status: 404 });
   },
 
@@ -203,6 +213,20 @@ async function handleConversationInit(req: Request, env: Env): Promise<Response>
   // Log the FULL payload so we can learn ElevenLabs' actual field names.
   // Truncate after some chars so we don't blow up Worker logs.
   console.log(`[init] payload: ${JSON.stringify(payload).slice(0, 2000)}`);
+
+  // ALSO persist the payload to KV so we can inspect it after the fact via
+  // GET /debug/last-init (no live tail needed). Keyed by ISO timestamp + a
+  // 'latest' pointer. 1-hour TTL — enough to debug, doesn't fill storage.
+  try {
+    const stamp = new Date().toISOString();
+    const snapshot = JSON.stringify({ at: stamp, payload }).slice(0, 50000);
+    await Promise.all([
+      env.DIAL_STATE.put("debug:last_init_payload", snapshot, { expirationTtl: 60 * 60 }),
+      env.DIAL_STATE.put(`debug:init:${stamp}`, snapshot, { expirationTtl: 60 * 60 }),
+    ]);
+  } catch (e) {
+    console.warn(`[init] could not persist debug payload: ${e}`);
+  }
 
   // For OUTBOUND calls (Blake dialing a seller), the SELLER'S phone is in
   // to_number / called_number, while caller_id is Blake's own number.
