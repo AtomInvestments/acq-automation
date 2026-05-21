@@ -855,8 +855,11 @@
     "dormant": false,
     "last_from_number": null,
     "last_sms_at": null,
-    "replied": false,
-    "replied_at": null,
+    "replied": true,
+    "replied_at": "2026-05-21T14:05:36.039000+00:00",
+    "reply_attempts": 0,
+    "reply_class": "NEGATIVE",
+    "reply_text": "Halt",
     "sms_count": 0,
     "stage_entered_at": "2026-05-20T17:37:51.629440+00:00",
     "stage_name": "mao"
