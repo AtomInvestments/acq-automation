@@ -35,6 +35,15 @@ const USER_MIKE = "Vj4WwH1ovxGN5Hv5Kq17";
 // Signature freshness window — reject events older than 5 minutes.
 const SIGNATURE_MAX_AGE_S = 300;
 
+// GHL custom field IDs (APG sub-account). Match elevenlabs-tools-config.md.
+const CF_BEDS = "xXEm77wvbxEbiqsw3lAz";
+const CF_BATHS = "EtKof5yT7KAWmoaNQqJZ";
+const CF_SQFT = "8kqwjqtJyTTeQ8SIaLQz";
+const CF_ASKING = "6q7syt4puxfP7E03Xxhd";
+const CF_MOTIVATION = "rbYZAdhvuvX1NQgexhxy";
+const CF_TIMELINE = "v47I1Mi63RBpCD5N5RrH";
+const CF_VA_NOTES = "ctNVXVw8VY1PD4B1oqXj";
+
 export default {
   async fetch(req: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     const url = new URL(req.url);
@@ -61,9 +70,151 @@ export default {
       return handleWebhook(req, env, ctx);
     }
 
+    if (req.method === "POST" && url.pathname === "/conversation-init") {
+      return handleConversationInit(req, env);
+    }
+
     return new Response("Not Found", { status: 404 });
   },
 };
+
+// ---- /conversation-init handler ---------------------------------------------
+//
+// Fires when an ElevenLabs Conversational AI call CONNECTS (before Blake
+// speaks). ElevenLabs POSTs caller phone + metadata; we look up the caller in
+// GHL and return dynamic_variables + a custom first_message so Blake's opener
+// uses real owner data instead of empty placeholders.
+//
+// Response shape (per ElevenLabs docs):
+//   {
+//     "type": "conversation_initiation_client_data",
+//     "dynamic_variables": { first_name, is_known_owner, ... },
+//     "conversation_config_override": {
+//       "agent": { "first_message": "..." }
+//     }
+//   }
+//
+// If GHL lookup fails / no match, return the "owner-unknown" branch so Blake
+// politely asks for the seller's name.
+
+async function handleConversationInit(req: Request, env: Env): Promise<Response> {
+  let payload: any = {};
+  try {
+    payload = await req.json();
+  } catch {
+    // Body might be empty for some triggers — keep going with empty payload
+  }
+
+  // ElevenLabs uses different field names depending on call source (Twilio vs
+  // SIP vs direct). Try them all.
+  const callerPhone: string =
+    payload?.caller_id ||
+    payload?.from_phone_number ||
+    payload?.from ||
+    payload?.metadata?.phone_call?.external_number ||
+    payload?.metadata?.from ||
+    "";
+
+  console.log(`[init] caller=${callerPhone || "(none)"} agent=${payload?.agent_id || "?"}`);
+
+  // Defaults — owner-unknown branch
+  let vars = {
+    first_name: "",
+    full_name: "",
+    is_known_owner: "false",
+    property_address: "",
+    motivation: "",
+    timeline: "",
+    asking_price: "",
+    last_call_summary: "",
+  };
+
+  let firstMessage = ownerUnknownFirstMessage();
+
+  if (callerPhone) {
+    try {
+      const contact = await lookupContactDetailByPhone(env.BLAKE_GHL_PIT, callerPhone);
+      if (contact) {
+        const cfMap = customFieldMap(contact.customFields ?? []);
+        const firstName = (contact.firstName || "").trim();
+        const lastName = (contact.lastName || "").trim();
+        const address = (contact.address1 || "").trim();
+        vars = {
+          first_name: firstName,
+          full_name: `${firstName} ${lastName}`.trim(),
+          is_known_owner: "true",
+          property_address: address,
+          motivation: cfMap[CF_MOTIVATION] || "",
+          timeline: cfMap[CF_TIMELINE] || "",
+          asking_price: cfMap[CF_ASKING] ? String(cfMap[CF_ASKING]) : "",
+          last_call_summary: cfMap[CF_VA_NOTES] || "",
+        };
+        firstMessage = ownerKnownFirstMessage(firstName, address);
+        console.log(`[init] matched contact id=${contact.id} name="${firstName} ${lastName}"`);
+      } else {
+        console.log(`[init] no GHL contact for ${callerPhone} → owner-unknown branch`);
+      }
+    } catch (e) {
+      console.error(`[init] GHL lookup threw: ${e}`);
+      // Fall through with owner-unknown defaults
+    }
+  }
+
+  const response = {
+    type: "conversation_initiation_client_data",
+    dynamic_variables: vars,
+    conversation_config_override: {
+      agent: {
+        first_message: firstMessage,
+      },
+    },
+  };
+
+  return new Response(JSON.stringify(response), {
+    status: 200,
+    headers: { "content-type": "application/json" },
+  });
+}
+
+function ownerKnownFirstMessage(firstName: string, address: string): string {
+  const name = firstName || "there";
+  if (address) {
+    return `Hi, is this ${name}? — This is Blake with Atom Property Group. I'm calling about ${address} — wondering if you'd be open to chatting about a proposal for it?`;
+  }
+  return `Hi, is this ${name}? — This is Blake with Atom Property Group. Just wanted to chat for a minute about your property — got a sec?`;
+}
+
+function ownerUnknownFirstMessage(): string {
+  return `Hi there — this is Blake with Atom Property Group. Sorry, I don't have your name on file yet. Could you share your name and the property you're calling about, so I can help you better?`;
+}
+
+// Returns the contact dict (NOT just the id) so we can read customFields,
+// address, name, etc.
+async function lookupContactDetailByPhone(pit: string, phone: string): Promise<any | null> {
+  const res = await fetch(`${GHL_BASE}/contacts/search`, {
+    method: "POST",
+    headers: ghlHeaders(pit),
+    body: JSON.stringify({
+      locationId: APG_LOCATION_ID,
+      query: phone,
+      pageLimit: 1,
+    }),
+  });
+  if (!res.ok) {
+    console.warn(`[init] GHL search failed: ${res.status}`);
+    return null;
+  }
+  const json: any = await res.json();
+  return (json?.contacts ?? [])[0] ?? null;
+}
+
+function customFieldMap(fields: any[]): Record<string, any> {
+  const out: Record<string, any> = {};
+  for (const f of fields ?? []) {
+    if (f?.id) out[f.id] = f.value;
+  }
+  return out;
+}
 
 async function handleWebhook(req: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
   // 1. Read raw body once. Signature verification needs the exact bytes
