@@ -305,18 +305,33 @@ async function handleWebhook(req: Request, env: Env, ctx: ExecutionContext): Pro
     transcript,
   });
 
-  // Don't block the webhook on the write — fire-and-forget but log failures.
+  // Don't block the webhook on the writes — fire-and-forget but log failures.
+  // Two side effects: backup note + 'blake-called' tag (so the team can build
+  // smart lists / filters in GHL: tag = blake-called → every contact Blake
+  // has ever talked to).
   ctx.waitUntil(
-    addNote(env.BLAKE_GHL_PIT, contactId, noteBody).then(
-      (res) => {
-        if (!res.ok) {
-          console.error(`[blake-post-call] note write failed: ${res.status} ${res.body}`);
-        } else {
-          console.log(`[blake-post-call] backup note written for contact ${contactId}`);
-        }
-      },
-      (err) => console.error(`[blake-post-call] note write threw: ${err}`)
-    )
+    Promise.all([
+      addNote(env.BLAKE_GHL_PIT, contactId, noteBody).then(
+        (res) => {
+          if (!res.ok) {
+            console.error(`[blake-post-call] note write failed: ${res.status} ${res.body}`);
+          } else {
+            console.log(`[blake-post-call] backup note written for contact ${contactId}`);
+          }
+        },
+        (err) => console.error(`[blake-post-call] note write threw: ${err}`)
+      ),
+      addTag(env.BLAKE_GHL_PIT, contactId, "blake-called").then(
+        (res) => {
+          if (!res.ok) {
+            console.error(`[blake-post-call] tag write failed: ${res.status} ${res.body}`);
+          } else {
+            console.log(`[blake-post-call] tagged 'blake-called' on contact ${contactId}`);
+          }
+        },
+        (err) => console.error(`[blake-post-call] tag write threw: ${err}`)
+      ),
+    ])
   );
 
   return new Response(
@@ -364,6 +379,20 @@ async function addNote(
     method: "POST",
     headers: ghlHeaders(pit),
     body: JSON.stringify({ userId: USER_MIKE, body }),
+  });
+  const text = await res.text();
+  return { ok: res.ok, status: res.status, body: text.slice(0, 500) };
+}
+
+async function addTag(
+  pit: string,
+  contactId: string,
+  tag: string
+): Promise<{ ok: boolean; status: number; body: string }> {
+  const res = await fetch(`${GHL_BASE}/contacts/${contactId}/tags`, {
+    method: "POST",
+    headers: ghlHeaders(pit),
+    body: JSON.stringify({ tags: [tag] }),
   });
   const text = await res.text();
   return { ok: res.ok, status: res.status, body: text.slice(0, 500) };
