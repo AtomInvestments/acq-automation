@@ -27,6 +27,7 @@ export interface Env {
   BLAKE_GHL_PIT: string;
   ELEVENLABS_WEBHOOK_SECRET: string;
   ELEVENLABS_API_KEY: string;       // needed for outbound dial API
+  ANTHROPIC_API_KEY: string;        // post-call structured extraction
   DIAL_STATE: KVNamespace;          // KV for warm-up quota + dial dedupe
 }
 
@@ -499,6 +500,30 @@ async function handleWebhook(req: Request, env: Env, ctx: ExecutionContext): Pro
             (err) => console.error(`[blake-post-call] recording field write threw: ${err}`)
           )
         : Promise.resolve(),
+      // 4. STRUCTURED EXTRACTION — Claude reads the transcript and we
+      //    deterministically write address / lead-temp / RJ-callback-task /
+      //    stage-move / DND back to GHL. This is the safety net for when
+      //    Blake's LLM doesn't fire his in-call tools (which is most of the
+      //    time, per the 2026-05-21 calls).
+      env.ANTHROPIC_API_KEY
+        ? (async () => {
+            const extraction = await extractStructuredFromTranscript(
+              env.ANTHROPIC_API_KEY,
+              transcript,
+              "", // contact state — unknown to webhook payload; could enrich via GHL re-lookup
+              startedAt
+            );
+            if (!extraction) {
+              console.warn(`[extract] no extraction returned for ${contactId}`);
+              return;
+            }
+            const log = await applyExtractionToGhl(env.BLAKE_GHL_PIT, contactId, extraction);
+            console.log(
+              `[extract] contact=${contactId} temp=${extraction.lead_temp} ` +
+              `callback=${extraction.callback_promised} writes=[${log.join(", ")}]`
+            );
+          })().catch((e) => console.error(`[extract] failed: ${e}`))
+        : Promise.resolve(console.log("[extract] ANTHROPIC_API_KEY not bound; skipping structured extraction")),
     ])
   );
 
@@ -584,6 +609,287 @@ async function setContactCustomField(
   });
   const text = await res.text();
   return { ok: res.ok, status: res.status, body: text.slice(0, 500) };
+}
+
+// PUT a wider set of contact updates (multiple custom fields + address) in
+// one call. Returns the same shape as setContactCustomField.
+async function updateContactFields(
+  pit: string,
+  contactId: string,
+  body: any
+): Promise<{ ok: boolean; status: number; body: string }> {
+  const res = await fetch(`${GHL_BASE}/contacts/${contactId}`, {
+    method: "PUT",
+    headers: ghlHeaders(pit),
+    body: JSON.stringify(body),
+  });
+  const text = await res.text();
+  return { ok: res.ok, status: res.status, body: text.slice(0, 500) };
+}
+
+// Create a task on a contact, assigned to RJ. Returns task id on success.
+async function createTaskOnContact(
+  pit: string,
+  contactId: string,
+  args: { title: string; body: string; dueDate: string; assignedTo?: string }
+): Promise<{ ok: boolean; status: number; body: string; taskId?: string }> {
+  const res = await fetch(`${GHL_BASE}/contacts/${contactId}/tasks`, {
+    method: "POST",
+    headers: ghlHeaders(pit),
+    body: JSON.stringify({
+      title: args.title,
+      body: args.body,
+      dueDate: args.dueDate,
+      completed: false,
+      assignedTo: args.assignedTo,
+    }),
+  });
+  const text = await res.text();
+  let taskId: string | undefined;
+  try {
+    const parsed = JSON.parse(text);
+    taskId = parsed?.task?.id || parsed?.id;
+  } catch {}
+  return { ok: res.ok, status: res.status, body: text.slice(0, 500), taskId };
+}
+
+// Find the most recent opportunity for a contact (used to move stage post-call).
+async function findOpportunityForContact(
+  pit: string,
+  contactId: string
+): Promise<{ id: string; pipelineId: string; pipelineStageId: string } | null> {
+  const res = await fetch(
+    `${GHL_BASE}/opportunities/search?location_id=${APG_LOCATION_ID}&contact_id=${contactId}&limit=1`,
+    { method: "GET", headers: ghlHeaders(pit) }
+  );
+  if (!res.ok) return null;
+  const j: any = await res.json();
+  const opp = (j?.opportunities ?? [])[0];
+  if (!opp) return null;
+  return {
+    id: opp.id,
+    pipelineId: opp.pipelineId || opp.pipeline_id,
+    pipelineStageId: opp.pipelineStageId || opp.pipeline_stage_id,
+  };
+}
+
+async function moveOpportunityStage(
+  pit: string,
+  opportunityId: string,
+  newStageId: string
+): Promise<{ ok: boolean; status: number; body: string }> {
+  const res = await fetch(`${GHL_BASE}/opportunities/${opportunityId}`, {
+    method: "PUT",
+    headers: ghlHeaders(pit),
+    body: JSON.stringify({ pipelineStageId: newStageId }),
+  });
+  const text = await res.text();
+  return { ok: res.ok, status: res.status, body: text.slice(0, 500) };
+}
+
+// ---- Post-call structured extraction ---------------------------------------
+//
+// After Blake hangs up, send the transcript to Claude with a tight extraction
+// prompt and translate the JSON output into deterministic GHL writes. This
+// is the SAFETY NET that ensures every call ends with a complete GHL record,
+// independent of whether Blake remembered to fire his in-call tools.
+
+interface ExtractionResult {
+  address1: string | null;
+  city: string | null;
+  state: string | null;            // 2-letter
+  postal_code: string | null;
+  beds: string | null;
+  baths: string | null;
+  sqft: string | null;
+  condition_notes: string | null;
+  asking_price: string | null;
+  motivation: string | null;
+  timeline: string | null;
+  lead_temp: "hot" | "warm" | "nurture" | "cold" | "dnc" | "wrong_number" | "unclear";
+  callback_promised: boolean;
+  callback_time_iso: string | null;
+  callback_relative: string | null;
+  requested_dnc: boolean;
+  is_owner: boolean;
+  rating_1_to_10: number | null;
+  one_line_summary: string;
+}
+
+async function extractStructuredFromTranscript(
+  apiKey: string,
+  transcriptTurns: any[],
+  contactState: string,
+  nowIso: string
+): Promise<ExtractionResult | null> {
+  if (!apiKey) return null;
+  const transcript = transcriptTurns
+    .map((t: any) => {
+      const role = (t.role || "?").toUpperCase();
+      const msg = (t.message || t.content || "").trim();
+      return msg ? `[${role}] ${msg}` : "";
+    })
+    .filter(Boolean)
+    .join("\n");
+
+  const systemPrompt = `You extract structured CRM data from a real estate cold-call transcript between Blake (APG's AI agent) and a property owner. Output STRICT JSON only.
+
+Rules:
+- Only fill fields the seller explicitly stated. Use null when not stated.
+- lead_temp: "hot" = motivated AND ready to sell AND price aligns; "warm" = interested but vague; "nurture" = interested but 6+ months out; "cold" = not really a seller; "dnc" = asked to be removed/STOP; "wrong_number" = confirmed wrong number; "unclear" = couldn't tell.
+- callback_promised: true ONLY if Blake explicitly proposed a time AND seller agreed.
+- callback_time_iso: best-effort ISO 8601 timestamp. The contact's state is "${contactState || "unknown"}", current time is ${nowIso}. "Tomorrow morning" = 9am next day in that state's timezone. "Later today around 4pm" = 4pm today.
+- one_line_summary: 1 sentence, Blake's voice.
+- DO NOT invent data. Conservative wins.`;
+
+  const userPrompt = `Conversation transcript:
+
+${transcript}
+
+Return ONLY the JSON object, no preamble.
+
+Schema:
+{
+  "address1": string|null,
+  "city": string|null,
+  "state": string|null,
+  "postal_code": string|null,
+  "beds": string|null,
+  "baths": string|null,
+  "sqft": string|null,
+  "condition_notes": string|null,
+  "asking_price": string|null,
+  "motivation": string|null,
+  "timeline": string|null,
+  "lead_temp": "hot"|"warm"|"nurture"|"cold"|"dnc"|"wrong_number"|"unclear",
+  "callback_promised": boolean,
+  "callback_time_iso": string|null,
+  "callback_relative": string|null,
+  "requested_dnc": boolean,
+  "is_owner": boolean,
+  "rating_1_to_10": integer|null,
+  "one_line_summary": string
+}`;
+
+  const res = await fetch("https://api.anthropic.com/v1/messages", {
+    method: "POST",
+    headers: {
+      "x-api-key": apiKey,
+      "anthropic-version": "2023-06-01",
+      "content-type": "application/json",
+    },
+    body: JSON.stringify({
+      model: "claude-sonnet-4-6",
+      max_tokens: 1500,
+      system: systemPrompt,
+      messages: [{ role: "user", content: userPrompt }],
+    }),
+  });
+  if (!res.ok) {
+    const errText = await res.text();
+    console.error(`[extract] Claude API error ${res.status}: ${errText.slice(0, 300)}`);
+    return null;
+  }
+  const data: any = await res.json();
+  const text = (data?.content?.[0]?.text || "").trim();
+
+  // Strip code fences if Claude added them.
+  let jsonStr = text;
+  const m = text.match(/```(?:json)?\s*([\s\S]*?)\s*```/);
+  if (m) jsonStr = m[1];
+
+  try {
+    return JSON.parse(jsonStr) as ExtractionResult;
+  } catch (e) {
+    console.error(`[extract] could not parse Claude output: ${e}; raw: ${text.slice(0, 500)}`);
+    return null;
+  }
+}
+
+// Apply extracted data → GHL writes. Returns an array of brief success/failure
+// strings for logging.
+async function applyExtractionToGhl(
+  pit: string,
+  contactId: string,
+  extraction: ExtractionResult
+): Promise<string[]> {
+  const log: string[] = [];
+
+  // 1. Update contact basic + custom fields if any are present
+  const customFields: any[] = [];
+  if (extraction.beds)         customFields.push({ id: CF_BEDS, value: extraction.beds });
+  if (extraction.baths)        customFields.push({ id: CF_BATHS, value: extraction.baths });
+  if (extraction.sqft)         customFields.push({ id: CF_SQFT, value: extraction.sqft });
+  if (extraction.asking_price) customFields.push({ id: CF_ASKING, value: extraction.asking_price });
+  if (extraction.motivation)   customFields.push({ id: CF_MOTIVATION, value: extraction.motivation });
+  if (extraction.timeline)     customFields.push({ id: CF_TIMELINE, value: extraction.timeline });
+  if (extraction.one_line_summary) customFields.push({ id: CF_VA_NOTES, value: extraction.one_line_summary });
+
+  const basicUpdates: any = {};
+  if (extraction.address1)    basicUpdates.address1 = extraction.address1;
+  if (extraction.city)        basicUpdates.city = extraction.city;
+  if (extraction.state)       basicUpdates.state = extraction.state;
+  if (extraction.postal_code) basicUpdates.postalCode = extraction.postal_code;
+
+  if (customFields.length || Object.keys(basicUpdates).length) {
+    const body = { ...basicUpdates, customFields };
+    const r = await updateContactFields(pit, contactId, body);
+    log.push(`update_contact: ${r.ok ? "ok" : `${r.status} ${r.body.slice(0, 100)}`}`);
+  }
+
+  // 2. Lead temp tag
+  if (extraction.lead_temp && extraction.lead_temp !== "unclear") {
+    const tag = `${extraction.lead_temp}-lead`;
+    const r = await addTag(pit, contactId, tag);
+    log.push(`tag_${tag}: ${r.ok ? "ok" : `${r.status}`}`);
+  }
+
+  // 3. DND
+  if (extraction.requested_dnc || extraction.lead_temp === "dnc" || extraction.lead_temp === "wrong_number") {
+    const r = await updateContactFields(pit, contactId, { dnd: true });
+    log.push(`dnd: ${r.ok ? "ok" : `${r.status}`}`);
+    // also tag for visibility
+    const tagName = extraction.lead_temp === "wrong_number" ? "wrong-number" : "dnd-opt-out";
+    await addTag(pit, contactId, tagName);
+  }
+
+  // 4. Callback task for RJ
+  if (extraction.callback_promised) {
+    const dueIso =
+      extraction.callback_time_iso ||
+      new Date(Date.now() + 4 * 60 * 60 * 1000).toISOString();   // default: now + 4h
+    const r = await createTaskOnContact(pit, contactId, {
+      title: "Blake booked callback — RJ to follow up",
+      body:
+        (extraction.callback_relative ? `Callback time (Blake): ${extraction.callback_relative}\n` : "") +
+        `\n${extraction.one_line_summary}\n` +
+        (extraction.motivation ? `\nMotivation: ${extraction.motivation}` : "") +
+        (extraction.timeline ? `\nTimeline: ${extraction.timeline}` : "") +
+        (extraction.asking_price ? `\nAsking price: ${extraction.asking_price}` : ""),
+      dueDate: dueIso,
+      assignedTo: "Vj4WwH1ovxGN5Hv5Kq17",  // Mike (fallback; replace with RJ_GHL_USER_ID when known)
+    });
+    log.push(`callback_task: ${r.ok ? `ok (id=${r.taskId})` : `${r.status}`}`);
+  }
+
+  // 5. Stage move based on lead temp
+  let targetStage: string | null = null;
+  if (extraction.lead_temp === "hot") targetStage = "d43fddd8-3a17-46b2-a193-cf18619f654f"; // LAO
+  else if (extraction.lead_temp === "warm") targetStage = "a17517be-8d1a-49fd-bd53-b9128a66e242"; // Qualified
+  else if (extraction.lead_temp === "nurture") targetStage = "4aa78ab3-85dc-46d1-a683-d97b0c7a23ee"; // FU 1.5mo
+  else if (extraction.lead_temp === "dnc" || extraction.lead_temp === "wrong_number") {
+    targetStage = "b9b560b0-30cb-47fc-a4ca-1e55ca2531e2"; // Dead Deals
+  }
+
+  if (targetStage) {
+    const opp = await findOpportunityForContact(pit, contactId);
+    if (opp && opp.pipelineStageId !== targetStage) {
+      const r = await moveOpportunityStage(pit, opp.id, targetStage);
+      log.push(`stage_move ${opp.pipelineStageId.slice(0, 8)}→${targetStage.slice(0, 8)}: ${r.ok ? "ok" : `${r.status}`}`);
+    }
+  }
+
+  return log;
 }
 
 // ---- /audio/{conversation_id} proxy ----------------------------------------
