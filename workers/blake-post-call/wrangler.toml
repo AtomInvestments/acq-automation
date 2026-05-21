@@ -1,9 +1,15 @@
-name = "blake-post-call"
+name = "acq-automation"
 main = "src/index.ts"
 compatibility_date = "2026-05-20"
 
-# Worker URL after deploy:
-#   https://blake-post-call.<your-cf-subdomain>.workers.dev
+# Worker URL:
+#   https://acq-automation.mithchell.workers.dev
+#
+# Naming note: the Worker code in this directory is conceptually the
+# "blake-post-call" handler, but the deployed Worker is named "acq-automation"
+# to match the CF Workers Builds project name (and to keep one URL for the
+# APG automation surface). Later Workers (listing-pipeline, slack-listener,
+# sms-reply-handler) live under their own CF projects with their own names.
 #
 # Secrets — set via `wrangler secret put NAME` locally, OR via the
 # .github/workflows/deploy-blake-post-call.yml workflow on push:
