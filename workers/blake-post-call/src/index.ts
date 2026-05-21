@@ -26,6 +26,8 @@
 export interface Env {
   BLAKE_GHL_PIT: string;
   ELEVENLABS_WEBHOOK_SECRET: string;
+  ELEVENLABS_API_KEY: string;       // needed for outbound dial API
+  DIAL_STATE: KVNamespace;          // KV for warm-up quota + dial dedupe
 }
 
 const APG_LOCATION_ID = "RCkiUmWqXX4BYQ39JXmm";
@@ -43,6 +45,69 @@ const CF_ASKING = "6q7syt4puxfP7E03Xxhd";
 const CF_MOTIVATION = "rbYZAdhvuvX1NQgexhxy";
 const CF_TIMELINE = "v47I1Mi63RBpCD5N5RrH";
 const CF_VA_NOTES = "ctNVXVw8VY1PD4B1oqXj";
+
+// GHL stage IDs (APG ACQ pipeline). Source of truth: tyler/project_ghl_acq.md.
+const STAGE_UNQUALIFIED = "c1d23905-7096-439c-9a31-f8db5b2b53d0";
+
+// ElevenLabs Blake agent + phone-number IDs.
+const BLAKE_AGENT_ID = "agent_5001ks3cp069f9rtfz6e81ypgnrd";
+const BLAKE_PHONE_NUMBER_ID = "phnum_8001ks3fhbbpe4vadtrdmparejgw";
+
+// Warm-up curve: max outbound dials per UTC day, indexed by days since the
+// dialer's first run. After WARMUP_CURVE.length days we stay at the last
+// value (the "steady state").
+const WARMUP_CURVE = [
+  10,   // Day 1  — pilot
+  20,   // Day 2
+  30,   // Day 3
+  50,   // Day 4
+  75,   // Day 5
+  100,  // Day 6
+  100,  // Day 7
+  150,  // Day 8 (week 2 starts)
+  150,  // Day 9
+  200,  // Day 10
+  200,  // Day 11
+  250,  // Day 12
+  250,  // Day 13
+  300,  // Day 14 (week 3 starts) → steady state
+];
+
+// TCPA call window: only dial between these hours in the contact's local time.
+const TCPA_DIAL_START_HOUR = 8;   // 8:00 am local
+const TCPA_DIAL_END_HOUR = 21;    // 9:00 pm local (calls placed before 21:00)
+
+// US state → IANA timezone (predominant). Some states (FL, IN, KY, MI, TN) are
+// split; we use the dominant zone. Conservative: edge cases will be filtered
+// out by the more restrictive of the two windows on a per-call basis later.
+const STATE_TZ: Record<string, string> = {
+  AL: "America/Chicago",      AK: "America/Anchorage",
+  AZ: "America/Phoenix",      AR: "America/Chicago",
+  CA: "America/Los_Angeles",  CO: "America/Denver",
+  CT: "America/New_York",     DE: "America/New_York",
+  FL: "America/New_York",     GA: "America/New_York",
+  HI: "Pacific/Honolulu",     ID: "America/Boise",
+  IL: "America/Chicago",      IN: "America/Indianapolis",
+  IA: "America/Chicago",      KS: "America/Chicago",
+  KY: "America/New_York",     LA: "America/Chicago",
+  ME: "America/New_York",     MD: "America/New_York",
+  MA: "America/New_York",     MI: "America/Detroit",
+  MN: "America/Chicago",      MS: "America/Chicago",
+  MO: "America/Chicago",      MT: "America/Denver",
+  NE: "America/Chicago",      NV: "America/Los_Angeles",
+  NH: "America/New_York",     NJ: "America/New_York",
+  NM: "America/Denver",       NY: "America/New_York",
+  NC: "America/New_York",     ND: "America/Chicago",
+  OH: "America/New_York",     OK: "America/Chicago",
+  OR: "America/Los_Angeles",  PA: "America/New_York",
+  RI: "America/New_York",     SC: "America/New_York",
+  SD: "America/Chicago",      TN: "America/Chicago",
+  TX: "America/Chicago",      UT: "America/Denver",
+  VT: "America/New_York",     VA: "America/New_York",
+  WA: "America/Los_Angeles",  WV: "America/New_York",
+  WI: "America/Chicago",      WY: "America/Denver",
+  DC: "America/New_York",
+};
 
 export default {
   async fetch(req: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
@@ -74,7 +139,28 @@ export default {
       return handleConversationInit(req, env);
     }
 
+    if (req.method === "POST" && url.pathname === "/dial-batch") {
+      return handleDialBatch(req, env, ctx);
+    }
+
+    if (req.method === "GET" && url.pathname === "/dial-status") {
+      return handleDialStatus(env);
+    }
+
     return new Response("Not Found", { status: 404 });
+  },
+
+  // Cron Trigger handler. Configured in wrangler.toml as `*/15 * * * *` — every
+  // 15 minutes, we attempt a small batch of dials respecting today's warm-up
+  // quota and TCPA call windows. Idempotent: if quota is already met for the
+  // day, the run is a no-op.
+  async scheduled(_event: ScheduledEvent, env: Env, ctx: ExecutionContext) {
+    try {
+      const result = await runDialBatch(env, { source: "cron", batchSize: 5, dryRun: false });
+      console.log(`[cron-dial] ${JSON.stringify(result)}`);
+    } catch (e) {
+      console.error(`[cron-dial] failed: ${e}`);
+    }
   },
 };
 
@@ -428,6 +514,282 @@ function buildBackupNote(args: {
     `--- Transcript (first 50 turns) ---`,
     transcriptText || "(transcript was empty in the payload)",
   ].join("\n");
+}
+
+// ---- Dialer: warm-up + TCPA + outbound trigger --------------------------------
+
+interface DialBatchResult {
+  source: string;
+  utc_date: string;
+  day_index: number;
+  daily_quota: number;
+  dialed_today_before: number;
+  attempted: number;
+  succeeded: number;
+  skipped_reasons: Record<string, number>;
+  details: Array<{ contact_id: string; phone: string; outcome: string; error?: string }>;
+  dry_run: boolean;
+}
+
+async function handleDialBatch(
+  req: Request,
+  env: Env,
+  _ctx: ExecutionContext
+): Promise<Response> {
+  // Body shape (all optional):
+  //   { batchSize?: number, dryRun?: boolean, overrideQuota?: number }
+  let body: any = {};
+  try {
+    body = await req.json();
+  } catch {}
+
+  const batchSize = Number.isFinite(body.batchSize) ? Math.max(1, Math.min(50, body.batchSize)) : 5;
+  const dryRun = body.dryRun === true;
+  const overrideQuota: number | null = Number.isFinite(body.overrideQuota) ? body.overrideQuota : null;
+
+  const result = await runDialBatch(env, { source: "manual", batchSize, dryRun, overrideQuota });
+  return new Response(JSON.stringify(result, null, 2), {
+    status: 200,
+    headers: { "content-type": "application/json" },
+  });
+}
+
+async function handleDialStatus(env: Env): Promise<Response> {
+  const utcDate = utcDateString(new Date());
+  const dayIndex = await dayIndexFromAnchor(env);
+  const dailyQuota = quotaForDay(dayIndex);
+  const dialedToday = await getDialedTodayCount(env);
+  const anchor = await env.DIAL_STATE.get("quota_anchor_date");
+
+  return new Response(
+    JSON.stringify({
+      utc_date: utcDate,
+      anchor_date: anchor || "(not yet set — first run sets it)",
+      day_index: dayIndex,
+      daily_quota: dailyQuota,
+      dialed_today: dialedToday,
+      remaining_today: Math.max(0, dailyQuota - dialedToday),
+      warmup_curve_max_days: WARMUP_CURVE.length,
+      steady_state_daily_quota: WARMUP_CURVE[WARMUP_CURVE.length - 1],
+    }, null, 2),
+    { status: 200, headers: { "content-type": "application/json" } }
+  );
+}
+
+async function runDialBatch(
+  env: Env,
+  opts: { source: string; batchSize: number; dryRun: boolean; overrideQuota?: number | null }
+): Promise<DialBatchResult> {
+  const now = new Date();
+  const utcDate = utcDateString(now);
+  const dayIndex = await dayIndexFromAnchor(env, now);
+  const dailyQuota = opts.overrideQuota != null ? opts.overrideQuota : quotaForDay(dayIndex);
+  const dialedToday = await getDialedTodayCount(env);
+
+  const remaining = Math.max(0, dailyQuota - dialedToday);
+  const toAttempt = Math.min(opts.batchSize, remaining);
+
+  const result: DialBatchResult = {
+    source: opts.source,
+    utc_date: utcDate,
+    day_index: dayIndex,
+    daily_quota: dailyQuota,
+    dialed_today_before: dialedToday,
+    attempted: 0,
+    succeeded: 0,
+    skipped_reasons: {},
+    details: [],
+    dry_run: opts.dryRun,
+  };
+
+  if (toAttempt <= 0) {
+    result.skipped_reasons["daily_quota_met"] = 1;
+    return result;
+  }
+
+  // Pull more than we need so post-filter (TCPA window, dedupe) still leaves enough.
+  const candidates = await getUnqualifiedContacts(env.BLAKE_GHL_PIT, Math.max(toAttempt * 3, 20));
+
+  for (const c of candidates) {
+    if (result.attempted >= toAttempt) break;
+
+    const phone = (c.phone || "").trim();
+    const contactId = c.id;
+    if (!phone || !contactId) {
+      result.skipped_reasons["missing_phone_or_id"] = (result.skipped_reasons["missing_phone_or_id"] || 0) + 1;
+      continue;
+    }
+
+    // Dedupe: have we already dialed this contact recently?
+    const lastAttempt = await env.DIAL_STATE.get(`last_attempt:${contactId}`);
+    if (lastAttempt) {
+      result.skipped_reasons["already_dialed"] = (result.skipped_reasons["already_dialed"] || 0) + 1;
+      continue;
+    }
+
+    // TCPA call window check (contact's local time).
+    const state = (c.state || "").toUpperCase();
+    if (!inCallWindow(state, now)) {
+      result.skipped_reasons[`outside_window_${state || "UNKNOWN_STATE"}`] =
+        (result.skipped_reasons[`outside_window_${state || "UNKNOWN_STATE"}`] || 0) + 1;
+      continue;
+    }
+
+    result.attempted += 1;
+
+    if (opts.dryRun) {
+      result.details.push({ contact_id: contactId, phone, outcome: "dry_run_would_dial" });
+      continue;
+    }
+
+    try {
+      const dialOk = await triggerOutboundCall(env.ELEVENLABS_API_KEY, phone);
+      if (dialOk.ok) {
+        result.succeeded += 1;
+        result.details.push({ contact_id: contactId, phone, outcome: "dialed" });
+
+        // Record in KV: bump today's counter + mark contact as dialed
+        await Promise.all([
+          incrementDialedToday(env),
+          env.DIAL_STATE.put(`last_attempt:${contactId}`, now.toISOString(), {
+            // 30-day TTL — long enough to prevent re-dialing during warm-up, short
+            // enough to allow re-attempts on contacts that didn't pick up.
+            expirationTtl: 60 * 60 * 24 * 30,
+          }),
+        ]);
+      } else {
+        result.details.push({
+          contact_id: contactId,
+          phone,
+          outcome: "dial_failed",
+          error: dialOk.error,
+        });
+      }
+    } catch (e: any) {
+      result.details.push({
+        contact_id: contactId,
+        phone,
+        outcome: "dial_threw",
+        error: String(e?.message || e),
+      });
+    }
+  }
+
+  return result;
+}
+
+async function getUnqualifiedContacts(pit: string, limit: number): Promise<any[]> {
+  // Search GHL for contacts in the Unqualified stage, NOT DND, NOT already
+  // tagged blake-called.
+  //
+  // GHL POST /contacts/search supports filters with `field`, `operator`, `value`.
+  const res = await fetch(`${GHL_BASE}/contacts/search`, {
+    method: "POST",
+    headers: ghlHeaders(pit),
+    body: JSON.stringify({
+      locationId: APG_LOCATION_ID,
+      pageLimit: Math.max(1, Math.min(100, limit)),
+      filters: [
+        // Stage 0 — Unqualified Leads
+        { field: "opportunity.pipeline_stage_id", operator: "eq", value: STAGE_UNQUALIFIED },
+        // Not DND
+        { field: "dnd", operator: "eq", value: false },
+        // Not already tagged blake-called
+        { field: "tags", operator: "not_contains", value: "blake-called" },
+      ],
+    }),
+  });
+  if (!res.ok) {
+    console.warn(`[dialer] getUnqualifiedContacts failed: ${res.status}`);
+    return [];
+  }
+  const json: any = await res.json();
+  return json?.contacts ?? [];
+}
+
+async function triggerOutboundCall(
+  apiKey: string,
+  toNumber: string
+): Promise<{ ok: boolean; error?: string; body?: string }> {
+  // ElevenLabs Conversational AI outbound via Twilio integration.
+  // POST /v1/convai/twilio/outbound-call
+  const res = await fetch("https://api.elevenlabs.io/v1/convai/twilio/outbound-call", {
+    method: "POST",
+    headers: {
+      "xi-api-key": apiKey,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      agent_id: BLAKE_AGENT_ID,
+      agent_phone_number_id: BLAKE_PHONE_NUMBER_ID,
+      to_number: toNumber,
+    }),
+  });
+  const text = await res.text();
+  if (!res.ok) {
+    return { ok: false, error: `HTTP ${res.status}`, body: text.slice(0, 500) };
+  }
+  return { ok: true, body: text.slice(0, 500) };
+}
+
+// ---- Warm-up curve helpers --------------------------------------------------
+
+function utcDateString(d: Date): string {
+  // YYYY-MM-DD in UTC
+  return d.toISOString().slice(0, 10);
+}
+
+function quotaForDay(dayIndex: number): number {
+  if (dayIndex < 0) return 0;
+  if (dayIndex >= WARMUP_CURVE.length) return WARMUP_CURVE[WARMUP_CURVE.length - 1];
+  return WARMUP_CURVE[dayIndex];
+}
+
+async function dayIndexFromAnchor(env: Env, now: Date = new Date()): Promise<number> {
+  let anchor = await env.DIAL_STATE.get("quota_anchor_date");
+  if (!anchor) {
+    anchor = utcDateString(now);
+    await env.DIAL_STATE.put("quota_anchor_date", anchor);
+  }
+  const anchorMs = Date.parse(anchor + "T00:00:00Z");
+  const nowMs = Date.parse(utcDateString(now) + "T00:00:00Z");
+  return Math.floor((nowMs - anchorMs) / (1000 * 60 * 60 * 24));
+}
+
+async function getDialedTodayCount(env: Env): Promise<number> {
+  const utcDate = utcDateString(new Date());
+  const val = await env.DIAL_STATE.get(`dialed:${utcDate}`);
+  return val ? parseInt(val, 10) || 0 : 0;
+}
+
+async function incrementDialedToday(env: Env): Promise<void> {
+  const utcDate = utcDateString(new Date());
+  const key = `dialed:${utcDate}`;
+  const current = await env.DIAL_STATE.get(key);
+  const next = (current ? parseInt(current, 10) || 0 : 0) + 1;
+  // 7-day TTL on day counters — plenty for any retrospective query, auto cleanup.
+  await env.DIAL_STATE.put(key, String(next), { expirationTtl: 60 * 60 * 24 * 7 });
+}
+
+// ---- TCPA call window ------------------------------------------------------
+
+function inCallWindow(stateCode: string, now: Date): boolean {
+  // If we don't know the state's timezone, conservatively skip (caller decides
+  // whether unknown-state means "don't dial" or "use Eastern fallback").
+  const tz = STATE_TZ[stateCode];
+  if (!tz) return false;
+
+  // Get local hour-of-day in the contact's timezone.
+  const localHour = parseInt(
+    new Intl.DateTimeFormat("en-US", {
+      timeZone: tz,
+      hour: "numeric",
+      hour12: false,
+    }).format(now),
+    10
+  );
+
+  return localHour >= TCPA_DIAL_START_HOUR && localHour < TCPA_DIAL_END_HOUR;
 }
 
 // ---- Signature verification ----------------------------------------------

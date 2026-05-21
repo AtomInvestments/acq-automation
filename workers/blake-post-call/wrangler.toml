@@ -2,6 +2,16 @@ name = "acq-automation"
 main = "src/index.ts"
 compatibility_date = "2026-05-20"
 
+# Cron Trigger: every 15 min, the scheduled handler attempts a small batch of
+# dials respecting the warm-up curve and TCPA call windows. No-op if quota met.
+[triggers]
+crons = ["*/15 * * * *"]
+
+# KV namespace for dial state — tracks today's count, contact dedupe, anchor.
+[[kv_namespaces]]
+binding = "DIAL_STATE"
+id = "c3e5500651af4248889c8ed69e5ec47b"
+
 # Worker URL:
 #   https://acq-automation.mithchell.workers.dev
 #
