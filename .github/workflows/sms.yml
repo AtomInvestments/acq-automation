@@ -103,6 +103,12 @@ jobs:
           GHL_TOKEN: ${{ secrets.GHL_TOKEN }}
         run: python deals_dashboard.py
 
+      - name: Generate Blake calls dashboard
+        env:
+          ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
+          BLAKE_GHL_PIT: ${{ secrets.BLAKE_GHL_PIT }}
+        run: python blake_dashboard.py || echo "blake_dashboard.py failed (non-fatal); continuing"
+
       - name: Refresh site/weekly.html shell with latest layout
         env:
           GHL_TOKEN: ${{ secrets.GHL_TOKEN }}
