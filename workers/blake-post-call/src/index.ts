@@ -679,32 +679,79 @@ async function runDialBatch(
 }
 
 async function getUnqualifiedContacts(pit: string, limit: number): Promise<any[]> {
-  // Search GHL for contacts in the Unqualified stage, NOT DND, NOT already
-  // tagged blake-called.
-  //
-  // GHL POST /contacts/search supports filters with `field`, `operator`, `value`.
-  const res = await fetch(`${GHL_BASE}/contacts/search`, {
-    method: "POST",
-    headers: ghlHeaders(pit),
-    body: JSON.stringify({
-      locationId: APG_LOCATION_ID,
-      pageLimit: Math.max(1, Math.min(100, limit)),
-      filters: [
-        // Stage 0 — Unqualified Leads
-        { field: "opportunity.pipeline_stage_id", operator: "eq", value: STAGE_UNQUALIFIED },
-        // Not DND
-        { field: "dnd", operator: "eq", value: false },
-        // Not already tagged blake-called
-        { field: "tags", operator: "not_contains", value: "blake-called" },
-      ],
-    }),
-  });
-  if (!res.ok) {
-    console.warn(`[dialer] getUnqualifiedContacts failed: ${res.status}`);
+  // Two-step query because GHL /contacts/search doesn't accept
+  // opportunity.pipeline_stage_id as a filter field.
+  //   Step 1: GET /opportunities/search?pipeline_stage_id=UNQUALIFIED
+  //           → returns opps with embedded contact (id, name, phone, tags)
+  //   Step 2: client-side pre-filter on embedded tags
+  //   Step 3: GET /contacts/{id} for each survivor to get state + DND
+  //           (these aren't in the embedded contact shape)
+  //   Step 4: caller does TCPA window check + final dedupe
+  const oppRes = await fetch(
+    `${GHL_BASE}/opportunities/search?location_id=${APG_LOCATION_ID}` +
+      `&pipeline_stage_id=${STAGE_UNQUALIFIED}` +
+      `&limit=${Math.max(1, Math.min(100, limit * 4))}`,
+    { method: "GET", headers: ghlHeaders(pit) }
+  );
+  if (!oppRes.ok) {
+    console.warn(`[dialer] /opportunities/search failed: ${oppRes.status}`);
     return [];
   }
-  const json: any = await res.json();
-  return json?.contacts ?? [];
+  const oppJson: any = await oppRes.json();
+  const opps: any[] = oppJson?.opportunities ?? [];
+
+  // Pre-filter on embedded contact tags so we don't waste GET /contacts/{id} calls.
+  const survivors = opps
+    .map((o) => o?.contact)
+    .filter((c): c is any => !!c && !!c.id && !!c.phone)
+    .filter((c) => {
+      const tags: string[] = c.tags ?? [];
+      if (tags.includes("blake-called")) return false;
+      if (tags.includes("agent")) return false;   // legacy filter — see automation memory
+      if (tags.includes("dnd-opt-out")) return false;
+      return true;
+    });
+
+  // Now hydrate each survivor with the full contact record (need state + dnd).
+  // Cap at `limit * 2` to keep latency reasonable; caller will further filter
+  // by TCPA window and we want some buffer over the actual `limit`.
+  const hydrateCount = Math.min(survivors.length, limit * 2);
+  const hydrated = await Promise.all(
+    survivors.slice(0, hydrateCount).map(async (c) => {
+      const detail = await getContactDetail(pit, c.id);
+      if (!detail) return null;
+      // The detail response wraps the contact under `.contact`, sometimes.
+      const full = detail.contact ?? detail;
+      return {
+        id: c.id,
+        phone: c.phone,
+        firstName: full?.firstName ?? "",
+        lastName: full?.lastName ?? "",
+        state: (full?.state ?? "").toUpperCase(),
+        address1: full?.address1 ?? "",
+        city: full?.city ?? "",
+        dnd: !!full?.dnd,
+        tags: full?.tags ?? c.tags ?? [],
+      };
+    })
+  );
+
+  // Strip null hydration failures + DND contacts (the embedded tag-filter missed
+  // contacts whose DND was set without a tag).
+  return hydrated.filter((c): c is any => !!c && !c.dnd);
+}
+
+async function getContactDetail(pit: string, contactId: string): Promise<any | null> {
+  const res = await fetch(`${GHL_BASE}/contacts/${contactId}`, {
+    method: "GET",
+    headers: ghlHeaders(pit),
+  });
+  if (!res.ok) return null;
+  try {
+    return await res.json();
+  } catch {
+    return null;
+  }
 }
 
 async function triggerOutboundCall(
