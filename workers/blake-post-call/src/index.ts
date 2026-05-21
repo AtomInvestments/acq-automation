@@ -174,6 +174,27 @@ export default {
       return handleDashboardData(env);
     }
 
+    // /admin/refresh-dashboard — manual trigger to populate the dashboard
+    // cache on demand (instead of waiting for next call or cron tick).
+    // No auth — the side effect is just reading public-ish data + writing
+    // to KV. Worst case someone keeps the cache fresh for us.
+    if (req.method === "POST" && url.pathname === "/admin/refresh-dashboard") {
+      return (async () => {
+        try {
+          await refreshDashboardCache(env);
+          return new Response(JSON.stringify({ ok: true }), {
+            status: 200,
+            headers: { "content-type": "application/json" },
+          });
+        } catch (e: any) {
+          return new Response(JSON.stringify({ ok: false, error: String(e?.message || e) }), {
+            status: 500,
+            headers: { "content-type": "application/json" },
+          });
+        }
+      })();
+    }
+
     return new Response("Not Found", { status: 404 });
   },
 
