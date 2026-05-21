@@ -48,8 +48,13 @@ const CF_TIMELINE = "v47I1Mi63RBpCD5N5RrH";
 const CF_VA_NOTES = "ctNVXVw8VY1PD4B1oqXj";
 const CF_BLAKE_RECORDING = "hsHjLlOE8mb4O2DqxNY7";  // URL to /audio/{conv_id} proxy
 
-// GHL stage IDs (APG ACQ pipeline). Source of truth: tyler/project_ghl_acq.md.
-const STAGE_UNQUALIFIED = "c1d23905-7096-439c-9a31-f8db5b2b53d0";
+// GHL ACQ pipeline + stage IDs. Source of truth: tyler/project_ghl_acq.md.
+const ACQ_PIPELINE_ID = "O8wzIa6E3SgD8HLg6gh9";
+const STAGE_UNQUALIFIED   = "c1d23905-7096-439c-9a31-f8db5b2b53d0";
+const STAGE_QUALIFIED     = "a17517be-8d1a-49fd-bd53-b9128a66e242";
+const STAGE_LAO           = "d43fddd8-3a17-46b2-a193-cf18619f654f";
+const STAGE_DEAD          = "b9b560b0-30cb-47fc-a4ca-1e55ca2531e2";
+const STAGE_FU_1_5MO      = "4aa78ab3-85dc-46d1-a683-d97b0c7a23ee";
 
 // ElevenLabs Blake agent + phone-number IDs.
 const BLAKE_AGENT_ID = "agent_5001ks3cp069f9rtfz6e81ypgnrd";
@@ -886,23 +891,28 @@ async function createTaskOnContact(
   return { ok: res.ok, status: res.status, body: text.slice(0, 500), taskId };
 }
 
-// Find the most recent opportunity for a contact (used to move stage post-call).
-async function findOpportunityForContact(
+// Find the contact's opportunity IN THE ACQ PIPELINE specifically (so we
+// don't accidentally try to move opps in the Realtor Listings or other
+// pipelines using ACQ stage IDs).
+async function findAcqOpportunityForContact(
   pit: string,
   contactId: string
-): Promise<{ id: string; pipelineId: string; pipelineStageId: string } | null> {
+): Promise<{ id: string; pipelineId: string; pipelineStageId: string; name?: string } | null> {
+  // Search all opps on this contact, then filter client-side by pipeline.
   const res = await fetch(
-    `${GHL_BASE}/opportunities/search?location_id=${APG_LOCATION_ID}&contact_id=${contactId}&limit=1`,
+    `${GHL_BASE}/opportunities/search?location_id=${APG_LOCATION_ID}&contact_id=${contactId}&limit=20`,
     { method: "GET", headers: ghlHeaders(pit) }
   );
   if (!res.ok) return null;
   const j: any = await res.json();
-  const opp = (j?.opportunities ?? [])[0];
-  if (!opp) return null;
+  const opps = (j?.opportunities ?? []) as any[];
+  const acq = opps.find((o) => (o.pipelineId || o.pipeline_id) === ACQ_PIPELINE_ID);
+  if (!acq) return null;
   return {
-    id: opp.id,
-    pipelineId: opp.pipelineId || opp.pipeline_id,
-    pipelineStageId: opp.pipelineStageId || opp.pipeline_stage_id,
+    id: acq.id,
+    pipelineId: acq.pipelineId || acq.pipeline_id,
+    pipelineStageId: acq.pipelineStageId || acq.pipeline_stage_id,
+    name: acq.name,
   };
 }
 
@@ -918,6 +928,56 @@ async function moveOpportunityStage(
   });
   const text = await res.text();
   return { ok: res.ok, status: res.status, body: text.slice(0, 500) };
+}
+
+async function updateOpportunityName(
+  pit: string,
+  opportunityId: string,
+  name: string
+): Promise<{ ok: boolean; status: number; body: string }> {
+  const res = await fetch(`${GHL_BASE}/opportunities/${opportunityId}`, {
+    method: "PUT",
+    headers: ghlHeaders(pit),
+    body: JSON.stringify({ name }),
+  });
+  const text = await res.text();
+  return { ok: res.ok, status: res.status, body: text.slice(0, 500) };
+}
+
+async function createOpportunity(
+  pit: string,
+  contactId: string,
+  args: { name: string; pipelineStageId: string }
+): Promise<{ ok: boolean; status: number; body: string; oppId?: string }> {
+  const res = await fetch(`${GHL_BASE}/opportunities/`, {
+    method: "POST",
+    headers: ghlHeaders(pit),
+    body: JSON.stringify({
+      locationId: APG_LOCATION_ID,
+      pipelineId: ACQ_PIPELINE_ID,
+      pipelineStageId: args.pipelineStageId,
+      contactId,
+      name: args.name,
+      status: "open",
+      source: "Blake AI",
+    }),
+  });
+  const text = await res.text();
+  let oppId: string | undefined;
+  try {
+    oppId = JSON.parse(text)?.opportunity?.id || JSON.parse(text)?.id;
+  } catch {}
+  return { ok: res.ok, status: res.status, body: text.slice(0, 500), oppId };
+}
+
+// Build the opportunity name format: "FullName / Address / Phone"
+function buildOpportunityName(
+  fullName: string | null | undefined,
+  addressFull: string | null | undefined,
+  phone: string | null | undefined
+): string {
+  const parts = [fullName, addressFull, phone].map((p) => (p || "").trim()).filter(Boolean);
+  return parts.join(" / ") || "Blake-handled contact";
 }
 
 // ---- Post-call structured extraction ---------------------------------------
@@ -1105,21 +1165,50 @@ async function applyExtractionToGhl(
     log.push(`callback_task: ${r.ok ? `ok (id=${r.taskId})` : `${r.status}`}`);
   }
 
-  // 5. Stage move based on lead temp
-  let targetStage: string | null = null;
-  if (extraction.lead_temp === "hot") targetStage = "d43fddd8-3a17-46b2-a193-cf18619f654f"; // LAO
-  else if (extraction.lead_temp === "warm") targetStage = "a17517be-8d1a-49fd-bd53-b9128a66e242"; // Qualified
-  else if (extraction.lead_temp === "nurture") targetStage = "4aa78ab3-85dc-46d1-a683-d97b0c7a23ee"; // FU 1.5mo
-  else if (extraction.lead_temp === "dnc" || extraction.lead_temp === "wrong_number") {
-    targetStage = "b9b560b0-30cb-47fc-a4ca-1e55ca2531e2"; // Dead Deals
-  }
+  // 5. Opportunity in ACQ pipeline. ALWAYS ensure one exists per Blake-called
+  //    contact (so the call has a tracked record). Set its stage based on
+  //    lead_temp and name it "FullName / Address / Phone" per APG convention.
+  const targetStage =
+    extraction.lead_temp === "hot"           ? STAGE_LAO
+    : extraction.lead_temp === "warm"        ? STAGE_QUALIFIED
+    : extraction.lead_temp === "nurture"     ? STAGE_FU_1_5MO
+    : extraction.lead_temp === "dnc"         ? STAGE_DEAD
+    : extraction.lead_temp === "wrong_number"? STAGE_DEAD
+    : STAGE_UNQUALIFIED;  // cold + unclear default to Unqualified — RJ can review
 
-  if (targetStage) {
-    const opp = await findOpportunityForContact(pit, contactId);
-    if (opp && opp.pipelineStageId !== targetStage) {
-      const r = await moveOpportunityStage(pit, opp.id, targetStage);
-      log.push(`stage_move ${opp.pipelineStageId.slice(0, 8)}→${targetStage.slice(0, 8)}: ${r.ok ? "ok" : `${r.status}`}`);
+  // Need contact data to format the opportunity name. Re-fetch for fresh
+  // address (the basic-field update above just landed, so we want the
+  // POST-update values — but since updateContactFields is fire-and-forget
+  // and might not be visible yet, we use the extraction's address fields
+  // directly + look up contact name).
+  const contactDetail = await getContactDetail(pit, contactId);
+  const fc = (contactDetail?.contact ?? contactDetail) || {};
+  const fullName = `${(fc.firstName || "").trim()} ${(fc.lastName || "").trim()}`.trim();
+  const phone = (fc.phone || "").trim();
+  const addressFull = [
+    extraction.address1 || fc.address1 || "",
+    extraction.city || fc.city || "",
+    extraction.state || fc.state || "",
+  ].filter(Boolean).join(", ");
+  const oppName = buildOpportunityName(fullName, addressFull, phone);
+
+  const existing = await findAcqOpportunityForContact(pit, contactId);
+
+  if (existing) {
+    // Update name if different
+    if (existing.name !== oppName) {
+      const r = await updateOpportunityName(pit, existing.id, oppName);
+      log.push(`opp_rename: ${r.ok ? "ok" : `${r.status}`}`);
     }
+    // Move stage if different
+    if (existing.pipelineStageId !== targetStage) {
+      const r = await moveOpportunityStage(pit, existing.id, targetStage);
+      log.push(`stage_move ${existing.pipelineStageId.slice(0, 8)}→${targetStage.slice(0, 8)}: ${r.ok ? "ok" : `${r.status}`}`);
+    }
+  } else {
+    // Create new ACQ opportunity for this contact at the target stage
+    const r = await createOpportunity(pit, contactId, { name: oppName, pipelineStageId: targetStage });
+    log.push(`opp_create stage=${targetStage.slice(0, 8)}: ${r.ok ? `ok (id=${r.oppId})` : `${r.status} ${r.body.slice(0, 80)}`}`);
   }
 
   return log;
