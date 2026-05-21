@@ -564,24 +564,30 @@ def main():
 
     header_meta = f"Updated {datetime.now(ET).strftime('%b %d, %Y · %I:%M %p ET')}"
 
-    html = HTML_TEMPLATE.format(
-        header_meta=escape(header_meta),
-        calls_today=calls_today,
-        calls_week=calls_week,
-        calls_total=calls_total,
-        avg_duration=avg_duration,
-        hot_count=hot_count,
-        engaged_pct=engaged_pct,
-        warmup_day=warmup_day,
-        warmup_quota=warmup_quota,
-        warmup_dialed=warmup_dialed,
-        warmup_remaining=warmup_remaining,
-        warmup_pct=warmup_pct,
-        warmup_anchor=escape(warmup_anchor),
-        warmup_grid=warmup_grid,
-        recent_count=len(enriched),
-        calls_block=calls_block,
-    )
+    # Use literal-string .replace() instead of str.format() — the CSS in the
+    # template contains '{...}' braces (CSS rule blocks) that collide with
+    # format placeholder syntax and raise KeyError.
+    substitutions = {
+        "{header_meta}":      escape(header_meta),
+        "{calls_today}":      str(calls_today),
+        "{calls_week}":       str(calls_week),
+        "{calls_total}":      str(calls_total),
+        "{avg_duration}":     str(avg_duration),
+        "{hot_count}":        str(hot_count),
+        "{engaged_pct}":      str(engaged_pct),
+        "{warmup_day}":       str(warmup_day),
+        "{warmup_quota}":     str(warmup_quota),
+        "{warmup_dialed}":    str(warmup_dialed),
+        "{warmup_remaining}": str(warmup_remaining),
+        "{warmup_pct}":       str(warmup_pct),
+        "{warmup_anchor}":    escape(warmup_anchor),
+        "{warmup_grid}":      warmup_grid,
+        "{recent_count}":     str(len(enriched)),
+        "{calls_block}":      calls_block,
+    }
+    html = HTML_TEMPLATE
+    for placeholder, value in substitutions.items():
+        html = html.replace(placeholder, value)
 
     os.makedirs("site", exist_ok=True)
     out = "site/blake.html"
