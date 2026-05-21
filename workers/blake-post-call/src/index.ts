@@ -230,17 +230,18 @@ async function handleDashboardData(env: Env): Promise<Response> {
 }
 
 async function computeDashboardData(env: Env): Promise<any> {
-  // 1. List recent conversations from ElevenLabs.
+  // 1. List recent conversations from ElevenLabs (one fast call).
   const listRes = await fetch(
-    `https://api.elevenlabs.io/v1/convai/conversations?agent_id=${BLAKE_AGENT_ID}&page_size=30`,
+    `https://api.elevenlabs.io/v1/convai/conversations?agent_id=${BLAKE_AGENT_ID}&page_size=20`,
     { headers: { "xi-api-key": env.ELEVENLABS_API_KEY } }
   );
   if (!listRes.ok) throw new Error(`elevenlabs list ${listRes.status}`);
   const listJson: any = await listRes.json();
   const conversations: any[] = listJson?.conversations || [];
 
-  // 2. Hydrate top 15 with detail (transcript_summary + caller phone).
-  const top = conversations.slice(0, 15);
+  // 2. Hydrate top 8 ONLY (CPU + parallel-network budget on free CF tier).
+  //    Older calls just show what the list endpoint gives us (no transcript).
+  const top = conversations.slice(0, 8);
   const detailed = await Promise.all(
     top.map(async (c: any) => {
       const convId = c.conversation_id;
