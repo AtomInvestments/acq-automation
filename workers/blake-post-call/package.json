@@ -1,0 +1,16 @@
+{
+  "name": "blake-post-call",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Cloudflare Worker — ElevenLabs Blake post-call webhook -> GHL backup note",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "tail": "wrangler tail blake-post-call --format pretty"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20240821.0",
+    "typescript": "^5.4.5",
+    "wrangler": "^3.78.0"
+  }
+}

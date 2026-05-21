@@ -1,0 +1,17 @@
+name = "blake-post-call"
+main = "src/index.ts"
+compatibility_date = "2026-05-20"
+
+# Worker URL after deploy:
+#   https://blake-post-call.<your-cf-subdomain>.workers.dev
+#
+# Secrets — set via `wrangler secret put NAME` locally, OR via the
+# .github/workflows/deploy-blake-post-call.yml workflow on push:
+#   BLAKE_GHL_PIT                  GHL Private Integration Token
+#   ELEVENLABS_WEBHOOK_SECRET      HMAC signing secret from ElevenLabs webhook
+#
+# Local dev (after `wrangler login`):
+#   wrangler dev
+#
+# Deploy:
+#   wrangler deploy

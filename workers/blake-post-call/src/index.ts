@@ -1,0 +1,287 @@
+/**
+ * blake-post-call — Cloudflare Worker that receives ElevenLabs Conversational
+ * AI post-call webhooks for the Blake voice agent and writes a backup record
+ * into GHL.
+ *
+ * Why this exists:
+ *   Blake's in-conversation tools (lookup_contact_by_phone, save_call_summary,
+ *   set_lead_temp, ...) ALREADY write to GHL during the call. But tools can
+ *   fail mid-call (LLM forgets to call save_call_summary, network blip, etc.).
+ *   This Worker is the safety net — at call end, ElevenLabs POSTs the full
+ *   transcript + outcome here, and we write a deterministic backup note to
+ *   GHL so no conversation is lost.
+ *
+ * Architecture rule (see `tyler/feedback_event_driven_no_cron.md`):
+ *   Real-time webhook, never cron. Sub-second latency, no polling.
+ *
+ * Endpoints:
+ *   GET  /            — health check
+ *   POST /webhook     — ElevenLabs post-call event
+ *
+ * Bindings (set via wrangler secret put / GitHub Actions):
+ *   BLAKE_GHL_PIT               — GHL Private Integration Token
+ *   ELEVENLABS_WEBHOOK_SECRET   — HMAC signing secret from ElevenLabs webhook config
+ */
+
+export interface Env {
+  BLAKE_GHL_PIT: string;
+  ELEVENLABS_WEBHOOK_SECRET: string;
+}
+
+const APG_LOCATION_ID = "RCkiUmWqXX4BYQ39JXmm";
+const GHL_BASE = "https://services.leadconnectorhq.com";
+const USER_MIKE = "Vj4WwH1ovxGN5Hv5Kq17";
+
+// Signature freshness window — reject events older than 5 minutes.
+const SIGNATURE_MAX_AGE_S = 300;
+
+export default {
+  async fetch(req: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
+    const url = new URL(req.url);
+
+    if (req.method === "GET" && (url.pathname === "/" || url.pathname === "/health")) {
+      return new Response(
+        JSON.stringify({
+          worker: "blake-post-call",
+          status: "live",
+          tz: new Date().toISOString(),
+        }),
+        { status: 200, headers: { "content-type": "application/json" } }
+      );
+    }
+
+    if (req.method === "POST" && url.pathname === "/webhook") {
+      return handleWebhook(req, env, ctx);
+    }
+
+    return new Response("Not Found", { status: 404 });
+  },
+};
+
+async function handleWebhook(req: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
+  // 1. Read raw body once. Signature verification needs the exact bytes
+  //    ElevenLabs signed, so we cannot use req.json() before verifying.
+  const rawBody = await req.text();
+
+  // 2. Verify HMAC signature.
+  const sigHeader = req.headers.get("ElevenLabs-Signature") || "";
+  const verify = await verifySignature(rawBody, sigHeader, env.ELEVENLABS_WEBHOOK_SECRET);
+  if (!verify.ok) {
+    console.warn(`[blake-post-call] signature rejected: ${verify.reason}`);
+    return new Response(JSON.stringify({ ok: false, error: verify.reason }), {
+      status: 401,
+      headers: { "content-type": "application/json" },
+    });
+  }
+
+  // 3. Parse the event payload.
+  let event: any;
+  try {
+    event = JSON.parse(rawBody);
+  } catch {
+    return new Response(JSON.stringify({ ok: false, error: "invalid_json" }), {
+      status: 400,
+      headers: { "content-type": "application/json" },
+    });
+  }
+
+  // 4. Extract what we need. Be defensive — ElevenLabs has changed payload
+  //    shapes in the past; treat every field as possibly missing.
+  const data = event?.data ?? event;
+  const conversationId: string =
+    data?.conversation_id || data?.id || event?.conversation_id || "unknown";
+  const callerPhone: string =
+    data?.metadata?.phone_call?.external_number ||
+    data?.metadata?.phone_number ||
+    data?.caller_phone ||
+    "";
+  const transcript: any[] = data?.transcript ?? data?.messages ?? [];
+  const callSummary: string = data?.analysis?.transcript_summary || data?.summary || "";
+  const callDurationS: number = data?.metadata?.call_duration_secs ?? data?.duration ?? 0;
+  const startedAt: string =
+    data?.metadata?.start_time_unix_secs
+      ? new Date(data.metadata.start_time_unix_secs * 1000).toISOString()
+      : (data?.started_at || new Date().toISOString());
+
+  console.log(
+    `[blake-post-call] conv=${conversationId} phone=${callerPhone} duration=${callDurationS}s transcript_len=${transcript.length}`
+  );
+
+  // 5. Find the GHL contact by phone. If we can't, still 200 — we don't want
+  //    ElevenLabs to retry forever just because we missed a match.
+  if (!callerPhone) {
+    return new Response(
+      JSON.stringify({ ok: true, note: "no caller_phone in payload, skipped GHL write" }),
+      { status: 200, headers: { "content-type": "application/json" } }
+    );
+  }
+
+  const contactId = await findContactByPhone(env.BLAKE_GHL_PIT, callerPhone);
+  if (!contactId) {
+    return new Response(
+      JSON.stringify({ ok: true, note: "no GHL contact for caller", caller: callerPhone }),
+      { status: 200, headers: { "content-type": "application/json" } }
+    );
+  }
+
+  // 6. Write a backup note. Mark explicitly as a post-call write so the
+  //    dashboard parsers know which note is canonical when there are two.
+  const noteBody = buildBackupNote({
+    conversationId,
+    callerPhone,
+    callDurationS,
+    startedAt,
+    callSummary,
+    transcript,
+  });
+
+  // Don't block the webhook on the write — fire-and-forget but log failures.
+  ctx.waitUntil(
+    addNote(env.BLAKE_GHL_PIT, contactId, noteBody).then(
+      (res) => {
+        if (!res.ok) {
+          console.error(`[blake-post-call] note write failed: ${res.status} ${res.body}`);
+        } else {
+          console.log(`[blake-post-call] backup note written for contact ${contactId}`);
+        }
+      },
+      (err) => console.error(`[blake-post-call] note write threw: ${err}`)
+    )
+  );
+
+  return new Response(
+    JSON.stringify({ ok: true, contact_id: contactId, conversation_id: conversationId }),
+    { status: 200, headers: { "content-type": "application/json" } }
+  );
+}
+
+// ---- GHL helpers ----------------------------------------------------------
+
+function ghlHeaders(pit: string): Record<string, string> {
+  return {
+    Authorization: `Bearer ${pit}`,
+    Version: "2021-07-28",
+    "Content-Type": "application/json",
+    Accept: "application/json",
+  };
+}
+
+async function findContactByPhone(pit: string, phone: string): Promise<string | null> {
+  const res = await fetch(`${GHL_BASE}/contacts/search`, {
+    method: "POST",
+    headers: ghlHeaders(pit),
+    body: JSON.stringify({
+      locationId: APG_LOCATION_ID,
+      query: phone,
+      pageLimit: 1,
+    }),
+  });
+  if (!res.ok) {
+    console.warn(`[blake-post-call] GHL search failed: ${res.status}`);
+    return null;
+  }
+  const json: any = await res.json();
+  const contact = (json?.contacts ?? [])[0];
+  return contact?.id ?? null;
+}
+
+async function addNote(
+  pit: string,
+  contactId: string,
+  body: string
+): Promise<{ ok: boolean; status: number; body: string }> {
+  const res = await fetch(`${GHL_BASE}/contacts/${contactId}/notes`, {
+    method: "POST",
+    headers: ghlHeaders(pit),
+    body: JSON.stringify({ userId: USER_MIKE, body }),
+  });
+  const text = await res.text();
+  return { ok: res.ok, status: res.status, body: text.slice(0, 500) };
+}
+
+function buildBackupNote(args: {
+  conversationId: string;
+  callerPhone: string;
+  callDurationS: number;
+  startedAt: string;
+  callSummary: string;
+  transcript: any[];
+}): string {
+  const transcriptText = args.transcript
+    .slice(0, 50) // GHL notes have a length cap; truncate generously
+    .map((t: any) => {
+      const role = t?.role || t?.speaker || "?";
+      const content = t?.content || t?.text || t?.message || "";
+      return `${role}: ${content}`;
+    })
+    .join("\n");
+
+  return [
+    `APG Lead Summary (Blake post-call · ${args.startedAt})`,
+    ``,
+    `Source: ElevenLabs webhook (backup record; primary record may also exist if in-call tools fired)`,
+    `Conversation ID: ${args.conversationId}`,
+    `Caller: ${args.callerPhone}`,
+    `Duration: ${args.callDurationS}s`,
+    ``,
+    `Summary: ${args.callSummary || "(no auto-summary provided)"}`,
+    ``,
+    `--- Transcript (first 50 turns) ---`,
+    transcriptText || "(transcript was empty in the payload)",
+  ].join("\n");
+}
+
+// ---- Signature verification ----------------------------------------------
+
+interface SigVerifyResult {
+  ok: boolean;
+  reason?: string;
+}
+
+async function verifySignature(
+  body: string,
+  sigHeader: string,
+  secret: string
+): Promise<SigVerifyResult> {
+  if (!secret) return { ok: false, reason: "no_secret_configured" };
+  if (!sigHeader) return { ok: false, reason: "missing_signature_header" };
+
+  // ElevenLabs header format: "t=<unix_seconds>,v0=<hex_hmac_sha256>"
+  const parts: Record<string, string> = {};
+  for (const p of sigHeader.split(",")) {
+    const [k, v] = p.split("=", 2);
+    if (k && v) parts[k.trim()] = v.trim();
+  }
+  const ts = parts["t"];
+  const expected = parts["v0"];
+  if (!ts || !expected) return { ok: false, reason: "malformed_signature_header" };
+
+  const tsNum = parseInt(ts, 10);
+  if (!Number.isFinite(tsNum)) return { ok: false, reason: "bad_timestamp" };
+  const ageS = Math.floor(Date.now() / 1000) - tsNum;
+  if (ageS > SIGNATURE_MAX_AGE_S || ageS < -SIGNATURE_MAX_AGE_S) {
+    return { ok: false, reason: `signature_too_old_or_skewed(${ageS}s)` };
+  }
+
+  const enc = new TextEncoder();
+  const key = await crypto.subtle.importKey(
+    "raw",
+    enc.encode(secret),
+    { name: "HMAC", hash: "SHA-256" },
+    false,
+    ["sign"]
+  );
+  const sigBytes = await crypto.subtle.sign("HMAC", key, enc.encode(`${ts}.${body}`));
+  const actual = Array.from(new Uint8Array(sigBytes))
+    .map((b) => b.toString(16).padStart(2, "0"))
+    .join("");
+
+  // Constant-time compare to dodge timing leaks.
+  if (actual.length !== expected.length) return { ok: false, reason: "signature_mismatch" };
+  let diff = 0;
+  for (let i = 0; i < actual.length; i++) {
+    diff |= actual.charCodeAt(i) ^ expected.charCodeAt(i);
+  }
+  if (diff !== 0) return { ok: false, reason: "signature_mismatch" };
+  return { ok: true };
+}
