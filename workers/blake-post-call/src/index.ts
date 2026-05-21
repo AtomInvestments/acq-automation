@@ -105,17 +105,29 @@ async function handleConversationInit(req: Request, env: Env): Promise<Response>
     // Body might be empty for some triggers — keep going with empty payload
   }
 
+  // Log the FULL payload so we can learn ElevenLabs' actual field names.
+  // Truncate after some chars so we don't blow up Worker logs.
+  console.log(`[init] payload: ${JSON.stringify(payload).slice(0, 2000)}`);
+
   // ElevenLabs uses different field names depending on call source (Twilio vs
-  // SIP vs direct). Try them all.
+  // SIP vs direct). Try them all — added more candidates after observing
+  // payloads in the wild.
   const callerPhone: string =
     payload?.caller_id ||
     payload?.from_phone_number ||
     payload?.from ||
+    payload?.From ||
+    payload?.caller_phone ||
+    payload?.phone_number ||
+    payload?.caller_number ||
     payload?.metadata?.phone_call?.external_number ||
     payload?.metadata?.from ||
+    payload?.metadata?.caller_id ||
+    payload?.metadata?.phone_number ||
+    payload?.dynamic_variables?.system__caller_id ||
     "";
 
-  console.log(`[init] caller=${callerPhone || "(none)"} agent=${payload?.agent_id || "?"}`);
+  console.log(`[init] extracted caller=${callerPhone || "(none)"} agent=${payload?.agent_id || "?"}`);
 
   // Defaults — owner-unknown branch
   let vars = {
