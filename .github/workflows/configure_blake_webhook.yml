@@ -1,0 +1,47 @@
+name: Configure Blake Post-Call Webhook
+
+# Discover or set the ElevenLabs Conversational AI post-call webhook URL.
+# The post-call webhook is a workspace-level setting in ElevenLabs ConvAI,
+# not always exposed in the UI on every plan tier — this workflow reaches
+# the API directly.
+#
+# Manual trigger only.
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'discover (read-only API probe) OR apply (set the webhook URL)'
+        type: choice
+        options:
+          - discover
+          - apply
+        default: discover
+      url:
+        description: 'Webhook URL (required when mode=apply). Default: https://acq-automation.mithchell.workers.dev/webhook'
+        required: false
+        default: 'https://acq-automation.mithchell.workers.dev/webhook'
+
+permissions:
+  contents: read
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Run configurator
+        env:
+          ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
+        run: |
+          set -e
+          if [ "${{ inputs.mode }}" = "apply" ]; then
+            python configure_blake_webhook.py --apply --url "${{ inputs.url }}"
+          else
+            python configure_blake_webhook.py
+          fi
