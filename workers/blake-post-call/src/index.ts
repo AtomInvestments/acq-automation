@@ -40,11 +40,18 @@ export default {
     const url = new URL(req.url);
 
     if (req.method === "GET" && (url.pathname === "/" || url.pathname === "/health")) {
+      // Health response now reports whether the two runtime secrets are bound.
+      // Diagnostic: if `secrets_bound.elevenlabs_webhook_secret` is false then
+      // CF didn't rebind the dashboard-set secret to this deploy.
       return new Response(
         JSON.stringify({
           worker: "blake-post-call",
           status: "live",
           tz: new Date().toISOString(),
+          secrets_bound: {
+            elevenlabs_webhook_secret: Boolean(env.ELEVENLABS_WEBHOOK_SECRET),
+            blake_ghl_pit: Boolean(env.BLAKE_GHL_PIT),
+          },
         }),
         { status: 200, headers: { "content-type": "application/json" } }
       );
