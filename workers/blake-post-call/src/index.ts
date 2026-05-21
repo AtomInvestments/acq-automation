@@ -178,9 +178,10 @@ export default {
   },
 
   // Cron Trigger handler. Configured in wrangler.toml as `*/15 * * * *` — every
-  // 15 minutes, we attempt a small batch of dials respecting today's warm-up
-  // quota and TCPA call windows. Idempotent: if quota is already met for the
-  // day, the run is a no-op.
+  // 15 minutes:
+  //   1. Attempt a small batch of dials (warm-up quota + TCPA windows)
+  //   2. Refresh the dashboard cache (so the dashboard never goes stale even
+  //      if no calls have happened recently)
   async scheduled(_event: ScheduledEvent, env: Env, ctx: ExecutionContext) {
     try {
       const result = await runDialBatch(env, { source: "cron", batchSize: 5, dryRun: false });
@@ -188,13 +189,24 @@ export default {
     } catch (e) {
       console.error(`[cron-dial] failed: ${e}`);
     }
+    try {
+      await refreshDashboardCache(env);
+    } catch (e) {
+      console.error(`[cron-dashboard] failed: ${e}`);
+    }
   },
 };
 
 // ---- /dashboard-data: live aggregated JSON for blake.html -----------------
 
 async function handleDashboardData(env: Env): Promise<Response> {
-  // Try cache first (30-sec TTL).
+  // Read pre-computed cache. The cache is populated by:
+  //   - Post-call webhook (after every call ends)
+  //   - Cron scheduled handler (every 15 min)
+  //
+  // This keeps /dashboard-data CPU-cheap on the request path (just a KV get)
+  // and avoids the CF error 1101 we hit doing on-demand ElevenLabs+GHL
+  // aggregation on a cold cache.
   const cached = await env.DIAL_STATE.get("dashboard:cache");
   if (cached) {
     return new Response(cached, {
@@ -202,31 +214,36 @@ async function handleDashboardData(env: Env): Promise<Response> {
       headers: {
         "content-type": "application/json",
         "access-control-allow-origin": "*",
-        "x-cache": "HIT",
       },
     });
   }
+  // No cache yet — return empty placeholder. The first call end will populate.
+  return new Response(
+    JSON.stringify({
+      updated_at: new Date().toISOString(),
+      pending: true,
+      message: "Dashboard cache empty. Will populate after the next call ends or the next cron tick.",
+      kpis: { calls_today: 0, calls_week: 0, calls_total: 0, avg_duration_secs: 0, hot_count: 0, engaged_pct: 0 },
+      warmup: null,
+      recent_calls: [],
+      blake_agent_id: BLAKE_AGENT_ID,
+      location_id: APG_LOCATION_ID,
+    }),
+    { status: 200, headers: { "content-type": "application/json", "access-control-allow-origin": "*" } }
+  );
+}
 
-  // Compute fresh — fetch conversations list, hydrate top 20 with details,
-  // join with GHL by phone.
-  const data = await computeDashboardData(env).catch((e) => {
-    console.error(`[dashboard] computeDashboardData threw: ${e}`);
-    return { error: String(e?.message || e) } as any;
-  });
-
-  const json = JSON.stringify(data);
-
-  // Cache for 30 sec. Repeat callers within window get served from KV.
-  await env.DIAL_STATE.put("dashboard:cache", json, { expirationTtl: 30 });
-
-  return new Response(json, {
-    status: 200,
-    headers: {
-      "content-type": "application/json",
-      "access-control-allow-origin": "*",   // page is on gh-pages, cross-origin
-      "x-cache": "MISS",
-    },
-  });
+// Refresh the dashboard cache by re-computing all data and writing to KV.
+// Called from the post-call webhook (best: fires right after each call ends)
+// and from the scheduled handler (every 15 min — covers idle periods).
+async function refreshDashboardCache(env: Env): Promise<void> {
+  try {
+    const data = await computeDashboardData(env);
+    await env.DIAL_STATE.put("dashboard:cache", JSON.stringify(data), { expirationTtl: 60 * 60 * 24 });
+    console.log(`[dashboard-cache] refreshed: ${data.recent_calls?.length || 0} calls`);
+  } catch (e) {
+    console.error(`[dashboard-cache] refresh failed: ${e}`);
+  }
 }
 
 async function computeDashboardData(env: Env): Promise<any> {
@@ -715,6 +732,10 @@ async function handleWebhook(req: Request, env: Env, ctx: ExecutionContext): Pro
             );
           })().catch((e) => console.error(`[extract] failed: ${e}`))
         : Promise.resolve(console.log("[extract] ANTHROPIC_API_KEY not bound; skipping structured extraction")),
+      // 5. Refresh the live dashboard cache so the SPA at /blake.html sees
+      //    this call within ~10 sec (next poll). Without this, the dashboard
+      //    only refreshes on the 15-min cron tick.
+      refreshDashboardCache(env),
     ])
   );
 
