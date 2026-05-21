@@ -1,155 +1,32 @@
-"""Generate site/blake.html — a live dashboard of Blake's outbound + inbound calls.
+"""Generate site/blake.html — LIVE dashboard for Blake's calls.
 
-Pulls data from:
-  - ElevenLabs Conversational AI:  /v1/convai/conversations?agent_id=...
-  - GHL:                            /contacts/{id} (for name/address per call)
-  - acq-automation Worker:          /dial-status (warm-up state)
+Architecture change (2026-05-21 evening): the page is now a JS-driven SPA
+that polls the Cloudflare Worker's /dashboard-data endpoint every 10 seconds.
+No data is baked into the HTML at build time; the cron still runs this script
+to ensure the shell exists at /blake.html, but the actual content is fetched
+client-side from
+   https://acq-automation.mithchell.workers.dev/dashboard-data
+which the Worker caches in KV for 30 sec.
 
-Designed to be rendered by the existing GitHub Actions cron (sms.yml) every
-30 min and pushed to gh-pages alongside the other dashboards.
-
-Env required:
-  ELEVENLABS_API_KEY    ElevenLabs account API key
-  BLAKE_GHL_PIT         GHL Private Integration Token for APG sub-account
-
-Output:
-  site/blake.html
+This means: when a new Blake call ends, the page sees it within ~30-40 seconds
+(Worker cache TTL + polling interval), instead of waiting up to 30 minutes for
+the next cron tick.
 """
-import json
 import os
 import sys
-import time
-import urllib.error
-import urllib.request
-from datetime import datetime, timedelta, timezone
-from html import escape
+from datetime import datetime
 from zoneinfo import ZoneInfo
 
-BLAKE_AGENT_ID = "agent_5001ks3cp069f9rtfz6e81ypgnrd"
-BLAKE_PHONE = "+16099449034"
-APG_LOCATION_ID = "RCkiUmWqXX4BYQ39JXmm"
-WORKER_BASE = "https://acq-automation.mithchell.workers.dev"
-EL_API = "https://api.elevenlabs.io/v1"
-GHL_API = "https://services.leadconnectorhq.com"
-
 ET = ZoneInfo("America/New_York")
-HTTP_TIMEOUT = 30
+WORKER_BASE = "https://acq-automation.mithchell.workers.dev"
 
 
-def http_get(url: str, headers: dict) -> dict | None:
-    req = urllib.request.Request(url, headers={**headers, "User-Agent": "blake-dashboard"})
-    try:
-        with urllib.request.urlopen(req, timeout=HTTP_TIMEOUT) as r:
-            return json.loads(r.read())
-    except urllib.error.HTTPError as e:
-        print(f"  [{url[:60]}] HTTP {e.code}: {e.read()[:200]!r}", file=sys.stderr)
-    except Exception as e:
-        print(f"  [{url[:60]}] {type(e).__name__}: {e}", file=sys.stderr)
-    return None
-
-
-def fetch_conversations(el_key: str, page_size: int = 100) -> list[dict]:
-    """List recent Blake conversations from ElevenLabs."""
-    url = f"{EL_API}/convai/conversations?agent_id={BLAKE_AGENT_ID}&page_size={page_size}"
-    data = http_get(url, {"xi-api-key": el_key})
-    if not data:
-        return []
-    return data.get("conversations", []) or []
-
-
-def fetch_conversation_detail(el_key: str, conv_id: str) -> dict | None:
-    """Get full conversation including transcript + metadata."""
-    return http_get(f"{EL_API}/convai/conversations/{conv_id}", {"xi-api-key": el_key})
-
-
-def fetch_ghl_contact(pit: str, contact_id: str) -> dict | None:
-    """Lookup GHL contact by id."""
-    data = http_get(
-        f"{GHL_API}/contacts/{contact_id}",
-        {"Authorization": f"Bearer {pit}", "Version": "2021-07-28"},
-    )
-    return (data or {}).get("contact") if data else None
-
-
-def find_ghl_contact_by_phone(pit: str, phone: str) -> dict | None:
-    """Search GHL by phone."""
-    if not phone:
-        return None
-    req = urllib.request.Request(
-        f"{GHL_API}/contacts/search",
-        data=json.dumps(
-            {"locationId": APG_LOCATION_ID, "query": phone, "pageLimit": 1}
-        ).encode(),
-        method="POST",
-        headers={
-            "Authorization": f"Bearer {pit}",
-            "Version": "2021-07-28",
-            "Content-Type": "application/json",
-            "User-Agent": "blake-dashboard",
-        },
-    )
-    try:
-        with urllib.request.urlopen(req, timeout=HTTP_TIMEOUT) as r:
-            data = json.loads(r.read())
-            return (data.get("contacts") or [None])[0]
-    except Exception as e:
-        print(f"  [GHL search {phone}] {type(e).__name__}: {e}", file=sys.stderr)
-        return None
-
-
-def fetch_dial_status() -> dict:
-    """Pull warm-up state from the Worker (public, no auth needed)."""
-    data = http_get(f"{WORKER_BASE}/dial-status", {})
-    return data or {}
-
-
-def classify_outcome(conv_detail: dict) -> tuple[str, str]:
-    """Best-effort classification of call outcome.
-
-    Returns (tag, label) where tag is one of: hot, warm, cold, dnd, voicemail,
-    no-answer, hangup, unknown.
-    """
-    if not conv_detail:
-        return ("unknown", "Unknown")
-
-    analysis = conv_detail.get("analysis", {}) or {}
-    summary = (analysis.get("transcript_summary") or "").lower()
-    call_successful = analysis.get("call_successful") or "unknown"
-
-    # Look for explicit signal in summary
-    if any(w in summary for w in ["hot lead", "ready to sell", "very interested"]):
-        return ("hot", "Hot Lead")
-    if any(w in summary for w in ["not interested", "no thanks", "pass"]):
-        return ("cold", "Not Interested")
-    if any(w in summary for w in ["do not call", "stop calling", "dnc", "take me off"]):
-        return ("dnd", "DNC Requested")
-    if "voicemail" in summary or "leave a message" in summary:
-        return ("voicemail", "Voicemail")
-    if "hung up" in summary:
-        return ("hangup", "Hung Up")
-
-    metadata = conv_detail.get("metadata", {}) or {}
-    dur = metadata.get("call_duration_secs") or 0
-    if dur and dur < 15:
-        return ("no-answer", "No Answer / Short")
-
-    if call_successful == "success":
-        return ("warm", "Engaged")
-
-    return ("unknown", "Completed")
-
-
-# ─────────────────────────────────────────────────────────────────────────────
-# Rendering
-# ─────────────────────────────────────────────────────────────────────────────
-
-
-HTML_TEMPLATE = """<!doctype html>
+SHELL_HTML = """<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>APG ACQ — Blake Calls Dashboard</title>
+<title>APG ACQ — Blake Live</title>
 <style>
 :root {
   --ink: #0A1F44;
@@ -211,6 +88,22 @@ h1 .accent { color: var(--gold); font-style: italic; }
   line-height: 1.5; color: var(--ink-soft); max-width: 780px; margin: 10px 0 0;
 }
 
+.live-pill {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 11px; font-weight: 700; letter-spacing: 0.12em;
+  text-transform: uppercase; padding: 3px 10px;
+  background: var(--s-live); color: white; border-radius: 3px;
+  margin-left: 10px;
+}
+.live-pill .dot {
+  width: 8px; height: 8px; background: white; border-radius: 50%;
+  animation: blink 1.2s ease-in-out infinite;
+}
+@keyframes blink { 0%,100% { opacity: 1 } 50% { opacity: 0.3 } }
+
+.live-pill.stale { background: var(--s-warm); }
+.live-pill.error { background: var(--s-uc); }
+
 .topnav {
   position: sticky; top: 0; z-index: 50;
   background: rgba(250, 247, 236, 0.96); backdrop-filter: blur(6px);
@@ -244,7 +137,9 @@ h2 .sec-count { margin-left: auto; font-size: 11px; letter-spacing: 0.18em; text
 .kpi {
   background: var(--cream); border-top: 4px solid var(--gold);
   border-bottom: 1px solid var(--rule); padding: 16px 18px 18px;
+  transition: background 0.2s;
 }
+.kpi.flash { background: var(--gold-wash); }
 .kpi .label {
   font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase;
   color: var(--muted); margin-bottom: 6px; font-weight: 700;
@@ -254,10 +149,10 @@ h2 .sec-count { margin-left: auto; font-size: 11px; letter-spacing: 0.18em; text
   color: var(--ink); line-height: 1; margin: 0;
 }
 .kpi .v small { font-size: 14px; color: var(--muted); margin-left: 6px; }
+.kpi .sub    { font-size: 11px; color: var(--muted); margin-top: 4px; }
 .kpi.live   { border-top-color: var(--s-live); } .kpi.live .v   { color: var(--s-live); }
 .kpi.warm   { border-top-color: var(--s-warm); } .kpi.warm .v   { color: var(--s-warm); }
 .kpi.uc     { border-top-color: var(--s-uc); }   .kpi.uc .v     { color: var(--s-uc); }
-.kpi.sub    { font-size: 11px; color: var(--muted); margin-top: 4px; }
 
 .warmup-panel {
   background: var(--cream); border-left: 4px solid var(--gold);
@@ -271,31 +166,30 @@ h2 .sec-count { margin-left: auto; font-size: 11px; letter-spacing: 0.18em; text
   border-radius: 3px; position: relative; overflow: hidden; margin-top: 10px;
 }
 .warmup-bar .fill {
-  height: 100%; background: var(--gold);
-  display: flex; align-items: center; justify-content: center;
-  color: var(--ink); font-weight: 700; font-size: 11px; letter-spacing: 0.06em;
+  height: 100%; background: var(--gold); display: flex; align-items: center;
+  justify-content: center; color: var(--ink); font-weight: 700; font-size: 11px;
+  letter-spacing: 0.06em; transition: width 0.4s;
 }
 .warmup-grid { display: grid; grid-template-columns: repeat(14, 1fr); gap: 4px; margin-top: 12px; }
 .warmup-grid .day {
   height: 26px; background: var(--cream-deep); border: 1px solid var(--rule);
   font-size: 9.5px; font-weight: 700; display: flex; align-items: center; justify-content: center;
-  color: var(--muted); position: relative;
+  color: var(--muted);
 }
 .warmup-grid .day.today { background: var(--gold); color: var(--ink); }
 .warmup-grid .day.past  { background: var(--ink); color: var(--gold); }
 
-.calls-table {
-  width: 100%; border-collapse: collapse; margin-top: 14px; font-size: 14px;
-}
+.calls-table { width: 100%; border-collapse: collapse; margin-top: 14px; font-size: 14px; }
 .calls-table th {
   text-align: left; padding: 10px 12px; background: var(--ink); color: var(--gold);
   font-family: Helvetica, Arial, sans-serif; font-size: 9.5px;
   letter-spacing: 0.10em; text-transform: uppercase; font-weight: 800;
 }
-.calls-table td {
-  padding: 12px 12px; border-bottom: 1px solid var(--rule); vertical-align: top;
-}
+.calls-table td { padding: 12px 12px; border-bottom: 1px solid var(--rule); vertical-align: top; }
 .calls-table tr:hover td { background: var(--cream); }
+.calls-table tr.new td { background: var(--gold-wash); animation: rowflash 1.5s ease-out; }
+@keyframes rowflash { 0% { background: var(--gold); } 100% { background: var(--gold-wash); } }
+
 .outcome {
   display: inline-block; padding: 2px 8px; font-size: 10px; font-weight: 800;
   letter-spacing: 0.06em; text-transform: uppercase; border-radius: 3px;
@@ -305,20 +199,23 @@ h2 .sec-count { margin-left: auto; font-size: 11px; letter-spacing: 0.18em; text
 .outcome.cold     { background: rgba(91,103,134,0.18); color: #334155; }
 .outcome.dnd      { background: var(--ink); color: var(--gold); }
 .outcome.voicemail{ background: var(--gold-wash); color: var(--ink); }
-.outcome.hangup   { background: rgba(234,179,8,0.20); color: #713F12; }
 .outcome.no-answer{ background: var(--cream-deep); color: var(--muted); }
 .outcome.unknown  { background: var(--cream-deep); color: var(--muted); }
 
 .caller { font-weight: 700; color: var(--ink); }
-.addr { color: var(--muted); font-size: 12px; margin-top: 2px; }
-.summary { font-size: 13px; color: #2b3856; max-width: 480px; }
-.ts { white-space: nowrap; font-family: ui-monospace, monospace; color: var(--muted); font-size: 12px; }
+.addr   { color: var(--muted); font-size: 12px; margin-top: 2px; }
+.summary{ font-size: 13px; color: #2b3856; max-width: 480px; }
+.ts     { white-space: nowrap; font-family: ui-monospace, monospace; color: var(--muted); font-size: 12px; }
 .duration { font-family: ui-monospace, monospace; font-size: 12px; color: var(--ink); white-space: nowrap; }
-
-.actions a { font-size: 11px; padding: 4px 8px; background: var(--ink); color: var(--gold); text-decoration: none; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; margin-right: 4px; }
+.actions a {
+  font-size: 11px; padding: 4px 8px; background: var(--ink); color: var(--gold);
+  text-decoration: none; font-weight: 700; letter-spacing: 0.06em;
+  text-transform: uppercase; margin-right: 4px;
+}
 .actions a:hover { background: var(--gold); color: var(--ink); }
 
-.empty { text-align: center; color: var(--muted); padding: 36px; font-style: italic; background: var(--cream); border: 1px dashed var(--rule); }
+.empty   { text-align: center; color: var(--muted); padding: 36px; font-style: italic; background: var(--cream); border: 1px dashed var(--rule); }
+.loading { text-align: center; color: var(--muted); padding: 60px; font-style: italic; }
 
 .footer {
   margin-top: 56px; padding-top: 20px;
@@ -336,10 +233,10 @@ h2 .sec-count { margin-left: auto; font-size: 11px; letter-spacing: 0.18em; text
   <header class="masthead">
     <div class="brandrow">
       <span class="brand">Atom Property Group · AI Operations</span>
-      <span>{header_meta}</span>
+      <span><span id="updated-at">Loading…</span> <span class="live-pill" id="live-pill"><span class="dot"></span>Live</span></span>
     </div>
     <h1>Blake <span class="accent">Live.</span></h1>
-    <p class="dek">Real-time view of every call Blake — APG's AI voice agent — has handled. Auto-refreshes every 30 minutes via the cron pipeline.</p>
+    <p class="dek">Real-time view of every call Blake — APG's AI voice agent — has handled. Auto-polls our Cloudflare Worker every 10 seconds for the latest activity.</p>
   </header>
 
   <nav class="topnav">
@@ -355,245 +252,188 @@ h2 .sec-count { margin-left: auto; font-size: 11px; letter-spacing: 0.18em; text
 
   <section>
     <h2><span class="num">00</span>At a Glance</h2>
-    <div class="kpi-row">
-      <div class="kpi live"><div class="label">Calls Today</div><p class="v">{calls_today}</p><div class="sub">UTC day</div></div>
-      <div class="kpi"><div class="label">Calls This Week</div><p class="v">{calls_week}</p><div class="sub">last 7 days</div></div>
-      <div class="kpi"><div class="label">Total Calls</div><p class="v">{calls_total}</p><div class="sub">all time</div></div>
-      <div class="kpi warm"><div class="label">Avg Duration</div><p class="v">{avg_duration}<small>s</small></p><div class="sub">across calls</div></div>
-      <div class="kpi uc"><div class="label">Hot Leads</div><p class="v">{hot_count}</p><div class="sub">flagged hot</div></div>
-      <div class="kpi"><div class="label">Engaged Rate</div><p class="v">{engaged_pct}<small>%</small></p><div class="sub">non-voicemail / total</div></div>
+    <div class="kpi-row" id="kpi-row">
+      <div class="kpi"><div class="label">Loading…</div></div>
     </div>
   </section>
 
   <section>
     <h2><span class="num">01</span>Warm-Up State</h2>
-    <div class="warmup-panel">
-      <h3>Day {warmup_day} of the warm-up curve</h3>
-      <p style="color:var(--muted);font-size:13px;margin:0 0 4px">
-        Today's cap: <strong style="color:var(--ink)">{warmup_quota}</strong> calls ·
-        Dialed so far today: <strong style="color:var(--ink)">{warmup_dialed}</strong> ·
-        Remaining: <strong style="color:var(--ink)">{warmup_remaining}</strong>
-      </p>
-      <div class="warmup-bar"><div class="fill" style="width:{warmup_pct}%;">{warmup_pct}%</div></div>
-      <div class="warmup-grid">{warmup_grid}</div>
-      <p style="font-size:11px;color:var(--muted);margin-top:10px;letter-spacing:0.06em;text-transform:uppercase">
-        Steady state (Day 14+): 300 calls / day. Anchor: {warmup_anchor}
-      </p>
-    </div>
+    <div id="warmup-section"><div class="loading">Loading warm-up state…</div></div>
   </section>
 
   <section>
-    <h2><span class="num">02</span>Recent Calls<span class="sec-count">{recent_count} shown</span></h2>
-    {calls_block}
+    <h2><span class="num">02</span>Recent Calls<span class="sec-count" id="calls-count"></span></h2>
+    <div id="calls-section"><div class="loading">Loading recent calls…</div></div>
   </section>
 
   <div class="footer">
-    <span>Auto-refreshed every 30 min · APG ACQ Operating Layer</span>
+    <span>Live data via Cloudflare Worker · 10-sec polling · 30-sec backend cache</span>
     <span class="gold-stamp">Blake · Live</span>
   </div>
 
 </div>
+
+<script>
+const DATA_URL = "__WORKER_BASE__/dashboard-data";
+const POLL_INTERVAL_MS = 10000;
+const ET_TZ = "America/New_York";
+
+let lastSeenConvIds = new Set();
+let fetchCounter = 0;
+
+function fmtDuration(secs) {
+  if (!secs) return "—";
+  secs = Math.round(secs);
+  if (secs < 60) return secs + "s";
+  const m = Math.floor(secs / 60), s = secs % 60;
+  return m + "m " + String(s).padStart(2, "0") + "s";
+}
+
+function fmtTsEt(unix) {
+  if (!unix) return "";
+  const d = new Date(unix * 1000);
+  return d.toLocaleString("en-US", {
+    timeZone: ET_TZ, month: "short", day: "numeric",
+    hour: "numeric", minute: "2-digit",
+  }) + " ET";
+}
+
+function escapeHtml(s) {
+  return (s == null ? "" : String(s)).replace(/[&<>\\"']/g, (ch) => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;",
+  }[ch]));
+}
+
+function renderKpis(kpis) {
+  const html = `
+    <div class="kpi live"><div class="label">Calls Today</div><p class="v">${kpis.calls_today ?? 0}</p><div class="sub">UTC day</div></div>
+    <div class="kpi"><div class="label">Calls This Week</div><p class="v">${kpis.calls_week ?? 0}</p><div class="sub">last 7 days</div></div>
+    <div class="kpi"><div class="label">Total Calls</div><p class="v">${kpis.calls_total ?? 0}</p><div class="sub">all time</div></div>
+    <div class="kpi warm"><div class="label">Avg Duration</div><p class="v">${kpis.avg_duration_secs ?? 0}<small>s</small></p><div class="sub">across calls</div></div>
+    <div class="kpi uc"><div class="label">Hot Leads</div><p class="v">${kpis.hot_count ?? 0}</p><div class="sub">flagged hot</div></div>
+    <div class="kpi"><div class="label">Engaged Rate</div><p class="v">${kpis.engaged_pct ?? 0}<small>%</small></p><div class="sub">hot+warm / total</div></div>`;
+  document.getElementById("kpi-row").innerHTML = html;
+}
+
+function renderWarmup(w) {
+  if (!w) {
+    document.getElementById("warmup-section").innerHTML = '<div class="empty">No warm-up data yet.</div>';
+    return;
+  }
+  const pct = Math.min(100, Math.round((w.dialed_today / Math.max(1, w.daily_quota)) * 100));
+  const grid = [];
+  for (let d = 1; d <= 14; d++) {
+    const cls = d === w.day ? "today" : (d < w.day ? "past" : "");
+    grid.push(`<div class="day ${cls}">D${d}</div>`);
+  }
+  document.getElementById("warmup-section").innerHTML = `
+    <div class="warmup-panel">
+      <h3>Day ${w.day} of the warm-up curve</h3>
+      <p style="color:var(--muted);font-size:13px;margin:0 0 4px">
+        Today's cap: <strong style="color:var(--ink)">${w.daily_quota}</strong> calls ·
+        Dialed so far: <strong style="color:var(--ink)">${w.dialed_today}</strong> ·
+        Remaining: <strong style="color:var(--ink)">${w.remaining_today}</strong>
+      </p>
+      <div class="warmup-bar"><div class="fill" style="width:${pct}%;">${pct}%</div></div>
+      <div class="warmup-grid">${grid.join("")}</div>
+      <p style="font-size:11px;color:var(--muted);margin-top:10px;letter-spacing:0.06em;text-transform:uppercase">
+        Steady state (Day 14+): 300 calls / day. Anchor: ${escapeHtml(w.anchor_date || "—")}
+      </p>
+    </div>`;
+}
+
+function renderCalls(calls, blakeAgentId, locationId) {
+  if (!calls || !calls.length) {
+    document.getElementById("calls-section").innerHTML =
+      '<div class="empty">No calls yet. Once Blake handles a call, it appears here within ~30 seconds of hanging up.</div>';
+    document.getElementById("calls-count").textContent = "0 shown";
+    return;
+  }
+  document.getElementById("calls-count").textContent = `${calls.length} shown`;
+
+  const rows = calls.map((c) => {
+    const isNew = fetchCounter > 1 && !lastSeenConvIds.has(c.conv_id);
+    const ghlLink = c.ghl_contact_id
+      ? `https://app.gohighlevel.com/v2/location/${locationId}/contacts/detail/${c.ghl_contact_id}`
+      : "";
+    const elLink = c.conv_id
+      ? `https://elevenlabs.io/app/conversational-ai/agents/${blakeAgentId}/history/${c.conv_id}`
+      : "";
+    return `
+      <tr${isNew ? ' class="new"' : ""}>
+        <td class="ts">${escapeHtml(fmtTsEt(c.started_unix))}</td>
+        <td>
+          <div class="caller">${escapeHtml(c.caller_name || "(unknown)")}</div>
+          <div class="addr">${escapeHtml(c.caller_address || "—")} · ${escapeHtml(c.caller_phone || "")}</div>
+        </td>
+        <td><span class="outcome ${escapeHtml(c.outcome_tag)}">${escapeHtml(c.outcome_label || "Completed")}</span></td>
+        <td class="duration">${escapeHtml(fmtDuration(c.duration_secs))}</td>
+        <td><div class="summary">${escapeHtml(c.summary || "")}</div></td>
+        <td class="actions">
+          ${elLink ? `<a href="${escapeHtml(elLink)}" target="_blank">Transcript</a>` : ""}
+          ${ghlLink ? `<a href="${escapeHtml(ghlLink)}" target="_blank">GHL</a>` : ""}
+        </td>
+      </tr>`;
+  }).join("");
+
+  document.getElementById("calls-section").innerHTML = `
+    <table class="calls-table">
+      <thead><tr>
+        <th style="width:140px">When</th>
+        <th>Caller</th>
+        <th style="width:120px">Outcome</th>
+        <th style="width:90px">Duration</th>
+        <th>Summary</th>
+        <th style="width:140px">Links</th>
+      </tr></thead>
+      <tbody>${rows}</tbody>
+    </table>`;
+
+  // Update seen set AFTER rendering so the flash class applies to brand-new
+  // conv_ids on this fetch (but won't re-flash on next poll).
+  lastSeenConvIds = new Set(calls.map((c) => c.conv_id).filter(Boolean));
+}
+
+async function refresh() {
+  fetchCounter += 1;
+  const pill = document.getElementById("live-pill");
+  pill.classList.remove("stale", "error");
+  pill.firstChild.style.animationPlayState = "running";
+  try {
+    const r = await fetch(DATA_URL, { cache: "no-store" });
+    if (!r.ok) throw new Error("HTTP " + r.status);
+    const data = await r.json();
+    if (data.error) throw new Error(data.error);
+    renderKpis(data.kpis || {});
+    renderWarmup(data.warmup);
+    renderCalls(data.recent_calls || [], data.blake_agent_id, data.location_id);
+    const fetchedAt = new Date(data.updated_at);
+    document.getElementById("updated-at").textContent =
+      "Updated " + fetchedAt.toLocaleTimeString("en-US", { timeZone: ET_TZ }) + " ET";
+  } catch (e) {
+    console.error("dashboard fetch failed", e);
+    pill.classList.add("error");
+    pill.lastChild.textContent = "Connection error";
+    document.getElementById("updated-at").textContent = "Last update failed: " + e.message;
+  }
+}
+
+refresh();
+setInterval(refresh, POLL_INTERVAL_MS);
+</script>
 </body>
 </html>
 """
 
 
-def fmt_duration(secs: int | None) -> str:
-    if not secs:
-        return "—"
-    secs = int(secs)
-    if secs < 60:
-        return f"{secs}s"
-    return f"{secs // 60}m {secs % 60:02d}s"
-
-
-def fmt_ts_et(unix_ts: int | None) -> str:
-    if not unix_ts:
-        return ""
-    try:
-        dt = datetime.fromtimestamp(int(unix_ts), tz=timezone.utc).astimezone(ET)
-        return dt.strftime("%b %d, %I:%M %p ET")
-    except Exception:
-        return ""
-
-
 def main():
-    el_key = os.environ.get("ELEVENLABS_API_KEY", "").strip()
-    pit = os.environ.get("BLAKE_GHL_PIT", "").strip()
-    if not el_key:
-        print("ERROR: ELEVENLABS_API_KEY required", file=sys.stderr)
-        return 2
-    if not pit:
-        print("ERROR: BLAKE_GHL_PIT required", file=sys.stderr)
-        return 2
-
-    print("Fetching dial-status from Worker...")
-    dial_status = fetch_dial_status()
-
-    print("Fetching conversations from ElevenLabs...")
-    conversations = fetch_conversations(el_key, page_size=50)
-    print(f"  found {len(conversations)} conversations")
-
-    # Hydrate each — fetch full detail (with rate-limit nap between calls)
-    enriched = []
-    for c in conversations[:50]:
-        conv_id = c.get("conversation_id")
-        if not conv_id:
-            continue
-        detail = fetch_conversation_detail(el_key, conv_id)
-        if not detail:
-            enriched.append({"summary_only": c, "detail": None, "contact": None, "outcome": ("unknown", "Unknown")})
-            continue
-
-        metadata = detail.get("metadata", {}) or {}
-        start_unix = metadata.get("start_time_unix_secs") or 0
-        duration_secs = metadata.get("call_duration_secs") or 0
-
-        # Try to extract caller phone
-        phone_call = metadata.get("phone_call") or {}
-        caller_phone = (
-            phone_call.get("external_number")
-            or metadata.get("phone_number")
-            or ""
-        )
-
-        contact = find_ghl_contact_by_phone(pit, caller_phone) if caller_phone else None
-        outcome = classify_outcome(detail)
-
-        analysis = detail.get("analysis", {}) or {}
-        summary = analysis.get("transcript_summary") or ""
-
-        enriched.append({
-            "conv_id": conv_id,
-            "start_unix": start_unix,
-            "duration_secs": duration_secs,
-            "caller_phone": caller_phone,
-            "contact": contact,
-            "outcome": outcome,
-            "summary": summary,
-        })
-
-        time.sleep(0.1)  # gentle rate limiting
-
-    # Sort newest-first
-    enriched.sort(key=lambda x: x.get("start_unix") or 0, reverse=True)
-
-    # Aggregate stats
-    now_utc = datetime.now(timezone.utc)
-    today_utc_start = int(datetime(now_utc.year, now_utc.month, now_utc.day, tzinfo=timezone.utc).timestamp())
-    week_start = int((now_utc - timedelta(days=7)).timestamp())
-
-    calls_today = sum(1 for e in enriched if (e.get("start_unix") or 0) >= today_utc_start)
-    calls_week = sum(1 for e in enriched if (e.get("start_unix") or 0) >= week_start)
-    calls_total = len(enriched)
-    durations = [e["duration_secs"] for e in enriched if e.get("duration_secs")]
-    avg_duration = int(sum(durations) / len(durations)) if durations else 0
-    hot_count = sum(1 for e in enriched if e["outcome"][0] == "hot")
-    engaged = sum(1 for e in enriched if e["outcome"][0] in ("hot", "warm"))
-    engaged_pct = int(engaged * 100 / calls_total) if calls_total else 0
-
-    # Warm-up
-    warmup_day = (dial_status.get("day_index") or 0) + 1
-    warmup_quota = dial_status.get("daily_quota") or 0
-    warmup_dialed = dial_status.get("dialed_today") or 0
-    warmup_remaining = dial_status.get("remaining_today") or 0
-    warmup_pct = int(warmup_dialed * 100 / max(1, warmup_quota))
-    warmup_anchor = dial_status.get("anchor_date") or "—"
-
-    # Warm-up 14-day visual grid
-    warmup_grid_parts = []
-    for d in range(1, 15):
-        cls = "today" if d == warmup_day else ("past" if d < warmup_day else "")
-        warmup_grid_parts.append(f'<div class="day {cls}">D{d}</div>')
-    warmup_grid = "".join(warmup_grid_parts)
-
-    # Render calls table
-    if enriched:
-        rows = []
-        for e in enriched:
-            ts = fmt_ts_et(e.get("start_unix"))
-            dur = fmt_duration(e.get("duration_secs"))
-            outcome_tag, outcome_label = e["outcome"]
-            phone = e.get("caller_phone") or "—"
-            contact = e.get("contact") or {}
-            name = (
-                (contact.get("firstName") or "") + " " + (contact.get("lastName") or "")
-            ).strip() or contact.get("contactName") or "(not in GHL)"
-            addr_parts = [contact.get("address1") or "", contact.get("city") or "", contact.get("state") or ""]
-            addr = ", ".join(p for p in addr_parts if p) or "—"
-            summary_clip = (e.get("summary") or "")[:200] + ("..." if len(e.get("summary") or "") > 200 else "")
-
-            ghl_link = (
-                f"https://app.gohighlevel.com/v2/location/{APG_LOCATION_ID}/contacts/detail/{contact.get('id')}"
-                if contact and contact.get("id") else ""
-            )
-            el_link = f"https://elevenlabs.io/app/conversational-ai/agents/{BLAKE_AGENT_ID}/history/{e.get('conv_id','')}"
-
-            rows.append(f"""
-            <tr>
-              <td class="ts">{escape(ts)}</td>
-              <td>
-                <div class="caller">{escape(name)}</div>
-                <div class="addr">{escape(addr)} · {escape(phone)}</div>
-              </td>
-              <td><span class="outcome {outcome_tag}">{escape(outcome_label)}</span></td>
-              <td class="duration">{escape(dur)}</td>
-              <td><div class="summary">{escape(summary_clip)}</div></td>
-              <td class="actions">
-                <a href="{escape(el_link)}" target="_blank">Transcript</a>
-                {('<a href="' + escape(ghl_link) + '" target="_blank">GHL</a>') if ghl_link else ''}
-              </td>
-            </tr>""")
-
-        calls_block = f"""
-        <table class="calls-table">
-          <thead>
-            <tr>
-              <th style="width:140px">When</th>
-              <th>Caller</th>
-              <th style="width:120px">Outcome</th>
-              <th style="width:90px">Duration</th>
-              <th>Summary</th>
-              <th style="width:140px">Links</th>
-            </tr>
-          </thead>
-          <tbody>{''.join(rows)}</tbody>
-        </table>"""
-    else:
-        calls_block = '<div class="empty">No calls yet. Once Blake starts dialing, calls will appear here within ~5 minutes of completion.</div>'
-
-    header_meta = f"Updated {datetime.now(ET).strftime('%b %d, %Y · %I:%M %p ET')}"
-
-    # Use literal-string .replace() instead of str.format() — the CSS in the
-    # template contains '{...}' braces (CSS rule blocks) that collide with
-    # format placeholder syntax and raise KeyError.
-    substitutions = {
-        "{header_meta}":      escape(header_meta),
-        "{calls_today}":      str(calls_today),
-        "{calls_week}":       str(calls_week),
-        "{calls_total}":      str(calls_total),
-        "{avg_duration}":     str(avg_duration),
-        "{hot_count}":        str(hot_count),
-        "{engaged_pct}":      str(engaged_pct),
-        "{warmup_day}":       str(warmup_day),
-        "{warmup_quota}":     str(warmup_quota),
-        "{warmup_dialed}":    str(warmup_dialed),
-        "{warmup_remaining}": str(warmup_remaining),
-        "{warmup_pct}":       str(warmup_pct),
-        "{warmup_anchor}":    escape(warmup_anchor),
-        "{warmup_grid}":      warmup_grid,
-        "{recent_count}":     str(len(enriched)),
-        "{calls_block}":      calls_block,
-    }
-    html = HTML_TEMPLATE
-    for placeholder, value in substitutions.items():
-        html = html.replace(placeholder, value)
-
+    html = SHELL_HTML.replace("__WORKER_BASE__", WORKER_BASE)
     os.makedirs("site", exist_ok=True)
     out = "site/blake.html"
     with open(out, "w", encoding="utf-8") as f:
         f.write(html)
-    print(f"Wrote {out} ({len(html)} bytes)")
+    print(f"Wrote {out} ({len(html)} bytes) — SPA shell, data fetched live from {WORKER_BASE}/dashboard-data")
     return 0
 
 

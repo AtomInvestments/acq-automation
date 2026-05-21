@@ -167,6 +167,13 @@ export default {
       });
     }
 
+    // /dashboard-data — JSON feed for the live Blake dashboard at
+    // atominvestments.github.io/acq-automation/blake.html. 30-sec KV cache
+    // to keep ElevenLabs + GHL API load bounded even with multiple viewers.
+    if (req.method === "GET" && url.pathname === "/dashboard-data") {
+      return handleDashboardData(env);
+    }
+
     return new Response("Not Found", { status: 404 });
   },
 
@@ -183,6 +190,189 @@ export default {
     }
   },
 };
+
+// ---- /dashboard-data: live aggregated JSON for blake.html -----------------
+
+async function handleDashboardData(env: Env): Promise<Response> {
+  // Try cache first (30-sec TTL).
+  const cached = await env.DIAL_STATE.get("dashboard:cache");
+  if (cached) {
+    return new Response(cached, {
+      status: 200,
+      headers: {
+        "content-type": "application/json",
+        "access-control-allow-origin": "*",
+        "x-cache": "HIT",
+      },
+    });
+  }
+
+  // Compute fresh — fetch conversations list, hydrate top 20 with details,
+  // join with GHL by phone.
+  const data = await computeDashboardData(env).catch((e) => {
+    console.error(`[dashboard] computeDashboardData threw: ${e}`);
+    return { error: String(e?.message || e) } as any;
+  });
+
+  const json = JSON.stringify(data);
+
+  // Cache for 30 sec. Repeat callers within window get served from KV.
+  await env.DIAL_STATE.put("dashboard:cache", json, { expirationTtl: 30 });
+
+  return new Response(json, {
+    status: 200,
+    headers: {
+      "content-type": "application/json",
+      "access-control-allow-origin": "*",   // page is on gh-pages, cross-origin
+      "x-cache": "MISS",
+    },
+  });
+}
+
+async function computeDashboardData(env: Env): Promise<any> {
+  // 1. List recent conversations from ElevenLabs.
+  const listRes = await fetch(
+    `https://api.elevenlabs.io/v1/convai/conversations?agent_id=${BLAKE_AGENT_ID}&page_size=30`,
+    { headers: { "xi-api-key": env.ELEVENLABS_API_KEY } }
+  );
+  if (!listRes.ok) throw new Error(`elevenlabs list ${listRes.status}`);
+  const listJson: any = await listRes.json();
+  const conversations: any[] = listJson?.conversations || [];
+
+  // 2. Hydrate top 15 with detail (transcript_summary + caller phone).
+  const top = conversations.slice(0, 15);
+  const detailed = await Promise.all(
+    top.map(async (c: any) => {
+      const convId = c.conversation_id;
+      if (!convId) return null;
+      try {
+        const dRes = await fetch(
+          `https://api.elevenlabs.io/v1/convai/conversations/${convId}`,
+          { headers: { "xi-api-key": env.ELEVENLABS_API_KEY } }
+        );
+        if (!dRes.ok) return null;
+        return await dRes.json();
+      } catch {
+        return null;
+      }
+    })
+  );
+
+  // 3. Build enriched call list with GHL contact lookup (parallel).
+  const enriched = await Promise.all(
+    detailed.filter((d): d is any => !!d).map(async (d) => {
+      const md = d.metadata || {};
+      const phoneCall = md.phone_call || {};
+      const callerPhone =
+        phoneCall.external_number ||
+        md.phone_number ||
+        d.dynamic_variables?.system__caller_id ||
+        "";
+      const startUnix = md.start_time_unix_secs || 0;
+      const duration = md.call_duration_secs || 0;
+      const analysis = d.analysis || {};
+      const summary = analysis.transcript_summary || "";
+      const outcome = classifyOutcomeForDashboard(d);
+
+      // Join with GHL (only if we have a phone). Failures non-fatal.
+      let contact: any = null;
+      if (callerPhone) {
+        try {
+          contact = await lookupContactDetailByPhone(env.BLAKE_GHL_PIT, callerPhone);
+        } catch {}
+      }
+      const contactName = contact
+        ? `${(contact.firstName || "").trim()} ${(contact.lastName || "").trim()}`.trim() ||
+          contact.contactName ||
+          "(unnamed)"
+        : "(not in GHL)";
+      const contactAddr = contact
+        ? [contact.address1, contact.city, contact.state].filter(Boolean).join(", ")
+        : "";
+
+      return {
+        conv_id: d.conversation_id || "",
+        started_unix: startUnix,
+        duration_secs: duration,
+        caller_phone: callerPhone,
+        caller_name: contactName,
+        caller_address: contactAddr,
+        ghl_contact_id: contact?.id || "",
+        outcome_tag: outcome.tag,
+        outcome_label: outcome.label,
+        summary: summary.slice(0, 250),
+      };
+    })
+  );
+
+  enriched.sort((a, b) => (b.started_unix || 0) - (a.started_unix || 0));
+
+  // 4. Aggregate KPIs.
+  const nowMs = Date.now();
+  const todayUtcStart = new Date();
+  todayUtcStart.setUTCHours(0, 0, 0, 0);
+  const todayCutoff = Math.floor(todayUtcStart.getTime() / 1000);
+  const weekCutoff = Math.floor((nowMs - 7 * 86400 * 1000) / 1000);
+
+  const callsToday = enriched.filter((c) => c.started_unix >= todayCutoff).length;
+  const callsWeek = enriched.filter((c) => c.started_unix >= weekCutoff).length;
+  const durations = enriched.map((c) => c.duration_secs).filter((d) => d > 0);
+  const avgDuration = durations.length
+    ? Math.round(durations.reduce((a, b) => a + b, 0) / durations.length)
+    : 0;
+  const hotCount = enriched.filter((c) => c.outcome_tag === "hot").length;
+  const engagedCount = enriched.filter((c) => c.outcome_tag === "hot" || c.outcome_tag === "warm").length;
+  const engagedPct = enriched.length ? Math.round((engagedCount * 100) / enriched.length) : 0;
+
+  // 5. Warm-up state.
+  const anchorRaw = await env.DIAL_STATE.get("quota_anchor_date");
+  const dayIndex = await dayIndexFromAnchor(env, new Date());
+  const dailyQuota = quotaForDay(dayIndex);
+  const dialedToday = await getDialedTodayCount(env);
+
+  return {
+    updated_at: new Date().toISOString(),
+    kpis: {
+      calls_today: callsToday,
+      calls_week: callsWeek,
+      calls_total: conversations.length,
+      avg_duration_secs: avgDuration,
+      hot_count: hotCount,
+      engaged_pct: engagedPct,
+    },
+    warmup: {
+      day: dayIndex + 1,
+      daily_quota: dailyQuota,
+      dialed_today: dialedToday,
+      remaining_today: Math.max(0, dailyQuota - dialedToday),
+      anchor_date: anchorRaw || "",
+    },
+    recent_calls: enriched,
+    blake_agent_id: BLAKE_AGENT_ID,
+    location_id: APG_LOCATION_ID,
+  };
+}
+
+function classifyOutcomeForDashboard(detail: any): { tag: string; label: string } {
+  const analysis = detail?.analysis || {};
+  const summary = (analysis.transcript_summary || "").toLowerCase();
+  if (summary.includes("hot lead") || summary.includes("ready to sell") || summary.includes("very interested")) {
+    return { tag: "hot", label: "Hot Lead" };
+  }
+  if (summary.includes("not interested") || summary.includes("no thanks")) {
+    return { tag: "cold", label: "Not Interested" };
+  }
+  if (summary.includes("do not call") || summary.includes("stop calling") || summary.includes("dnc")) {
+    return { tag: "dnd", label: "DNC Requested" };
+  }
+  if (summary.includes("voicemail") || summary.includes("leave a message")) {
+    return { tag: "voicemail", label: "Voicemail" };
+  }
+  const dur = detail?.metadata?.call_duration_secs || 0;
+  if (dur < 15) return { tag: "no-answer", label: "No Answer / Short" };
+  if (analysis.call_successful === "success") return { tag: "warm", label: "Engaged" };
+  return { tag: "unknown", label: "Completed" };
+}
 
 // ---- /conversation-init handler ---------------------------------------------
 //
