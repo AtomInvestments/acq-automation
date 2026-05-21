@@ -860,6 +860,7 @@
     "reply_attempts": 0,
     "reply_class": "NEGATIVE",
     "reply_text": "Halt",
+    "skip_reason": "tag-already-routed",
     "sms_count": 0,
     "stage_entered_at": "2026-05-20T17:37:51.629440+00:00",
     "stage_name": "mao"
