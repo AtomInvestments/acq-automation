@@ -45,6 +45,7 @@ const CF_ASKING = "6q7syt4puxfP7E03Xxhd";
 const CF_MOTIVATION = "rbYZAdhvuvX1NQgexhxy";
 const CF_TIMELINE = "v47I1Mi63RBpCD5N5RrH";
 const CF_VA_NOTES = "ctNVXVw8VY1PD4B1oqXj";
+const CF_BLAKE_RECORDING = "hsHjLlOE8mb4O2DqxNY7";  // URL to /audio/{conv_id} proxy
 
 // GHL stage IDs (APG ACQ pipeline). Source of truth: tyler/project_ghl_acq.md.
 const STAGE_UNQUALIFIED = "c1d23905-7096-439c-9a31-f8db5b2b53d0";
@@ -147,6 +148,14 @@ export default {
       return handleDialStatus(env);
     }
 
+    // /audio/{conversation_id} — streams the ElevenLabs call recording.
+    // The URL is written to each contact's "Blake Call Recording" custom field
+    // by the post-call webhook handler so APG team can play it from GHL.
+    if (req.method === "GET" && url.pathname.startsWith("/audio/")) {
+      const convId = url.pathname.slice("/audio/".length);
+      return handleAudioProxy(convId, env);
+    }
+
     return new Response("Not Found", { status: 404 });
   },
 
@@ -195,25 +204,50 @@ async function handleConversationInit(req: Request, env: Env): Promise<Response>
   // Truncate after some chars so we don't blow up Worker logs.
   console.log(`[init] payload: ${JSON.stringify(payload).slice(0, 2000)}`);
 
-  // ElevenLabs uses different field names depending on call source (Twilio vs
-  // SIP vs direct). Try them all — added more candidates after observing
-  // payloads in the wild.
-  const callerPhone: string =
-    payload?.caller_id ||
-    payload?.from_phone_number ||
-    payload?.from ||
-    payload?.From ||
-    payload?.caller_phone ||
-    payload?.phone_number ||
-    payload?.caller_number ||
-    payload?.metadata?.phone_call?.external_number ||
-    payload?.metadata?.from ||
-    payload?.metadata?.caller_id ||
-    payload?.metadata?.phone_number ||
-    payload?.dynamic_variables?.system__caller_id ||
-    "";
+  // For OUTBOUND calls (Blake dialing a seller), the SELLER'S phone is in
+  // to_number / called_number, while caller_id is Blake's own number.
+  // For INBOUND calls (seller dialing Blake), the seller's phone is in
+  // caller_id / from. The lookup target is always "the OTHER party" — the
+  // seller, not Blake.
+  const BLAKE = "+16099449034";
+  const candidates = [
+    // Outbound call destination (seller's phone) — try first
+    payload?.to_number,
+    payload?.to,
+    payload?.To,
+    payload?.called_number,
+    payload?.callee_phone,
+    payload?.customer_number,
+    payload?.dialed_number,
+    payload?.metadata?.phone_call?.callee_number,
+    payload?.metadata?.to,
+    payload?.metadata?.to_number,
+    payload?.dynamic_variables?.system__called_number,
+    // Inbound call caller (seller's phone)
+    payload?.caller_id,
+    payload?.from_phone_number,
+    payload?.from,
+    payload?.From,
+    payload?.caller_phone,
+    payload?.phone_number,
+    payload?.caller_number,
+    payload?.metadata?.phone_call?.external_number,
+    payload?.metadata?.from,
+    payload?.metadata?.caller_id,
+    payload?.metadata?.phone_number,
+    payload?.dynamic_variables?.system__caller_id,
+  ];
 
-  console.log(`[init] extracted caller=${callerPhone || "(none)"} agent=${payload?.agent_id || "?"}`);
+  // The seller's phone is whichever candidate is NOT Blake's number.
+  let callerPhone = "";
+  for (const c of candidates) {
+    if (c && typeof c === "string" && c.trim() && c.trim() !== BLAKE) {
+      callerPhone = c.trim();
+      break;
+    }
+  }
+
+  console.log(`[init] extracted seller phone=${callerPhone || "(none)"} agent=${payload?.agent_id || "?"}`);
 
   // Defaults — owner-unknown branch
   let vars = {
@@ -391,13 +425,25 @@ async function handleWebhook(req: Request, env: Env, ctx: ExecutionContext): Pro
     transcript,
   });
 
+  // Compose recording URL — proxy through this Worker so GHL team can play
+  // the audio without ElevenLabs auth.
+  const recordingUrl = conversationId && conversationId !== "unknown"
+    ? `https://acq-automation.mithchell.workers.dev/audio/${conversationId}`
+    : "";
+  // Embed the recording URL in the note body too — visible in the GHL note
+  // timeline without having to look at the custom field.
+  const noteWithRecording = recordingUrl
+    ? `${noteBody}\n\n🎧 Recording: ${recordingUrl}`
+    : noteBody;
+
   // Don't block the webhook on the writes — fire-and-forget but log failures.
-  // Two side effects: backup note + 'blake-called' tag (so the team can build
-  // smart lists / filters in GHL: tag = blake-called → every contact Blake
-  // has ever talked to).
+  // Three side effects:
+  //   1. Backup note (with embedded recording URL)
+  //   2. 'blake-called' tag (so team can build smart lists by tag)
+  //   3. 'Blake Call Recording' custom field set to the proxy URL
   ctx.waitUntil(
     Promise.all([
-      addNote(env.BLAKE_GHL_PIT, contactId, noteBody).then(
+      addNote(env.BLAKE_GHL_PIT, contactId, noteWithRecording).then(
         (res) => {
           if (!res.ok) {
             console.error(`[blake-post-call] note write failed: ${res.status} ${res.body}`);
@@ -417,6 +463,18 @@ async function handleWebhook(req: Request, env: Env, ctx: ExecutionContext): Pro
         },
         (err) => console.error(`[blake-post-call] tag write threw: ${err}`)
       ),
+      recordingUrl
+        ? setContactCustomField(env.BLAKE_GHL_PIT, contactId, CF_BLAKE_RECORDING, recordingUrl).then(
+            (res) => {
+              if (!res.ok) {
+                console.error(`[blake-post-call] recording field write failed: ${res.status} ${res.body}`);
+              } else {
+                console.log(`[blake-post-call] recording URL set on contact ${contactId}: ${recordingUrl}`);
+              }
+            },
+            (err) => console.error(`[blake-post-call] recording field write threw: ${err}`)
+          )
+        : Promise.resolve(),
     ])
   );
 
@@ -482,6 +540,81 @@ async function addTag(
   });
   const text = await res.text();
   return { ok: res.ok, status: res.status, body: text.slice(0, 500) };
+}
+
+// Write a single custom field value on a contact. Uses the direct REST endpoint
+// (mcp__ghl-mcp__contacts_update-contact is broken for custom fields per
+// tyler/feedback_ghl_api.md memory).
+async function setContactCustomField(
+  pit: string,
+  contactId: string,
+  fieldId: string,
+  value: string
+): Promise<{ ok: boolean; status: number; body: string }> {
+  const res = await fetch(`${GHL_BASE}/contacts/${contactId}`, {
+    method: "PUT",
+    headers: ghlHeaders(pit),
+    body: JSON.stringify({
+      customFields: [{ id: fieldId, value }],
+    }),
+  });
+  const text = await res.text();
+  return { ok: res.ok, status: res.status, body: text.slice(0, 500) };
+}
+
+// ---- /audio/{conversation_id} proxy ----------------------------------------
+//
+// Streams the call audio from ElevenLabs through our Worker so the GHL team
+// can play it without ElevenLabs auth. The Worker is the only place the
+// ElevenLabs API key lives; the resulting URL we write into the GHL custom
+// field is unauthenticated public proxy.
+//
+// Risk: unauthenticated. Anyone who has the URL can play the call. The
+// conversation_id is non-guessable (32 random chars), so by-URL access is
+// effectively secret-token gated. For sensitive PII calls in the future we
+// can layer Cloudflare Access on top of /audio/*.
+
+async function handleAudioProxy(convId: string, env: Env): Promise<Response> {
+  // Defensively validate the conv_id format. Only allow what ElevenLabs uses
+  // for conversation IDs to prevent path-traversal or open-proxy abuse.
+  if (!/^conv_[a-zA-Z0-9]{6,80}$/.test(convId)) {
+    return new Response(
+      JSON.stringify({ ok: false, error: "invalid_conversation_id" }),
+      { status: 400, headers: { "content-type": "application/json" } }
+    );
+  }
+
+  const upstream = await fetch(
+    `https://api.elevenlabs.io/v1/convai/conversations/${convId}/audio`,
+    {
+      headers: { "xi-api-key": env.ELEVENLABS_API_KEY },
+    }
+  );
+
+  if (!upstream.ok) {
+    const errBody = await upstream.text();
+    return new Response(
+      JSON.stringify({
+        ok: false,
+        error: "elevenlabs_fetch_failed",
+        status: upstream.status,
+        details: errBody.slice(0, 200),
+      }),
+      { status: upstream.status, headers: { "content-type": "application/json" } }
+    );
+  }
+
+  // Stream the MP3 body to the browser. Set headers so browsers play inline
+  // (with controls) instead of forcing download. Long cache because audio
+  // is immutable once a call ends.
+  return new Response(upstream.body, {
+    status: 200,
+    headers: {
+      "Content-Type": "audio/mpeg",
+      "Content-Disposition": `inline; filename="blake-${convId}.mp3"`,
+      "Cache-Control": "public, max-age=604800, immutable",  // 1 week
+    },
+  });
 }
 
 function buildBackupNote(args: {
