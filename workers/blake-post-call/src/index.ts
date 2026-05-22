@@ -350,39 +350,55 @@ async function handleListingEmail(req: Request, env: Env): Promise<Response> {
     }
   }
 
-  // 3. Create opportunity in Realtor Listings pipeline.
-  const oppName = buildListingOppName(body.property_address, asking, mao);
-  const oppRes = await fetch(`${GHL_BASE}/opportunities/`, {
-    method: "POST",
-    headers: ghlHeaders(env.BLAKE_GHL_PIT),
-    body: JSON.stringify({
-      locationId: APG_LOCATION_ID,
-      pipelineId: REALTOR_LISTINGS_PIPELINE_ID,
-      pipelineStageId: RL_STAGE_NEW_LISTING,
-      contactId: realtorContactId,
-      name: oppName,
-      monetaryValue: mao,
-      status: "open",
-      source: "Zillow / Redfin Listing",
-    }),
-  });
-  const oppText = await oppRes.text();
+  // 3. Create or update opportunity in Realtor Listings pipeline.
+  //    New naming: "Realtor Name / Property Address / Realtor Phone"
+  //    Dedup: if an opp already exists in this pipeline whose name contains
+  //    the same property address, UPDATE it (don't create a duplicate).
+  const oppName = buildListingOppName(realtorName, body.property_address, realtorPhone);
+
   let opportunityId = "";
-  try {
-    opportunityId = JSON.parse(oppText)?.opportunity?.id || JSON.parse(oppText)?.id || "";
-  } catch {}
-  if (!oppRes.ok || !opportunityId) {
-    console.error(`[listing] opp create failed: ${oppRes.status} ${oppText.slice(0, 300)}`);
-    return new Response(
-      JSON.stringify({
-        ok: false,
-        error: "opportunity_create_failed",
-        status: oppRes.status,
-        body: oppText.slice(0, 300),
-        realtor_contact_id: realtorContactId,
+  let oppAction: "created" | "updated" = "created";
+
+  const existing = await findRealtorListingOppByAddress(env.BLAKE_GHL_PIT, body.property_address);
+  if (existing) {
+    opportunityId = existing.id;
+    oppAction = "updated";
+    const upd = await updateOpportunityNameValue(env.BLAKE_GHL_PIT, existing.id, oppName, mao);
+    if (!upd.ok) {
+      console.warn(`[listing] dedup update failed (id=${existing.id}): ${upd.status} ${upd.body.slice(0, 200)}`);
+    }
+  } else {
+    const oppRes = await fetch(`${GHL_BASE}/opportunities/`, {
+      method: "POST",
+      headers: ghlHeaders(env.BLAKE_GHL_PIT),
+      body: JSON.stringify({
+        locationId: APG_LOCATION_ID,
+        pipelineId: REALTOR_LISTINGS_PIPELINE_ID,
+        pipelineStageId: RL_STAGE_NEW_LISTING,
+        contactId: realtorContactId,
+        name: oppName,
+        monetaryValue: mao,
+        status: "open",
+        source: "Zillow / Redfin Listing",
       }),
-      { status: 500, headers: { "content-type": "application/json" } }
-    );
+    });
+    const oppText = await oppRes.text();
+    try {
+      opportunityId = JSON.parse(oppText)?.opportunity?.id || JSON.parse(oppText)?.id || "";
+    } catch {}
+    if (!oppRes.ok || !opportunityId) {
+      console.error(`[listing] opp create failed: ${oppRes.status} ${oppText.slice(0, 300)}`);
+      return new Response(
+        JSON.stringify({
+          ok: false,
+          error: "opportunity_create_failed",
+          status: oppRes.status,
+          body: oppText.slice(0, 300),
+          realtor_contact_id: realtorContactId,
+        }),
+        { status: 500, headers: { "content-type": "application/json" } }
+      );
+    }
   }
 
   // 4. SMS the listing realtor with the cash offer.
@@ -423,6 +439,7 @@ async function handleListingEmail(req: Request, env: Env): Promise<Response> {
       realtor_contact_id: realtorContactId,
       opportunity_id: opportunityId,
       opportunity_name: oppName,
+      opportunity_action: oppAction,   // "created" or "updated" (dedup hit)
       sms_to_realtor: sms.ok
         ? { ok: true, twilio_sid: sms.twilioSid }
         : { ok: false, status: sms.status, error: sms.body.slice(0, 200) },
@@ -502,9 +519,75 @@ async function postSlackMessage(
   return { ok: slackOk, status: res.status, body: respText, ts, channel: resolvedChannel };
 }
 
-function buildListingOppName(address: string, asking: number, mao: number): string {
-  const fmt = (n: number) => `$${(n / 1000).toFixed(0)}k`;
-  return `${address} · asking ${fmt(asking)} → MAO ${fmt(mao)}`;
+// Listing opp name format: "Realtor Name / Property Address / Realtor Phone"
+// Matches the APG ACQ-pipeline naming convention. Phone is omitted if missing.
+// Realtor name falls back to "Unknown Realtor" if the listing email didn't
+// include one — this keeps the slash separators stable so dedup-by-substring
+// on address keeps working.
+function buildListingOppName(
+  realtorName: string,
+  address: string,
+  realtorPhone: string
+): string {
+  const name = (realtorName || "").trim() || "Unknown Realtor";
+  const phone = (realtorPhone || "").trim();
+  return phone ? `${name} / ${address} / ${phone}` : `${name} / ${address}`;
+}
+
+// Normalize an address for fuzzy comparison — used by dedup search.
+function normalizeAddress(a: string): string {
+  return (a || "")
+    .toLowerCase()
+    .replace(/[.,#]/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+// Find an existing opportunity in the Realtor Listings pipeline whose name
+// contains this address. Returns null if none. Prevents duplicate opps when
+// the same listing comes in twice (e.g. Zillow re-sends a price-change alert).
+async function findRealtorListingOppByAddress(
+  pit: string,
+  address: string
+): Promise<{ id: string; name: string; pipelineStageId: string; contactId?: string } | null> {
+  const needle = normalizeAddress(address);
+  if (!needle) return null;
+
+  // GHL search supports ?q= for fuzzy name match. Filter to the Realtor
+  // Listings pipeline so we don't collide with ACQ opps.
+  const url =
+    `${GHL_BASE}/opportunities/search?location_id=${APG_LOCATION_ID}` +
+    `&pipeline_id=${REALTOR_LISTINGS_PIPELINE_ID}` +
+    `&q=${encodeURIComponent(address)}&limit=20`;
+  const res = await fetch(url, { method: "GET", headers: ghlHeaders(pit) });
+  if (!res.ok) return null;
+  const j: any = await res.json();
+  const opps = (j?.opportunities ?? []) as any[];
+  // Exact-after-normalize match on address substring within name.
+  const hit = opps.find((o) => normalizeAddress(o.name || "").includes(needle));
+  if (!hit) return null;
+  return {
+    id: hit.id,
+    name: hit.name,
+    pipelineStageId: hit.pipelineStageId || hit.pipeline_stage_id,
+    contactId: hit.contactId || hit.contact_id || hit?.contact?.id,
+  };
+}
+
+// Update an existing opportunity's name + value (used when dedup hits).
+async function updateOpportunityNameValue(
+  pit: string,
+  opportunityId: string,
+  name: string,
+  monetaryValue: number
+): Promise<{ ok: boolean; status: number; body: string }> {
+  const res = await fetch(`${GHL_BASE}/opportunities/${opportunityId}`, {
+    method: "PUT",
+    headers: ghlHeaders(pit),
+    body: JSON.stringify({ name, monetaryValue }),
+  });
+  const text = await res.text();
+  return { ok: res.ok, status: res.status, body: text.slice(0, 500) };
 }
 
 // ---- /dashboard-data: live aggregated JSON for blake.html -----------------
