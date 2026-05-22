@@ -81,8 +81,9 @@ const BLAKE_PHONE_NUMBER_ID = "phnum_8001ks3fhbbpe4vadtrdmparejgw";
 // Twilio sending number — shared with Blake outbound dialer (APG-owned).
 const TWILIO_FROM_NUMBER = "+16099449034";
 
-// Slack channel for Pillar B listing alerts.
-const SLACK_LISTINGS_CHANNEL = "#base1-sms-leadgen";
+// Slack channel for Pillar B listing alerts. APG bot (@apg_automations) must
+// be /invite'd to this channel for chat.postMessage to succeed.
+const SLACK_LISTINGS_CHANNEL = "#listed-leads";
 
 // Warm-up curve: max outbound dials per UTC day, indexed by days since the
 // dialer's first run. After WARMUP_CURVE.length days we stay at the last
