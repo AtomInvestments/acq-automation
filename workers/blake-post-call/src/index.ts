@@ -84,6 +84,36 @@ const BLAKE_PHONE_NUMBER_ID = "phnum_8001ks3fhbbpe4vadtrdmparejgw";
 const BLAKE_VOICE_NUMBER = "+16099449034";
 const GHL_SMS_NUMBER = "+16096998437";  // documentation only — GHL auto-uses this
 
+// All 18 GHL/LeadConnector phone numbers in this APG sub-account. When one of
+// these appears as the `external_number` on an inbound call to Blake, it means
+// GHL forwarded the call (not a direct seller dial). GHL forwards trigger a
+// "Press 1 to connect" whisper that Blake can't respond to verbally — we have
+// to inject DTMF "1" via the Twilio API to accept the connection.
+//
+// Update this list if numbers are added/removed in GHL → Settings → Phone Numbers.
+// Source: GHL /phone-system/numbers/ list as of 2026-05-22.
+const GHL_FORWARD_NUMBERS = new Set([
+  "+12676197270", // PA Market
+  "+16095263418", // A2P 10DLC (utility)
+  "+14707508168", // GA Market
+  "+16098045017", // Wendy Chodes
+  "+16096844472", // Mike Yasser
+  "+16094388996", // Jef De los Santos
+  "+16096306321", // John's number
+  "+19013138258", // TN Market
+  "+14406169376", // OH Market
+  "+16095071176", // RJ
+  "+16097987201", // Cherry Blossom
+  "+12568006289", // AL Market
+  "+12603193698", // IN Market
+  "+16095961996", // Justus
+  "+16095668320", // Adam Chodes
+  "+18037843538", // SC Market
+  "+16096047761", // Gyeo Steven
+  "+14143489182", // WI Market
+  "+16096998437", // Location primary (used for outbound SMS)
+]);
+
 // Slack channel for Pillar B listing alerts. APG bot (@apg_automations) must
 // be /invite'd to this channel for chat.postMessage to succeed.
 const SLACK_LISTINGS_CHANNEL = "#listed-leads";
@@ -496,6 +526,44 @@ async function handleListingEmail(req: Request, env: Env): Promise<Response> {
     }, null, 2),
     { status: 200, headers: { "content-type": "application/json" } }
   );
+}
+
+// --- Twilio DTMF injection on live call ---
+// Used when a GHL number forwards an inbound call to Blake. GHL plays a
+// "Press 1 to connect" whisper prompt that requires DTMF acknowledgement.
+// Blake (AI) can't press a key with his voice, so we POST to Twilio's
+// Calls API to inject TwiML <Play digits="1"/> on the live call SID,
+// which sends the DTMF tone GHL needs to bridge the real caller through.
+//
+// Twilio docs: https://www.twilio.com/docs/voice/api/call-resource#update-a-call-resource
+//   Modifying an in-progress call by setting Twiml param resets the call's
+//   instructions mid-flight. Twilio plays the digits, then resumes whatever
+//   it was doing (in our case, the ElevenLabs media stream).
+async function injectDtmfOnTwilioCall(
+  env: Env,
+  callSid: string,
+  digits: string
+): Promise<{ ok: boolean; status: number; body: string }> {
+  if (!env.TWILIO_ACCOUNT_SID || !env.TWILIO_AUTH_TOKEN) {
+    return { ok: false, status: 0, body: "twilio_creds_not_bound" };
+  }
+  const auth = btoa(`${env.TWILIO_ACCOUNT_SID}:${env.TWILIO_AUTH_TOKEN}`);
+  const form = new URLSearchParams({
+    Twiml: `<Response><Play digits="${digits}"/></Response>`,
+  });
+  const res = await fetch(
+    `https://api.twilio.com/2010-04-01/Accounts/${env.TWILIO_ACCOUNT_SID}/Calls/${callSid}.json`,
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Basic ${auth}`,
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: form.toString(),
+    }
+  );
+  const text = await res.text();
+  return { ok: res.ok, status: res.status, body: text.slice(0, 500) };
 }
 
 // --- GHL conversations SMS ---
@@ -962,6 +1030,33 @@ async function handleConversationInit(req: Request, env: Env): Promise<Response>
 
   console.log(`[init] extracted seller phone=${callerPhone || "(none)"} agent=${payload?.agent_id || "?"}`);
 
+  // --- DTMF AUTO-PRESS FOR GHL FORWARDS ---
+  // If the "caller" is one of our 18 GHL numbers, this isn't a direct seller
+  // call — it's a GHL forwarded call carrying a "Press 1 to connect" whisper.
+  // Inject DTMF "1" on the live Twilio call SID so the whisper accepts and
+  // bridges the real seller through. Fire-and-forget so it doesn't slow the
+  // init response.
+  const callSid =
+    payload?.metadata?.phone_call?.call_sid ||
+    payload?.call_sid ||
+    payload?.CallSid;
+  const isGhlForward = !!callerPhone && GHL_FORWARD_NUMBERS.has(callerPhone);
+  if (isGhlForward && callSid) {
+    console.log(`[init] GHL forward detected from ${callerPhone} → injecting DTMF "1" on call ${callSid}`);
+    // Fire-and-forget — don't await, don't block init response
+    injectDtmfOnTwilioCall(env, callSid, "1")
+      .then((r) => console.log(`[init] DTMF inject: ${r.ok ? "OK" : "FAIL"} ${r.status} ${r.body.slice(0, 200)}`))
+      .catch((e) => console.warn(`[init] DTMF inject threw: ${e}`));
+  } else if (isGhlForward && !callSid) {
+    console.warn(`[init] GHL forward from ${callerPhone} but no call_sid in payload — can't inject DTMF`);
+  }
+  // For GHL forwards we DON'T know who the real seller is (the external_number
+  // is the GHL number, not the original caller). Skip the contact lookup and
+  // use the owner-unknown greeting — Blake will ask who's calling.
+  if (isGhlForward) {
+    console.log(`[init] GHL forward — skipping contact lookup, using owner-unknown branch`);
+  }
+
   // Defaults — owner-unknown branch
   let vars = {
     first_name: "",
@@ -977,7 +1072,10 @@ async function handleConversationInit(req: Request, env: Env): Promise<Response>
 
   let firstMessage = ownerUnknownFirstMessage();
 
-  if (callerPhone) {
+  // Only look up the caller in GHL if it's NOT a GHL-number forward.
+  // (For forwards, the external_number is the GHL number itself, not the real
+  // seller — the lookup would be guaranteed to miss.)
+  if (callerPhone && !isGhlForward) {
     try {
       const contact = await lookupContactDetailByPhone(env.BLAKE_GHL_PIT, callerPhone);
       if (contact) {
