@@ -241,6 +241,51 @@ export default {
       });
     }
 
+    // /twiml-bridge — TwiML endpoint for the GHL-whisper-bypass intermediary
+    // Twilio number. GHL forwards inbound calls to the intermediary number.
+    // Twilio hits this URL on call connect; we return TwiML that:
+    //   1. Pauses 2s so GHL's whisper has time to start playing
+    //   2. Plays DTMF "1" via Twilio's RFC 2833 signaling (out-of-band — what
+    //      GHL's whisper actually listens for, unlike in-band audio tones)
+    //   3. Pauses 1s for GHL to bridge the real caller through
+    //   4. Dials Blake's actual voice number → ElevenLabs picks up normally
+    // This bypasses the GHL whisper completely without touching Blake's
+    // direct ElevenLabs setup. If someone calls Blake's number directly,
+    // they still hit ElevenLabs without going through this.
+    if (req.method === "POST" && url.pathname === "/twiml-bridge") {
+      const twiml = `<?xml version="1.0" encoding="UTF-8"?>
+<Response>
+  <Pause length="2"/>
+  <Play digits="1"/>
+  <Pause length="1"/>
+  <Dial answerOnBridge="false" timeout="30">
+    <Number>+16099449034</Number>
+  </Dial>
+</Response>`;
+      return new Response(twiml, {
+        status: 200,
+        headers: { "content-type": "text/xml" },
+      });
+    }
+
+    // Same TwiML endpoint, but Twilio sometimes hits voice webhooks via GET
+    // depending on number config. Support both verbs.
+    if (req.method === "GET" && url.pathname === "/twiml-bridge") {
+      const twiml = `<?xml version="1.0" encoding="UTF-8"?>
+<Response>
+  <Pause length="2"/>
+  <Play digits="1"/>
+  <Pause length="1"/>
+  <Dial answerOnBridge="false" timeout="30">
+    <Number>+16099449034</Number>
+  </Dial>
+</Response>`;
+      return new Response(twiml, {
+        status: 200,
+        headers: { "content-type": "text/xml" },
+      });
+    }
+
     // /dashboard-data — JSON feed for the live Blake dashboard at
     // atominvestments.github.io/acq-automation/blake.html. 30-sec KV cache
     // to keep ElevenLabs + GHL API load bounded even with multiple viewers.
