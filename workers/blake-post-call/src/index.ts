@@ -34,6 +34,7 @@ export interface Env {
 const APG_LOCATION_ID = "RCkiUmWqXX4BYQ39JXmm";
 const GHL_BASE = "https://services.leadconnectorhq.com";
 const USER_MIKE = "Vj4WwH1ovxGN5Hv5Kq17";
+const USER_RJ = "EvxJmnll1hlJtzpW14BE";   // Rene Fonseca (RJ) — callback assignee
 
 // Signature freshness window — reject events older than 5 minutes.
 const SIGNATURE_MAX_AGE_S = 300;
@@ -1440,7 +1441,7 @@ async function applyExtractionToGhl(
         (extraction.timeline ? `\nTimeline: ${extraction.timeline}` : "") +
         (extraction.asking_price ? `\nAsking price: ${extraction.asking_price}` : ""),
       dueDate: dueIso,
-      assignedTo: "Vj4WwH1ovxGN5Hv5Kq17",  // Mike (fallback; replace with RJ_GHL_USER_ID when known)
+      assignedTo: USER_RJ,   // Rene Fonseca (RJ) — owns all Blake-booked callbacks
     });
     log.push(`callback_task: ${r.ok ? `ok (id=${r.taskId})` : `${r.status}`}`);
   }

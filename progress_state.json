@@ -24,7 +24,7 @@
         { "label": "Cron Trigger every 15 min — auto-dial unqualified contacts within quota", "done": true },
         { "label": "Live dashboard at /blake.html (Worker /dashboard-data, 10-sec polling)", "done": true },
         { "label": "Adam records 30-min voice clone session (hard gate before scaling)", "done": false },
-        { "label": "RJ's GHL user ID provisioned (replaces Mike fallback on callback tasks)", "done": false },
+        { "label": "RJ's GHL user ID provisioned (replaces Mike fallback on callback tasks)", "done": true },
         { "label": "TCPA consent triage on the 398 unqualified (Adam review)", "done": false },
         { "label": "Pilot 10 real outbound dials + transcript review", "done": false }
       ]
