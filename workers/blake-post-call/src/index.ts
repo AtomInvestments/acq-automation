@@ -273,17 +273,19 @@ async function refreshDashboardCache(env: Env): Promise<void> {
 }
 
 async function computeDashboardData(env: Env): Promise<any> {
-  // 1. List recent conversations from ElevenLabs (one fast call).
+  // 1. List ALL conversations from ElevenLabs (up to 100 per page). Mido
+  //    wants every Blake call visible, not just the recent few.
   const listRes = await fetch(
-    `https://api.elevenlabs.io/v1/convai/conversations?agent_id=${BLAKE_AGENT_ID}&page_size=20`,
+    `https://api.elevenlabs.io/v1/convai/conversations?agent_id=${BLAKE_AGENT_ID}&page_size=100`,
     { headers: { "xi-api-key": env.ELEVENLABS_API_KEY } }
   );
   if (!listRes.ok) throw new Error(`elevenlabs list ${listRes.status}`);
   const listJson: any = await listRes.json();
   const conversations: any[] = listJson?.conversations || [];
 
-  // 2. Hydrate top 8 ONLY (CPU + parallel-network budget on free CF tier).
-  //    Older calls just show what the list endpoint gives us (no transcript).
+  // 2. Hydrate the top 8 with full detail (transcript_summary + GHL contact
+  //    join). Older calls in the list get sparse data from the list response
+  //    only — no per-conv API call. Keeps the CPU budget per request bounded.
   const top = conversations.slice(0, 8);
   const detailed = await Promise.all(
     top.map(async (c: any) => {
@@ -301,10 +303,39 @@ async function computeDashboardData(env: Env): Promise<any> {
       }
     })
   );
+  const detailedById = new Map<string, any>();
+  for (const d of detailed) {
+    if (d?.conversation_id) detailedById.set(d.conversation_id, d);
+  }
 
-  // 3. Build enriched call list with GHL contact lookup (parallel).
+  // 3. Build enriched call list. Hydrated calls get full detail + GHL join.
+  //    Non-hydrated calls use the list-endpoint data only (no extra API calls).
   const enriched = await Promise.all(
-    detailed.filter((d): d is any => !!d).map(async (d) => {
+    conversations.map(async (c: any) => {
+      const convId = c.conversation_id || "";
+      const d = detailedById.get(convId);
+      const listStartUnix =
+        c.start_time_unix_secs || c.start_time_unix || c.created_at_unix_secs || 0;
+      const listDuration = c.call_duration_secs || c.duration_secs || 0;
+      const listStatus = c.status || c.call_status || "";
+
+      if (!d) {
+        // Sparse — older call we didn't hydrate. List response only.
+        return {
+          conv_id: convId,
+          started_unix: listStartUnix,
+          duration_secs: listDuration,
+          caller_phone: "",
+          caller_name: "(not hydrated)",
+          caller_address: "",
+          ghl_contact_id: "",
+          outcome_tag: "unknown",
+          outcome_label: listStatus || "Completed",
+          summary: "(open in ElevenLabs to see full transcript)",
+          hydrated: false,
+        };
+      }
+
       const md = d.metadata || {};
       const phoneCall = md.phone_call || {};
       const callerPhone =
@@ -312,8 +343,8 @@ async function computeDashboardData(env: Env): Promise<any> {
         md.phone_number ||
         d.dynamic_variables?.system__caller_id ||
         "";
-      const startUnix = md.start_time_unix_secs || 0;
-      const duration = md.call_duration_secs || 0;
+      const startUnix = md.start_time_unix_secs || listStartUnix;
+      const duration = md.call_duration_secs || listDuration;
       const analysis = d.analysis || {};
       const summary = analysis.transcript_summary || "";
       const outcome = classifyOutcomeForDashboard(d);
@@ -335,7 +366,7 @@ async function computeDashboardData(env: Env): Promise<any> {
         : "";
 
       return {
-        conv_id: d.conversation_id || "",
+        conv_id: convId,
         started_unix: startUnix,
         duration_secs: duration,
         caller_phone: callerPhone,
@@ -345,6 +376,7 @@ async function computeDashboardData(env: Env): Promise<any> {
         outcome_tag: outcome.tag,
         outcome_label: outcome.label,
         summary: summary.slice(0, 250),
+        hydrated: true,
       };
     })
   );

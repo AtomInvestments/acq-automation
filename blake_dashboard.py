@@ -350,26 +350,33 @@ function renderCalls(calls, blakeAgentId, locationId) {
     document.getElementById("calls-count").textContent = "0 shown";
     return;
   }
-  document.getElementById("calls-count").textContent = `${calls.length} shown`;
+  const hydratedCount = calls.filter((c) => c.hydrated).length;
+  document.getElementById("calls-count").textContent =
+    `${calls.length} total · ${hydratedCount} with detail`;
 
   const rows = calls.map((c) => {
     const isNew = fetchCounter > 1 && !lastSeenConvIds.has(c.conv_id);
+    const isSparse = c.hydrated === false;
     const ghlLink = c.ghl_contact_id
       ? `https://app.gohighlevel.com/v2/location/${locationId}/contacts/detail/${c.ghl_contact_id}`
       : "";
     const elLink = c.conv_id
       ? `https://elevenlabs.io/app/conversational-ai/agents/${blakeAgentId}/history/${c.conv_id}`
       : "";
+    const callerCell = isSparse
+      ? `<div class="caller" style="color:var(--muted);font-weight:600">${escapeHtml(c.caller_name || "—")}</div>`
+      : `<div class="caller">${escapeHtml(c.caller_name || "(unknown)")}</div>
+         <div class="addr">${escapeHtml(c.caller_address || "—")} · ${escapeHtml(c.caller_phone || "")}</div>`;
+    const summaryCell = isSparse
+      ? `<div class="summary" style="color:var(--muted);font-style:italic">${escapeHtml(c.summary || "(transcript not loaded)")}</div>`
+      : `<div class="summary">${escapeHtml(c.summary || "")}</div>`;
     return `
-      <tr${isNew ? ' class="new"' : ""}>
+      <tr${isNew ? ' class="new"' : ""}${isSparse ? ' style="opacity:0.75"' : ""}>
         <td class="ts">${escapeHtml(fmtTsEt(c.started_unix))}</td>
-        <td>
-          <div class="caller">${escapeHtml(c.caller_name || "(unknown)")}</div>
-          <div class="addr">${escapeHtml(c.caller_address || "—")} · ${escapeHtml(c.caller_phone || "")}</div>
-        </td>
+        <td>${callerCell}</td>
         <td><span class="outcome ${escapeHtml(c.outcome_tag)}">${escapeHtml(c.outcome_label || "Completed")}</span></td>
         <td class="duration">${escapeHtml(fmtDuration(c.duration_secs))}</td>
-        <td><div class="summary">${escapeHtml(c.summary || "")}</div></td>
+        <td>${summaryCell}</td>
         <td class="actions">
           ${elLink ? `<a href="${escapeHtml(elLink)}" target="_blank">Transcript</a>` : ""}
           ${ghlLink ? `<a href="${escapeHtml(ghlLink)}" target="_blank">GHL</a>` : ""}
