@@ -1142,11 +1142,15 @@ async function handleConversationInit(req: Request, env: Env): Promise<Response>
     seller_file: "",   // Composed below from recent notes if contact exists
   };
 
-  // For GHL forwards, blank the first_message so Blake stays silent while
-  // the whisper plays + DTMF injects accept it. Once the real seller speaks,
-  // Blake's normal turn-taking will trigger his (prompt-driven) greeting.
-  // For all other call types, use the owner-unknown opener.
-  let firstMessage = isGhlForward ? "" : ownerUnknownFirstMessage();
+  // Blake greets normally on every call type, including GHL forwards.
+  // For forwards, the Worker-side DTMF inject runs in parallel and accepts
+  // the whisper within ~500ms-1s, so by the time Blake finishes his greeting
+  // the real seller is bridged through. (Earlier we tried blanking the
+  // first_message to make Blake wait for the seller to speak, but that
+  // created an awkward silence on connect — the seller didn't know anyone
+  // was there. Better to greet normally; seller may miss first half-second
+  // but hears the back half of the greeting which is enough to respond.)
+  let firstMessage = ownerUnknownFirstMessage();
 
   // Only look up the caller in GHL if it's NOT a GHL-number forward.
   // (For forwards, the external_number is the GHL number itself, not the real
