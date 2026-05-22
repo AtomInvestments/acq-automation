@@ -342,8 +342,11 @@
     "dormant": false,
     "last_from_number": "+12568006289",
     "last_sms_at": "2026-05-22T17:08:26.848565+00:00",
-    "replied": false,
-    "replied_at": null,
+    "replied": true,
+    "replied_at": "2026-05-22T17:55:10.338000+00:00",
+    "reply_attempts": 0,
+    "reply_class": "NEUTRAL",
+    "reply_text": "What number?",
     "sms_count": 2,
     "stage_entered_at": "2026-05-07T23:06:57.095484+00:00",
     "stage_name": "lao"
