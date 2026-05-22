@@ -28,6 +28,9 @@ export interface Env {
   ELEVENLABS_WEBHOOK_SECRET: string;
   ELEVENLABS_API_KEY: string;       // needed for outbound dial API
   ANTHROPIC_API_KEY: string;        // post-call structured extraction
+  TWILIO_ACCOUNT_SID: string;       // Pillar B: SMS to listing realtors + Blake outbound dial
+  TWILIO_AUTH_TOKEN: string;        // Pillar B: SMS to listing realtors + Blake outbound dial
+  SLACK_BOT_TOKEN: string;          // Pillar B: post new-listing alerts to #base1-sms-leadgen
   DIAL_STATE: KVNamespace;          // KV for warm-up quota + dial dedupe
 }
 
@@ -74,6 +77,12 @@ const MAO_BUFFER         = 10000;  // negotiation buffer
 // ElevenLabs Blake agent + phone-number IDs.
 const BLAKE_AGENT_ID = "agent_5001ks3cp069f9rtfz6e81ypgnrd";
 const BLAKE_PHONE_NUMBER_ID = "phnum_8001ks3fhbbpe4vadtrdmparejgw";
+
+// Twilio sending number — shared with Blake outbound dialer (APG-owned).
+const TWILIO_FROM_NUMBER = "+16099449034";
+
+// Slack channel for Pillar B listing alerts.
+const SLACK_LISTINGS_CHANNEL = "#base1-sms-leadgen";
 
 // Warm-up curve: max outbound dials per UTC day, indexed by days since the
 // dialer's first run. After WARMUP_CURVE.length days we stay at the last
@@ -375,12 +384,30 @@ async function handleListingEmail(req: Request, env: Env): Promise<Response> {
     );
   }
 
-  // 4 & 5. SMS to realtor + Slack post — gated on creds being bound.
-  //    Stub for now; will wire when TWILIO_* + SLACK_BOT_TOKEN are added.
-  const todo = {
-    sms_to_realtor: "TODO: bind TWILIO_ACCOUNT_SID + TWILIO_AUTH_TOKEN",
-    slack_notify: "TODO: bind SLACK_BOT_TOKEN",
-  };
+  // 4. SMS the listing realtor with the cash offer.
+  const realtorFirst = (realtorName.split(" ")[0] || "there").trim();
+  const fmtK = (n: number) => `$${Math.round(n / 1000)}k`;
+  const smsBody =
+    `Hi ${realtorFirst}, Mike with Atom Property Group — cash buyer, no contingencies. ` +
+    `Saw your listing at ${body.property_address}. ` +
+    `Best we can do is ${fmtK(mao)} cash, close in 14 days. ` +
+    `Worth a quick chat? Reply Y or call ${TWILIO_FROM_NUMBER}.`;
+
+  const sms = realtorPhone
+    ? await sendTwilioSms(env, realtorPhone, smsBody)
+    : { ok: false, status: 0, body: "no_realtor_phone" };
+
+  // 5. Slack notify #base1-sms-leadgen with the new listing record.
+  const slackText =
+    `:house: *New listing landed* — ${body.property_address}` +
+    (body.city ? `, ${body.city}` : "") +
+    (body.state ? `, ${body.state}` : "") + "\n" +
+    `> Asking *${fmtK(asking)}* · MAO *${fmtK(mao)}* (ARV ${fmtK(arvProxy)} × 0.70 − rehab ${fmtK(rehabEstimate)} − ${fmtK(MAO_BUFFER)} buffer)\n` +
+    `> Realtor: ${realtorName || "(unknown)"} ${realtorPhone || ""} ${realtorEmail ? `<${realtorEmail}>` : ""}\n` +
+    `> SMS to realtor: ${sms.ok ? ":white_check_mark: sent" : `:x: ${sms.status} ${sms.body.slice(0, 100)}`}\n` +
+    (body.listing_url ? `> Listing: ${body.listing_url}\n` : "") +
+    `> GHL opp: \`${opportunityId}\` (Realtor Listings → 1. New Listing)`;
+  const slack = await postSlackMessage(env, SLACK_LISTINGS_CHANNEL, slackText);
 
   return new Response(
     JSON.stringify({
@@ -395,10 +422,83 @@ async function handleListingEmail(req: Request, env: Env): Promise<Response> {
       realtor_contact_id: realtorContactId,
       opportunity_id: opportunityId,
       opportunity_name: oppName,
-      todo,
+      sms_to_realtor: sms.ok
+        ? { ok: true, twilio_sid: sms.twilioSid }
+        : { ok: false, status: sms.status, error: sms.body.slice(0, 200) },
+      slack_notify: slack.ok
+        ? { ok: true, ts: slack.ts, channel: slack.channel }
+        : { ok: false, status: slack.status, error: slack.body.slice(0, 200) },
     }, null, 2),
     { status: 200, headers: { "content-type": "application/json" } }
   );
+}
+
+// --- Twilio SMS ---
+// POST to /2010-04-01/Accounts/{SID}/Messages.json with Basic auth (SID:token).
+// Body is x-www-form-urlencoded: From, To, Body.
+async function sendTwilioSms(
+  env: Env,
+  to: string,
+  text: string
+): Promise<{ ok: boolean; status: number; body: string; twilioSid?: string }> {
+  if (!env.TWILIO_ACCOUNT_SID || !env.TWILIO_AUTH_TOKEN) {
+    return { ok: false, status: 0, body: "twilio_creds_not_bound" };
+  }
+  const auth = btoa(`${env.TWILIO_ACCOUNT_SID}:${env.TWILIO_AUTH_TOKEN}`);
+  const form = new URLSearchParams({
+    From: TWILIO_FROM_NUMBER,
+    To: to,
+    Body: text,
+  });
+  const res = await fetch(
+    `https://api.twilio.com/2010-04-01/Accounts/${env.TWILIO_ACCOUNT_SID}/Messages.json`,
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Basic ${auth}`,
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: form.toString(),
+    }
+  );
+  const respText = await res.text();
+  let twilioSid: string | undefined;
+  try {
+    twilioSid = JSON.parse(respText)?.sid;
+  } catch {}
+  return { ok: res.ok, status: res.status, body: respText, twilioSid };
+}
+
+// --- Slack chat.postMessage ---
+// channel can be a #channel-name (Slack resolves) or a channel ID.
+async function postSlackMessage(
+  env: Env,
+  channel: string,
+  text: string
+): Promise<{ ok: boolean; status: number; body: string; ts?: string; channel?: string }> {
+  if (!env.SLACK_BOT_TOKEN) {
+    return { ok: false, status: 0, body: "slack_token_not_bound" };
+  }
+  const res = await fetch("https://slack.com/api/chat.postMessage", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${env.SLACK_BOT_TOKEN}`,
+      "Content-Type": "application/json; charset=utf-8",
+    },
+    body: JSON.stringify({ channel, text, unfurl_links: false }),
+  });
+  const respText = await res.text();
+  let ts: string | undefined;
+  let resolvedChannel: string | undefined;
+  let slackOk = false;
+  try {
+    const j = JSON.parse(respText);
+    slackOk = j?.ok === true;
+    ts = j?.ts;
+    resolvedChannel = j?.channel;
+    if (!slackOk) return { ok: false, status: res.status, body: respText };
+  } catch {}
+  return { ok: slackOk, status: res.status, body: respText, ts, channel: resolvedChannel };
 }
 
 function buildListingOppName(address: string, asking: number, mao: number): string {

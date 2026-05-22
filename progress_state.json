@@ -41,8 +41,8 @@
         { "label": "Upsert realtor contact in GHL (search by phone; create if missing)", "done": true },
         { "label": "Create opportunity in Realtor Listings pipeline @ '1. New Listing' with name 'Address · asking $Xk → MAO $Yk'", "done": true },
         { "label": "Email parser: extract address / asking / sqft / realtor info from Zillow/Redfin HTML", "done": false },
-        { "label": "SMS realtor with offer via Twilio (needs TWILIO_ACCOUNT_SID + TWILIO_AUTH_TOKEN bound to Worker)", "done": false },
-        { "label": "Slack notify #base1-sms-leadgen (needs SLACK_BOT_TOKEN bound to Worker)", "done": false },
+        { "label": "SMS realtor with offer via Twilio (needs TWILIO_ACCOUNT_SID + TWILIO_AUTH_TOKEN bound to Worker)", "done": true },
+        { "label": "Slack notify #base1-sms-leadgen (needs SLACK_BOT_TOKEN bound to Worker)", "done": true },
         { "label": "Cloudflare Email Routing: listings@atompropertygroup.org → Worker", "done": false },
         { "label": "Realtor reply handler: Twilio inbound → GHL update + Slack alert", "done": false },
         { "label": "Future: Apify/RentCast ARV integration (replace flat $30/sqft assumption)", "done": false }
