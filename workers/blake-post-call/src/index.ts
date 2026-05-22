@@ -28,8 +28,8 @@ export interface Env {
   ELEVENLABS_WEBHOOK_SECRET: string;
   ELEVENLABS_API_KEY: string;       // needed for outbound dial API
   ANTHROPIC_API_KEY: string;        // post-call structured extraction
-  TWILIO_ACCOUNT_SID: string;       // Pillar B: SMS to listing realtors + Blake outbound dial
-  TWILIO_AUTH_TOKEN: string;        // Pillar B: SMS to listing realtors + Blake outbound dial
+  TWILIO_ACCOUNT_SID: string;       // Reserved: Blake outbound dial + future inbound-webhook signature validation
+  TWILIO_AUTH_TOKEN: string;        // Reserved: same as above. (Listing-realtor SMS goes via GHL Conversations API, not direct Twilio.)
   SLACK_BOT_TOKEN: string;          // Pillar B: post new-listing alerts to #base1-sms-leadgen
   DIAL_STATE: KVNamespace;          // KV for warm-up quota + dial dedupe
 }
@@ -78,8 +78,11 @@ const MAO_BUFFER         = 10000;  // negotiation buffer
 const BLAKE_AGENT_ID = "agent_5001ks3cp069f9rtfz6e81ypgnrd";
 const BLAKE_PHONE_NUMBER_ID = "phnum_8001ks3fhbbpe4vadtrdmparejgw";
 
-// Twilio sending number — shared with Blake outbound dialer (APG-owned).
-const TWILIO_FROM_NUMBER = "+16099449034";
+// Blake's outbound voice number (APG-owned, Twilio-registered, voice-only).
+// NOT used for SMS — listing-realtor SMS goes via GHL Conversations API which
+// auto-routes from GHL's location SMS number (+1 609-699-8437).
+const BLAKE_VOICE_NUMBER = "+16099449034";
+const GHL_SMS_NUMBER = "+16096998437";  // documentation only — GHL auto-uses this
 
 // Slack channel for Pillar B listing alerts. APG bot (@apg_automations) must
 // be /invite'd to this channel for chat.postMessage to succeed.
@@ -402,28 +405,72 @@ async function handleListingEmail(req: Request, env: Env): Promise<Response> {
   }
 
   // 4. SMS the listing realtor with the cash offer.
+  //    Sent via GHL conversations API (NOT direct Twilio) so:
+  //    - Uses GHL's registered SMS number (+1 609-699-8437), not Blake's
+  //      voice-only number (+1 609-944-9034).
+  //    - SMS gets recorded as a GHL conversation on the realtor contact.
+  //    - Realtor replies thread back to the same conversation automatically
+  //      (no separate Twilio inbound webhook plumbing required).
   const realtorFirst = (realtorName.split(" ")[0] || "there").trim();
   const fmtK = (n: number) => `$${Math.round(n / 1000)}k`;
+  const beds = Number(body.beds) || 0;
+  const baths = Number(body.baths) || 0;
   const smsBody =
     `Hi ${realtorFirst}, Mike with Atom Property Group — cash buyer, no contingencies. ` +
     `Saw your listing at ${body.property_address}. ` +
     `Best we can do is ${fmtK(mao)} cash, close in 14 days. ` +
-    `Worth a quick chat? Reply Y or call ${TWILIO_FROM_NUMBER}.`;
+    `Worth a quick chat? Reply Y.`;
 
-  const sms = realtorPhone
-    ? await sendTwilioSms(env, realtorPhone, smsBody)
-    : { ok: false, status: 0, body: "no_realtor_phone" };
+  const sms = realtorContactId
+    ? await sendGhlSms(env, realtorContactId, smsBody)
+    : { ok: false, status: 0, body: "no_realtor_contact_id" };
 
-  // 5. Slack notify #base1-sms-leadgen with the new listing record.
-  const slackText =
-    `:house: *New listing landed* — ${body.property_address}` +
+  // 5. Write a structured listing brief as a NOTE on the realtor contact, so
+  //    RJ/Adam can see the deal context when they open the contact card.
+  const brief =
+    `[Listing brief — ${new Date().toISOString().slice(0, 10)}]\n` +
+    `Address: ${body.property_address}` +
     (body.city ? `, ${body.city}` : "") +
-    (body.state ? `, ${body.state}` : "") + "\n" +
+    (body.state ? `, ${body.state}` : "") +
+    (body.postal_code ? ` ${body.postal_code}` : "") + `\n` +
+    (beds || baths || sqft
+      ? `Property: ${beds || "?"} bd / ${baths || "?"} ba / ${sqft ? sqft.toLocaleString() + " sqft" : "? sqft"}\n`
+      : "") +
+    `Asking: ${fmtK(asking)}\n` +
+    `MAO: ${fmtK(mao)}  (= ${fmtK(arvProxy)} × 0.70 − rehab ${fmtK(rehabEstimate)} − ${fmtK(MAO_BUFFER)} buffer)\n` +
+    `Offer sent via SMS: ${sms.ok ? "yes" : "FAILED — " + sms.body.slice(0, 80)}\n` +
+    (body.listing_url ? `Listing URL: ${body.listing_url}\n` : "") +
+    `Realtor: ${realtorName || "(unknown)"}` +
+    (realtorPhone ? ` · ${realtorPhone}` : "") +
+    (realtorEmail ? ` · ${realtorEmail}` : "");
+  await addNote(env.BLAKE_GHL_PIT, realtorContactId, brief).catch(() => {});
+
+  // 6. Update the realtor contact's VA Notes custom field with the latest
+  //    one-liner so it shows up in the GHL contact list view.
+  const vaNotesLine =
+    `Listed ${body.property_address}${body.city ? ", " + body.city : ""}${body.state ? ", " + body.state : ""} at ${fmtK(asking)}. ` +
+    `MAO ${fmtK(mao)} sent ${sms.ok ? "via SMS" : "(SMS failed)"} ${new Date().toISOString().slice(0, 10)}.`;
+  await setContactCustomField(env.BLAKE_GHL_PIT, realtorContactId, CF_VA_NOTES, vaNotesLine).catch(() => {});
+
+  // 7. Slack alert in #listed-leads. Now includes the property details line
+  //    (beds / baths / sqft) — was missing in v1.
+  const fullAddress =
+    body.property_address +
+    (body.city ? `, ${body.city}` : "") +
+    (body.state ? `, ${body.state}` : "") +
+    (body.postal_code ? ` ${body.postal_code}` : "");
+  const propertyLine =
+    (beds || baths || sqft)
+      ? `> *${beds || "?"} bd · ${baths || "?"} ba · ${sqft ? sqft.toLocaleString() + " sqft" : "? sqft"}*\n`
+      : "";
+  const slackText =
+    `:house: *New listing landed* — ${fullAddress}\n` +
+    propertyLine +
     `> Asking *${fmtK(asking)}* · MAO *${fmtK(mao)}* (ARV ${fmtK(arvProxy)} × 0.70 − rehab ${fmtK(rehabEstimate)} − ${fmtK(MAO_BUFFER)} buffer)\n` +
     `> Realtor: ${realtorName || "(unknown)"} ${realtorPhone || ""} ${realtorEmail ? `<${realtorEmail}>` : ""}\n` +
-    `> SMS to realtor: ${sms.ok ? ":white_check_mark: sent" : `:x: ${sms.status} ${sms.body.slice(0, 100)}`}\n` +
+    `> SMS to realtor: ${sms.ok ? ":white_check_mark: sent via GHL (conversation on contact)" : `:x: ${sms.status} ${sms.body.slice(0, 100)}`}\n` +
     (body.listing_url ? `> Listing: ${body.listing_url}\n` : "") +
-    `> GHL opp: \`${opportunityId}\` (Realtor Listings → 1. New Listing)`;
+    `> GHL opp: \`${opportunityId}\` (Realtor Listings → 1. New Listing) [${oppAction}]`;
   const slack = await postSlackMessage(env, SLACK_LISTINGS_CHANNEL, slackText);
 
   return new Response(
@@ -441,7 +488,7 @@ async function handleListingEmail(req: Request, env: Env): Promise<Response> {
       opportunity_name: oppName,
       opportunity_action: oppAction,   // "created" or "updated" (dedup hit)
       sms_to_realtor: sms.ok
-        ? { ok: true, twilio_sid: sms.twilioSid }
+        ? { ok: true, via: "ghl-conversations", conversation_id: sms.conversationId, message_id: sms.messageId }
         : { ok: false, status: sms.status, error: sms.body.slice(0, 200) },
       slack_notify: slack.ok
         ? { ok: true, ts: slack.ts, channel: slack.channel }
@@ -451,40 +498,40 @@ async function handleListingEmail(req: Request, env: Env): Promise<Response> {
   );
 }
 
-// --- Twilio SMS ---
-// POST to /2010-04-01/Accounts/{SID}/Messages.json with Basic auth (SID:token).
-// Body is x-www-form-urlencoded: From, To, Body.
-async function sendTwilioSms(
+// --- GHL conversations SMS ---
+// POST /conversations/messages with type=SMS + contactId.
+// GHL auto-routes from the location's registered SMS number (+1 609-699-8437)
+// and threads the conversation on the contact. Realtor replies land inbound
+// on the same conversation automatically — no separate Twilio webhook needed.
+//
+// Why NOT direct Twilio:
+//   - Blake's number (+1 609-944-9034) is voice-only, can't send SMS.
+//   - Calling Twilio directly bypasses GHL conversation tracking.
+//   - GHL's number list is the source of truth — if we add/change numbers
+//     there, this code doesn't need updating.
+async function sendGhlSms(
   env: Env,
-  to: string,
+  contactId: string,
   text: string
-): Promise<{ ok: boolean; status: number; body: string; twilioSid?: string }> {
-  if (!env.TWILIO_ACCOUNT_SID || !env.TWILIO_AUTH_TOKEN) {
-    return { ok: false, status: 0, body: "twilio_creds_not_bound" };
-  }
-  const auth = btoa(`${env.TWILIO_ACCOUNT_SID}:${env.TWILIO_AUTH_TOKEN}`);
-  const form = new URLSearchParams({
-    From: TWILIO_FROM_NUMBER,
-    To: to,
-    Body: text,
+): Promise<{ ok: boolean; status: number; body: string; conversationId?: string; messageId?: string }> {
+  const res = await fetch(`${GHL_BASE}/conversations/messages`, {
+    method: "POST",
+    headers: ghlHeaders(env.BLAKE_GHL_PIT),
+    body: JSON.stringify({
+      type: "SMS",
+      contactId,
+      message: text,
+    }),
   });
-  const res = await fetch(
-    `https://api.twilio.com/2010-04-01/Accounts/${env.TWILIO_ACCOUNT_SID}/Messages.json`,
-    {
-      method: "POST",
-      headers: {
-        Authorization: `Basic ${auth}`,
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-      body: form.toString(),
-    }
-  );
   const respText = await res.text();
-  let twilioSid: string | undefined;
+  let conversationId: string | undefined;
+  let messageId: string | undefined;
   try {
-    twilioSid = JSON.parse(respText)?.sid;
+    const j = JSON.parse(respText);
+    conversationId = j?.conversationId;
+    messageId = j?.messageId;
   } catch {}
-  return { ok: res.ok, status: res.status, body: respText, twilioSid };
+  return { ok: res.ok, status: res.status, body: respText, conversationId, messageId };
 }
 
 // --- Slack chat.postMessage ---
