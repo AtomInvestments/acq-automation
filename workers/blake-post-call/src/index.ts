@@ -518,6 +518,7 @@ async function handleConversationInit(req: Request, env: Env): Promise<Response>
     timeline: "",
     asking_price: "",
     last_call_summary: "",
+    seller_file: "",   // Composed below from recent notes if contact exists
   };
 
   let firstMessage = ownerUnknownFirstMessage();
@@ -530,6 +531,39 @@ async function handleConversationInit(req: Request, env: Env): Promise<Response>
         const firstName = (contact.firstName || "").trim();
         const lastName = (contact.lastName || "").trim();
         const address = (contact.address1 || "").trim();
+
+        // SELLER FILE: compose a Markdown-flavored brief of everything we
+        // know about this seller, so Blake walks into the call already
+        // briefed instead of asking questions we already have answers to.
+        // Pulls structured fields + last APG Lead Summary note (the
+        // canonical record from prior Blake calls).
+        const fullAddress = [contact.address1, contact.city, contact.state, contact.postalCode]
+          .filter(Boolean).join(", ");
+        let sellerFileLines = [
+          `Name: ${firstName} ${lastName}`.trim() || "Name: (unknown)",
+          fullAddress ? `Property: ${fullAddress}` : null,
+          cfMap[CF_BEDS] ? `Beds: ${cfMap[CF_BEDS]}` : null,
+          cfMap[CF_BATHS] ? `Baths: ${cfMap[CF_BATHS]}` : null,
+          cfMap[CF_SQFT] ? `Sqft: ${cfMap[CF_SQFT]}` : null,
+          cfMap[CF_ASKING] ? `Asking price: $${cfMap[CF_ASKING]}` : null,
+          cfMap[CF_MOTIVATION] ? `Motivation: ${cfMap[CF_MOTIVATION]}` : null,
+          cfMap[CF_TIMELINE] ? `Timeline: ${cfMap[CF_TIMELINE]}` : null,
+        ].filter(Boolean) as string[];
+
+        // Pull the latest APG Lead Summary note (Blake's own prior call notes)
+        try {
+          const lastSummary = await getLatestApgLeadSummary(env.BLAKE_GHL_PIT, contact.id);
+          if (lastSummary) {
+            sellerFileLines.push("");
+            sellerFileLines.push("Last Blake call notes:");
+            sellerFileLines.push(lastSummary);
+          }
+        } catch (e) {
+          // best-effort; ignore failures
+        }
+
+        const sellerFile = sellerFileLines.join("\n");
+
         vars = {
           first_name: firstName,
           full_name: `${firstName} ${lastName}`.trim(),
@@ -539,9 +573,10 @@ async function handleConversationInit(req: Request, env: Env): Promise<Response>
           timeline: cfMap[CF_TIMELINE] || "",
           asking_price: cfMap[CF_ASKING] ? String(cfMap[CF_ASKING]) : "",
           last_call_summary: cfMap[CF_VA_NOTES] || "",
+          seller_file: sellerFile,
         };
         firstMessage = ownerKnownFirstMessage(firstName, address);
-        console.log(`[init] matched contact id=${contact.id} name="${firstName} ${lastName}"`);
+        console.log(`[init] matched contact id=${contact.id} name="${firstName} ${lastName}" seller_file_chars=${sellerFile.length}`);
       } else {
         console.log(`[init] no GHL contact for ${callerPhone} → owner-unknown branch`);
       }
@@ -605,6 +640,29 @@ function customFieldMap(fields: any[]): Record<string, any> {
     if (f?.id) out[f.id] = f.value;
   }
   return out;
+}
+
+// Fetch the latest "APG Lead Summary" note for a contact (Blake's prior-call
+// canonical record). Returns the body text or null if none found. Used by
+// /conversation-init to compose the seller_file dynamic variable.
+async function getLatestApgLeadSummary(pit: string, contactId: string): Promise<string | null> {
+  const res = await fetch(`${GHL_BASE}/contacts/${contactId}/notes`, {
+    method: "GET",
+    headers: ghlHeaders(pit),
+  });
+  if (!res.ok) return null;
+  const json: any = await res.json();
+  const notes: any[] = json?.notes || [];
+  // Sort newest first
+  const sorted = [...notes].sort((a, b) => (b?.dateAdded || "").localeCompare(a?.dateAdded || ""));
+  const summary = sorted.find((n) => (n?.body || "").startsWith("APG Lead Summary"));
+  if (!summary) return null;
+  // Return the body but trim noise (boilerplate header lines we ourselves wrote)
+  let body = String(summary.body || "");
+  // Remove the proxied recording URL — Blake doesn't need to read it aloud
+  body = body.replace(/🎧 Recording:.*$/m, "").trim();
+  // Cap length so the prompt doesn't balloon
+  return body.length > 2000 ? body.slice(0, 2000) + "...(truncated)" : body;
 }
 
 async function handleWebhook(req: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
