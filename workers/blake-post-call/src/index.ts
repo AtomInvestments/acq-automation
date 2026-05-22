@@ -230,6 +230,17 @@ export default {
       });
     }
 
+    // /debug/last-dtmf — returns the most recent Twilio DTMF inject attempt
+    // (only fires on GHL-forwarded calls). Used to verify the inject ran and
+    // see what Twilio returned (success / error / which call SID).
+    if (req.method === "GET" && url.pathname === "/debug/last-dtmf") {
+      const snapshot = await env.DIAL_STATE.get("debug:last_dtmf");
+      return new Response(snapshot || JSON.stringify({ none: true }), {
+        status: 200,
+        headers: { "content-type": "application/json" },
+      });
+    }
+
     // /dashboard-data — JSON feed for the live Blake dashboard at
     // atominvestments.github.io/acq-automation/blake.html. 30-sec KV cache
     // to keep ElevenLabs + GHL API load bounded even with multiple viewers.
@@ -1043,12 +1054,28 @@ async function handleConversationInit(req: Request, env: Env): Promise<Response>
   const isGhlForward = !!callerPhone && GHL_FORWARD_NUMBERS.has(callerPhone);
   if (isGhlForward && callSid) {
     console.log(`[init] GHL forward detected from ${callerPhone} → injecting DTMF "1" on call ${callSid}`);
-    // Fire-and-forget — don't await, don't block init response
+    // Fire-and-forget — don't await, don't block init response.
+    // ALSO persist the result to KV so /debug/last-dtmf can verify it ran.
     injectDtmfOnTwilioCall(env, callSid, "1")
-      .then((r) => console.log(`[init] DTMF inject: ${r.ok ? "OK" : "FAIL"} ${r.status} ${r.body.slice(0, 200)}`))
-      .catch((e) => console.warn(`[init] DTMF inject threw: ${e}`));
+      .then((r) => {
+        const log = {
+          at: new Date().toISOString(),
+          callSid, callerPhone, digit: "1",
+          ok: r.ok, status: r.status, body: r.body.slice(0, 800),
+        };
+        console.log(`[init] DTMF inject: ${r.ok ? "OK" : "FAIL"} ${r.status} ${r.body.slice(0, 200)}`);
+        return env.DIAL_STATE.put("debug:last_dtmf", JSON.stringify(log), { expirationTtl: 3600 });
+      })
+      .catch((e) => {
+        const log = { at: new Date().toISOString(), callSid, callerPhone, error: String(e) };
+        console.warn(`[init] DTMF inject threw: ${e}`);
+        return env.DIAL_STATE.put("debug:last_dtmf", JSON.stringify(log), { expirationTtl: 3600 });
+      });
   } else if (isGhlForward && !callSid) {
     console.warn(`[init] GHL forward from ${callerPhone} but no call_sid in payload — can't inject DTMF`);
+    await env.DIAL_STATE.put("debug:last_dtmf", JSON.stringify({
+      at: new Date().toISOString(), callerPhone, error: "no_call_sid_in_payload"
+    }), { expirationTtl: 3600 });
   }
   // For GHL forwards we DON'T know who the real seller is (the external_number
   // is the GHL number, not the original caller). Skip the contact lookup and
@@ -1070,7 +1097,11 @@ async function handleConversationInit(req: Request, env: Env): Promise<Response>
     seller_file: "",   // Composed below from recent notes if contact exists
   };
 
-  let firstMessage = ownerUnknownFirstMessage();
+  // For GHL forwards, blank the first_message so Blake stays silent while
+  // the whisper plays + DTMF injects accept it. Once the real seller speaks,
+  // Blake's normal turn-taking will trigger his (prompt-driven) greeting.
+  // For all other call types, use the owner-unknown opener.
+  let firstMessage = isGhlForward ? "" : ownerUnknownFirstMessage();
 
   // Only look up the caller in GHL if it's NOT a GHL-number forward.
   // (For forwards, the external_number is the GHL number itself, not the real
