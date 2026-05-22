@@ -320,18 +320,26 @@ async function computeDashboardData(env: Env): Promise<any> {
       const listStatus = c.status || c.call_status || "";
 
       if (!d) {
-        // Sparse — older call we didn't hydrate. List response only.
+        // Sparse — older call we didn't hydrate. Surface whatever the list
+        // endpoint gave us so the row isn't useless; don't show developer-y
+        // placeholder text like "(not hydrated)" to non-technical viewers.
+        const listPhone =
+          c?.metadata?.phone_call?.external_number ||
+          c?.metadata?.phone_number ||
+          c?.caller_id ||
+          c?.from ||
+          "";
         return {
           conv_id: convId,
           started_unix: listStartUnix,
           duration_secs: listDuration,
-          caller_phone: "",
-          caller_name: "(not hydrated)",
+          caller_phone: listPhone,
+          caller_name: listPhone || "—",
           caller_address: "",
           ghl_contact_id: "",
           outcome_tag: "unknown",
-          outcome_label: listStatus || "Completed",
-          summary: "(open in ElevenLabs to see full transcript)",
+          outcome_label: listStatus === "done" || listStatus === "completed" ? "Completed" : (listStatus || "Completed"),
+          summary: "",
           hydrated: false,
         };
       }

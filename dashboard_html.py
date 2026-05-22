@@ -640,6 +640,7 @@ section h2, h2 {
     <a href="priorities.html">Priority</a>
     <a href="markets.html">Markets</a>
     <a href="blake.html">Blake</a>
+    <a href="progress.html">Progress</a>
     <a href="ai-agents-plan.html">AI Agents Plan</a>
     <a href="about.html">About</a>
   </nav>

@@ -1,0 +1,346 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>APG ACQ — Project Tracker</title>
+<style>
+:root {
+  --ink: #0A1F44;
+  --ink-deep: #061331;
+  --ink-soft: #1A3A7A;
+  --gold: #F5C518;
+  --gold-soft: #FFE58A;
+  --gold-wash: #FFF6D0;
+  --cream: #FAF7EC;
+  --cream-deep: #F3EED8;
+  --paper: #FFFFFF;
+  --rule: #C9C2A8;
+  --muted: #5A6786;
+  --muted-soft: #8A93AA;
+  --text: #101827;
+  --s-uc:   #B91C1C;
+  --s-live: #10B981;
+  --s-warm: #EA580C;
+  --s-hold: #EAB308;
+  --s-dead: #6B625A;
+}
+* { box-sizing: border-box; }
+html, body {
+  margin: 0; padding: 0; background: var(--cream); color: var(--text);
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 16px; line-height: 1.6;
+}
+.shell {
+  max-width: 1240px; margin: 0 auto;
+  padding: 40px 64px 120px;
+  background: var(--paper); min-height: 100vh;
+}
+@media (max-width: 820px) { .shell { padding: 32px 24px 80px; } }
+
+.masthead {
+  border-top: 5px solid var(--ink);
+  border-bottom: 1px solid var(--rule);
+  padding: 28px 0 24px; margin-bottom: 24px; position: relative;
+}
+.masthead::before {
+  content: ""; position: absolute; left: 0; top: 0;
+  width: 160px; height: 5px; background: var(--gold);
+}
+.brandrow {
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 16px; flex-wrap: wrap; gap: 8px;
+}
+h1 {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 54px; line-height: 1.04; letter-spacing: -0.015em;
+  margin: 0 0 14px; color: var(--ink); font-weight: 700;
+}
+h1 .accent { color: var(--gold); font-style: italic; }
+.dek {
+  font-family: Georgia, serif; font-style: italic; font-size: 18px;
+  line-height: 1.5; color: var(--ink-soft); max-width: 780px; margin: 10px 0 0;
+}
+
+.topnav {
+  position: sticky; top: 0; z-index: 50;
+  background: rgba(250, 247, 236, 0.96); backdrop-filter: blur(6px);
+  border-bottom: 1px solid var(--rule);
+  margin: 0 -64px 28px; padding: 10px 64px;
+  font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--muted);
+  display: flex; gap: 18px; overflow-x: auto; white-space: nowrap;
+}
+@media (max-width: 820px) { .topnav { margin: 0 -24px 24px; padding: 10px 24px; } }
+.topnav a { color: var(--ink-soft); text-decoration: none; font-weight: 700; padding: 4px 0; border-bottom: 2px solid transparent; }
+.topnav a:hover, .topnav a.active { color: var(--ink); border-bottom: 2px solid var(--gold); }
+
+.summary-row {
+  display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin: 18px 0 32px;
+}
+@media (max-width: 1100px) { .summary-row { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 600px)  { .summary-row { grid-template-columns: repeat(2, 1fr); } }
+.summary-kpi {
+  background: var(--cream); border-top: 4px solid var(--gold);
+  border-bottom: 1px solid var(--rule); padding: 14px 16px 16px;
+}
+.summary-kpi .label {
+  font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 6px; font-weight: 700;
+}
+.summary-kpi .v {
+  font-family: Georgia, serif; font-size: 28px; font-weight: 700;
+  color: var(--ink); line-height: 1; margin: 0;
+}
+.summary-kpi .v small { font-size: 14px; color: var(--muted); margin-left: 6px; }
+.summary-kpi.live { border-top-color: var(--s-live); } .summary-kpi.live .v { color: var(--s-live); }
+.summary-kpi.warm { border-top-color: var(--s-warm); } .summary-kpi.warm .v { color: var(--s-warm); }
+
+.pillar {
+  border-top: 1px solid var(--rule);
+  padding: 32px 0;
+}
+.pillar:first-of-type { border-top: 0; padding-top: 0; }
+
+.pillar-header {
+  display: flex; justify-content: space-between; align-items: flex-end;
+  margin-bottom: 14px; gap: 18px; flex-wrap: wrap;
+}
+.pillar h2 {
+  font-family: Georgia, serif; font-size: 24px; color: var(--ink);
+  margin: 0; padding: 0; border: 0; letter-spacing: -0.01em;
+  display: flex; align-items: center; gap: 12px;
+}
+.status-pill {
+  font-family: Helvetica, Arial, sans-serif;
+  font-size: 10px; font-weight: 800; letter-spacing: 0.12em;
+  text-transform: uppercase; padding: 3px 10px; border-radius: 3px;
+}
+.status-pill.active     { background: var(--s-live); color: white; }
+.status-pill.in-progress{ background: var(--gold); color: var(--ink); }
+.status-pill.planned    { background: var(--cream-deep); color: var(--muted); border: 1px solid var(--rule); }
+
+.progress-bar {
+  flex: 0 0 200px; height: 8px; background: var(--cream-deep);
+  border-radius: 4px; overflow: hidden; position: relative; margin-top: 8px;
+}
+.progress-bar .fill {
+  height: 100%; background: var(--gold); border-radius: 4px;
+  transition: width 0.4s;
+}
+.progress-bar.complete .fill { background: var(--s-live); }
+.progress-label {
+  font-size: 11px; font-weight: 700; letter-spacing: 0.10em; text-transform: uppercase;
+  color: var(--muted); margin-top: 4px;
+}
+
+.pillar .summary {
+  font-family: Georgia, serif; font-style: italic; font-size: 14.5px;
+  color: var(--ink-soft); padding: 8px 0 4px 16px;
+  border-left: 3px solid var(--gold); margin-bottom: 18px;
+  max-width: 880px;
+}
+
+.tasks {
+  list-style: none; padding: 0; margin: 0;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 6px 24px;
+}
+@media (max-width: 820px) { .tasks { grid-template-columns: 1fr; } }
+.task {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 8px 0; border-bottom: 1px dashed var(--rule);
+  font-size: 14px; line-height: 1.45;
+}
+.task .checkbox {
+  flex-shrink: 0; width: 18px; height: 18px; border-radius: 3px;
+  border: 1.5px solid var(--muted-soft); margin-top: 2px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 800; color: white;
+}
+.task.done .checkbox {
+  background: var(--s-live); border-color: var(--s-live);
+}
+.task.done .checkbox::after { content: "✓"; }
+.task.done .label { color: var(--muted); text-decoration: line-through; }
+
+.footer {
+  margin-top: 56px; padding-top: 20px;
+  border-top: 3px double var(--ink);
+  display: flex; justify-content: space-between;
+  font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--muted); font-weight: 700; flex-wrap: wrap; gap: 12px;
+}
+.footer .gold-stamp { display: inline-block; padding: 4px 10px; background: var(--gold); color: var(--ink); letter-spacing: 0.14em; }
+</style>
+</head>
+<body>
+<div class="shell">
+
+  <header class="masthead">
+    <div class="brandrow">
+      <img src="logo.svg" alt="Atom Property Group" style="height:32px;width:auto">
+      <span>Updated May 22, 2026 · 01:41 PM ET</span>
+    </div>
+    <h1>Project <span class="accent">Tracker.</span></h1>
+    <p class="dek">Every active plan APG is shipping right now, with live checkbox state. Source of truth is <code>progress_state.json</code> in the repo — edit, commit, push, and this page re-renders on the next cron tick.</p>
+  </header>
+
+  <nav class="topnav">
+    <a href="index.html">Follow-Ups</a>
+    <a href="deals.html">Deals</a>
+    <a href="weekly.html">Weekly</a>
+    <a href="priorities.html">Priority</a>
+    <a href="markets.html">Markets</a>
+    <a href="blake.html">Blake</a>
+    <a href="progress.html" class="active">Progress</a>
+    <a href="ai-agents-plan.html">AI Agents Plan</a>
+    <a href="about.html">About</a>
+  </nav>
+
+  <div class="summary-row">
+    
+      <div class="summary-kpi live"><div class="label">Overall Completion</div><p class="v">43<small>%</small></p></div>
+      <div class="summary-kpi"><div class="label">Tasks Done</div><p class="v">25<small> / 57</small></p></div>
+      <div class="summary-kpi live"><div class="label">Active Pillars</div><p class="v">2</p></div>
+      <div class="summary-kpi warm"><div class="label">In Progress</div><p class="v">1</p></div>
+      <div class="summary-kpi"><div class="label">Planned</div><p class="v">2</p></div>
+    
+  </div>
+
+  
+    <section class="pillar">
+      <div class="pillar-header">
+        <h2>Pillar A — Blake the Voice Agent <span class="status-pill active">ACTIVE</span></h2>
+        <div>
+          <div class="progress-bar"><div class="fill" style="width:78%"></div></div>
+          <div class="progress-label">15 / 19 done · 78%</div>
+        </div>
+      </div>
+      <p class="summary">Single AI voice agent that qualifies sellers on phone calls + hands off warm leads to RJ. Runs on ElevenLabs + Twilio +1 (609) 944-9034 + Cloudflare Workers + GHL.</p>
+      <ul class="tasks">
+        <li class="task done"><span class="checkbox"></span><span class="label">ElevenLabs Conversational AI account on mithchell@atompropertygroup.org</span></li>
+<li class="task done"><span class="checkbox"></span><span class="label">Twilio +1 (609) 944-9034 number provisioned + STIR/SHAKEN compliant</span></li>
+<li class="task done"><span class="checkbox"></span><span class="label">Blake agent created in ElevenLabs</span></li>
+<li class="task done"><span class="checkbox"></span><span class="label">GHL Private Integration Token (BLAKE_GHL_PIT) for tool calls</span></li>
+<li class="task done"><span class="checkbox"></span><span class="label">8 in-call tools wired (lookup, save summary, set lead temp, RJ task, stage move, DND, etc.)</span></li>
+<li class="task done"><span class="checkbox"></span><span class="label">Built-in tools enabled (end_call, voicemail_detection, skip_turn)</span></li>
+<li class="task done"><span class="checkbox"></span><span class="label">Cloudflare Worker `acq-automation` deployed</span></li>
+<li class="task done"><span class="checkbox"></span><span class="label">Post-call webhook → GHL backup note + recording URL + blake-called tag</span></li>
+<li class="task done"><span class="checkbox"></span><span class="label">/conversation-init webhook with Seller File pre-call briefing</span></li>
+<li class="task done"><span class="checkbox"></span><span class="label">Post-call structured extractor (Claude) → auto-writes address / lead temp / RJ task / opportunity stage</span></li>
+<li class="task done"><span class="checkbox"></span><span class="label">Auto-create opportunity in ACQ pipeline with APG-format name &#x27;Name / Address / Phone&#x27;</span></li>
+<li class="task done"><span class="checkbox"></span><span class="label">Voice prompt v1.3 (no narration / read Seller File / end-call confirmation read-back)</span></li>
+<li class="task done"><span class="checkbox"></span><span class="label">Outbound dialer Worker (warm-up curve, TCPA windows, ElevenLabs outbound API)</span></li>
+<li class="task done"><span class="checkbox"></span><span class="label">Cron Trigger every 15 min — auto-dial unqualified contacts within quota</span></li>
+<li class="task done"><span class="checkbox"></span><span class="label">Live dashboard at /blake.html (Worker /dashboard-data, 10-sec polling)</span></li>
+<li class="task"><span class="checkbox"></span><span class="label">Adam records 30-min voice clone session (hard gate before scaling)</span></li>
+<li class="task"><span class="checkbox"></span><span class="label">RJ&#x27;s GHL user ID provisioned (replaces Mike fallback on callback tasks)</span></li>
+<li class="task"><span class="checkbox"></span><span class="label">TCPA consent triage on the 398 unqualified (Adam review)</span></li>
+<li class="task"><span class="checkbox"></span><span class="label">Pilot 10 real outbound dials + transcript review</span></li>
+      </ul>
+    </section>
+    
+
+    <section class="pillar">
+      <div class="pillar-header">
+        <h2>Pillar B — Listing Pipeline (Zillow / Redfin) <span class="status-pill in-progress">IN PROGRESS</span></h2>
+        <div>
+          <div class="progress-bar"><div class="fill" style="width:0%"></div></div>
+          <div class="progress-label">0 / 11 done · 0%</div>
+        </div>
+      </div>
+      <p class="summary">Email-driven realtor outreach. Zillow/Redfin listing alert arrives → Worker parses → computes MAO = ARV × 0.7 − (sqft × $30) − $10k → SMS to listing realtor → GHL Realtor Listings pipeline → Slack notify.</p>
+      <ul class="tasks">
+        <li class="task"><span class="checkbox"></span><span class="label">Create &#x27;D. 🏠 Realtor Listings&#x27; pipeline in GHL</span></li>
+<li class="task"><span class="checkbox"></span><span class="label">Scaffold listing-pipeline Worker endpoint (POST /listing-email)</span></li>
+<li class="task"><span class="checkbox"></span><span class="label">Email parser: address / asking / sqft / realtor info</span></li>
+<li class="task"><span class="checkbox"></span><span class="label">MAO calculator: ARV × 0.7 − sqft × $30 − $10k</span></li>
+<li class="task"><span class="checkbox"></span><span class="label">Create realtor contact in GHL (if not exists)</span></li>
+<li class="task"><span class="checkbox"></span><span class="label">Create opportunity in Realtor Listings pipeline @ &#x27;1. New Listing&#x27;</span></li>
+<li class="task"><span class="checkbox"></span><span class="label">SMS realtor with offer via Twilio</span></li>
+<li class="task"><span class="checkbox"></span><span class="label">Slack notify #base1-sms-leadgen</span></li>
+<li class="task"><span class="checkbox"></span><span class="label">Cloudflare Email Routing: listings@atompropertygroup.org → Worker</span></li>
+<li class="task"><span class="checkbox"></span><span class="label">Realtor reply handler: Twilio inbound → GHL update + Slack alert</span></li>
+<li class="task"><span class="checkbox"></span><span class="label">Future: Apify/RentCast ARV integration (replace flat $30/sqft assumption)</span></li>
+      </ul>
+    </section>
+    
+
+    <section class="pillar">
+      <div class="pillar-header">
+        <h2>Pillar C — Vault + Self-Improvement <span class="status-pill planned">PLANNED</span></h2>
+        <div>
+          <div class="progress-bar"><div class="fill" style="width:0%"></div></div>
+          <div class="progress-label">0 / 8 done · 0%</div>
+        </div>
+      </div>
+      <p class="summary">Every conversation live-syncs to APG-Vault as markdown. Self-improvement loop fires when 50+ new transcripts accumulate — Claude reads the batch, drafts Blake v1.4, A/B tests, promotes winner.</p>
+      <ul class="tasks">
+        <li class="task"><span class="checkbox"></span><span class="label">Vault sync: every Blake conversation → APG-Vault markdown</span></li>
+<li class="task"><span class="checkbox"></span><span class="label">Vault sync: every SmarterContact thread → vault</span></li>
+<li class="task"><span class="checkbox"></span><span class="label">Vault sync: every #base1-sms-leadgen Slack message → vault</span></li>
+<li class="task"><span class="checkbox"></span><span class="label">Self-improvement trigger: fire on 50+ new transcripts</span></li>
+<li class="task"><span class="checkbox"></span><span class="label">Claude prompt-iteration loop: draft new Blake version</span></li>
+<li class="task"><span class="checkbox"></span><span class="label">A/B test infrastructure: 20-30% of calls on new version</span></li>
+<li class="task"><span class="checkbox"></span><span class="label">Auto-promote winning version</span></li>
+<li class="task"><span class="checkbox"></span><span class="label">Daily Slack summary of Blake calls</span></li>
+      </ul>
+    </section>
+    
+
+    <section class="pillar">
+      <div class="pillar-header">
+        <h2>Pillar D — Training Video Factory <span class="status-pill planned">PLANNED</span></h2>
+        <div>
+          <div class="progress-bar"><div class="fill" style="width:0%"></div></div>
+          <div class="progress-label">0 / 6 done · 0%</div>
+        </div>
+      </div>
+      <p class="summary">SOPs in vault tagged #video-ready → Claude script → ElevenLabs trainer voice → Fal.AI animations → ffmpeg composite → MP4 in vault. ~$10-35/video.</p>
+      <ul class="tasks">
+        <li class="task"><span class="checkbox"></span><span class="label">SOP indexing in vault (tag with #video-ready)</span></li>
+<li class="task"><span class="checkbox"></span><span class="label">Claude script generator (hook → 3-5 points → summary)</span></li>
+<li class="task"><span class="checkbox"></span><span class="label">ElevenLabs trainer voice (separate from Blake)</span></li>
+<li class="task"><span class="checkbox"></span><span class="label">Fal.AI scene-by-scene animation generator</span></li>
+<li class="task"><span class="checkbox"></span><span class="label">ffmpeg composite pipeline</span></li>
+<li class="task"><span class="checkbox"></span><span class="label">Vault output: per-video markdown wrapper</span></li>
+      </ul>
+    </section>
+    
+
+    <section class="pillar">
+      <div class="pillar-header">
+        <h2>Infrastructure <span class="status-pill active">ACTIVE</span></h2>
+        <div>
+          <div class="progress-bar"><div class="fill" style="width:76%"></div></div>
+          <div class="progress-label">10 / 13 done · 76%</div>
+        </div>
+      </div>
+      <p class="summary">Repos, credentials, account chain, dashboards.</p>
+      <ul class="tasks">
+        <li class="task done"><span class="checkbox"></span><span class="label">AtomInvestments GitHub account + acq-automation repo (transferred from Mid0117)</span></li>
+<li class="task done"><span class="checkbox"></span><span class="label">Cloudflare account on mithchell@atompropertygroup.org</span></li>
+<li class="task done"><span class="checkbox"></span><span class="label">CF Workers Builds → auto-deploy on push</span></li>
+<li class="task done"><span class="checkbox"></span><span class="label">CF Worker secrets: BLAKE_GHL_PIT, ELEVENLABS_API_KEY, ELEVENLABS_WEBHOOK_SECRET, ANTHROPIC_API_KEY</span></li>
+<li class="task done"><span class="checkbox"></span><span class="label">DIAL_STATE KV namespace for warm-up + dedupe</span></li>
+<li class="task done"><span class="checkbox"></span><span class="label">GHL Private Integration Token + scopes</span></li>
+<li class="task done"><span class="checkbox"></span><span class="label">Master credentials inventory in APG-Vault/_internal/credentials.md</span></li>
+<li class="task done"><span class="checkbox"></span><span class="label">Live dashboard at atominvestments.github.io/acq-automation/blake.html</span></li>
+<li class="task done"><span class="checkbox"></span><span class="label">All-time call history visible on Blake dashboard</span></li>
+<li class="task done"><span class="checkbox"></span><span class="label">APG logo wired into Blake dashboard</span></li>
+<li class="task"><span class="checkbox"></span><span class="label">SmarterContact account email migration to mithchell@atompropertygroup.org</span></li>
+<li class="task"><span class="checkbox"></span><span class="label">Worker #3: slack-listener replaces slack.yml cron</span></li>
+<li class="task"><span class="checkbox"></span><span class="label">Worker #4: sms-reply-handler replaces sms.yml cron</span></li>
+      </ul>
+    </section>
+    
+
+  <div class="footer">
+    <span>Auto-generated from progress_state.json · APG ACQ Operating Layer</span>
+    <span class="gold-stamp">Tracker · Live</span>
+  </div>
+
+</div>
+</body>
+</html>

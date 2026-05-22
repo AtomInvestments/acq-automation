@@ -232,7 +232,7 @@ h2 .sec-count { margin-left: auto; font-size: 11px; letter-spacing: 0.18em; text
 
   <header class="masthead">
     <div class="brandrow">
-      <span class="brand">Atom Property Group · AI Operations</span>
+      <img src="logo.svg" alt="Atom Property Group" style="height:32px;width:auto;display:inline-block;vertical-align:middle">
       <span><span id="updated-at">Loading…</span> <span class="live-pill" id="live-pill"><span class="dot"></span>Live</span></span>
     </div>
     <h1>Blake <span class="accent">Live.</span></h1>
@@ -246,6 +246,7 @@ h2 .sec-count { margin-left: auto; font-size: 11px; letter-spacing: 0.18em; text
     <a href="priorities.html">Priority</a>
     <a href="markets.html">Markets</a>
     <a href="blake.html" class="active">Blake</a>
+    <a href="progress.html">Progress</a>
     <a href="ai-agents-plan.html">AI Agents Plan</a>
     <a href="about.html">About</a>
   </nav>
@@ -368,7 +369,7 @@ function renderCalls(calls, blakeAgentId, locationId) {
       : `<div class="caller">${escapeHtml(c.caller_name || "(unknown)")}</div>
          <div class="addr">${escapeHtml(c.caller_address || "—")} · ${escapeHtml(c.caller_phone || "")}</div>`;
     const summaryCell = isSparse
-      ? `<div class="summary" style="color:var(--muted);font-style:italic">${escapeHtml(c.summary || "(transcript not loaded)")}</div>`
+      ? '<div class="summary" style="color:var(--muted-soft)">&mdash;</div>'
       : `<div class="summary">${escapeHtml(c.summary || "")}</div>`;
     return `
       <tr${isNew ? ' class="new"' : ""}${isSparse ? ' style="opacity:0.75"' : ""}>

@@ -1,0 +1,103 @@
+{
+  "schema_version": 1,
+  "last_updated": "2026-05-21",
+  "pillars": [
+    {
+      "id": "pillar-a-blake",
+      "name": "Pillar A — Blake the Voice Agent",
+      "status": "active",
+      "summary": "Single AI voice agent that qualifies sellers on phone calls + hands off warm leads to RJ. Runs on ElevenLabs + Twilio +1 (609) 944-9034 + Cloudflare Workers + GHL.",
+      "tasks": [
+        { "label": "ElevenLabs Conversational AI account on mithchell@atompropertygroup.org", "done": true },
+        { "label": "Twilio +1 (609) 944-9034 number provisioned + STIR/SHAKEN compliant", "done": true },
+        { "label": "Blake agent created in ElevenLabs", "done": true },
+        { "label": "GHL Private Integration Token (BLAKE_GHL_PIT) for tool calls", "done": true },
+        { "label": "8 in-call tools wired (lookup, save summary, set lead temp, RJ task, stage move, DND, etc.)", "done": true },
+        { "label": "Built-in tools enabled (end_call, voicemail_detection, skip_turn)", "done": true },
+        { "label": "Cloudflare Worker `acq-automation` deployed", "done": true },
+        { "label": "Post-call webhook → GHL backup note + recording URL + blake-called tag", "done": true },
+        { "label": "/conversation-init webhook with Seller File pre-call briefing", "done": true },
+        { "label": "Post-call structured extractor (Claude) → auto-writes address / lead temp / RJ task / opportunity stage", "done": true },
+        { "label": "Auto-create opportunity in ACQ pipeline with APG-format name 'Name / Address / Phone'", "done": true },
+        { "label": "Voice prompt v1.3 (no narration / read Seller File / end-call confirmation read-back)", "done": true },
+        { "label": "Outbound dialer Worker (warm-up curve, TCPA windows, ElevenLabs outbound API)", "done": true },
+        { "label": "Cron Trigger every 15 min — auto-dial unqualified contacts within quota", "done": true },
+        { "label": "Live dashboard at /blake.html (Worker /dashboard-data, 10-sec polling)", "done": true },
+        { "label": "Adam records 30-min voice clone session (hard gate before scaling)", "done": false },
+        { "label": "RJ's GHL user ID provisioned (replaces Mike fallback on callback tasks)", "done": false },
+        { "label": "TCPA consent triage on the 398 unqualified (Adam review)", "done": false },
+        { "label": "Pilot 10 real outbound dials + transcript review", "done": false }
+      ]
+    },
+    {
+      "id": "pillar-b-listing-pipeline",
+      "name": "Pillar B — Listing Pipeline (Zillow / Redfin)",
+      "status": "in-progress",
+      "summary": "Email-driven realtor outreach. Zillow/Redfin listing alert arrives → Worker parses → computes MAO = ARV × 0.7 − (sqft × $30) − $10k → SMS to listing realtor → GHL Realtor Listings pipeline → Slack notify.",
+      "tasks": [
+        { "label": "Create 'D. 🏠 Realtor Listings' pipeline in GHL", "done": false },
+        { "label": "Scaffold listing-pipeline Worker endpoint (POST /listing-email)", "done": false },
+        { "label": "Email parser: address / asking / sqft / realtor info", "done": false },
+        { "label": "MAO calculator: ARV × 0.7 − sqft × $30 − $10k", "done": false },
+        { "label": "Create realtor contact in GHL (if not exists)", "done": false },
+        { "label": "Create opportunity in Realtor Listings pipeline @ '1. New Listing'", "done": false },
+        { "label": "SMS realtor with offer via Twilio", "done": false },
+        { "label": "Slack notify #base1-sms-leadgen", "done": false },
+        { "label": "Cloudflare Email Routing: listings@atompropertygroup.org → Worker", "done": false },
+        { "label": "Realtor reply handler: Twilio inbound → GHL update + Slack alert", "done": false },
+        { "label": "Future: Apify/RentCast ARV integration (replace flat $30/sqft assumption)", "done": false }
+      ]
+    },
+    {
+      "id": "pillar-c-vault-self-improvement",
+      "name": "Pillar C — Vault + Self-Improvement",
+      "status": "planned",
+      "summary": "Every conversation live-syncs to APG-Vault as markdown. Self-improvement loop fires when 50+ new transcripts accumulate — Claude reads the batch, drafts Blake v1.4, A/B tests, promotes winner.",
+      "tasks": [
+        { "label": "Vault sync: every Blake conversation → APG-Vault markdown", "done": false },
+        { "label": "Vault sync: every SmarterContact thread → vault", "done": false },
+        { "label": "Vault sync: every #base1-sms-leadgen Slack message → vault", "done": false },
+        { "label": "Self-improvement trigger: fire on 50+ new transcripts", "done": false },
+        { "label": "Claude prompt-iteration loop: draft new Blake version", "done": false },
+        { "label": "A/B test infrastructure: 20-30% of calls on new version", "done": false },
+        { "label": "Auto-promote winning version", "done": false },
+        { "label": "Daily Slack summary of Blake calls", "done": false }
+      ]
+    },
+    {
+      "id": "pillar-d-training-videos",
+      "name": "Pillar D — Training Video Factory",
+      "status": "planned",
+      "summary": "SOPs in vault tagged #video-ready → Claude script → ElevenLabs trainer voice → Fal.AI animations → ffmpeg composite → MP4 in vault. ~$10-35/video.",
+      "tasks": [
+        { "label": "SOP indexing in vault (tag with #video-ready)", "done": false },
+        { "label": "Claude script generator (hook → 3-5 points → summary)", "done": false },
+        { "label": "ElevenLabs trainer voice (separate from Blake)", "done": false },
+        { "label": "Fal.AI scene-by-scene animation generator", "done": false },
+        { "label": "ffmpeg composite pipeline", "done": false },
+        { "label": "Vault output: per-video markdown wrapper", "done": false }
+      ]
+    },
+    {
+      "id": "infrastructure",
+      "name": "Infrastructure",
+      "status": "active",
+      "summary": "Repos, credentials, account chain, dashboards.",
+      "tasks": [
+        { "label": "AtomInvestments GitHub account + acq-automation repo (transferred from Mid0117)", "done": true },
+        { "label": "Cloudflare account on mithchell@atompropertygroup.org", "done": true },
+        { "label": "CF Workers Builds → auto-deploy on push", "done": true },
+        { "label": "CF Worker secrets: BLAKE_GHL_PIT, ELEVENLABS_API_KEY, ELEVENLABS_WEBHOOK_SECRET, ANTHROPIC_API_KEY", "done": true },
+        { "label": "DIAL_STATE KV namespace for warm-up + dedupe", "done": true },
+        { "label": "GHL Private Integration Token + scopes", "done": true },
+        { "label": "Master credentials inventory in APG-Vault/_internal/credentials.md", "done": true },
+        { "label": "Live dashboard at atominvestments.github.io/acq-automation/blake.html", "done": true },
+        { "label": "All-time call history visible on Blake dashboard", "done": true },
+        { "label": "APG logo wired into Blake dashboard", "done": true },
+        { "label": "SmarterContact account email migration to mithchell@atompropertygroup.org", "done": false },
+        { "label": "Worker #3: slack-listener replaces slack.yml cron", "done": false },
+        { "label": "Worker #4: sms-reply-handler replaces sms.yml cron", "done": false }
+      ]
+    }
+  ]
+}
