@@ -56,6 +56,20 @@ const STAGE_LAO           = "d43fddd8-3a17-46b2-a193-cf18619f654f";
 const STAGE_DEAD          = "b9b560b0-30cb-47fc-a4ca-1e55ca2531e2";
 const STAGE_FU_1_5MO      = "4aa78ab3-85dc-46d1-a683-d97b0c7a23ee";
 
+// Realtor Listings pipeline (Pillar B). Created 2026-05-21.
+const REALTOR_LISTINGS_PIPELINE_ID = "Br9cCXPJRNvtm3egHmwh";
+const RL_STAGE_NEW_LISTING     = "344694da-14cf-4f09-b690-67f07b4e5e1b";
+const RL_STAGE_OFFER_SENT      = "48f6d051-a906-4615-accb-7466930763ad";
+const RL_STAGE_REALTOR_REPLIED = "3f6ff995-ab23-413f-9c54-5f355ddd8644";
+const RL_STAGE_NEGOTIATING     = "5dec7a3f-3d8e-4e6c-888d-d2608e5332a1";
+const RL_STAGE_UNDER_CONTRACT  = "8fb78edf-e2b1-4681-8420-44b2a04c4776";
+const RL_STAGE_DEAD            = "3750430d-38da-4765-8069-827d1dc7daac";
+
+// MAO formula constants (Adam can revise per market).
+const MAO_ARV_MULTIPLIER = 0.70;
+const MAO_REHAB_PER_SQFT = 30;     // flat assumption pending Apify/RentCast
+const MAO_BUFFER         = 10000;  // negotiation buffer
+
 // ElevenLabs Blake agent + phone-number IDs.
 const BLAKE_AGENT_ID = "agent_5001ks3cp069f9rtfz6e81ypgnrd";
 const BLAKE_PHONE_NUMBER_ID = "phnum_8001ks3fhbbpe4vadtrdmparejgw";
@@ -179,6 +193,14 @@ export default {
       return handleDashboardData(env);
     }
 
+    // /listing-email — Pillar B endpoint. Accepts a parsed listing payload
+    // (eventually wired to Cloudflare Email Routing for Zillow/Redfin alerts).
+    // For now, manual POST works for testing. Computes MAO, upserts realtor
+    // contact + creates opportunity in Realtor Listings pipeline.
+    if (req.method === "POST" && url.pathname === "/listing-email") {
+      return handleListingEmail(req, env);
+    }
+
     // /admin/refresh-dashboard — manual trigger to populate the dashboard
     // cache on demand (instead of waiting for next call or cron tick).
     // No auth — the side effect is just reading public-ish data + writing
@@ -222,6 +244,166 @@ export default {
     }
   },
 };
+
+// ---- /listing-email: Pillar B listing-pipeline handler --------------------
+//
+// Receives a parsed Zillow / Redfin listing alert (or a manual test payload)
+// and:
+//   1. Computes MAO = (asking ?? ARV) × 0.70 - sqft × $30 - $10k
+//   2. Upserts the listing realtor as a GHL contact
+//   3. Creates an opportunity in the Realtor Listings pipeline at
+//      "1. New Listing"
+//   4. (TODO when Twilio creds bound) Sends offer SMS to realtor
+//   5. (TODO when Slack token bound) Posts to #base1-sms-leadgen
+//
+// Expected payload (all fields optional; we'll work with what we get):
+//   {
+//     "property_address": "123 Main St",
+//     "city": "Camden",
+//     "state": "NJ",
+//     "postal_code": "08234",
+//     "asking_price": 250000,
+//     "sqft": 1500,
+//     "beds": 3,
+//     "baths": 2,
+//     "listing_url": "https://www.zillow.com/...",
+//     "listing_realtor_name": "Jane Smith",
+//     "listing_realtor_phone": "+19085551234",
+//     "listing_realtor_email": "jane@realty.com"
+//   }
+
+async function handleListingEmail(req: Request, env: Env): Promise<Response> {
+  let body: any = {};
+  try {
+    body = await req.json();
+  } catch {
+    return new Response(JSON.stringify({ ok: false, error: "invalid_json" }), {
+      status: 400,
+      headers: { "content-type": "application/json" },
+    });
+  }
+
+  const asking = Number(body.asking_price) || 0;
+  const sqft = Number(body.sqft) || 0;
+  const realtorPhone = (body.listing_realtor_phone || "").trim();
+  const realtorName = (body.listing_realtor_name || "").trim();
+  const realtorEmail = (body.listing_realtor_email || "").trim();
+
+  if (!asking || !body.property_address) {
+    return new Response(
+      JSON.stringify({ ok: false, error: "missing_required_fields", details: "asking_price + property_address are required" }),
+      { status: 400, headers: { "content-type": "application/json" } }
+    );
+  }
+
+  // 1. MAO calculation. For MVP: treat asking_price as ARV proxy. Later when
+  //    Apify/RentCast is wired we'll compute a real ARV from comps.
+  const arvProxy = asking;
+  const rehabEstimate = sqft * MAO_REHAB_PER_SQFT;
+  const mao = Math.max(0, Math.round(arvProxy * MAO_ARV_MULTIPLIER - rehabEstimate - MAO_BUFFER));
+
+  // 2. Upsert realtor contact.
+  let realtorContactId = "";
+  if (realtorPhone) {
+    const existing = await lookupContactDetailByPhone(env.BLAKE_GHL_PIT, realtorPhone);
+    realtorContactId = existing?.id || "";
+  }
+  if (!realtorContactId) {
+    // Create
+    const createRes = await fetch(`${GHL_BASE}/contacts/`, {
+      method: "POST",
+      headers: ghlHeaders(env.BLAKE_GHL_PIT),
+      body: JSON.stringify({
+        locationId: APG_LOCATION_ID,
+        firstName: realtorName.split(" ")[0] || "Listing",
+        lastName: realtorName.split(" ").slice(1).join(" ") || "Realtor",
+        phone: realtorPhone || undefined,
+        email: realtorEmail || undefined,
+        source: "Zillow / Redfin Listing",
+        tags: ["realtor", "listing-pipeline"],
+      }),
+    });
+    const createText = await createRes.text();
+    try {
+      realtorContactId =
+        JSON.parse(createText)?.contact?.id ||
+        JSON.parse(createText)?.id ||
+        "";
+    } catch {}
+    if (!realtorContactId) {
+      console.error(`[listing] failed to upsert realtor contact: ${createRes.status} ${createText.slice(0, 200)}`);
+      return new Response(
+        JSON.stringify({ ok: false, error: "realtor_contact_create_failed", status: createRes.status, body: createText.slice(0, 300) }),
+        { status: 500, headers: { "content-type": "application/json" } }
+      );
+    }
+  }
+
+  // 3. Create opportunity in Realtor Listings pipeline.
+  const oppName = buildListingOppName(body.property_address, asking, mao);
+  const oppRes = await fetch(`${GHL_BASE}/opportunities/`, {
+    method: "POST",
+    headers: ghlHeaders(env.BLAKE_GHL_PIT),
+    body: JSON.stringify({
+      locationId: APG_LOCATION_ID,
+      pipelineId: REALTOR_LISTINGS_PIPELINE_ID,
+      pipelineStageId: RL_STAGE_NEW_LISTING,
+      contactId: realtorContactId,
+      name: oppName,
+      monetaryValue: mao,
+      status: "open",
+      source: "Zillow / Redfin Listing",
+    }),
+  });
+  const oppText = await oppRes.text();
+  let opportunityId = "";
+  try {
+    opportunityId = JSON.parse(oppText)?.opportunity?.id || JSON.parse(oppText)?.id || "";
+  } catch {}
+  if (!oppRes.ok || !opportunityId) {
+    console.error(`[listing] opp create failed: ${oppRes.status} ${oppText.slice(0, 300)}`);
+    return new Response(
+      JSON.stringify({
+        ok: false,
+        error: "opportunity_create_failed",
+        status: oppRes.status,
+        body: oppText.slice(0, 300),
+        realtor_contact_id: realtorContactId,
+      }),
+      { status: 500, headers: { "content-type": "application/json" } }
+    );
+  }
+
+  // 4 & 5. SMS to realtor + Slack post — gated on creds being bound.
+  //    Stub for now; will wire when TWILIO_* + SLACK_BOT_TOKEN are added.
+  const todo = {
+    sms_to_realtor: "TODO: bind TWILIO_ACCOUNT_SID + TWILIO_AUTH_TOKEN",
+    slack_notify: "TODO: bind SLACK_BOT_TOKEN",
+  };
+
+  return new Response(
+    JSON.stringify({
+      ok: true,
+      mao,
+      asking_price: asking,
+      rehab_estimate: rehabEstimate,
+      buffer: MAO_BUFFER,
+      property_address: body.property_address,
+      city: body.city || "",
+      state: body.state || "",
+      realtor_contact_id: realtorContactId,
+      opportunity_id: opportunityId,
+      opportunity_name: oppName,
+      todo,
+    }, null, 2),
+    { status: 200, headers: { "content-type": "application/json" } }
+  );
+}
+
+function buildListingOppName(address: string, asking: number, mao: number): string {
+  const fmt = (n: number) => `$${(n / 1000).toFixed(0)}k`;
+  return `${address} · asking ${fmt(asking)} → MAO ${fmt(mao)}`;
+}
 
 // ---- /dashboard-data: live aggregated JSON for blake.html -----------------
 
