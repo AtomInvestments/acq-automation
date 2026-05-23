@@ -160,8 +160,12 @@ jobs:
             exit 0
           fi
           git commit -m "chore: bake dashboards.ts [skip ci]"
+          # --autostash: other workflow steps (priority_activity, weekly bundle)
+          # leave unstaged files in the worktree which would normally make
+          # `git pull --rebase` refuse. Autostash stashes + reapplies them
+          # transparently for the rebase only.
           for i in 1 2 3; do
-            if git pull --rebase origin main && git push origin HEAD:main; then
+            if git pull --rebase --autostash origin main && git push origin HEAD:main; then
               echo "Pushed baked dashboards (attempt $i)."
               exit 0
             fi
