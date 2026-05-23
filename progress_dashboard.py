@@ -192,6 +192,16 @@ h1 .accent { color: var(--gold); font-style: italic; }
 .task.done .checkbox::after { content: "✓"; }
 .task.done .label { color: var(--muted); text-decoration: line-through; }
 
+/* Interactive checkboxes — click anywhere on the task row to toggle. */
+.task { cursor: pointer; transition: background 120ms; border-radius: 4px; padding: 2px 6px; margin-left: -6px; }
+.task:hover { background: rgba(26, 40, 64, 0.04); }
+.task:focus-visible { outline: 2px solid var(--gold, #FFC72C); outline-offset: 2px; background: rgba(26, 40, 64, 0.04); }
+.task .checkbox { transition: background 140ms, border-color 140ms, transform 140ms; }
+.task:active .checkbox { transform: scale(0.92); }
+.task[aria-busy="true"] { opacity: 0.55; cursor: progress; }
+.task[aria-busy="true"] .checkbox::after { content: "…"; color: var(--muted); }
+.task.error .checkbox { border-color: #c0392b; background: #fdecea; color: #c0392b; }
+
 .footer {
   margin-top: 56px; padding-top: 20px;
   border-top: 3px double var(--ink);
@@ -233,11 +243,100 @@ h1 .accent { color: var(--gold); font-style: italic; }
   {pillars_html}
 
   <div class="footer">
-    <span>Auto-generated from progress_state.json · APG ACQ Operating Layer</span>
+    <span>Auto-generated from progress_state.json · APG ACQ Operating Layer · click any task to toggle</span>
     <span class="gold-stamp">Tracker · Live</span>
   </div>
 
 </div>
+<script>
+(function() {
+  // Interactive progress: click any .task li → POST /api/progress/toggle.
+  // On success the override persists in the Worker's KV. On failure the
+  // optimistic UI rollback restores the previous state and shows a brief
+  // error glyph on the checkbox.
+  function setTaskState(li, done) {
+    li.classList.toggle("done", done);
+    li.setAttribute("aria-checked", done ? "true" : "false");
+  }
+  async function toggle(li) {
+    if (li.getAttribute("aria-busy") === "true") return;
+    const pillarId = li.getAttribute("data-pillar-id");
+    const taskLabel = li.getAttribute("data-task-label");
+    if (!pillarId || !taskLabel) return;
+    const wasDone = li.classList.contains("done");
+    const target = !wasDone;
+    li.setAttribute("aria-busy", "true");
+    setTaskState(li, target);  // optimistic
+    li.classList.remove("error");
+    try {
+      const res = await fetch("/api/progress/toggle", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        credentials: "same-origin",
+        body: JSON.stringify({
+          pillar_id: pillarId,
+          task_label: taskLabel,
+          done: target,
+        }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data.ok) {
+        // Roll back
+        setTaskState(li, wasDone);
+        li.classList.add("error");
+        console.warn("[progress toggle] failed", res.status, data);
+        setTimeout(function() { li.classList.remove("error"); }, 2200);
+      } else {
+        // Server confirmed — leave optimistic state. Update KPI counters.
+        updateKpis();
+      }
+    } catch (err) {
+      setTaskState(li, wasDone);
+      li.classList.add("error");
+      console.warn("[progress toggle] threw", err);
+      setTimeout(function() { li.classList.remove("error"); }, 2200);
+    } finally {
+      li.setAttribute("aria-busy", "false");
+    }
+  }
+  function updateKpis() {
+    // Recompute the per-pillar and overall counters from the DOM after a toggle.
+    document.querySelectorAll("section.pillar").forEach(function(p) {
+      const tasks = p.querySelectorAll("li.task");
+      const done = p.querySelectorAll("li.task.done").length;
+      const total = tasks.length;
+      const pct = total ? Math.round(done * 100 / total) : 0;
+      const fill = p.querySelector(".progress-bar .fill");
+      if (fill) fill.style.width = pct + "%";
+      const lbl = p.querySelector(".progress-label");
+      if (lbl) lbl.textContent = done + " / " + total + " done · " + pct + "%";
+      const bar = p.querySelector(".progress-bar");
+      if (bar) bar.classList.toggle("complete", pct === 100);
+    });
+    // Top-level KPIs
+    const allTasks = document.querySelectorAll("li.task");
+    const allDone = document.querySelectorAll("li.task.done").length;
+    const total = allTasks.length;
+    const pct = total ? Math.round(allDone * 100 / total) : 0;
+    const overallEls = document.querySelectorAll(".summary-kpi");
+    if (overallEls.length >= 2) {
+      const pctEl = overallEls[0].querySelector(".v");
+      if (pctEl) pctEl.innerHTML = pct + "<small>%</small>";
+      const doneEl = overallEls[1].querySelector(".v");
+      if (doneEl) doneEl.innerHTML = allDone + "<small> / " + total + "</small>";
+    }
+  }
+  document.addEventListener("click", function(e) {
+    const li = e.target.closest("li.task");
+    if (li) { e.preventDefault(); toggle(li); }
+  });
+  document.addEventListener("keydown", function(e) {
+    if (e.key !== " " && e.key !== "Enter") return;
+    const li = document.activeElement && document.activeElement.closest("li.task");
+    if (li) { e.preventDefault(); toggle(li); }
+  });
+})();
+</script>
 </body>
 </html>
 """
@@ -256,11 +355,20 @@ def render_pillar(pillar: dict) -> str:
     pct = int(done_count * 100 / max(1, total))
     bar_class = "progress-bar complete" if pct == 100 else "progress-bar"
 
+    pillar_id = escape(pillar.get("id", ""))
     task_lis = []
     for t in tasks:
         cls = "task done" if t.get("done") else "task"
         label = escape(t.get("label", ""))
-        task_lis.append(f'<li class="{cls}"><span class="checkbox"></span><span class="label">{label}</span></li>')
+        # Interactive checkbox: clicking toggles via POST /api/progress/toggle.
+        # data-pillar-id + data-task-label encode the canonical lookup key.
+        # The JS at the bottom of the page hijacks clicks and updates the UI
+        # optimistically before the server confirms.
+        task_lis.append(
+            f'<li class="{cls}" data-pillar-id="{pillar_id}" data-task-label="{label}" tabindex="0" role="checkbox" aria-checked="{"true" if t.get("done") else "false"}">'
+            f'<span class="checkbox"></span><span class="label">{label}</span>'
+            f'</li>'
+        )
     tasks_html = "\n".join(task_lis)
 
     return f'''

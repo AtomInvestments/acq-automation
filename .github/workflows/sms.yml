@@ -137,6 +137,40 @@ jobs:
           GHL_TOKEN: ${{ secrets.GHL_TOKEN }}
         run: python priority_activity.py
 
+      # Bake the latest site/*.html into the Worker's TS bundle so the
+      # auth-gated dashboard routes can serve from inline (no github.io proxy).
+      # The next CF Workers Build will pick up the regenerated dashboards.ts
+      # automatically on push.
+      - name: Bake dashboards.ts from site/
+        run: python bake_dashboards.py
+
+      - name: Commit baked dashboards.ts back to main
+        if: always()
+        run: |
+          set -e
+          if [ ! -f workers/blake-post-call/src/dashboards.ts ]; then
+            echo "dashboards.ts not produced — skipping commit."
+            exit 0
+          fi
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add workers/blake-post-call/src/dashboards.ts
+          if git diff --cached --quiet; then
+            echo "dashboards.ts unchanged — no commit needed."
+            exit 0
+          fi
+          git commit -m "chore: bake dashboards.ts [skip ci]"
+          for i in 1 2 3; do
+            if git pull --rebase origin main && git push origin HEAD:main; then
+              echo "Pushed baked dashboards (attempt $i)."
+              exit 0
+            fi
+            echo "Push attempt $i failed; sleeping then retrying..."
+            sleep 3
+          done
+          echo "ERROR: failed to push baked dashboards after 3 attempts." >&2
+          exit 1
+
       - name: Deploy HTML dashboard to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
