@@ -31,6 +31,8 @@ export interface Env {
   TWILIO_ACCOUNT_SID: string;       // Reserved: Blake outbound dial + future inbound-webhook signature validation
   TWILIO_AUTH_TOKEN: string;        // Reserved: same as above. (Listing-realtor SMS goes via GHL Conversations API, not direct Twilio.)
   SLACK_BOT_TOKEN: string;          // Pillar B: post new-listing alerts to #base1-sms-leadgen
+  DASHBOARD_PASSWORD: string;       // Plaintext password for /login (single-tenant, single-user auth)
+  DASHBOARD_SESSION_SECRET: string; // HMAC-SHA256 key for signing session cookies
   DIAL_STATE: KVNamespace;          // KV for warm-up quota + dial dedupe
 }
 
@@ -178,6 +180,111 @@ export default {
   async fetch(req: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     const url = new URL(req.url);
 
+    // --- Dashboard auth & gated pages ----------------------------------
+    // Public asset routes (no auth) — needed so the login page can show the logo.
+    if (req.method === "GET" && url.pathname === "/favicon.svg") {
+      return proxyGithubPagesAsset("favicon.svg", "image/svg+xml");
+    }
+    if (req.method === "GET" && url.pathname === "/logo.svg") {
+      return proxyGithubPagesAsset("logo.svg", "image/svg+xml");
+    }
+
+    // /login — GET shows the form, POST validates the password.
+    if (req.method === "GET" && url.pathname === "/login") {
+      const next = url.searchParams.get("next") || "";
+      // If already authed, skip the form.
+      const auth = await requireAuth(req, env);
+      if (auth.ok) {
+        return new Response(null, {
+          status: 302,
+          headers: { Location: next || "/blake" },
+        });
+      }
+      return new Response(loginPageHtml({ next }), {
+        status: 200,
+        headers: {
+          "content-type": "text/html; charset=utf-8",
+          "cache-control": "no-store",
+        },
+      });
+    }
+
+    if (req.method === "POST" && url.pathname === "/login") {
+      let password = "";
+      let next = "";
+      try {
+        const ct = req.headers.get("content-type") || "";
+        if (ct.includes("application/json")) {
+          const j: any = await req.json();
+          password = String(j?.password || "");
+          next = String(j?.next || "");
+        } else {
+          const form = await req.formData();
+          password = String(form.get("password") || "");
+          next = String(form.get("next") || "");
+        }
+      } catch {
+        // fall through with empty password → error response
+      }
+      if (!env.DASHBOARD_PASSWORD) {
+        return new Response(loginPageHtml({ error: "Server misconfigured: DASHBOARD_PASSWORD secret not set" }), {
+          status: 500,
+          headers: { "content-type": "text/html; charset=utf-8" },
+        });
+      }
+      // Constant-time string compare (don't reveal length via short-circuit)
+      const a = password;
+      const b = env.DASHBOARD_PASSWORD;
+      let diff = a.length ^ b.length;
+      for (let i = 0; i < Math.max(a.length, b.length); i++) {
+        diff |= (a.charCodeAt(i) || 0) ^ (b.charCodeAt(i) || 0);
+      }
+      if (diff !== 0) {
+        return new Response(loginPageHtml({ error: "Incorrect password.", next }), {
+          status: 401,
+          headers: { "content-type": "text/html; charset=utf-8" },
+        });
+      }
+      const cookie = await signSessionCookie(env.DASHBOARD_SESSION_SECRET);
+      const safeNext = next && next.startsWith("/") ? next : "/blake";
+      return new Response(null, {
+        status: 302,
+        headers: {
+          Location: safeNext,
+          "Set-Cookie": buildSessionCookieHeader(cookie),
+        },
+      });
+    }
+
+    if (req.method === "GET" && url.pathname === "/logout") {
+      return new Response(null, {
+        status: 302,
+        headers: {
+          Location: "/login",
+          "Set-Cookie": clearSessionCookieHeader(),
+        },
+      });
+    }
+
+    // Gated dashboard pages — proxy github.io HTML behind session check.
+    const gated: Record<string, string> = {
+      "/blake": "blake.html",
+      "/progress": "progress.html",
+      "/weekly": "weekly.html",
+      "/priorities": "priorities.html",
+      "/markets": "markets.html",
+    };
+    if (req.method === "GET" && gated[url.pathname]) {
+      const auth = await requireAuth(req, env);
+      if (!auth.ok) {
+        return new Response(null, {
+          status: 302,
+          headers: { Location: `/login?next=${encodeURIComponent(url.pathname)}` },
+        });
+      }
+      return proxyGithubPagesHtml(gated[url.pathname]);
+    }
+
     if (req.method === "GET" && (url.pathname === "/" || url.pathname === "/health")) {
       // Health response now reports whether the two runtime secrets are bound.
       // Diagnostic: if `secrets_bound.elevenlabs_webhook_secret` is false then
@@ -286,10 +393,17 @@ export default {
       });
     }
 
-    // /dashboard-data — JSON feed for the live Blake dashboard at
-    // atominvestments.github.io/acq-automation/blake.html. 30-sec KV cache
-    // to keep ElevenLabs + GHL API load bounded even with multiple viewers.
+    // /dashboard-data — JSON feed for the live Blake dashboard. Auth-gated
+    // (same session cookie as /blake) so a scraper can't pull it directly.
+    // The dashboard's JS runs inside the authed session so cookie rides along.
     if (req.method === "GET" && url.pathname === "/dashboard-data") {
+      const auth = await requireAuth(req, env);
+      if (!auth.ok) {
+        return new Response(JSON.stringify({ error: "unauthorized" }), {
+          status: 401,
+          headers: { "content-type": "application/json", "WWW-Authenticate": "Cookie" },
+        });
+      }
       return handleDashboardData(env);
     }
 
@@ -2367,4 +2481,310 @@ async function verifySignature(
   }
   if (diff !== 0) return { ok: false, reason: "signature_mismatch" };
   return { ok: true };
+}
+
+// =============================================================================
+// Dashboard auth (login + session cookies)
+// =============================================================================
+//
+// Single-tenant auth for the Blake dashboard, Progress tracker, and any other
+// page the Worker serves. Pattern:
+//
+//   GET /login              → renders login form (APG-branded)
+//   POST /login             → validates DASHBOARD_PASSWORD, sets session cookie,
+//                             302s to ?next= or /blake
+//   GET /logout             → clears cookie, 302s to /login
+//   GET /blake, /progress   → require valid session cookie, else 302 to /login
+//   GET /logo.svg, /favicon.svg  → public (no auth) so the login page can show them
+//
+// Session cookie format: `apg_session=<base64(payload)>.<base64(hmac)>`
+// payload = JSON { u: "mido", exp: <unix_secs> }
+// hmac = HMAC-SHA256(payload, DASHBOARD_SESSION_SECRET)
+// Cookie attrs: HttpOnly, Secure, SameSite=Lax, Path=/, Max-Age=86400 (24h)
+
+const SESSION_COOKIE_NAME = "apg_session";
+const SESSION_TTL_SECS = 60 * 60 * 24;   // 24 hours
+const DASHBOARD_LOGIN_USER = "mido";
+
+function b64urlEncode(bytes: Uint8Array | string): string {
+  const arr =
+    typeof bytes === "string"
+      ? new TextEncoder().encode(bytes)
+      : bytes;
+  let bin = "";
+  for (let i = 0; i < arr.length; i++) bin += String.fromCharCode(arr[i]);
+  return btoa(bin).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+}
+
+function b64urlDecode(s: string): Uint8Array {
+  const pad = s + "=".repeat((4 - (s.length % 4)) % 4);
+  const bin = atob(pad.replace(/-/g, "+").replace(/_/g, "/"));
+  const arr = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
+  return arr;
+}
+
+async function hmacSha256(secret: string, message: string): Promise<Uint8Array> {
+  const key = await crypto.subtle.importKey(
+    "raw",
+    new TextEncoder().encode(secret),
+    { name: "HMAC", hash: "SHA-256" },
+    false,
+    ["sign", "verify"]
+  );
+  const sig = await crypto.subtle.sign("HMAC", key, new TextEncoder().encode(message));
+  return new Uint8Array(sig);
+}
+
+async function signSessionCookie(secret: string): Promise<string> {
+  const payload = JSON.stringify({
+    u: DASHBOARD_LOGIN_USER,
+    exp: Math.floor(Date.now() / 1000) + SESSION_TTL_SECS,
+  });
+  const payloadB64 = b64urlEncode(payload);
+  const sig = await hmacSha256(secret, payloadB64);
+  return `${payloadB64}.${b64urlEncode(sig)}`;
+}
+
+async function verifySessionCookie(
+  cookieValue: string,
+  secret: string
+): Promise<{ ok: boolean; user?: string; reason?: string }> {
+  if (!cookieValue || !cookieValue.includes(".")) {
+    return { ok: false, reason: "malformed" };
+  }
+  const [payloadB64, sigB64] = cookieValue.split(".");
+  const expected = await hmacSha256(secret, payloadB64);
+  const actual = b64urlDecode(sigB64);
+  if (actual.length !== expected.length) return { ok: false, reason: "sig_length" };
+  let diff = 0;
+  for (let i = 0; i < actual.length; i++) diff |= actual[i] ^ expected[i];
+  if (diff !== 0) return { ok: false, reason: "sig_mismatch" };
+  let payload: any;
+  try {
+    payload = JSON.parse(new TextDecoder().decode(b64urlDecode(payloadB64)));
+  } catch {
+    return { ok: false, reason: "payload_parse" };
+  }
+  if (!payload?.exp || payload.exp < Math.floor(Date.now() / 1000)) {
+    return { ok: false, reason: "expired" };
+  }
+  return { ok: true, user: payload.u };
+}
+
+function getCookie(req: Request, name: string): string {
+  const header = req.headers.get("cookie") || "";
+  for (const pair of header.split(";")) {
+    const [k, ...rest] = pair.trim().split("=");
+    if (k === name) return rest.join("=");
+  }
+  return "";
+}
+
+async function requireAuth(req: Request, env: Env): Promise<{ ok: boolean; user?: string }> {
+  const cookie = getCookie(req, SESSION_COOKIE_NAME);
+  if (!cookie) return { ok: false };
+  const v = await verifySessionCookie(cookie, env.DASHBOARD_SESSION_SECRET);
+  return v.ok ? { ok: true, user: v.user } : { ok: false };
+}
+
+// Login page HTML — APG-branded card on a clean background.
+function loginPageHtml(opts: { error?: string; next?: string } = {}): string {
+  const error = opts.error
+    ? `<div class="err">${opts.error.replace(/[<&]/g, (c) => (c === "<" ? "&lt;" : "&amp;"))}</div>`
+    : "";
+  const nextField = opts.next
+    ? `<input type="hidden" name="next" value="${opts.next.replace(/"/g, "&quot;")}">`
+    : "";
+  return `<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>APG — Sign in</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="apple-touch-icon" href="/favicon.svg">
+<meta name="theme-color" content="#1A2840">
+<style>
+  :root {
+    --ink: #1A2840;
+    --ink-deep: #0A1428;
+    --gold: #FFC72C;
+    --paper: #F7F4EA;
+    --line: #DDD6C4;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+    background: linear-gradient(135deg, var(--paper) 0%, #ffffff 100%);
+    color: var(--ink);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+  .card {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    box-shadow: 0 4px 24px rgba(10, 31, 68, 0.08);
+    padding: 40px 36px;
+    width: 100%;
+    max-width: 380px;
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    margin-bottom: 28px;
+  }
+  .brand img { width: 72px; height: 72px; }
+  .brand h1 {
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 0.4px;
+    margin: 16px 0 4px;
+    color: var(--ink);
+  }
+  .brand p {
+    margin: 0;
+    font-size: 12px;
+    color: #6b7480;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+  }
+  form { display: flex; flex-direction: column; gap: 14px; }
+  label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--ink);
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+  }
+  input[type=password], input[type=text] {
+    font-size: 15px;
+    padding: 12px 14px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    width: 100%;
+    background: #fafaf6;
+    color: var(--ink);
+    transition: border-color 120ms, background 120ms;
+  }
+  input:focus {
+    outline: none;
+    border-color: var(--ink);
+    background: #fff;
+  }
+  button {
+    margin-top: 8px;
+    background: var(--ink);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 13px 16px;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.4px;
+    cursor: pointer;
+    transition: background 120ms;
+  }
+  button:hover { background: var(--ink-deep); }
+  .err {
+    margin-bottom: 16px;
+    padding: 10px 12px;
+    background: #fff0ec;
+    border: 1px solid #f4c5b9;
+    border-radius: 8px;
+    color: #a23015;
+    font-size: 13px;
+  }
+  .foot {
+    margin-top: 22px;
+    text-align: center;
+    color: #8a8e98;
+    font-size: 11px;
+  }
+</style>
+</head>
+<body>
+  <div class="card">
+    <div class="brand">
+      <img src="/favicon.svg" alt="APG">
+      <h1>Atom Property Group</h1>
+      <p>ACQ Operations Console</p>
+    </div>
+    ${error}
+    <form method="POST" action="/login">
+      ${nextField}
+      <label for="p">Password</label>
+      <input type="password" id="p" name="password" autofocus autocomplete="current-password" required>
+      <button type="submit">Sign in</button>
+    </form>
+    <div class="foot">Authorized personnel only</div>
+  </div>
+</body>
+</html>`;
+}
+
+// Builds the Set-Cookie header value. HttpOnly + Secure + SameSite=Lax so it
+// rides on top-level navigation (e.g. when you click a link to /blake from
+// elsewhere) but isn't readable to JS or sent in third-party iframes.
+function buildSessionCookieHeader(cookieValue: string): string {
+  return [
+    `${SESSION_COOKIE_NAME}=${cookieValue}`,
+    "HttpOnly",
+    "Secure",
+    "SameSite=Lax",
+    "Path=/",
+    `Max-Age=${SESSION_TTL_SECS}`,
+  ].join("; ");
+}
+
+function clearSessionCookieHeader(): string {
+  return [
+    `${SESSION_COOKIE_NAME}=`,
+    "HttpOnly",
+    "Secure",
+    "SameSite=Lax",
+    "Path=/",
+    "Max-Age=0",
+  ].join("; ");
+}
+
+// Proxy a static page from GitHub Pages (atominvestments.github.io/acq-automation/X)
+// so the Worker can gate it behind auth. The HTML's relative refs to
+// /dashboard-data, /logo.svg, /favicon.svg all resolve to the Worker (which
+// serves those endpoints natively). No URL rewriting needed.
+async function proxyGithubPagesHtml(path: string): Promise<Response> {
+  const upstream = `https://atominvestments.github.io/acq-automation/${path}`;
+  const res = await fetch(upstream, { cf: { cacheTtl: 30, cacheEverything: true } as any });
+  if (!res.ok) {
+    return new Response(`Upstream fetch failed: ${res.status}`, { status: 502 });
+  }
+  const body = await res.text();
+  return new Response(body, {
+    status: 200,
+    headers: {
+      "content-type": "text/html; charset=utf-8",
+      "cache-control": "no-store",
+    },
+  });
+}
+
+// Pass through a static asset (logo.svg, favicon.svg) from GitHub Pages.
+async function proxyGithubPagesAsset(path: string, contentType: string): Promise<Response> {
+  const upstream = `https://atominvestments.github.io/acq-automation/${path}`;
+  const res = await fetch(upstream, { cf: { cacheTtl: 3600, cacheEverything: true } as any });
+  if (!res.ok) return new Response("Not found", { status: 404 });
+  return new Response(await res.arrayBuffer(), {
+    status: 200,
+    headers: {
+      "content-type": contentType,
+      "cache-control": "public, max-age=3600",
+    },
+  });
 }

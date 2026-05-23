@@ -280,6 +280,9 @@ HTML = """<!doctype html>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>APG ACQ — Deals Dashboard</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="apple-touch-icon" href="favicon.svg">
+<meta name="theme-color" content="#1A2840">
 <style>
 :root {
   --ink: #0A1F44;
