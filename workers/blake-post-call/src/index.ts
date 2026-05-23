@@ -200,12 +200,12 @@ export default {
     // /login — GET shows the form, POST validates the password.
     if (req.method === "GET" && url.pathname === "/login") {
       const next = url.searchParams.get("next") || "";
-      // If already authed, skip the form.
+      // If already authed, skip the form — land on the hub by default.
       const auth = await requireAuth(req, env);
       if (auth.ok) {
         return new Response(null, {
           status: 302,
-          headers: { Location: next || "/blake" },
+          headers: { Location: next || "/" },
         });
       }
       return new Response(loginPageHtml({ next }), {
@@ -254,7 +254,9 @@ export default {
         });
       }
       const cookie = await signSessionCookie(env.DASHBOARD_SESSION_SECRET);
-      const safeNext = next && next.startsWith("/") ? next : "/blake";
+      // Default post-login destination is the landing hub at "/" — gives the
+      // user a clear nav to all dashboards instead of dumping them on Blake.
+      const safeNext = next && next.startsWith("/") ? next : "/";
       return new Response(null, {
         status: 302,
         headers: {
@@ -275,12 +277,18 @@ export default {
     }
 
     // Gated dashboard pages — proxy github.io HTML behind session check.
+    // All paths must exist as files under site/ in gh-pages branch.
     const gated: Record<string, string> = {
       "/blake": "blake.html",
       "/progress": "progress.html",
       "/weekly": "weekly.html",
       "/priorities": "priorities.html",
       "/markets": "markets.html",
+      "/deals": "deals.html",
+      "/followups": "index.html",   // dashboard_html.py outputs site/index.html
+      "/about": "about.html",
+      "/setup": "setup.html",
+      "/ai-agents-plan": "ai-agents-plan.html",
     };
     if (req.method === "GET" && gated[url.pathname]) {
       const auth = await requireAuth(req, env);
@@ -293,10 +301,23 @@ export default {
       return proxyGithubPagesHtml(gated[url.pathname]);
     }
 
-    if (req.method === "GET" && (url.pathname === "/" || url.pathname === "/health")) {
-      // Health response now reports whether the two runtime secrets are bound.
-      // Diagnostic: if `secrets_bound.elevenlabs_webhook_secret` is false then
-      // CF didn't rebind the dashboard-set secret to this deploy.
+    // Landing hub at "/" — if logged in, show the dashboard navigation page;
+    // if not, redirect to /login. (Health JSON moves to /health only.)
+    if (req.method === "GET" && url.pathname === "/") {
+      const auth = await requireAuth(req, env);
+      if (!auth.ok) {
+        return new Response(null, {
+          status: 302,
+          headers: { Location: "/login?next=/" },
+        });
+      }
+      return new Response(landingHubHtml(), {
+        status: 200,
+        headers: { "content-type": "text/html; charset=utf-8", "cache-control": "no-store" },
+      });
+    }
+
+    if (req.method === "GET" && url.pathname === "/health") {
       return new Response(
         JSON.stringify({
           worker: "blake-post-call",
@@ -1179,10 +1200,13 @@ async function computeDashboardData(env: Env): Promise<any> {
   const listJson: any = await listRes.json();
   const conversations: any[] = listJson?.conversations || [];
 
-  // 2. Hydrate the top 8 with full detail (transcript_summary + GHL contact
+  // 2. Hydrate the top 30 with full detail (transcript_summary + GHL contact
   //    join). Older calls in the list get sparse data from the list response
-  //    only — no per-conv API call. Keeps the CPU budget per request bounded.
-  const top = conversations.slice(0, 8);
+  //    only — no per-conv API call. Bumped from 8 → 30 since CF paid-plan
+  //    CPU budget (50ms/request) easily covers 30 parallel I/O fetches.
+  //    For full historical coverage we'd want per-conv-id KV caching of
+  //    hydrated data so we don't re-fetch on every cache rebuild; deferred.
+  const top = conversations.slice(0, 30);
   const detailed = await Promise.all(
     top.map(async (c: any) => {
       const convId = c.conversation_id;
@@ -2833,6 +2857,208 @@ async function requireAuth(req: Request, env: Env): Promise<{ ok: boolean; user?
 }
 
 // Login page HTML — APG-branded card on a clean background.
+// Landing hub at GET / — shows after auth. Clean card grid linking to every
+// dashboard. Future: unify all dashboards under this layout (shared top nav
+// + same color palette + same card style).
+function landingHubHtml(): string {
+  const cards: Array<{ href: string; title: string; subtitle: string; live?: boolean }> = [
+    { href: "/blake",     title: "Blake — Live Calls",     subtitle: "Voice agent dashboard, real-time transcripts + outcomes", live: true },
+    { href: "/progress",  title: "Project Tracker",        subtitle: "Pillar A–D delivery status with checkboxes" },
+    { href: "/followups", title: "Follow-ups",             subtitle: "SMS follow-up queue across all sellers" },
+    { href: "/deals",     title: "Deals",                  subtitle: "Active acquisitions: stage, value, last touch" },
+    { href: "/weekly",    title: "Weekly Docket",          subtitle: "Operator briefing — KPIs, charts, action items" },
+    { href: "/priorities", title: "Priority Activity",     subtitle: "Daily priority queue with click-through to contacts" },
+    { href: "/markets",   title: "Markets",                subtitle: "PA / TN / GA / OH per-market activity rollup" },
+  ];
+  const cardHtml = cards
+    .map(
+      (c) => `
+      <a class="card" href="${c.href}">
+        <div class="card-title">${c.title}${c.live ? '<span class="live-dot" title="real-time"></span>' : ""}</div>
+        <div class="card-sub">${c.subtitle}</div>
+        <div class="card-arrow">→</div>
+      </a>`
+    )
+    .join("");
+  return `<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>APG — Operations Console</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="apple-touch-icon" href="/favicon.svg">
+<meta name="theme-color" content="#1A2840">
+<style>
+  :root {
+    --ink: #1A2840;
+    --ink-deep: #0A1428;
+    --gold: #FFC72C;
+    --paper: #F7F4EA;
+    --line: #DDD6C4;
+    --muted: #6b7480;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+    background: linear-gradient(135deg, var(--paper) 0%, #ffffff 100%);
+    color: var(--ink);
+  }
+  header.hub-nav {
+    background: var(--ink);
+    color: #fff;
+    padding: 16px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 2px 8px rgba(10, 31, 68, 0.15);
+  }
+  header .brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-weight: 700;
+    letter-spacing: 0.4px;
+  }
+  header .brand img { width: 32px; height: 32px; }
+  header .right { display: flex; align-items: center; gap: 18px; font-size: 13px; }
+  header .right a {
+    color: rgba(255,255,255,0.78);
+    text-decoration: none;
+    transition: color 120ms;
+  }
+  header .right a:hover { color: var(--gold); }
+  main {
+    max-width: 1100px;
+    margin: 40px auto 60px;
+    padding: 0 32px;
+  }
+  h1.hub-title {
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: -0.4px;
+    margin: 0 0 6px;
+  }
+  p.hub-sub {
+    color: var(--muted);
+    margin: 0 0 32px;
+    font-size: 15px;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+  }
+  .card {
+    display: block;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 22px 22px 20px;
+    text-decoration: none;
+    color: var(--ink);
+    transition: transform 140ms, box-shadow 140ms, border-color 140ms;
+    position: relative;
+    overflow: hidden;
+  }
+  .card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(10, 31, 68, 0.12);
+    border-color: var(--ink);
+  }
+  .card::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0;
+    width: 4px;
+    height: 100%;
+    background: var(--gold);
+    opacity: 0;
+    transition: opacity 140ms;
+  }
+  .card:hover::before { opacity: 1; }
+  .card-title {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .live-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: #2ec27e;
+    box-shadow: 0 0 0 0 rgba(46, 194, 126, 0.6);
+    animation: pulse 1.8s infinite;
+  }
+  @keyframes pulse {
+    0%   { box-shadow: 0 0 0 0 rgba(46, 194, 126, 0.6); }
+    70%  { box-shadow: 0 0 0 8px rgba(46, 194, 126, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(46, 194, 126, 0); }
+  }
+  .card-sub {
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.5;
+  }
+  .card-arrow {
+    position: absolute;
+    bottom: 18px;
+    right: 22px;
+    color: var(--muted);
+    font-size: 18px;
+    transition: transform 140ms, color 140ms;
+  }
+  .card:hover .card-arrow {
+    color: var(--ink);
+    transform: translateX(4px);
+  }
+  .ops-bar {
+    margin-top: 36px;
+    padding-top: 20px;
+    border-top: 1px solid var(--line);
+    display: flex;
+    gap: 24px;
+    font-size: 13px;
+    color: var(--muted);
+    flex-wrap: wrap;
+  }
+  .ops-bar a {
+    color: var(--muted);
+    text-decoration: none;
+    border-bottom: 1px dotted var(--line);
+  }
+  .ops-bar a:hover { color: var(--ink); }
+</style>
+</head>
+<body>
+  <header class="hub-nav">
+    <div class="brand">
+      <img src="/favicon.svg" alt="APG">
+      <span>Atom Property Group</span>
+    </div>
+    <div class="right">
+      <span>Signed in</span>
+      <a href="/logout">Sign out</a>
+    </div>
+  </header>
+  <main>
+    <h1 class="hub-title">Operations Console</h1>
+    <p class="hub-sub">Pick a dashboard. Real-time data lives at the green dot.</p>
+    <div class="grid">${cardHtml}</div>
+    <div class="ops-bar">
+      <a href="/about">About</a>
+      <a href="/setup">Setup notes</a>
+      <a href="/ai-agents-plan">AI agents plan</a>
+      <a href="/health" target="_blank">Worker health</a>
+    </div>
+  </main>
+</body>
+</html>`;
+}
+
 function loginPageHtml(opts: { error?: string; next?: string } = {}): string {
   const error = opts.error
     ? `<div class="err">${opts.error.replace(/[<&]/g, (c) => (c === "<" ? "&lt;" : "&amp;"))}</div>`
