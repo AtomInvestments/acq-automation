@@ -278,17 +278,32 @@ export default {
 
     // Gated dashboard pages — proxy github.io HTML behind session check.
     // All paths must exist as files under site/ in gh-pages branch.
+    // Both clean (/blake) and legacy (/blake.html) paths are routed because
+    // the dashboard HTMLs' internal nav uses relative ".html" links — without
+    // the .html aliases, every cross-dashboard click 404s with CF's error
+    // page (the "multiple options error at the bottom" Mido saw).
     const gated: Record<string, string> = {
       "/blake": "blake.html",
+      "/blake.html": "blake.html",
       "/progress": "progress.html",
+      "/progress.html": "progress.html",
       "/weekly": "weekly.html",
+      "/weekly.html": "weekly.html",
       "/priorities": "priorities.html",
+      "/priorities.html": "priorities.html",
       "/markets": "markets.html",
+      "/markets.html": "markets.html",
       "/deals": "deals.html",
+      "/deals.html": "deals.html",
       "/followups": "index.html",   // dashboard_html.py outputs site/index.html
+      "/followups.html": "index.html",
+      "/index.html": "index.html",
       "/about": "about.html",
+      "/about.html": "about.html",
       "/setup": "setup.html",
+      "/setup.html": "setup.html",
       "/ai-agents-plan": "ai-agents-plan.html",
+      "/ai-agents-plan.html": "ai-agents-plan.html",
     };
     if (req.method === "GET" && gated[url.pathname]) {
       const auth = await requireAuth(req, env);
