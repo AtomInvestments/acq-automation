@@ -2871,212 +2871,391 @@ async function requireAuth(req: Request, env: Env): Promise<{ ok: boolean; user?
   return v.ok ? { ok: true, user: v.user } : { ok: false };
 }
 
-// Login page HTML — APG-branded card on a clean background.
-// Landing hub at GET / — shows after auth. Clean card grid linking to every
-// dashboard. Future: unify all dashboards under this layout (shared top nav
-// + same color palette + same card style).
-function landingHubHtml(): string {
-  const cards: Array<{ href: string; title: string; subtitle: string; live?: boolean }> = [
-    { href: "/blake",     title: "Blake — Live Calls",     subtitle: "Voice agent dashboard, real-time transcripts + outcomes", live: true },
-    { href: "/progress",  title: "Project Tracker",        subtitle: "Pillar A–D delivery status with checkboxes" },
-    { href: "/followups", title: "Follow-ups",             subtitle: "SMS follow-up queue across all sellers" },
-    { href: "/deals",     title: "Deals",                  subtitle: "Active acquisitions: stage, value, last touch" },
-    { href: "/weekly",    title: "Weekly Docket",          subtitle: "Operator briefing — KPIs, charts, action items" },
-    { href: "/priorities", title: "Priority Activity",     subtitle: "Daily priority queue with click-through to contacts" },
-    { href: "/markets",   title: "Markets",                subtitle: "PA / TN / GA / OH per-market activity rollup" },
+// =============================================================================
+// APG design system — shared by login + hub + (next session) all dashboards
+// =============================================================================
+// Grounded in the ui-ux-pro-max skill's "Data-Dense Dashboard" pattern:
+//   - Pattern: Data-Dense + Drill-Down (internal ops, not landing pages)
+//   - Style: WCAG AA, hover-row highlighting, drill-down workflow
+//   - Typography: Fira Sans for body, Fira Code for numerics/monospaced
+//   - Effects: hover tooltips, row highlighting on hover, smooth filter
+//     animations, focus rings, prefers-reduced-motion support
+//   - Anti-patterns avoided: ornate design, no filtering
+//
+// Brand colors (NOT the skill's recommended teal/blue — APG overrides):
+//   --ink #1A2840 (primary), --gold #FFC72C (accent), --paper #F7F4EA (bg)
+// Plus a shadcn-style neutral gray scale for borders, text, and surfaces.
+
+function apgDesignTokens(): string {
+  return `
+  /* Google Fonts: Fira Sans (body) + Fira Code (numerics) — loaded once
+     per page via @import inside this token block. */
+  @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Fira+Sans:wght@300;400;500;600;700;800&display=swap');
+
+  :root {
+    /* Brand */
+    --apg-ink:        #1A2840;
+    --apg-ink-deep:   #0A1428;
+    --apg-gold:       #FFC72C;
+    --apg-gold-soft:  #fff3c4;
+    --apg-paper:      #F7F4EA;
+
+    /* shadcn-flavored neutral scale (zinc-ish, tuned to feel right on paper bg) */
+    --apg-bg:         #fafaf7;
+    --apg-surface:    #ffffff;
+    --apg-border:     #e6e3d9;
+    --apg-border-strong: #d3cebe;
+    --apg-muted:      #f3f0e6;
+    --apg-fg:         #1a2840;
+    --apg-fg-soft:    #4a5366;
+    --apg-fg-muted:   #767e8d;
+    --apg-fg-subtle:  #a5acb8;
+
+    /* Semantic */
+    --apg-success:    #2ec27e;
+    --apg-success-bg: #e8f8f0;
+    --apg-warning:    #d98c2c;
+    --apg-warning-bg: #fff3e3;
+    --apg-danger:     #c0392b;
+    --apg-danger-bg:  #fdecea;
+    --apg-info:       #2c6fd9;
+    --apg-info-bg:    #ecf2fc;
+
+    /* Radius — shadcn defaults */
+    --apg-r-sm:  4px;
+    --apg-r-md:  8px;
+    --apg-r-lg:  12px;
+    --apg-r-xl:  16px;
+
+    /* Spacing scale (4-based, matches Tailwind) */
+    --apg-s-1:   4px;
+    --apg-s-2:   8px;
+    --apg-s-3:   12px;
+    --apg-s-4:   16px;
+    --apg-s-6:   24px;
+    --apg-s-8:   32px;
+    --apg-s-12: 48px;
+
+    /* Type scale */
+    --apg-font-sans: 'Fira Sans', -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+    --apg-font-mono: 'Fira Code', ui-monospace, "SF Mono", Menlo, monospace;
+  }
+
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    padding: 0;
+    font-family: var(--apg-font-sans);
+    color: var(--apg-fg);
+    background: var(--apg-bg);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  body { min-height: 100vh; }
+
+  a { color: inherit; }
+  *:focus-visible {
+    outline: 2px solid var(--apg-gold);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+
+  /* Mono numerics — apply to KPI numbers + table currency cells */
+  .num, .mono { font-family: var(--apg-font-mono); font-feature-settings: "tnum" 1, "zero" 0; }
+
+  /* Live status dot — used on real-time dashboards */
+  .apg-live-dot {
+    display: inline-block;
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--apg-success);
+    box-shadow: 0 0 0 0 rgba(46, 194, 126, 0.55);
+    animation: apg-pulse 1.8s infinite;
+    vertical-align: middle;
+  }
+  @keyframes apg-pulse {
+    0%   { box-shadow: 0 0 0 0 rgba(46, 194, 126, 0.55); }
+    70%  { box-shadow: 0 0 0 8px rgba(46, 194, 126, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(46, 194, 126, 0); }
+  }
+  `;
+}
+
+// Shared APG top navigation — used by hub + (next session) all dashboards.
+function apgTopNav(activeTab: string = ""): string {
+  const tabs = [
+    { href: "/",          key: "hub",        label: "Home" },
+    { href: "/blake",     key: "blake",      label: "Blake" },
+    { href: "/progress",  key: "progress",   label: "Progress" },
+    { href: "/followups", key: "followups",  label: "Follow-ups" },
+    { href: "/deals",     key: "deals",      label: "Deals" },
+    { href: "/weekly",    key: "weekly",     label: "Weekly" },
+    { href: "/priorities", key: "priorities", label: "Priorities" },
+    { href: "/markets",   key: "markets",    label: "Markets" },
   ];
-  const cardHtml = cards
-    .map(
-      (c) => `
-      <a class="card" href="${c.href}">
-        <div class="card-title">${c.title}${c.live ? '<span class="live-dot" title="real-time"></span>' : ""}</div>
-        <div class="card-sub">${c.subtitle}</div>
-        <div class="card-arrow">→</div>
-      </a>`
-    )
-    .join("");
+  const tabHtml = tabs.map((t) => {
+    const active = t.key === activeTab ? " apg-nav-tab--active" : "";
+    return `<a class="apg-nav-tab${active}" href="${t.href}">${t.label}</a>`;
+  }).join("");
+  return `
+  <style>
+    .apg-nav {
+      position: sticky; top: 0; z-index: 50;
+      background: var(--apg-ink);
+      color: #fff;
+      box-shadow: 0 1px 0 var(--apg-border);
+    }
+    .apg-nav-inner {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 var(--apg-s-6);
+      display: flex;
+      align-items: stretch;
+      height: 56px;
+      gap: var(--apg-s-6);
+    }
+    .apg-nav-brand {
+      display: flex;
+      align-items: center;
+      gap: var(--apg-s-3);
+      color: #fff;
+      text-decoration: none;
+      font-weight: 800;
+      font-size: 15px;
+      letter-spacing: 0.2px;
+      white-space: nowrap;
+    }
+    .apg-nav-brand img { width: 28px; height: 28px; }
+    .apg-nav-tabs {
+      display: flex;
+      align-items: stretch;
+      gap: 2px;
+      flex: 1;
+      overflow-x: auto;
+    }
+    .apg-nav-tab {
+      display: flex;
+      align-items: center;
+      padding: 0 var(--apg-s-4);
+      color: rgba(255,255,255,0.72);
+      text-decoration: none;
+      font-size: 13.5px;
+      font-weight: 500;
+      border-bottom: 2px solid transparent;
+      transition: color 120ms, border-color 120ms;
+      white-space: nowrap;
+    }
+    .apg-nav-tab:hover { color: #fff; }
+    .apg-nav-tab--active {
+      color: #fff;
+      border-bottom-color: var(--apg-gold);
+    }
+    .apg-nav-actions {
+      display: flex;
+      align-items: center;
+      gap: var(--apg-s-4);
+      font-size: 13px;
+    }
+    .apg-nav-actions a {
+      color: rgba(255,255,255,0.72);
+      text-decoration: none;
+      transition: color 120ms;
+    }
+    .apg-nav-actions a:hover { color: var(--apg-gold); }
+  </style>
+  <nav class="apg-nav" aria-label="Primary">
+    <div class="apg-nav-inner">
+      <a class="apg-nav-brand" href="/">
+        <img src="/favicon.svg" alt="">
+        <span>Atom Property Group</span>
+      </a>
+      <div class="apg-nav-tabs">${tabHtml}</div>
+      <div class="apg-nav-actions">
+        <a href="/logout" aria-label="Sign out">Sign out</a>
+      </div>
+    </div>
+  </nav>
+  `;
+}
+
+// Reusable page-shell wrapper for ALL future Worker-served dashboards.
+// Usage (next session, once dashboards are Worker-native):
+//   return new Response(apgLayout({ title: "Blake Live", activeTab: "blake", content: blakeBody }))
+function apgLayout(opts: { title: string; activeTab: string; content: string }): string {
   return `<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>APG — Operations Console</title>
+<title>APG — ${opts.title}</title>
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="apple-touch-icon" href="/favicon.svg">
 <meta name="theme-color" content="#1A2840">
-<style>
-  :root {
-    --ink: #1A2840;
-    --ink-deep: #0A1428;
-    --gold: #FFC72C;
-    --paper: #F7F4EA;
-    --line: #DDD6C4;
-    --muted: #6b7480;
-  }
-  * { box-sizing: border-box; }
-  body {
-    margin: 0;
-    min-height: 100vh;
-    font-family: -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
-    background: linear-gradient(135deg, var(--paper) 0%, #ffffff 100%);
-    color: var(--ink);
-  }
-  header.hub-nav {
-    background: var(--ink);
-    color: #fff;
-    padding: 16px 32px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    box-shadow: 0 2px 8px rgba(10, 31, 68, 0.15);
-  }
-  header .brand {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    font-weight: 700;
-    letter-spacing: 0.4px;
-  }
-  header .brand img { width: 32px; height: 32px; }
-  header .right { display: flex; align-items: center; gap: 18px; font-size: 13px; }
-  header .right a {
-    color: rgba(255,255,255,0.78);
-    text-decoration: none;
-    transition: color 120ms;
-  }
-  header .right a:hover { color: var(--gold); }
-  main {
-    max-width: 1100px;
-    margin: 40px auto 60px;
-    padding: 0 32px;
-  }
-  h1.hub-title {
-    font-size: 28px;
-    font-weight: 800;
-    letter-spacing: -0.4px;
-    margin: 0 0 6px;
-  }
-  p.hub-sub {
-    color: var(--muted);
-    margin: 0 0 32px;
-    font-size: 15px;
-  }
-  .grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 16px;
-  }
-  .card {
-    display: block;
-    background: #fff;
-    border: 1px solid var(--line);
-    border-radius: 12px;
-    padding: 22px 22px 20px;
-    text-decoration: none;
-    color: var(--ink);
-    transition: transform 140ms, box-shadow 140ms, border-color 140ms;
-    position: relative;
-    overflow: hidden;
-  }
-  .card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(10, 31, 68, 0.12);
-    border-color: var(--ink);
-  }
-  .card::before {
-    content: "";
-    position: absolute;
-    top: 0; left: 0;
-    width: 4px;
-    height: 100%;
-    background: var(--gold);
-    opacity: 0;
-    transition: opacity 140ms;
-  }
-  .card:hover::before { opacity: 1; }
-  .card-title {
-    font-size: 16px;
-    font-weight: 700;
-    margin-bottom: 6px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .live-dot {
-    width: 8px; height: 8px; border-radius: 50%;
-    background: #2ec27e;
-    box-shadow: 0 0 0 0 rgba(46, 194, 126, 0.6);
-    animation: pulse 1.8s infinite;
-  }
-  @keyframes pulse {
-    0%   { box-shadow: 0 0 0 0 rgba(46, 194, 126, 0.6); }
-    70%  { box-shadow: 0 0 0 8px rgba(46, 194, 126, 0); }
-    100% { box-shadow: 0 0 0 0 rgba(46, 194, 126, 0); }
-  }
-  .card-sub {
-    color: var(--muted);
-    font-size: 13px;
-    line-height: 1.5;
-  }
-  .card-arrow {
-    position: absolute;
-    bottom: 18px;
-    right: 22px;
-    color: var(--muted);
-    font-size: 18px;
-    transition: transform 140ms, color 140ms;
-  }
-  .card:hover .card-arrow {
-    color: var(--ink);
-    transform: translateX(4px);
-  }
-  .ops-bar {
-    margin-top: 36px;
-    padding-top: 20px;
-    border-top: 1px solid var(--line);
-    display: flex;
-    gap: 24px;
-    font-size: 13px;
-    color: var(--muted);
-    flex-wrap: wrap;
-  }
-  .ops-bar a {
-    color: var(--muted);
-    text-decoration: none;
-    border-bottom: 1px dotted var(--line);
-  }
-  .ops-bar a:hover { color: var(--ink); }
-</style>
+<style>${apgDesignTokens()}</style>
 </head>
 <body>
-  <header class="hub-nav">
-    <div class="brand">
-      <img src="/favicon.svg" alt="APG">
-      <span>Atom Property Group</span>
-    </div>
-    <div class="right">
-      <span>Signed in</span>
-      <a href="/logout">Sign out</a>
-    </div>
-  </header>
-  <main>
-    <h1 class="hub-title">Operations Console</h1>
-    <p class="hub-sub">Pick a dashboard. Real-time data lives at the green dot.</p>
-    <div class="grid">${cardHtml}</div>
-    <div class="ops-bar">
-      <a href="/about">About</a>
-      <a href="/setup">Setup notes</a>
-      <a href="/ai-agents-plan">AI agents plan</a>
-      <a href="/health" target="_blank">Worker health</a>
-    </div>
-  </main>
+${apgTopNav(opts.activeTab)}
+<main class="apg-main">${opts.content}</main>
+<style>
+  .apg-main {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: var(--apg-s-8) var(--apg-s-6) var(--apg-s-12);
+  }
+</style>
 </body>
 </html>`;
 }
 
+// Landing hub at GET / — uses the new shared apgLayout.
+function landingHubHtml(): string {
+  const cards: Array<{ href: string; title: string; subtitle: string; live?: boolean; tag?: string }> = [
+    { href: "/blake",     title: "Blake — Live Calls",  subtitle: "Voice agent dashboard. Calls + transcripts + outcomes.", live: true, tag: "Voice" },
+    { href: "/progress",  title: "Project Tracker",     subtitle: "Pillar A–D delivery status with task-level progress.", tag: "Roadmap" },
+    { href: "/followups", title: "Follow-ups",          subtitle: "SMS follow-up queue across all sellers.", tag: "SMS" },
+    { href: "/deals",     title: "Deals",               subtitle: "Active acquisitions — stage, MAO, last touch.", tag: "Pipeline" },
+    { href: "/weekly",    title: "Weekly Docket",       subtitle: "Operator briefing — KPIs, charts, action items.", tag: "Brief" },
+    { href: "/priorities", title: "Priority Activity",  subtitle: "Daily priority queue with click-through to contacts.", tag: "Today" },
+    { href: "/markets",   title: "Markets",             subtitle: "PA / TN / GA / OH per-market activity rollup.", tag: "Geo" },
+  ];
+  const cardHtml = cards.map((c) => `
+    <a class="apg-card" href="${c.href}">
+      <div class="apg-card-head">
+        <div class="apg-card-tag">${c.tag || ""}</div>
+        ${c.live ? '<span class="apg-live-dot" title="real-time"></span>' : ""}
+      </div>
+      <div class="apg-card-title">${c.title}</div>
+      <div class="apg-card-sub">${c.subtitle}</div>
+      <div class="apg-card-cta">Open
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+      </div>
+    </a>
+  `).join("");
+
+  const body = `
+    <style>
+      .apg-hub-head { margin-bottom: var(--apg-s-8); }
+      .apg-hub-title {
+        font-size: 30px;
+        font-weight: 800;
+        letter-spacing: -0.6px;
+        margin: 0 0 var(--apg-s-2);
+        color: var(--apg-fg);
+      }
+      .apg-hub-sub {
+        color: var(--apg-fg-muted);
+        margin: 0;
+        font-size: 14.5px;
+        line-height: 1.55;
+        max-width: 600px;
+      }
+      .apg-hub-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: var(--apg-s-4);
+      }
+      .apg-card {
+        display: flex;
+        flex-direction: column;
+        gap: var(--apg-s-2);
+        background: var(--apg-surface);
+        border: 1px solid var(--apg-border);
+        border-radius: var(--apg-r-lg);
+        padding: var(--apg-s-6);
+        text-decoration: none;
+        color: var(--apg-fg);
+        transition: border-color 160ms, box-shadow 160ms;
+        position: relative;
+      }
+      .apg-card:hover {
+        border-color: var(--apg-ink);
+        box-shadow: 0 1px 0 var(--apg-border), 0 8px 24px -8px rgba(10, 31, 68, 0.18);
+      }
+      .apg-card-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        height: 18px;
+        margin-bottom: var(--apg-s-1);
+      }
+      .apg-card-tag {
+        font-family: var(--apg-font-mono);
+        font-size: 10.5px;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 1.4px;
+        color: var(--apg-fg-subtle);
+      }
+      .apg-card-title {
+        font-size: 16px;
+        font-weight: 700;
+        line-height: 1.3;
+        color: var(--apg-fg);
+        margin: 0;
+      }
+      .apg-card-sub {
+        color: var(--apg-fg-muted);
+        font-size: 13.5px;
+        line-height: 1.55;
+        flex: 1;
+      }
+      .apg-card-cta {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--apg-s-2);
+        margin-top: var(--apg-s-3);
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--apg-ink);
+        transition: gap 160ms;
+      }
+      .apg-card:hover .apg-card-cta { gap: var(--apg-s-3); }
+      .apg-card-cta svg { transition: transform 160ms; }
+      .apg-card:hover .apg-card-cta svg { transform: translateX(2px); }
+
+      .apg-ops-bar {
+        margin-top: var(--apg-s-12);
+        padding-top: var(--apg-s-6);
+        border-top: 1px solid var(--apg-border);
+        display: flex;
+        gap: var(--apg-s-6);
+        font-size: 13px;
+        color: var(--apg-fg-muted);
+        flex-wrap: wrap;
+      }
+      .apg-ops-bar a {
+        color: var(--apg-fg-muted);
+        text-decoration: none;
+        padding-bottom: 1px;
+        border-bottom: 1px dotted var(--apg-border-strong);
+        transition: color 120ms, border-color 120ms;
+      }
+      .apg-ops-bar a:hover { color: var(--apg-ink); border-bottom-color: var(--apg-ink); }
+    </style>
+    <header class="apg-hub-head">
+      <h1 class="apg-hub-title">Operations Console</h1>
+      <p class="apg-hub-sub">Pick a dashboard. Cards with a pulse are real-time — backed by the Cloudflare Worker, not the 30-min cron.</p>
+    </header>
+    <div class="apg-hub-grid">${cardHtml}</div>
+    <div class="apg-ops-bar">
+      <a href="/about">About</a>
+      <a href="/setup">Setup notes</a>
+      <a href="/ai-agents-plan">AI agents plan</a>
+      <a href="/health" target="_blank" rel="noopener">Worker health</a>
+    </div>
+  `;
+
+  return apgLayout({ title: "Operations Console", activeTab: "hub", content: body });
+}
+
 function loginPageHtml(opts: { error?: string; next?: string } = {}): string {
   const error = opts.error
-    ? `<div class="err">${opts.error.replace(/[<&]/g, (c) => (c === "<" ? "&lt;" : "&amp;"))}</div>`
+    ? `<div class="apg-alert" role="alert">${opts.error.replace(/[<&]/g, (c) => (c === "<" ? "&lt;" : "&amp;"))}</div>`
     : "";
   const nextField = opts.next
     ? `<input type="hidden" name="next" value="${opts.next.replace(/"/g, "&quot;")}">`
@@ -3090,126 +3269,121 @@ function loginPageHtml(opts: { error?: string; next?: string } = {}): string {
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="apple-touch-icon" href="/favicon.svg">
 <meta name="theme-color" content="#1A2840">
+<style>${apgDesignTokens()}</style>
 <style>
-  :root {
-    --ink: #1A2840;
-    --ink-deep: #0A1428;
-    --gold: #FFC72C;
-    --paper: #F7F4EA;
-    --line: #DDD6C4;
-  }
-  * { box-sizing: border-box; }
   body {
-    margin: 0;
-    min-height: 100vh;
-    font-family: -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
-    background: linear-gradient(135deg, var(--paper) 0%, #ffffff 100%);
-    color: var(--ink);
+    background: linear-gradient(155deg, var(--apg-paper) 0%, #ffffff 65%);
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 24px;
+    padding: var(--apg-s-6);
   }
-  .card {
-    background: #fff;
-    border: 1px solid var(--line);
-    border-radius: 14px;
-    box-shadow: 0 4px 24px rgba(10, 31, 68, 0.08);
-    padding: 40px 36px;
+  .apg-login-card {
+    background: var(--apg-surface);
+    border: 1px solid var(--apg-border);
+    border-radius: var(--apg-r-xl);
+    box-shadow: 0 1px 0 var(--apg-border), 0 24px 48px -24px rgba(10, 31, 68, 0.18);
+    padding: var(--apg-s-12) var(--apg-s-8) var(--apg-s-8);
     width: 100%;
-    max-width: 380px;
+    max-width: 400px;
   }
-  .brand {
+  .apg-login-brand {
     display: flex;
     align-items: center;
     justify-content: center;
     flex-direction: column;
-    margin-bottom: 28px;
+    margin-bottom: var(--apg-s-8);
   }
-  .brand img { width: 72px; height: 72px; }
-  .brand h1 {
-    font-size: 18px;
-    font-weight: 700;
-    letter-spacing: 0.4px;
-    margin: 16px 0 4px;
-    color: var(--ink);
+  .apg-login-brand img { width: 64px; height: 64px; }
+  .apg-login-brand h1 {
+    font-size: 17px;
+    font-weight: 800;
+    letter-spacing: 0.2px;
+    margin: var(--apg-s-4) 0 var(--apg-s-1);
+    color: var(--apg-fg);
   }
-  .brand p {
+  .apg-login-brand .eyebrow {
     margin: 0;
-    font-size: 12px;
-    color: #6b7480;
-    letter-spacing: 1.2px;
+    font-family: var(--apg-font-mono);
+    font-size: 10.5px;
+    color: var(--apg-fg-subtle);
+    letter-spacing: 1.6px;
     text-transform: uppercase;
   }
-  form { display: flex; flex-direction: column; gap: 14px; }
-  label {
-    font-size: 12px;
+  .apg-form { display: flex; flex-direction: column; gap: var(--apg-s-3); }
+  .apg-form label {
+    font-size: 11.5px;
     font-weight: 600;
-    color: var(--ink);
+    color: var(--apg-fg-soft);
     text-transform: uppercase;
-    letter-spacing: 0.6px;
+    letter-spacing: 0.8px;
   }
-  input[type=password], input[type=text] {
+  .apg-form input[type=password],
+  .apg-form input[type=text] {
     font-size: 15px;
-    padding: 12px 14px;
-    border: 1px solid var(--line);
-    border-radius: 8px;
+    font-family: var(--apg-font-sans);
+    padding: var(--apg-s-3) var(--apg-s-4);
+    border: 1px solid var(--apg-border);
+    border-radius: var(--apg-r-md);
     width: 100%;
-    background: #fafaf6;
-    color: var(--ink);
-    transition: border-color 120ms, background 120ms;
+    background: var(--apg-bg);
+    color: var(--apg-fg);
+    transition: border-color 120ms, background 120ms, box-shadow 120ms;
   }
-  input:focus {
+  .apg-form input:focus {
     outline: none;
-    border-color: var(--ink);
-    background: #fff;
+    border-color: var(--apg-ink);
+    background: var(--apg-surface);
+    box-shadow: 0 0 0 3px rgba(26, 40, 64, 0.08);
   }
-  button {
-    margin-top: 8px;
-    background: var(--ink);
+  .apg-btn {
+    margin-top: var(--apg-s-2);
+    background: var(--apg-ink);
     color: #fff;
     border: none;
-    border-radius: 8px;
-    padding: 13px 16px;
-    font-size: 15px;
+    border-radius: var(--apg-r-md);
+    padding: var(--apg-s-3) var(--apg-s-4);
+    font-size: 14.5px;
     font-weight: 700;
-    letter-spacing: 0.4px;
+    font-family: var(--apg-font-sans);
+    letter-spacing: 0.2px;
     cursor: pointer;
     transition: background 120ms;
   }
-  button:hover { background: var(--ink-deep); }
-  .err {
-    margin-bottom: 16px;
-    padding: 10px 12px;
-    background: #fff0ec;
+  .apg-btn:hover { background: var(--apg-ink-deep); }
+  .apg-alert {
+    margin-bottom: var(--apg-s-4);
+    padding: var(--apg-s-3) var(--apg-s-4);
+    background: var(--apg-danger-bg);
     border: 1px solid #f4c5b9;
-    border-radius: 8px;
-    color: #a23015;
+    border-radius: var(--apg-r-md);
+    color: var(--apg-danger);
     font-size: 13px;
   }
-  .foot {
-    margin-top: 22px;
+  .apg-foot {
+    margin-top: var(--apg-s-6);
     text-align: center;
-    color: #8a8e98;
+    color: var(--apg-fg-subtle);
     font-size: 11px;
+    letter-spacing: 0.4px;
   }
 </style>
 </head>
 <body>
-  <div class="card">
-    <div class="brand">
-      <img src="/favicon.svg" alt="APG">
+  <div class="apg-login-card">
+    <div class="apg-login-brand">
+      <img src="/favicon.svg" alt="">
       <h1>Atom Property Group</h1>
-      <p>ACQ Operations Console</p>
+      <p class="eyebrow">ACQ Operations Console</p>
     </div>
     ${error}
-    <form method="POST" action="/login">
+    <form class="apg-form" method="POST" action="/login">
       ${nextField}
       <label for="p">Password</label>
       <input type="password" id="p" name="password" autofocus autocomplete="current-password" required>
-      <button type="submit">Sign in</button>
+      <button type="submit" class="apg-btn">Sign in</button>
     </form>
-    <div class="foot">Authorized personnel only</div>
+    <p class="apg-foot">Authorized personnel only</p>
   </div>
 </body>
 </html>`;
