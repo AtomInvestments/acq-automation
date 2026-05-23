@@ -27,6 +27,11 @@ HTML_TEMPLATE = """<!doctype html>
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link rel="apple-touch-icon" href="favicon.svg">
 <meta name="theme-color" content="#1A2840">
+<script>
+  if (location.hostname === "atominvestments.github.io") {
+    location.replace("https://acq-automation.mithchell.workers.dev/login?next=/progress");
+  }
+</script>
 <style>
 :root {
   --ink: #0A1F44;

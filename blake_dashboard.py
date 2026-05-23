@@ -30,6 +30,15 @@ SHELL_HTML = """<!doctype html>
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link rel="apple-touch-icon" href="favicon.svg">
 <meta name="theme-color" content="#1A2840">
+<script>
+  // If anyone hits this dashboard via github.io directly (bypassing the Worker
+  // auth gate at acq-automation.mithchell.workers.dev), redirect to /login.
+  // The canonical URL for this dashboard is the Worker route; github.io is
+  // a build artifact, not the supported entry point.
+  if (location.hostname === "atominvestments.github.io") {
+    location.replace("https://acq-automation.mithchell.workers.dev/login?next=/blake");
+  }
+</script>
 <style>
 :root {
   --ink: #0A1F44;

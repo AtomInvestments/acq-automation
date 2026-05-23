@@ -182,8 +182,16 @@ export default {
 
     // --- Dashboard auth & gated pages ----------------------------------
     // Public asset routes (no auth) — needed so the login page can show the logo.
+    // favicon.svg is INLINED in the Worker so the login page works without
+    // depending on github.io's Pages publish cadence.
     if (req.method === "GET" && url.pathname === "/favicon.svg") {
-      return proxyGithubPagesAsset("favicon.svg", "image/svg+xml");
+      return new Response(INLINE_FAVICON_SVG, {
+        status: 200,
+        headers: {
+          "content-type": "image/svg+xml",
+          "cache-control": "public, max-age=86400",
+        },
+      });
     }
     if (req.method === "GET" && url.pathname === "/logo.svg") {
       return proxyGithubPagesAsset("logo.svg", "image/svg+xml");
@@ -413,6 +421,16 @@ export default {
     // contact + creates opportunity in Realtor Listings pipeline.
     if (req.method === "POST" && url.pathname === "/listing-email") {
       return handleListingEmail(req, env);
+    }
+
+    // /listing-email-from-html — Accepts raw Zillow/Redfin email HTML, parses
+    // out address/price/beds/baths/sqft/realtor fields, then delegates to
+    // handleListingEmail. This is the endpoint n8n's Gmail trigger POSTs to.
+    // Payload shape:
+    //   { "raw_html": "<html>...</html>", "from": "noreply@convo.zillow.com", "subject": "Just listed: ..." }
+    // Optional: { "dry_run": true } to parse only (no GHL/SMS/Slack side effects).
+    if (req.method === "POST" && url.pathname === "/listing-email-from-html") {
+      return handleListingEmailFromHtml(req, env);
     }
 
     // /admin/refresh-dashboard — manual trigger to populate the dashboard
@@ -696,6 +714,232 @@ async function handleListingEmail(req: Request, env: Env): Promise<Response> {
     }, null, 2),
     { status: 200, headers: { "content-type": "application/json" } }
   );
+}
+
+// =============================================================================
+// Zillow / Redfin email parser
+// =============================================================================
+//
+// n8n's Gmail trigger POSTs the raw email body (HTML) to this endpoint. We
+// detect platform by From address, parse out the structured fields, then
+// delegate to handleListingEmail() which fires the MAO/SMS/Slack chain.
+//
+// Tolerant by design: tries multiple regex patterns for each field, falls back
+// gracefully. If parsing fails on a critical field (address or asking price),
+// returns 422 with the unparsed HTML preserved so we can iterate the regexes.
+
+const NJ_PA_ALLOWED_STATES = new Set(["NJ", "PA"]);
+
+interface ParsedListing {
+  property_address?: string;
+  city?: string;
+  state?: string;
+  postal_code?: string;
+  asking_price?: number;
+  sqft?: number;
+  beds?: number;
+  baths?: number;
+  listing_url?: string;
+  listing_realtor_name?: string;
+  listing_realtor_phone?: string;
+  listing_realtor_email?: string;
+  source?: "zillow" | "redfin" | "unknown";
+}
+
+// Strip HTML tags + decode common entities → text usable for regex on prose.
+function htmlToText(html: string): string {
+  return html
+    .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, " ")
+    .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, " ")
+    .replace(/<[^>]+>/g, " ")
+    .replace(/&nbsp;/g, " ")
+    .replace(/&amp;/g, "&")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&#39;|&apos;/g, "'")
+    .replace(/&quot;/g, '"')
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+// First match of any regex in the list, returning the first capture group.
+function firstMatch(text: string, patterns: RegExp[]): string | undefined {
+  for (const p of patterns) {
+    const m = text.match(p);
+    if (m && m[1]) return m[1].trim();
+  }
+  return undefined;
+}
+
+function parseListingEmail(
+  rawHtml: string,
+  from: string,
+  subject: string
+): ParsedListing {
+  const fromLower = (from || "").toLowerCase();
+  const source: ParsedListing["source"] = fromLower.includes("zillow")
+    ? "zillow"
+    : fromLower.includes("redfin")
+    ? "redfin"
+    : "unknown";
+
+  const text = htmlToText(rawHtml);
+  const result: ParsedListing = { source };
+
+  // --- Property address + city/state/zip ---
+  // Patterns like "123 Main St, Springfield, NJ 07514" or in subject "Just listed: 123 Main St"
+  const addrInText = text.match(
+    /\b(\d+[A-Za-z]?\s+[\w\s\.'\-]{3,60}?),\s+([A-Za-z][\w\s\.'\-]{2,40}?),\s+([A-Z]{2})\s+(\d{5})/
+  );
+  if (addrInText) {
+    result.property_address = addrInText[1].trim();
+    result.city = addrInText[2].trim();
+    result.state = addrInText[3];
+    result.postal_code = addrInText[4];
+  } else {
+    // Subject line fallbacks: "Just listed: 123 Main St" / "New listing: 123 Main St in Paterson, NJ"
+    const subjAddr = (subject || "").match(
+      /(?:Just listed|New listing|Listing|Price change|Just sold|Coming soon)[:\s\-]+(.+)/i
+    );
+    if (subjAddr) result.property_address = subjAddr[1].trim();
+  }
+
+  // --- Asking price ---
+  const priceStr = firstMatch(text, [
+    /(?:asking|price|list price|listed at)[:\s]*\$([\d,]{4,})/i,
+    /\$([\d,]{4,})(?:\s|\.|,)/,
+  ]);
+  if (priceStr) result.asking_price = Number(priceStr.replace(/,/g, ""));
+
+  // --- Sqft ---
+  const sqftStr = firstMatch(text, [
+    /([\d,]+)\s*(?:sqft|sq\.?\s*ft\.?|square feet)/i,
+  ]);
+  if (sqftStr) result.sqft = Number(sqftStr.replace(/,/g, ""));
+
+  // --- Beds ---
+  const bedsStr = firstMatch(text, [
+    /(\d+)\s*(?:bd|bed|bedroom|bedrooms)\b/i,
+  ]);
+  if (bedsStr) result.beds = Number(bedsStr);
+
+  // --- Baths ---
+  const bathsStr = firstMatch(text, [
+    /(\d+(?:\.\d+)?)\s*(?:ba|bath|bathroom|bathrooms)\b/i,
+  ]);
+  if (bathsStr) result.baths = Number(bathsStr);
+
+  // --- Listing URL (from anchor tags in raw HTML) ---
+  const urlMatch = rawHtml.match(
+    /https?:\/\/(?:www\.)?(?:zillow|redfin)\.com\/[^"'\s<>]+/i
+  );
+  if (urlMatch) result.listing_url = urlMatch[0];
+
+  // --- Realtor info (listing agent / listed by block) ---
+  // Patterns vary widely; try a few.
+  // Zillow often has "Listed by Edna Krabappel" or "Courtesy of: Jane Smith, ABC Realty"
+  const nameMatch = firstMatch(text, [
+    /(?:Listed by|Listing agent|Courtesy of)[:\s]+([A-Z][a-zA-Z'\-]+(?:\s+[A-Z][a-zA-Z'\-]+){0,3})/,
+  ]);
+  if (nameMatch) result.listing_realtor_name = nameMatch.trim();
+
+  // Phone: any (NNN) NNN-NNNN or NNN-NNN-NNNN or +1 NNN... in text
+  const phoneMatch = text.match(
+    /(?:\+1[\s\-\.]?)?\(?(\d{3})\)?[\s\-\.]?(\d{3})[\s\-\.]?(\d{4})/
+  );
+  if (phoneMatch) {
+    result.listing_realtor_phone = `+1${phoneMatch[1]}${phoneMatch[2]}${phoneMatch[3]}`;
+  }
+
+  // Email: first @ address that isn't @zillow/@redfin (those are the sender)
+  const emailMatches = text.match(/[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}/g) || [];
+  const realtorEmail = emailMatches.find(
+    (e) =>
+      !e.toLowerCase().includes("@zillow") &&
+      !e.toLowerCase().includes("@redfin") &&
+      !e.toLowerCase().includes("noreply") &&
+      !e.toLowerCase().includes("no-reply")
+  );
+  if (realtorEmail) result.listing_realtor_email = realtorEmail;
+
+  return result;
+}
+
+async function handleListingEmailFromHtml(req: Request, env: Env): Promise<Response> {
+  let body: any = {};
+  try {
+    body = await req.json();
+  } catch {
+    return new Response(JSON.stringify({ ok: false, error: "invalid_json" }), {
+      status: 400,
+      headers: { "content-type": "application/json" },
+    });
+  }
+
+  const rawHtml = String(body.raw_html || "");
+  const from = String(body.from || "");
+  const subject = String(body.subject || "");
+  const dryRun = body.dry_run === true || body.dry_run === "true";
+
+  if (!rawHtml) {
+    return new Response(
+      JSON.stringify({ ok: false, error: "missing_raw_html" }),
+      { status: 400, headers: { "content-type": "application/json" } }
+    );
+  }
+
+  const parsed = parseListingEmail(rawHtml, from, subject);
+
+  // Critical-fields check: must have an address AND an asking price to fire
+  // the rest of the pipeline. If either is missing, return 422 with parse
+  // result so the user (or n8n) can manually review.
+  if (!parsed.property_address || !parsed.asking_price) {
+    return new Response(
+      JSON.stringify({
+        ok: false,
+        error: "parse_incomplete",
+        details: "Could not extract property_address and/or asking_price from this email.",
+        parsed,
+        from, subject,
+        html_excerpt: rawHtml.slice(0, 500),
+      }, null, 2),
+      { status: 422, headers: { "content-type": "application/json" } }
+    );
+  }
+
+  // State allowlist: only NJ + PA listings fire the full pipeline. Anything
+  // else gets parsed + returned but no SMS / Slack / GHL side effects (saves
+  // Twilio + GHL cost on out-of-buy-box alerts).
+  const inBuyBox = !!parsed.state && NJ_PA_ALLOWED_STATES.has(parsed.state);
+  if (!inBuyBox && parsed.state) {
+    // Notify Slack so we still see it, then return early.
+    const note = `:no_entry: *Out-of-buy-box listing skipped* — ${parsed.property_address}, ${parsed.city || "?"}, ${parsed.state} (buy box = NJ + PA only)`;
+    await postSlackMessage(env, SLACK_LISTINGS_CHANNEL, note).catch(() => {});
+    return new Response(
+      JSON.stringify({
+        ok: true,
+        skipped_reason: "out_of_buy_box",
+        buy_box: ["NJ", "PA"],
+        parsed,
+      }, null, 2),
+      { status: 200, headers: { "content-type": "application/json" } }
+    );
+  }
+
+  if (dryRun) {
+    return new Response(
+      JSON.stringify({ ok: true, dry_run: true, parsed }, null, 2),
+      { status: 200, headers: { "content-type": "application/json" } }
+    );
+  }
+
+  // Forward to the existing handler by re-invoking with a synthetic Request.
+  const forwarded = new Request("https://internal/listing-email", {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify(parsed),
+  });
+  return handleListingEmail(forwarded, env);
 }
 
 // --- Twilio DTMF injection on live call ---
@@ -2788,3 +3032,26 @@ async function proxyGithubPagesAsset(path: string, contentType: string): Promise
     },
   });
 }
+
+// Favicon SVG inlined directly so the login page works even if github.io
+// Pages hasn't published the latest assets yet (Pages can lag the Worker
+// by 1-2 min after a commit). Identical content to site/favicon.svg.
+const INLINE_FAVICON_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" aria-label="Atom Property Group">
+  <defs>
+    <style>
+      .ink   { fill: #1A2840; }
+      .gold  { fill: #FFC72C; }
+      .orbit { stroke: #FFC72C; stroke-width: 12; fill: none; stroke-linecap: round; }
+    </style>
+  </defs>
+  <rect width="256" height="256" fill="#FFFFFF" rx="36" />
+  <g transform="translate(128, 128)">
+    <ellipse class="orbit" cx="0" cy="0" rx="92" ry="34" />
+    <ellipse class="orbit" cx="0" cy="0" rx="92" ry="34" transform="rotate(60)" />
+    <ellipse class="orbit" cx="0" cy="0" rx="92" ry="34" transform="rotate(-60)" />
+    <circle class="gold" cx="92" cy="0"   r="11" />
+    <circle class="gold" cx="-46" cy="80" r="11" />
+    <circle class="gold" cx="-46" cy="-80" r="11" />
+    <circle class="ink" cx="0" cy="0" r="22" />
+  </g>
+</svg>`;
