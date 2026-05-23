@@ -857,25 +857,83 @@ function parseListingEmail(
     ? "redfin"
     : "unknown";
 
-  const text = htmlToText(rawHtml);
+  // Strip out sender-HQ footer blocks before body regex sweeps — Zillow and
+  // Redfin both put their corporate HQ address in the footer. Earlier the
+  // unfiltered body regex grabbed "1301 Second Avenue, Floor 36 Seattle, WA
+  // 98101" as the listing address, which then state-filtered as WA (out of
+  // buy box) and dropped real NJ leads.
+  let text = htmlToText(rawHtml);
+  for (const marker of [
+    "Zillow, Inc.",
+    "Zillow Group",
+    "1301 Second Avenue",
+    "1301 Second Ave",
+    "Redfin Corporation",
+    "1099 Stewart",
+    "Help improve your email",
+  ]) {
+    const idx = text.indexOf(marker);
+    if (idx > 100) { text = text.slice(0, idx); break; }
+  }
+
   const result: ParsedListing = { source };
 
   // --- Property address + city/state/zip ---
-  // Patterns like "123 Main St, Springfield, NJ 07514" or in subject "Just listed: 123 Main St"
-  const addrInText = text.match(
-    /\b(\d+[A-Za-z]?\s+[\w\s\.'\-]{3,60}?),\s+([A-Za-z][\w\s\.'\-]{2,40}?),\s+([A-Z]{2})\s+(\d{5})/
-  );
-  if (addrInText) {
-    result.property_address = addrInText[1].trim();
-    result.city = addrInText[2].trim();
-    result.state = addrInText[3];
-    result.postal_code = addrInText[4];
-  } else {
-    // Subject line fallbacks: "Just listed: 123 Main St" / "New listing: 123 Main St in Paterson, NJ"
-    const subjAddr = (subject || "").match(
-      /(?:Just listed|New listing|Listing|Price change|Just sold|Coming soon)[:\s\-]+(.+)/i
+  // PRIORITY 1: Subject line. Zillow/Redfin subjects encode the listing
+  // address structurally, e.g.:
+  //   "New Listing: 25 Woodside Ln Cinnaminson, NJ 08077. Your 'NJ' search"
+  //   "Just listed: 123 Main St, Newark, NJ 07102"
+  //   "Price change: 5 Maple Ave, Cherry Hill, NJ 08002"
+  // The state+zip after the trigger word is reliable. We then split the
+  // street from city by detecting the last street-suffix abbreviation.
+  if (subject) {
+    const subjMatch = subject.match(
+      /(?:New Listing|Just listed|Just sold|Price change|Coming soon|For sale|Listing)[:\s\-]+(.+?),\s+([A-Z]{2})\s+(\d{5})/i
     );
-    if (subjAddr) result.property_address = subjAddr[1].trim();
+    if (subjMatch) {
+      const streetAndCity = subjMatch[1].trim();
+      result.state = subjMatch[2];
+      result.postal_code = subjMatch[3];
+      // Find LAST occurrence of a street-suffix word; everything up to + including
+      // it is the street, everything after is the city.
+      const SUFFIX_RE = /\b(?:St|Street|Ave|Avenue|Rd|Road|Blvd|Boulevard|Ln|Lane|Dr|Drive|Ct|Court|Pl|Place|Way|Cir|Circle|Hwy|Highway|Pkwy|Parkway|Trl|Trail|Ter|Terrace|Sq|Square|Pt|Point|Bnd|Bend|Crk|Creek|Mnr|Manor)\b\.?/gi;
+      const suffMatches = [...streetAndCity.matchAll(SUFFIX_RE)];
+      if (suffMatches.length > 0) {
+        const last = suffMatches[suffMatches.length - 1];
+        const cutAt = (last.index ?? 0) + last[0].length;
+        result.property_address = streetAndCity.slice(0, cutAt).trim();
+        result.city = streetAndCity.slice(cutAt).trim().replace(/^,\s*/, "");
+      } else {
+        // No suffix detected — split on the LAST comma if any
+        const lastComma = streetAndCity.lastIndexOf(",");
+        if (lastComma > 0) {
+          result.property_address = streetAndCity.slice(0, lastComma).trim();
+          result.city = streetAndCity.slice(lastComma + 1).trim();
+        } else {
+          result.property_address = streetAndCity;
+        }
+      }
+    }
+  }
+
+  // PRIORITY 2: Body-text fallback. Same regex as before but operates on the
+  // footer-stripped text so we can't accidentally grab Zillow HQ's address.
+  if (!result.property_address) {
+    const addrInText = text.match(
+      /\b(\d+[A-Za-z]?\s+[\w\s\.'\-]{3,60}?),\s+([A-Za-z][\w\s\.'\-]{2,40}?),\s+([A-Z]{2})\s+(\d{5})/
+    );
+    if (addrInText) {
+      result.property_address = addrInText[1].trim();
+      result.city = addrInText[2].trim();
+      result.state = addrInText[3];
+      result.postal_code = addrInText[4];
+    } else {
+      // PRIORITY 3: bare subject (no structured trigger word, no state+zip)
+      const subjAddr = (subject || "").match(
+        /(?:Just listed|New listing|Listing|Price change|Just sold|Coming soon)[:\s\-]+(.+)/i
+      );
+      if (subjAddr) result.property_address = subjAddr[1].trim();
+    }
   }
 
   // --- Asking price ---
@@ -904,10 +962,16 @@ function parseListingEmail(
   if (bathsStr) result.baths = Number(bathsStr);
 
   // --- Listing URL (from anchor tags in raw HTML) ---
-  const urlMatch = rawHtml.match(
-    /https?:\/\/(?:www\.)?(?:zillow|redfin)\.com\/[^"'\s<>]+/i
-  );
-  if (urlMatch) result.listing_url = urlMatch[0];
+  // Prefer real listing-detail URLs (homedetails / homes/for_sale / property)
+  // over Zillow's tracking pixel + email-open URLs.
+  const allUrls = [
+    ...rawHtml.matchAll(/https?:\/\/(?:click\.mail\.|www\.)?(?:zillow|redfin)\.com\/[^"'\s<>)]+/gi),
+  ].map((m) => m[0]);
+  const listingUrl =
+    allUrls.find((u) => /homedetails|homes\/for_sale|property\/|rent\/|sold\//i.test(u)) ||
+    allUrls.find((u) => !/emailtrackingservice|\/app\/?\?tok=|unsubscribe|click\.mail/i.test(u)) ||
+    allUrls[0];
+  if (listingUrl) result.listing_url = listingUrl;
 
   // --- Realtor info (listing agent / listed by block) ---
   // Patterns vary widely; try a few.
