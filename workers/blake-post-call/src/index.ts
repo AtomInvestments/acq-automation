@@ -591,15 +591,41 @@ async function handleListingEmail(req: Request, env: Env): Promise<Response> {
 
   const asking = Number(body.asking_price) || 0;
   const sqft = Number(body.sqft) || 0;
-  const realtorPhone = (body.listing_realtor_phone || "").trim();
-  const realtorName = (body.listing_realtor_name || "").trim();
-  const realtorEmail = (body.listing_realtor_email || "").trim();
+  let realtorPhone = (body.listing_realtor_phone || "").trim();
+  let realtorName = (body.listing_realtor_name || "").trim();
+  let realtorEmail = (body.listing_realtor_email || "").trim();
+  let realtorLookupResult: AgentLookupResult | null = null;
 
   if (!asking || !body.property_address) {
     return new Response(
       JSON.stringify({ ok: false, error: "missing_required_fields", details: "asking_price + property_address are required" }),
       { status: 400, headers: { "content-type": "application/json" } }
     );
+  }
+
+  // 0. If we don't have a realtor phone from the email (typical for Zillow
+  //    listing alerts — they show the brokerage but not the agent contact),
+  //    fire a Claude web-search lookup against the listing URL + address.
+  //    Skipped if we already have a phone OR if the call is missing both
+  //    listing_url and property_address (can't search without an anchor).
+  if (!realtorPhone && (body.listing_url || body.property_address)) {
+    try {
+      realtorLookupResult = await lookupListingAgentViaWebSearch(
+        env,
+        body.listing_url || "",
+        body.property_address,
+        body.city,
+        body.state
+      );
+      if (realtorLookupResult) {
+        if (!realtorName && realtorLookupResult.agent_name)  realtorName  = realtorLookupResult.agent_name;
+        if (realtorLookupResult.agent_phone)                 realtorPhone = realtorLookupResult.agent_phone;
+        if (!realtorEmail && realtorLookupResult.agent_email) realtorEmail = realtorLookupResult.agent_email;
+        console.log(`[listing] agent web-search: name=${realtorName || "?"} phone=${realtorPhone || "?"} email=${realtorEmail || "?"}`);
+      }
+    } catch (e) {
+      console.warn(`[listing] agent web-search threw: ${e}`);
+    }
   }
 
   // 1. MAO calculation. For MVP: treat asking_price as ARV proxy. Later when
@@ -755,11 +781,15 @@ async function handleListingEmail(req: Request, env: Env): Promise<Response> {
     (beds || baths || sqft)
       ? `> *${beds || "?"} bd · ${baths || "?"} ba · ${sqft ? sqft.toLocaleString() + " sqft" : "? sqft"}*\n`
       : "";
+  const lookupTag = realtorLookupResult
+    ? (realtorPhone ? " :mag: via web-search" : " :mag: web-search returned nothing")
+    : "";
   const slackText =
     `:house: *New listing landed* — ${fullAddress}\n` +
     propertyLine +
     `> Asking *${fmtK(asking)}* · MAO *${fmtK(mao)}* (ARV ${fmtK(arvProxy)} × 0.70 − rehab ${fmtK(rehabEstimate)} − ${fmtK(MAO_BUFFER)} buffer)\n` +
-    `> Realtor: ${realtorName || "(unknown)"} ${realtorPhone || ""} ${realtorEmail ? `<${realtorEmail}>` : ""}\n` +
+    `> Realtor: ${realtorName || "(unknown)"} ${realtorPhone || ""} ${realtorEmail ? `<${realtorEmail}>` : ""}${lookupTag}\n` +
+    (realtorLookupResult?.brokerage ? `> Brokerage: ${realtorLookupResult.brokerage}\n` : "") +
     `> SMS to realtor: ${sms.ok ? ":white_check_mark: sent via GHL (conversation on contact)" : `:x: ${sms.status} ${sms.body.slice(0, 100)}`}\n` +
     (body.listing_url ? `> Listing: ${body.listing_url}\n` : "") +
     `> GHL opp: \`${opportunityId}\` (Realtor Listings → 1. New Listing) [${oppAction}]`;
@@ -785,6 +815,7 @@ async function handleListingEmail(req: Request, env: Env): Promise<Response> {
       slack_notify: slack.ok
         ? { ok: true, ts: slack.ts, channel: slack.channel }
         : { ok: false, status: slack.status, error: slack.body.slice(0, 200) },
+      realtor_lookup: realtorLookupResult || null,
     }, null, 2),
     { status: 200, headers: { "content-type": "application/json" } }
   );
@@ -1120,6 +1151,122 @@ async function handleProgressToggle(req: Request, env: Env): Promise<Response> {
     }),
     { status: 200, headers: { "content-type": "application/json" } }
   );
+}
+
+// =============================================================================
+// Listing-agent lookup via Anthropic web_search
+// =============================================================================
+//
+// Zillow/Redfin emails carry the brokerage name but rarely the listing agent's
+// direct phone/email. Their listing pages have it, but Zillow blocks Worker
+// fetches with HTTP 403. So we ask Claude to web-search and extract.
+//
+// Cost per lookup: ~$0.01-0.03 (Sonnet input + search tool usage).
+// Reliability: ~85% — Claude finds the agent block on Zillow / Realtor / brokerage
+// site. Returns empty fields when the public web doesn't expose the info.
+//
+// Called from handleListingEmail when realtor_phone wasn't in the email body.
+
+interface AgentLookupResult {
+  agent_name?: string;
+  agent_phone?: string;
+  agent_email?: string;
+  brokerage?: string;
+  source?: "claude_web_search";
+  raw_response?: string;     // present only on parse failure
+  error?: string;            // present only on API error
+}
+
+async function lookupListingAgentViaWebSearch(
+  env: Env,
+  listingUrl: string,
+  address: string,
+  city?: string,
+  state?: string
+): Promise<AgentLookupResult> {
+  if (!env.ANTHROPIC_API_KEY) return { error: "no_anthropic_key" };
+
+  const locationLine = [address, city, state].filter(Boolean).join(", ");
+  const prompt = `You are an APG real-estate operations assistant. Find the listing agent's contact details for this specific property.
+
+Property: ${locationLine}
+${listingUrl ? `Listing URL: ${listingUrl}` : ""}
+
+Search the web (Zillow, Realtor.com, the brokerage website, MLS — whichever has it) and find:
+1. Listing agent's full name (the human agent, NOT the brokerage)
+2. Their direct phone number (10-digit US number in any format)
+3. Their public email address (only if openly listed on a public site)
+4. The brokerage they work for
+
+Return EXACTLY this JSON object and nothing else, no prose, no code fences:
+{"agent_name":"...","agent_phone":"...","agent_email":"...","brokerage":"..."}
+
+For any field you cannot find on the public web, use an empty string. Do not invent or guess data.`;
+
+  let res: Response;
+  try {
+    res = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: {
+        "x-api-key": env.ANTHROPIC_API_KEY,
+        "anthropic-version": "2023-06-01",
+        "content-type": "application/json",
+      },
+      body: JSON.stringify({
+        model: "claude-sonnet-4-6",
+        max_tokens: 1024,
+        tools: [
+          { type: "web_search_20250305", name: "web_search", max_uses: 4 },
+        ],
+        messages: [{ role: "user", content: prompt }],
+      }),
+    });
+  } catch (e: any) {
+    return { error: `fetch_threw: ${e?.message || String(e)}` };
+  }
+
+  if (!res.ok) {
+    const errText = await res.text();
+    console.warn(`[agent-lookup] anthropic ${res.status}: ${errText.slice(0, 300)}`);
+    return { error: `anthropic_${res.status}` };
+  }
+
+  const data: any = await res.json();
+  let textOutput = "";
+  for (const block of data.content || []) {
+    if (block.type === "text") textOutput += block.text;
+  }
+
+  // The model is instructed to return ONLY a JSON object. Be tolerant of
+  // accidental code fences or surrounding whitespace.
+  const jsonMatch = textOutput.match(/\{[\s\S]*\}/);
+  if (!jsonMatch) {
+    return { source: "claude_web_search", raw_response: textOutput.slice(0, 500) };
+  }
+  let parsed: any = {};
+  try {
+    parsed = JSON.parse(jsonMatch[0]);
+  } catch {
+    return { source: "claude_web_search", raw_response: textOutput.slice(0, 500), error: "json_parse" };
+  }
+
+  // Normalize phone to E.164 (+1XXXXXXXXXX) if possible
+  let phone = String(parsed.agent_phone || "").trim();
+  if (phone) {
+    const digits = phone.replace(/\D/g, "");
+    if (digits.length === 10) phone = `+1${digits}`;
+    else if (digits.length === 11 && digits.startsWith("1")) phone = `+${digits}`;
+    else if (digits.length < 10) phone = "";   // junk — discard
+    else phone = `+${digits}`;
+  }
+
+  return {
+    source: "claude_web_search",
+    agent_name: String(parsed.agent_name || "").trim() || undefined,
+    agent_phone: phone || undefined,
+    agent_email: String(parsed.agent_email || "").trim() || undefined,
+    brokerage: String(parsed.brokerage || "").trim() || undefined,
+  };
 }
 
 async function handleListingEmailFromHtml(req: Request, env: Env): Promise<Response> {
