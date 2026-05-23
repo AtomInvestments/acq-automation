@@ -1192,16 +1192,16 @@ async function lookupListingAgentViaWebSearch(
 Property: ${locationLine}
 ${listingUrl ? `Listing URL: ${listingUrl}` : ""}
 
-Search the web (Zillow, Realtor.com, the brokerage website, MLS — whichever has it) and find:
-1. Listing agent's full name (the human agent, NOT the brokerage)
-2. Their direct phone number (10-digit US number in any format)
-3. Their public email address (only if openly listed on a public site)
-4. The brokerage they work for
+STRATEGY: Public web search results do NOT index the specific listing agent for a given Zillow URL — that data only appears on the actual listing page itself. So:
 
-Return EXACTLY this JSON object and nothing else, no prose, no code fences:
+1. FIRST, use the web_fetch tool to fetch the Zillow listing URL directly (you have access to it; Workers don't but you do). Look for the "Listed by:" / "Listing agent:" / agent contact block on the rendered listing page.
+2. If web_fetch returns the listing data, extract: agent name, phone (10-digit), email, brokerage.
+3. If web_fetch fails or doesn't have the agent block, FALLBACK to web_search to find the agent via Realtor.com, the brokerage website, or MLS directories using the property address.
+
+Return EXACTLY this JSON object and nothing else — no prose, no code fences, no commentary:
 {"agent_name":"...","agent_phone":"...","agent_email":"...","brokerage":"..."}
 
-For any field you cannot find on the public web, use an empty string. Do not invent or guess data.`;
+For any field you cannot find from web_fetch or web_search, use an empty string. Do not invent or guess data.`;
 
   let res: Response;
   try {
@@ -1216,7 +1216,11 @@ For any field you cannot find on the public web, use an empty string. Do not inv
         model: "claude-sonnet-4-6",
         max_tokens: 1024,
         tools: [
-          { type: "web_search_20250305", name: "web_search", max_uses: 4 },
+          // web_fetch lets Claude directly retrieve URL contents. Critical for
+          // Zillow listing agents — Google doesn't index that data, only the
+          // live listing page has it.
+          { type: "web_fetch_20250910", name: "web_fetch", max_uses: 3 },
+          { type: "web_search_20250305", name: "web_search", max_uses: 3 },
         ],
         messages: [{ role: "user", content: prompt }],
       }),
