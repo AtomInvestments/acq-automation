@@ -652,7 +652,9 @@ async function handleListingEmail(req: Request, env: Env): Promise<Response> {
   const asking = Number(body.asking_price) || 0;
   const sqft = Number(body.sqft) || 0;
   let realtorPhone = (body.listing_realtor_phone || "").trim();
-  let realtorName = (body.listing_realtor_name || "").trim();
+  // Title-case the realtor name to fix VEERA BODAVULA -> Veera Bodavula. The
+  // SMS opens with "Hi <first>" so all-caps reads as shouting.
+  let realtorName = titleCaseName((body.listing_realtor_name || "").trim());
   let realtorEmail = (body.listing_realtor_email || "").trim();
   let realtorLookupResult: AgentLookupResult | null = null;
 
@@ -678,7 +680,7 @@ async function handleListingEmail(req: Request, env: Env): Promise<Response> {
         body.state
       );
       if (realtorLookupResult) {
-        if (!realtorName && realtorLookupResult.agent_name)  realtorName  = realtorLookupResult.agent_name;
+        if (!realtorName && realtorLookupResult.agent_name)  realtorName  = titleCaseName(realtorLookupResult.agent_name);
         if (realtorLookupResult.agent_phone)                 realtorPhone = realtorLookupResult.agent_phone;
         if (!realtorEmail && realtorLookupResult.agent_email) realtorEmail = realtorLookupResult.agent_email;
         console.log(`[listing] agent web-search: name=${realtorName || "?"} phone=${realtorPhone || "?"} email=${realtorEmail || "?"}`);
@@ -789,33 +791,25 @@ async function handleListingEmail(req: Request, env: Env): Promise<Response> {
   //    - SMS gets recorded as a GHL conversation on the realtor contact.
   //    - Realtor replies thread back to the same conversation automatically
   //      (no separate Twilio inbound webhook plumbing required).
+  // Realtor first name, title-cased. realtorName was already normalized
+  // above so 'VEERA BODAVULA' is now 'Veera Bodavula'.
   const realtorFirst = (realtorName.split(" ")[0] || "there").trim();
   const fmtK = (n: number) => `$${Math.round(n / 1000)}k`;
   const beds = Number(body.beds) || 0;
   const baths = Number(body.baths) || 0;
-  // Human-feeling outreach. Signed as Blake (same identity as the voice agent
-  // — keeps APG's voice consistent across SMS and phone). Specific to the
-  // listing so it doesn't read as a mass template. Includes property specs
-  // so the realtor knows we actually saw their listing.
-  const propertyShort =
-    (body.property_address || "your listing") +
-    (body.city ? ` in ${body.city}` : "");
-  const specs = [
-    beds ? `${beds}bd` : "",
-    baths ? `${baths}ba` : "",
-    sqft ? `${sqft.toLocaleString()} sqft` : "",
-  ].filter(Boolean).join("/");
-  const variants = [
-    `Hey ${realtorFirst}, this is Blake at Atom Property Group. Just saw ${propertyShort}${specs ? ` (${specs})` : ""} hit the market — we're a cash buyer in the area and could probably do ${fmtK(mao)} as-is, close in 2 weeks no contingencies. Worth a quick chat? No pressure either way.`,
-    `Hi ${realtorFirst}, Blake here from Atom Property Group. Caught your ${propertyShort} listing this morning. We buy cash in the area${specs ? ` and ${specs} fits what we're after` : ""} — would ${fmtK(mao)} work, close in 14 days no contingencies? Happy to chat if it's a fit.`,
-    `Hey ${realtorFirst} — Blake at Atom Property Group. Your ${propertyShort} listing popped up in our feed. We're cash buyers and the math gets us to about ${fmtK(mao)} as-is, 14-day close. Worth a conversation? Totally fine if not — just figured I'd reach out.`,
-  ];
-  // Pick a variant per-listing so the same realtor texted twice doesn't see
-  // the identical message. Hash the address as a stable seed.
-  const variantIdx = Math.abs(
-    (body.property_address || "").split("").reduce((h, c) => ((h << 5) - h + c.charCodeAt(0)) | 0, 0)
-  ) % variants.length;
-  const smsBody = variants[variantIdx];
+
+  // SMS body — Mike-with-APG copy per direct user instruction (2026-05-24).
+  // The B2B realtor outreach uses a different persona than Blake (the voice
+  // agent for seller calls): "active buyer backed by private capital" frames
+  // APG as a serious cash buyer rather than a generic wholesaler.
+  // Specific to the listing, ends with a clear non-pressuring CTA.
+  const addrShort = body.property_address || "your listing";
+  const smsBody =
+    `Hi ${realtorFirst}, this is Mike with APG. ` +
+    `I'm an active buyer backed by private capital — ` +
+    `saw your listing at ${addrShort}. ` +
+    `Our offer as-is, close in 14 days, is ${fmtK(mao)}. ` +
+    `Let me know your thoughts. Thanks.`;
 
   const sms = realtorContactId
     ? await sendGhlSms(env, realtorContactId, smsBody)
@@ -1000,7 +994,19 @@ function parseListingEmail(
       /(?:New Listing|Just listed|Just sold|Price change|Coming soon|For sale|Listing)[:\s\-]+(.+?),\s+([A-Z]{2})\s+(\d{5})/i
     );
     if (subjMatch) {
-      const streetAndCity = subjMatch[1].trim();
+      // Pre-clean the street+city capture. Some Zillow subjects include
+      // metadata that looks like part of the address, e.g.:
+      //   "Just listed: 604 Sq Ft - 544 Westgate Dr, Newark, NJ 07103"
+      // The "604 Sq Ft" is sqft metadata, NOT a street number. Without
+      // this strip, the parser stored 'property_address = "604 Sq Ft -
+      // 544 Westgate Dr"' which then got into the opp name + SMS body.
+      // Same defense for "<N> bd / <N> bed" prefixes we've seen Zillow
+      // include in some subject templates.
+      let streetAndCity = subjMatch[1]
+        .replace(/\b\d{1,4}\s*sq\.?\s*ft\.?\b[\s,\-—–]*/gi, "")
+        .replace(/\b\d{1,2}\s*(?:bd|bed|bedrooms?)\b[\s,\-—–]*/gi, "")
+        .replace(/^[\s,\-—–]+|[\s,\-—–]+$/g, "")
+        .trim();
       result.state = subjMatch[2];
       result.postal_code = subjMatch[3];
       // Find LAST occurrence of a street-suffix word; everything up to + including
@@ -1412,30 +1418,27 @@ async function handleListingEmailFromHtml(req: Request, env: Env): Promise<Respo
     );
   }
 
-  // Property-type filter — single-family only. Skip townhouses, condos,
-  // multi-family, manufactured / mobile homes. APG's buy box is single-family
-  // (per user direction). We detect by keyword sweep of the raw HTML +
-  // parsed text. If any non-SFR keyword appears, skip with a Slack note
-  // (so the team still sees the listing came through) and don't fire SMS.
-  const nonSfrKeywords = [
-    "townhouse", "townhome", "town home", "town house",
-    "condo", "condominium", "co-op", "co op", "coop",
+  // Property-type filter — buy box is single-family + multi-family + townhouse.
+  // BLOCK: condo / condominium / co-op / apartment / manufactured / mobile /
+  // trailer (per user direction 2026-05-24). Multi-family and townhouses
+  // were previously blocked; now allowed.
+  const blockedPropertyTypes = [
+    "condo", "condominium",
+    "co-op", "co op", "coop",
     "apartment building", "apartments",
-    "multi-family", "multi family", "multifamily",
-    "duplex", "triplex", "fourplex", "quadplex",
     "manufactured home", "mobile home", "trailer home",
   ];
   const haystack = `${rawHtml} ${subject || ""}`.toLowerCase();
-  const matchedNonSfr = nonSfrKeywords.find((kw) => haystack.includes(kw));
-  if (matchedNonSfr) {
-    const note = `:no_entry: *Non-SFR listing skipped* — ${parsed.property_address}, ${parsed.city || "?"}, ${parsed.state || "?"} (matched "${matchedNonSfr}"; buy box = single-family only)`;
+  const matchedBlocked = blockedPropertyTypes.find((kw) => haystack.includes(kw));
+  if (matchedBlocked) {
+    const note = `:no_entry: *Out-of-buy-box property type skipped* — ${parsed.property_address}, ${parsed.city || "?"}, ${parsed.state || "?"} (matched "${matchedBlocked}"; buy box = SFR + multi + townhouse only)`;
     await postSlackMessage(env, SLACK_LISTINGS_CHANNEL, note).catch(() => {});
     return new Response(
       JSON.stringify({
         ok: true,
-        skipped_reason: "not_single_family",
-        matched_keyword: matchedNonSfr,
-        buy_box: "single_family_only",
+        skipped_reason: "blocked_property_type",
+        matched_keyword: matchedBlocked,
+        buy_box: "sfr_multi_townhouse_only",
         parsed,
       }, null, 2),
       { status: 200, headers: { "content-type": "application/json" } }
@@ -1586,6 +1589,23 @@ function normalizeAddress(a: string): string {
     .replace(/[.,#]/g, "")
     .replace(/\s+/g, " ")
     .trim();
+}
+
+// Title-case a name. Zillow + GHL sometimes give us ALL-CAPS names like
+// "VEERA BODAVULA" which read badly in SMS ("Hi VEERA, ..."). This
+// normalizes to "Veera Bodavula" while preserving punctuation + common
+// name shapes like "O'Brien" and "McDonald".
+function titleCaseName(s: string): string {
+  if (!s) return "";
+  return s
+    .trim()
+    .toLowerCase()
+    .replace(/\b([a-z])/g, (_m, c) => c.toUpperCase())
+    // McDonald / MacKenzie — re-case after Mc / Mac prefixes
+    .replace(/\b(Mc)([a-z])/g, (_m, p, c) => p + c.toUpperCase())
+    .replace(/\b(Mac)([a-z]{2,})/g, (_m, p, c) => p + c.charAt(0).toUpperCase() + c.slice(1))
+    // O'Brien — re-case after O' apostrophe
+    .replace(/\bO'([a-z])/g, (_m, c) => "O'" + c.toUpperCase());
 }
 
 // Find an existing opportunity in the Realtor Listings pipeline whose name

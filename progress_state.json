@@ -45,8 +45,10 @@
         { "label": "Slack notify #listed-leads on every accepted listing (with full MAO breakdown + agent contact)", "done": true },
         { "label": "Gmail → Worker bridge (n8n Cloud workflow, polls listing-alert label every 1 min, active)", "done": true },
         { "label": "Listing-agent lookup via Claude web_fetch (fills agent name + phone + brokerage when email omits them)", "done": true },
-        { "label": "Single-family-only filter (skip townhouse / condo / multi-family / manufactured)", "done": true },
-        { "label": "SMS message rewritten as human Blake outreach (3 rotating variants, signed as Blake at APG, not a corporate template)", "done": true },
+        { "label": "Property-type filter: SFR + multi + townhouse allowed; block condo / co-op / apartment / manufactured / mobile", "done": true },
+        { "label": "SMS message: Mike-with-APG B2B template ('active buyer backed by private capital', signed Mike) — single variant per user direction", "done": true },
+        { "label": "Title-case realtor name (VEERA BODAVULA → Veera Bodavula) for SMS + opp name + GHL contact", "done": true },
+        { "label": "Strip 'Sq Ft' / 'bd' metadata prefix from parsed street address (fixes '604 Sq Ft 544 Westgate Dr' bug)", "done": true },
         { "label": "Realtor SMS reply handler: realtor replies in GHL conversation → auto-thread reply on the original #listed-leads Slack alert + bump opp stage", "done": false },
         { "label": "Future: Apify / RentCast ARV integration (replace flat $30/sqft assumption with real comp data)", "done": false }
       ]
