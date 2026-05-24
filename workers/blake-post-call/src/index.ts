@@ -793,11 +793,29 @@ async function handleListingEmail(req: Request, env: Env): Promise<Response> {
   const fmtK = (n: number) => `$${Math.round(n / 1000)}k`;
   const beds = Number(body.beds) || 0;
   const baths = Number(body.baths) || 0;
-  const smsBody =
-    `Hi ${realtorFirst}, Mike with Atom Property Group — cash buyer, no contingencies. ` +
-    `Saw your listing at ${body.property_address}. ` +
-    `Best we can do is ${fmtK(mao)} cash, close in 14 days. ` +
-    `Worth a quick chat? Reply Y.`;
+  // Human-feeling outreach. Signed as Blake (same identity as the voice agent
+  // — keeps APG's voice consistent across SMS and phone). Specific to the
+  // listing so it doesn't read as a mass template. Includes property specs
+  // so the realtor knows we actually saw their listing.
+  const propertyShort =
+    (body.property_address || "your listing") +
+    (body.city ? ` in ${body.city}` : "");
+  const specs = [
+    beds ? `${beds}bd` : "",
+    baths ? `${baths}ba` : "",
+    sqft ? `${sqft.toLocaleString()} sqft` : "",
+  ].filter(Boolean).join("/");
+  const variants = [
+    `Hey ${realtorFirst}, this is Blake at Atom Property Group. Just saw ${propertyShort}${specs ? ` (${specs})` : ""} hit the market — we're a cash buyer in the area and could probably do ${fmtK(mao)} as-is, close in 2 weeks no contingencies. Worth a quick chat? No pressure either way.`,
+    `Hi ${realtorFirst}, Blake here from Atom Property Group. Caught your ${propertyShort} listing this morning. We buy cash in the area${specs ? ` and ${specs} fits what we're after` : ""} — would ${fmtK(mao)} work, close in 14 days no contingencies? Happy to chat if it's a fit.`,
+    `Hey ${realtorFirst} — Blake at Atom Property Group. Your ${propertyShort} listing popped up in our feed. We're cash buyers and the math gets us to about ${fmtK(mao)} as-is, 14-day close. Worth a conversation? Totally fine if not — just figured I'd reach out.`,
+  ];
+  // Pick a variant per-listing so the same realtor texted twice doesn't see
+  // the identical message. Hash the address as a stable seed.
+  const variantIdx = Math.abs(
+    (body.property_address || "").split("").reduce((h, c) => ((h << 5) - h + c.charCodeAt(0)) | 0, 0)
+  ) % variants.length;
+  const smsBody = variants[variantIdx];
 
   const sms = realtorContactId
     ? await sendGhlSms(env, realtorContactId, smsBody)
@@ -1388,6 +1406,36 @@ async function handleListingEmailFromHtml(req: Request, env: Env): Promise<Respo
         ok: true,
         skipped_reason: "out_of_buy_box",
         buy_box: ["NJ", "PA"],
+        parsed,
+      }, null, 2),
+      { status: 200, headers: { "content-type": "application/json" } }
+    );
+  }
+
+  // Property-type filter — single-family only. Skip townhouses, condos,
+  // multi-family, manufactured / mobile homes. APG's buy box is single-family
+  // (per user direction). We detect by keyword sweep of the raw HTML +
+  // parsed text. If any non-SFR keyword appears, skip with a Slack note
+  // (so the team still sees the listing came through) and don't fire SMS.
+  const nonSfrKeywords = [
+    "townhouse", "townhome", "town home", "town house",
+    "condo", "condominium", "co-op", "co op", "coop",
+    "apartment building", "apartments",
+    "multi-family", "multi family", "multifamily",
+    "duplex", "triplex", "fourplex", "quadplex",
+    "manufactured home", "mobile home", "trailer home",
+  ];
+  const haystack = `${rawHtml} ${subject || ""}`.toLowerCase();
+  const matchedNonSfr = nonSfrKeywords.find((kw) => haystack.includes(kw));
+  if (matchedNonSfr) {
+    const note = `:no_entry: *Non-SFR listing skipped* — ${parsed.property_address}, ${parsed.city || "?"}, ${parsed.state || "?"} (matched "${matchedNonSfr}"; buy box = single-family only)`;
+    await postSlackMessage(env, SLACK_LISTINGS_CHANNEL, note).catch(() => {});
+    return new Response(
+      JSON.stringify({
+        ok: true,
+        skipped_reason: "not_single_family",
+        matched_keyword: matchedNonSfr,
+        buy_box: "single_family_only",
         parsed,
       }, null, 2),
       { status: 200, headers: { "content-type": "application/json" } }

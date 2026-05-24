@@ -32,20 +32,23 @@
     {
       "id": "pillar-b-listing-pipeline",
       "name": "Pillar B — Listing Pipeline (Zillow / Redfin)",
-      "status": "in-progress",
-      "summary": "Email-driven realtor outreach. Zillow/Redfin listing alert arrives → Worker parses → computes MAO = ARV × 0.7 − (sqft × $30) − $10k → SMS to listing realtor → GHL Realtor Listings pipeline → Slack notify.",
+      "status": "active",
+      "summary": "Email-driven realtor outreach. Zillow/Redfin listing arrives → n8n forwards to Worker → parse + single-family + NJ/PA filter → Claude web_fetch finds the agent → MAO calc → opp in Realtor Listings pipeline → SMS from Blake to agent → Slack alert in #listed-leads.",
       "tasks": [
         { "label": "Create 'D. 🏠 Realtor Listings' pipeline in GHL", "done": true },
         { "label": "Scaffold listing-pipeline Worker endpoint (POST /listing-email)", "done": true },
         { "label": "MAO calculator: asking × 0.7 − sqft × $30 − $10k", "done": true },
         { "label": "Upsert realtor contact in GHL (search by phone; create if missing)", "done": true },
-        { "label": "Create opportunity in Realtor Listings pipeline @ '1. New Listing' with name 'Address · asking $Xk → MAO $Yk'", "done": true },
-        { "label": "Email parser: extract address / asking / sqft / realtor info from Zillow/Redfin HTML", "done": false },
-        { "label": "SMS realtor with offer via Twilio (needs TWILIO_ACCOUNT_SID + TWILIO_AUTH_TOKEN bound to Worker)", "done": true },
-        { "label": "Slack notify #base1-sms-leadgen (needs SLACK_BOT_TOKEN bound to Worker)", "done": true },
-        { "label": "Cloudflare Email Routing: listings@atompropertygroup.org → Worker", "done": false },
-        { "label": "Realtor reply handler: Twilio inbound → GHL update + Slack alert", "done": false },
-        { "label": "Future: Apify/RentCast ARV integration (replace flat $30/sqft assumption)", "done": false }
+        { "label": "Create opportunity in Realtor Listings @ '1. New Listing' (naming: Agent / Address / Phone, dedup by address)", "done": true },
+        { "label": "Email parser: pull address / asking / sqft / beds / baths / listing URL from Zillow/Redfin HTML (subject-priority, footer blacklist)", "done": true },
+        { "label": "SMS realtor — routed through GHL Conversations API (uses GHL +1 609-699-8437, not Blake's voice number)", "done": true },
+        { "label": "Slack notify #listed-leads on every accepted listing (with full MAO breakdown + agent contact)", "done": true },
+        { "label": "Gmail → Worker bridge (n8n Cloud workflow, polls listing-alert label every 1 min, active)", "done": true },
+        { "label": "Listing-agent lookup via Claude web_fetch (fills agent name + phone + brokerage when email omits them)", "done": true },
+        { "label": "Single-family-only filter (skip townhouse / condo / multi-family / manufactured)", "done": true },
+        { "label": "SMS message rewritten as human Blake outreach (3 rotating variants, signed as Blake at APG, not a corporate template)", "done": true },
+        { "label": "Realtor SMS reply handler: realtor replies in GHL conversation → auto-thread reply on the original #listed-leads Slack alert + bump opp stage", "done": false },
+        { "label": "Future: Apify / RentCast ARV integration (replace flat $30/sqft assumption with real comp data)", "done": false }
       ]
     },
     {
