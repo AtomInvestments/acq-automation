@@ -824,6 +824,74 @@ h2 .sec-count {
 .filter-chip:hover { color: var(--ink); border-color: var(--ink); }
 .filter-chip.active { background: var(--ink); color: var(--gold); border-color: var(--ink); }
 
+/* ── DOCKET TABS — segmented control ───────────────── */
+.docket-tabs {
+  display: flex; flex-wrap: wrap; gap: 0;
+  margin: 28px 0 0;
+  border-top: 3px double var(--ink);
+  border-bottom: 1px solid var(--rule);
+}
+.docket-tab {
+  background: transparent; border: 0;
+  border-right: 1px solid var(--rule-soft);
+  padding: 14px 22px 12px;
+  cursor: pointer; user-select: none;
+  display: flex; flex-direction: column; align-items: flex-start; gap: 4px;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  flex: 1 1 auto;
+  min-width: 110px;
+  position: relative;
+  transition: background .14s;
+}
+.docket-tab:last-child { border-right: 0; }
+.docket-tab:hover { background: var(--cream); }
+.docket-tab .tab-label {
+  font-size: 10.5px; font-weight: 700; letter-spacing: 0.18em;
+  text-transform: uppercase; color: var(--muted);
+  transition: color .14s;
+}
+.docket-tab .tab-count {
+  font-family: Georgia, serif;
+  font-size: 22px; font-weight: 700;
+  color: var(--ink); line-height: 1;
+}
+.docket-tab:hover .tab-label { color: var(--ink); }
+.docket-tab.active {
+  background: var(--cream);
+}
+.docket-tab.active::before {
+  content: "";
+  position: absolute; left: 0; right: 0; top: 0;
+  height: 3px; background: var(--gold);
+}
+.docket-tab.active .tab-label { color: var(--ink); }
+.docket-tab.active .tab-count { color: var(--ink); }
+
+.docket-filters {
+  margin-top: 6px;
+  background: var(--cream);
+  border: 1px solid var(--rule); border-top: 0;
+  padding: 8px 14px 12px;
+}
+.docket-filters .stage-filter {
+  margin: 6px 0 0; padding: 0; background: transparent; border: 0;
+}
+
+.docket-tab-intro {
+  margin: 28px 0 8px;
+}
+.docket-tab-intro .lede {
+  margin: 0;
+  font-family: Georgia, serif; font-style: italic;
+  font-size: 16px; line-height: 1.55;
+  color: var(--ink-soft); max-width: 780px;
+}
+
+@media (max-width: 720px) {
+  .docket-tab { min-width: auto; padding: 10px 14px 8px; }
+  .docket-tab .tab-count { font-size: 18px; }
+}
+
 /* ── SLACK MENTIONS ────────────────────────────────── */
 .slack-card {
   background: var(--gold-wash); border: 1px solid var(--gold-soft);
@@ -1240,14 +1308,38 @@ function dismissSuggestion(btn) {
   }
 }
 
+// Active tab — persisted to URL hash so refresh keeps the view.
+let docketTab = (location.hash || '').replace('#tab=', '') || 'action';
+
+const DOCKET_TABS = [
+  { key: 'action',   label: 'Take Action',        bucketKeys: ['ready_contract', 'ready_mao'],         showSlack: false, showQuiet: false, intro: 'Leads waiting on a contract, an MAO offer, or a Hot follow-up. This is the call list.' },
+  { key: 'movement', label: 'Movement',           bucketKeys: ['advanced', 'new', 'demoted'],          showSlack: false, showQuiet: false, intro: 'What changed in the pipeline this week — moved forward, just landed, or fell back.' },
+  { key: 'active',   label: 'Active (No Move)',   bucketKeys: ['active_no_move', 'drop_suggest'],      showSlack: false, showQuiet: false, intro: 'Same stage, still warm. Or sitting too long — drop suggestions.' },
+  { key: 'slack',    label: 'Slack Suggestions',  bucketKeys: [],                                       showSlack: true,  showQuiet: false, intro: 'Lead mentions captured from APG Slack channels this week. Review and Apply to GHL.' },
+  { key: 'quiet',    label: 'Quiet',              bucketKeys: [],                                       showSlack: false, showQuiet: true,  intro: 'In pipeline but no activity this week. Skim for ones worth waking up.' },
+  { key: 'all',      label: 'Everything',         bucketKeys: ['ready_contract','ready_mao','advanced','new','active_no_move','demoted','drop_suggest'], showSlack: true, showQuiet: true, intro: 'Every section, top to bottom. Use Stage / Show filters below to narrow.' },
+];
+
+function setDocketTab(key, week) {
+  docketTab = key;
+  if (history && history.replaceState) {
+    history.replaceState(null, '', '#tab=' + key);
+  }
+  render(week);
+  // Smooth-scroll back to the tab bar so the user sees their selection
+  const bar = document.getElementById('docketTabs');
+  if (bar) bar.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
 function render(week) {
   const c = document.getElementById('content');
   if (!week) { c.innerHTML = '<div class="empty">No analysis for this week.</div>'; return; }
+  window.__weekCache = week;     // for tab-switch callbacks
   const totals = week.totals || {};
   const buckets = week.buckets || {};
   let html = '';
 
-  // Snapshot section
+  // === This Week — KPI strip (always visible at top) ===
   html += '<section><h2><span class="num">00</span>This Week</h2>';
   html += '<p class="lede">' + (totals.active_this_week || 0) + ' lead' + (totals.active_this_week===1?'':'s') + ' had activity this week. ' +
           (totals.advanced || 0) + ' moved forward, ' + (totals.demoted || 0) + ' moved back. ' +
@@ -1262,8 +1354,30 @@ function render(week) {
   html += '<div class="crit uc"><div class="kicker">Ready Contract</div><p class="num-big">' + (totals.ready_contract||0) + '</p><div class="sub">send it</div></div>';
   html += '</div>';
   html += '<div style="margin-top:12px;font-size:12px;color:var(--muted);letter-spacing:0.06em">Pipeline total: <strong style="color:var(--ink)">' + (totals.total_pipeline||0) + '</strong> · Quiet (no activity): <strong style="color:var(--muted)">' + (totals.quiet||0) + '</strong></div>';
+  html += '</section>';
 
-  // Stage filter chips (row 1)
+  // === Tab bar — segmented control between KPIs and content ===
+  // Counts per tab so the user knows what's where without clicking through.
+  function tabCount(tabKey) {
+    const t = DOCKET_TABS.find(x => x.key === tabKey);
+    let n = 0;
+    for (const bk of (t.bucketKeys || [])) n += (buckets[bk] || []).length;
+    if (t.showQuiet) n += (buckets['quiet'] || []).length;
+    if (t.showSlack) n += ((week.slack_suggestions || []).length);
+    return n;
+  }
+  html += '<div id="docketTabs" class="docket-tabs">';
+  for (const t of DOCKET_TABS) {
+    const cnt = tabCount(t.key);
+    html += '<button class="docket-tab' + (docketTab === t.key ? ' active' : '') + '" data-tab="' + t.key + '">' +
+            '<span class="tab-label">' + escapeHtml(t.label) + '</span>' +
+            '<span class="tab-count">' + cnt + '</span>' +
+            '</button>';
+  }
+  html += '</div>';
+
+  // === Stage + Show filter chips — apply within active tab ===
+  html += '<div class="docket-filters">';
   html += '<div class="stage-filter">';
   html += '<span style="font-size:10px;color:var(--muted);font-weight:700;letter-spacing:0.10em;margin-right:6px">STAGE</span>';
   const stageChipDefs = [
@@ -1284,12 +1398,10 @@ function render(week) {
     html += '<span class="filter-chip' + (stageFilter===val?' active':'') + '" data-stage="' + escapeHtml(val) + '">' + escapeHtml(lab) + '</span>';
   }
   html += '</div>';
-
-  // Activity filter chips (row 2)
   html += '<div class="stage-filter" style="margin-top:8px">';
   html += '<span style="font-size:10px;color:var(--muted);font-weight:700;letter-spacing:0.10em;margin-right:6px">SHOW</span>';
   const activityChipDefs = [
-    ['all',          'All Leads'],
+    ['all',          'All'],
     ['has_suggestions','Has Slack Suggestion'],
     ['hot',          '🔥 Hot'],
     ['replied',      'Replied to SMS'],
@@ -1301,18 +1413,30 @@ function render(week) {
   for (const [val,lab] of activityChipDefs) {
     html += '<span class="filter-chip activity-chip' + (activityFilter===val?' active':'') + '" data-activity="' + escapeHtml(val) + '">' + escapeHtml(lab) + '</span>';
   }
-  html += '</div></section>';
+  html += '</div></div>';
 
-  // Slack section
-  html += renderSlackSection(week);
+  // === Active tab content ===
+  const tab = DOCKET_TABS.find(t => t.key === docketTab) || DOCKET_TABS[0];
+  html += '<div class="docket-tab-intro"><p class="lede">' + escapeHtml(tab.intro) + '</p></div>';
 
-  // Buckets
   let dealCounter = 1;
-  for (const def of BUCKET_DEFS) {
+  let anyContent = false;
+
+  // Slack section if this tab includes it
+  if (tab.showSlack) {
+    const slackHtml = renderSlackSection(week);
+    if (slackHtml) { html += slackHtml; anyContent = true; }
+  }
+
+  // Buckets selected by this tab
+  for (const bucketKey of (tab.bucketKeys || [])) {
+    const def = BUCKET_DEFS.find(b => b.key === bucketKey);
+    if (!def) continue;
     const all = buckets[def.key] || [];
     const items = all.filter(leadMatchesAllFilters);
     if (!items.length) continue;
-    const filterNote = (stageFilter !== 'all' && all.length !== items.length) ?
+    anyContent = true;
+    const filterNote = (all.length !== items.length) ?
       ' <span style="color:var(--muted);font-weight:500">of ' + all.length + '</span>' : '';
     html += '<section><h2><span class="num">' + def.num + '</span>' + def.title + '<span class="sec-count">' + items.length + ' lead' + (items.length===1?'':'s') + filterNote + '</span></h2>';
     if (def.desc) html += '<p class="lede">' + def.desc + '</p>';
@@ -1323,23 +1447,38 @@ function render(week) {
     html += '</div></section>';
   }
 
-  // Quiet bucket — collapsed
-  const quietAll = buckets['quiet'] || [];
-  const quietItems = quietAll.filter(leadMatchesAllFilters);
-  if (quietItems.length) {
-    html += '<section><h2><span class="num">∅</span>Quiet — No Activity This Week<span class="sec-count">' + quietItems.length + ' lead' + (quietItems.length===1?'':'s') + '</span></h2>';
-    html += '<p class="lede">Leads in pipeline but no SMS / reply / Slack / note this week. Click any to expand details.</p>';
-    html += '<div class="deal-grid">';
-    const quietDef = {key:'quiet', title:'Quiet', status:'dead', num:'∅'};
-    for (const l of quietItems) {
-      html += renderDeal(l, quietDef, dealCounter++);
+  // Quiet section if this tab includes it
+  if (tab.showQuiet) {
+    const quietAll = buckets['quiet'] || [];
+    const quietItems = quietAll.filter(leadMatchesAllFilters);
+    if (quietItems.length) {
+      anyContent = true;
+      html += '<section><h2><span class="num">∅</span>Quiet — No Activity This Week<span class="sec-count">' + quietItems.length + ' lead' + (quietItems.length===1?'':'s') + '</span></h2>';
+      html += '<p class="lede">Leads in pipeline but no SMS / reply / Slack / note this week. Click any to expand details.</p>';
+      html += '<div class="deal-grid">';
+      const quietDef = {key:'quiet', title:'Quiet', status:'dead', num:'∅'};
+      for (const l of quietItems) {
+        html += renderDeal(l, quietDef, dealCounter++);
+      }
+      html += '</div></section>';
     }
-    html += '</div></section>';
   }
 
-  if (!html.includes('<article')) html += '<div class="empty">No leads match this filter for this week.</div>';
+  if (!anyContent) {
+    html += '<div class="empty">Nothing in this section this week.' +
+            (docketTab !== 'all' ? ' Try the <strong>Everything</strong> tab or change the filters.' : '') +
+            '</div>';
+  }
 
   c.innerHTML = html;
+
+  // Wire up tab buttons (since innerHTML wiped the DOM)
+  document.querySelectorAll('.docket-tab').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const key = btn.getAttribute('data-tab');
+      setDocketTab(key, window.__weekCache);
+    });
+  });
   // Wire chip clicks — stage chips have data-stage, activity chips have data-activity
   document.querySelectorAll('.filter-chip').forEach(chip => {
     chip.addEventListener('click', () => {
