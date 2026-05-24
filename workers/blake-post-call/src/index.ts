@@ -551,6 +551,32 @@ export default {
       return handleListingEmailFromHtml(req, env);
     }
 
+    // /landing-lead — accepts form-encoded POST from the WP landing pages
+    // (v2 homepage + city pages). Upserts the contact in GHL APG, tags
+    // 'website-lead' + the source slug, drops an opp into ACQ Unqualified
+    // so the dialer cron picks them up, then attempts an IMMEDIATE Blake
+    // outbound dial (within TCPA windows). Responds with a 303 redirect
+    // to the WP thank-you page so the browser lands cleanly.
+    //
+    // CORS: also accepts OPTIONS preflight for cases where someone hits
+    // it from a different origin (e.g. embedded iframe on city page).
+    if (url.pathname === "/landing-lead") {
+      if (req.method === "OPTIONS") {
+        return new Response(null, {
+          status: 204,
+          headers: {
+            "access-control-allow-origin":  "*",
+            "access-control-allow-methods": "POST, OPTIONS",
+            "access-control-allow-headers": "content-type",
+            "access-control-max-age":       "86400",
+          },
+        });
+      }
+      if (req.method === "POST") {
+        return handleLandingLead(req, env);
+      }
+    }
+
     // --- Interactive Progress tracker ---
     // GET /api/progress              — merged view of progress_state.json + KV overrides (auth required)
     // POST /api/progress/toggle      — toggle a task's done bit, persist to KV (auth required)
@@ -1710,6 +1736,216 @@ async function updateOpportunityNameValue(
   return { ok: res.ok, status: res.status, body: text.slice(0, 500) };
 }
 
+// ---- /landing-lead: APG landing-page form intake --------------------------
+//
+// Receives form POST from /v2-home and the /sell-house-fast-{city} drafts on
+// atompropertygroup.com. Pipeline:
+//   1. Parse + validate (name, address, phone required; consent must be checked)
+//   2. Normalize phone to E.164 (US default)
+//   3. Search GHL by phone → upsert contact (create or update)
+//   4. Tag with 'website-lead' + source slug ('home-v2' or 'city-newark' etc.)
+//   5. Add note with full submission payload for audit
+//   6. Create ACQ opportunity at Unqualified stage if none exists
+//   7. Best-effort immediate Blake outbound dial within TCPA window
+//   8. 303 redirect → /thank-you/ on the WP site
+//
+// Failure mode: even if GHL/dial step fails partway, we still 303 the user
+// so they don't see an error. The lead is recoverable from the note we wrote.
+
+async function handleLandingLead(req: Request, env: Env): Promise<Response> {
+  const THANK_YOU_URL = "https://atompropertygroup.com/thank-you/";
+
+  const formRedirect = (statusParam: string) =>
+    new Response(null, {
+      status: 303,
+      headers: {
+        Location: `${THANK_YOU_URL}?s=${encodeURIComponent(statusParam)}`,
+        "access-control-allow-origin": "*",
+      },
+    });
+
+  // 1. Parse body — accept both application/x-www-form-urlencoded and JSON.
+  let fields: Record<string, string> = {};
+  try {
+    const ct = req.headers.get("content-type") || "";
+    if (ct.includes("application/json")) {
+      const j = await req.json() as any;
+      for (const k of Object.keys(j || {})) fields[k] = String(j[k] ?? "");
+    } else {
+      const form = await req.formData();
+      for (const [k, v] of form.entries()) fields[k] = String(v);
+    }
+  } catch (e) {
+    console.warn(`[landing-lead] body parse failed: ${e}`);
+    return formRedirect("badreq");
+  }
+
+  const name    = (fields["name"]    || "").trim();
+  const address = (fields["address"] || "").trim();
+  const phoneIn = (fields["phone"]   || "").trim();
+  const email   = (fields["email"]   || "").trim();
+  const source  = (fields["source"]  || "website").trim();
+  const city    = (fields["city"]    || "").trim();
+  const stateV  = (fields["state"]   || "").trim();
+  const consent = (fields["consent"] || "").trim();
+  const referrer = (fields["utm_referrer"] || "").trim();
+
+  if (!name || !address || !phoneIn || !consent) {
+    console.warn(`[landing-lead] missing required fields: name=${!!name} addr=${!!address} phone=${!!phoneIn} consent=${!!consent}`);
+    return formRedirect("missing");
+  }
+
+  // 2. Normalize phone — strip non-digits, add +1 if US 10-digit.
+  const digits = phoneIn.replace(/\D/g, "");
+  let phoneE164 = "";
+  if (digits.length === 10)      phoneE164 = `+1${digits}`;
+  else if (digits.length === 11 && digits.startsWith("1")) phoneE164 = `+${digits}`;
+  else if (digits.length >= 11)  phoneE164 = `+${digits}`;
+  else {
+    console.warn(`[landing-lead] invalid phone: ${phoneIn}`);
+    return formRedirect("badphone");
+  }
+
+  // Name split: first token = first, rest = last.
+  const nameParts = name.split(/\s+/).filter(Boolean);
+  const firstName = nameParts[0] || name;
+  const lastName  = nameParts.slice(1).join(" ") || "";
+
+  const pit = env.BLAKE_GHL_PIT;
+  let contactId = "";
+
+  // 3. Upsert contact: search by phone first.
+  try {
+    contactId = (await findContactByPhone(pit, phoneE164)) || "";
+  } catch (e) {
+    console.warn(`[landing-lead] findContactByPhone threw: ${e}`);
+  }
+
+  if (!contactId) {
+    // CREATE.
+    try {
+      const createRes = await fetch(`${GHL_BASE}/contacts/`, {
+        method: "POST",
+        headers: ghlHeaders(pit),
+        body: JSON.stringify({
+          locationId: APG_LOCATION_ID,
+          firstName,
+          lastName,
+          phone:    phoneE164,
+          email:    email || undefined,
+          address1: address,
+          city:     city  || undefined,
+          state:    stateV || undefined,
+          source:   `APG Website — ${source}`,
+          tags:     ["website-lead", `src-${source}`],
+        }),
+      });
+      const createText = await createRes.text();
+      try {
+        contactId =
+          JSON.parse(createText)?.contact?.id ||
+          JSON.parse(createText)?.id ||
+          "";
+      } catch {}
+      if (!contactId) {
+        console.error(`[landing-lead] contact create failed ${createRes.status}: ${createText.slice(0, 200)}`);
+        return formRedirect("contactfail");
+      }
+    } catch (e) {
+      console.error(`[landing-lead] contact create threw: ${e}`);
+      return formRedirect("contactfail");
+    }
+  } else {
+    // UPDATE existing: re-tag + refresh address.
+    try {
+      await updateContactFields(pit, contactId, {
+        firstName,
+        lastName,
+        email:    email || undefined,
+        address1: address,
+        city:     city  || undefined,
+        state:    stateV || undefined,
+      });
+      await addTag(pit, contactId, "website-lead");
+      await addTag(pit, contactId, `src-${source}`);
+    } catch (e) {
+      console.warn(`[landing-lead] update existing contact threw: ${e}`);
+    }
+  }
+
+  // 4. Audit note — full payload + referrer.
+  const noteBody = [
+    `Inbound lead from APG website form.`,
+    `Source: ${source}${referrer ? ` (ref: ${referrer})` : ""}`,
+    `Name: ${name}`,
+    `Address: ${address}`,
+    `Phone: ${phoneE164}`,
+    email   ? `Email: ${email}` : null,
+    city    ? `City: ${city}`   : null,
+    stateV  ? `State: ${stateV}` : null,
+    `Consent: ${consent}`,
+    `Submitted: ${new Date().toISOString()}`,
+  ].filter(Boolean).join("\n");
+  try {
+    await addNote(pit, contactId, noteBody);
+  } catch (e) {
+    console.warn(`[landing-lead] addNote threw: ${e}`);
+  }
+
+  // 5. ACQ opportunity — create at Unqualified if none exists.
+  let oppCreated = false;
+  try {
+    const existing = await findAcqOpportunityForContact(pit, contactId);
+    if (!existing) {
+      const oppName = buildOpportunityName(name, address, phoneE164);
+      const opp = await createOpportunity(pit, contactId, {
+        name: oppName,
+        pipelineStageId: STAGE_UNQUALIFIED,
+      });
+      if (opp.ok) oppCreated = true;
+      else console.warn(`[landing-lead] createOpportunity ${opp.status}: ${opp.body.slice(0, 200)}`);
+    }
+  } catch (e) {
+    console.warn(`[landing-lead] opp create threw: ${e}`);
+  }
+
+  // 6. Immediate Blake dial — best-effort. Respect TCPA window.
+  let dialOutcome = "skipped";
+  try {
+    // TCPA: rely on contact's submitted state, or fall back to NJ defaults
+    // (these landing pages are NJ/PA-targeted; non-NJ/PA still get same rule).
+    const callState = (stateV || "NJ").toUpperCase();
+    if (!inCallWindow(callState, new Date())) {
+      dialOutcome = `outside_tcpa_${callState}`;
+    } else {
+      // Dedupe: if we just dialed this number in the last 5 min, don't re-dial.
+      const recentKey = `last_attempt:${contactId}`;
+      const recent    = await env.DIAL_STATE.get(recentKey);
+      if (recent) {
+        dialOutcome = "recent_dial_dedupe";
+      } else {
+        const dial = await triggerOutboundCall(env.ELEVENLABS_API_KEY, phoneE164);
+        if (dial.ok) {
+          await env.DIAL_STATE.put(recentKey, new Date().toISOString(), {
+            expirationTtl: 60 * 60 * 24 * 30,
+          });
+          await incrementDialedToday(env);
+          dialOutcome = "dialed";
+        } else {
+          dialOutcome = `dial_failed_${dial.error}`;
+        }
+      }
+    }
+  } catch (e) {
+    console.warn(`[landing-lead] dial threw: ${e}`);
+    dialOutcome = "dial_threw";
+  }
+
+  console.log(`[landing-lead] OK contact=${contactId} source=${source} opp_created=${oppCreated} dial=${dialOutcome}`);
+
+  return formRedirect("ok");
+}
+
 // ---- /dashboard-data: live aggregated JSON for blake.html -----------------
 
 async function handleDashboardData(env: Env): Promise<Response> {
@@ -2184,17 +2420,20 @@ async function handleConversationInit(req: Request, env: Env): Promise<Response>
 
         // Per-call prompt enrichment (per user direction 2026-05-24):
         // Blake needs the FRESHEST context before every call. We refresh
-        // three layers in parallel:
+        // four layers in parallel:
         //   (a) Latest APG Lead Summary note (Blake's own structured prior-call notes)
         //   (b) Last 5 contact notes of any kind (manual notes from Adam/RJ, etc.)
         //   (c) Last 10 SMS messages on the conversation (what's been texted recently)
-        // All three layers run in parallel to keep init webhook latency low
+        //   (d) Top 5 Slack mentions across channels the bot is in (cross-channel chatter
+        //       about this seller — KV-cached, so latency is bounded)
+        // All four layers run in parallel to keep init webhook latency low
         // (ElevenLabs times out ~5 sec). Each layer is best-effort — failures
         // don't block the call from happening.
-        const [lastSummary, recentNotes, recentSms] = await Promise.all([
+        const [lastSummary, recentNotes, recentSms, slackMentions] = await Promise.all([
           getLatestApgLeadSummary(env.BLAKE_GHL_PIT, contact.id).catch(() => null),
           getRecentNotes(env.BLAKE_GHL_PIT, contact.id, 5).catch(() => []),
           getRecentSmsConversation(env.BLAKE_GHL_PIT, contact.id, 10).catch(() => []),
+          getSlackMentions(env, `${firstName} ${lastName}`.trim(), callerPhone, 5).catch(() => []),
         ]);
 
         if (lastSummary) {
@@ -2224,6 +2463,17 @@ async function handleConversationInit(req: Request, env: Env): Promise<Response>
           }
         }
 
+        if (slackMentions.length > 0) {
+          sellerFileLines.push("");
+          sellerFileLines.push(`=== Slack mentions (${slackMentions.length}) ===`);
+          for (const sm of slackMentions) {
+            // Slack ts is unix epoch seconds — turn it into a date for context
+            const epoch = Number(sm.ts.split(".")[0]);
+            const when = Number.isFinite(epoch) ? new Date(epoch * 1000).toISOString().slice(0, 10) : "?";
+            sellerFileLines.push(`[${when}] #${sm.channel}: ${sm.text}`);
+          }
+        }
+
         // Cap the total seller_file size so it doesn't blow up the prompt.
         // Sonnet+Opus can take huge prompts but Blake's first message latency
         // matters more — keep it lean.
@@ -2231,7 +2481,7 @@ async function handleConversationInit(req: Request, env: Env): Promise<Response>
         if (sellerFile.length > 6000) {
           sellerFile = sellerFile.slice(0, 6000) + "\n... [truncated to keep call init fast]";
         }
-        console.log(`[init] seller_file enriched: ${sellerFile.length} chars (${otherNotes.length} notes + ${recentSms.length} SMS)`);
+        console.log(`[init] seller_file enriched: ${sellerFile.length} chars (${otherNotes.length} notes + ${recentSms.length} SMS + ${slackMentions.length} slack)`);
 
         vars = {
           first_name: firstName,
@@ -2355,6 +2605,107 @@ async function getRecentNotes(
     addedAt: String(n?.dateAdded || ""),
     author: n?.userId,
   }));
+}
+
+// Pull recent Slack mentions of a contact across channels the bot is in.
+// Returns up to `limit` messages where the message body contains the contact's
+// name (case-insensitive) OR last-10-digit phone match.
+//
+// Cache layers (to keep init latency low):
+//   - slack:channels  → cached list of channel ids the bot belongs to (1h TTL)
+//   - slack:msgs:<ch> → cached last ~100 messages per channel (10m TTL)
+//
+// Both layers are populated on first call after expiry; subsequent calls hit
+// KV without round-tripping Slack. Failures degrade gracefully (return []).
+async function getSlackMentions(
+  env: Env,
+  nameQuery: string,
+  phoneE164: string,
+  limit: number = 5
+): Promise<Array<{ channel: string; ts: string; text: string }>> {
+  if (!env.SLACK_BOT_TOKEN) return [];
+
+  const phoneTail = phoneE164.replace(/\D/g, "").slice(-10);
+  const nameLc    = nameQuery.trim().toLowerCase();
+  if (!phoneTail && !nameLc) return [];
+
+  // 1. Get channel list (cached 1h)
+  let channels: Array<{ id: string; name: string }> = [];
+  const cachedCh = await env.DIAL_STATE.get("slack:channels");
+  if (cachedCh) {
+    try { channels = JSON.parse(cachedCh); } catch {}
+  }
+  if (!channels.length) {
+    try {
+      const res = await fetch(
+        "https://slack.com/api/users.conversations?types=public_channel,private_channel&limit=200&exclude_archived=true",
+        { headers: { Authorization: `Bearer ${env.SLACK_BOT_TOKEN}` } }
+      );
+      const j: any = await res.json();
+      if (j?.ok) {
+        channels = (j.channels || []).map((c: any) => ({ id: c.id, name: c.name }));
+        await env.DIAL_STATE.put("slack:channels", JSON.stringify(channels), {
+          expirationTtl: 60 * 60, // 1h
+        });
+      }
+    } catch (e) {
+      console.warn(`[slack-mentions] channel list failed: ${e}`);
+      return [];
+    }
+  }
+  if (!channels.length) return [];
+
+  // 2. For each channel, pull cached messages (or fetch fresh + cache)
+  const allHits: Array<{ channel: string; ts: string; text: string; score: number }> = [];
+  const channelFetches = channels.map(async (ch) => {
+    const cacheKey = `slack:msgs:${ch.id}`;
+    let messages: Array<{ ts: string; text: string }> = [];
+    const cached = await env.DIAL_STATE.get(cacheKey);
+    if (cached) {
+      try { messages = JSON.parse(cached); } catch {}
+    }
+    if (!messages.length) {
+      try {
+        const res = await fetch(
+          `https://slack.com/api/conversations.history?channel=${ch.id}&limit=100`,
+          { headers: { Authorization: `Bearer ${env.SLACK_BOT_TOKEN}` } }
+        );
+        const j: any = await res.json();
+        if (j?.ok) {
+          messages = (j.messages || [])
+            .filter((m: any) => m?.text && !m?.subtype)
+            .map((m: any) => ({ ts: m.ts, text: String(m.text).slice(0, 800) }));
+          await env.DIAL_STATE.put(cacheKey, JSON.stringify(messages), {
+            expirationTtl: 60 * 10, // 10m
+          });
+        }
+      } catch (e) {
+        console.warn(`[slack-mentions] history ${ch.name} failed: ${e}`);
+        return;
+      }
+    }
+    // 3. Filter for mentions
+    for (const m of messages) {
+      const textLc = m.text.toLowerCase();
+      const phoneHit = phoneTail && m.text.replace(/\D/g, "").includes(phoneTail);
+      const nameHit  = nameLc && nameLc.length >= 4 && textLc.includes(nameLc);
+      if (phoneHit || nameHit) {
+        allHits.push({
+          channel: ch.name,
+          ts:      m.ts,
+          text:    m.text,
+          // Phone hits rank higher than name hits (phone is unique, names collide)
+          score:   (phoneHit ? 10 : 0) + (nameHit ? 1 : 0),
+        });
+      }
+    }
+  });
+
+  await Promise.all(channelFetches);
+
+  // 4. Sort by score desc, then ts desc, slice to limit
+  allHits.sort((a, b) => (b.score - a.score) || b.ts.localeCompare(a.ts));
+  return allHits.slice(0, limit).map(({ channel, ts, text }) => ({ channel, ts, text }));
 }
 
 // Pull the most recent N SMS messages on a contact's conversation so Blake
