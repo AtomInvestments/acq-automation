@@ -58,6 +58,8 @@ const CF_MOTIVATION = "rbYZAdhvuvX1NQgexhxy";
 const CF_TIMELINE = "v47I1Mi63RBpCD5N5RrH";
 const CF_VA_NOTES = "ctNVXVw8VY1PD4B1oqXj";
 const CF_BLAKE_RECORDING = "hsHjLlOE8mb4O2DqxNY7";  // URL to /audio/{conv_id} proxy
+const CF_DAYS_ON_MARKET = "YRW9Zk8MtItZNO7bemRF";   // numerical — days the listing has been active
+const CF_LISTING_DATE   = "zFNZ4U7CmLB2ABUNrFNz";   // date — when the listing first appeared
 
 // GHL ACQ pipeline + stage IDs. Source of truth: tyler/project_ghl_acq.md.
 const ACQ_PIPELINE_ID = "O8wzIa6E3SgD8HLg6gh9";
@@ -837,10 +839,25 @@ async function handleListingEmail(req: Request, env: Env): Promise<Response> {
 
   // 6. Update the realtor contact's VA Notes custom field with the latest
   //    one-liner so it shows up in the GHL contact list view.
+  const daysOnMarket = (typeof body.days_on_market === "number") ? body.days_on_market : null;
+  const listingDateIso = String(body.listing_date_iso || "").trim() || null;
+  const domSnippet = daysOnMarket !== null
+    ? ` · ${daysOnMarket}d on market`
+    : "";
   const vaNotesLine =
-    `Listed ${body.property_address}${body.city ? ", " + body.city : ""}${body.state ? ", " + body.state : ""} at ${fmtK(asking)}. ` +
+    `Listed ${body.property_address}${body.city ? ", " + body.city : ""}${body.state ? ", " + body.state : ""} at ${fmtK(asking)}.` +
+    domSnippet + " " +
     `MAO ${fmtK(mao)} sent ${sms.ok ? "via SMS" : "(SMS failed)"} ${new Date().toISOString().slice(0, 10)}.`;
   await setContactCustomField(env.BLAKE_GHL_PIT, realtorContactId, CF_VA_NOTES, vaNotesLine).catch(() => {});
+
+  // Days on Market + Listing Date — write to dedicated custom fields so they're
+  // sortable in the GHL contact list ('show me realtors with stalest listings').
+  if (daysOnMarket !== null) {
+    await setContactCustomField(env.BLAKE_GHL_PIT, realtorContactId, CF_DAYS_ON_MARKET, daysOnMarket).catch(() => {});
+  }
+  if (listingDateIso) {
+    await setContactCustomField(env.BLAKE_GHL_PIT, realtorContactId, CF_LISTING_DATE, listingDateIso).catch(() => {});
+  }
 
   // 7. Slack alert in #listed-leads. Now includes the property details line
   //    (beds / baths / sqft) — was missing in v1.
@@ -849,9 +866,16 @@ async function handleListingEmail(req: Request, env: Env): Promise<Response> {
     (body.city ? `, ${body.city}` : "") +
     (body.state ? `, ${body.state}` : "") +
     (body.postal_code ? ` ${body.postal_code}` : "");
+  // DOM display: highlight stale listings — gold flag at 30+ days, red at 60+
+  const domDisplay = daysOnMarket !== null
+    ? (daysOnMarket >= 60 ? ` · :red_circle: *${daysOnMarket} days on market*`
+      : daysOnMarket >= 30 ? ` · :large_orange_diamond: *${daysOnMarket} days on market*`
+      : daysOnMarket === 0 ? ` · :sparkles: *Just listed*`
+      : ` · ${daysOnMarket}d on market`)
+    : "";
   const propertyLine =
-    (beds || baths || sqft)
-      ? `> *${beds || "?"} bd · ${baths || "?"} ba · ${sqft ? sqft.toLocaleString() + " sqft" : "? sqft"}*\n`
+    (beds || baths || sqft || daysOnMarket !== null)
+      ? `> *${beds || "?"} bd · ${baths || "?"} ba · ${sqft ? sqft.toLocaleString() + " sqft" : "? sqft"}*${domDisplay}\n`
       : "";
   const lookupTag = realtorLookupResult
     ? (realtorPhone ? " :mag: via web-search" : " :mag: web-search returned nothing")
@@ -881,6 +905,8 @@ async function handleListingEmail(req: Request, env: Env): Promise<Response> {
       opportunity_id: opportunityId,
       opportunity_name: oppName,
       opportunity_action: oppAction,   // "created" or "updated" (dedup hit)
+      days_on_market: daysOnMarket,
+      listing_date: listingDateIso,
       sms_to_realtor: sms.ok
         ? { ok: true, via: "ghl-conversations", conversation_id: sms.conversationId, message_id: sms.messageId }
         : { ok: false, status: sms.status, error: sms.body.slice(0, 200) },
@@ -921,6 +947,8 @@ interface ParsedListing {
   listing_realtor_phone?: string;
   listing_realtor_email?: string;
   source?: "zillow" | "redfin" | "unknown";
+  days_on_market?: number;       // 0 for fresh listings; parsed from "X days on Zillow / on market"
+  listing_date_iso?: string;     // YYYY-MM-DD if extractable, else today
 }
 
 // Strip HTML tags + decode common entities → text usable for regex on prose.
@@ -1075,6 +1103,33 @@ function parseListingEmail(
     /(\d+(?:\.\d+)?)\s*(?:ba|bath|bathroom|bathrooms)\b/i,
   ]);
   if (bathsStr) result.baths = Number(bathsStr);
+
+  // --- Days on Market ---
+  // Zillow / Redfin patterns:
+  //   "12 days on Zillow"
+  //   "5 days on market"
+  //   "Listed 3 days ago"
+  //   "Listed today" / "Just listed" -> 0
+  //   "Listed yesterday" -> 1
+  const dom = firstMatch(text, [
+    /(\d+)\s*days?\s*on\s*(?:zillow|redfin|market|the\s+market)/i,
+    /listed\s+(\d+)\s+days?\s+ago/i,
+    /(\d+)\s*days?\s*ago.*?(?:listed|on\s*market)/i,
+  ]);
+  if (dom) {
+    result.days_on_market = Number(dom);
+  } else if (/just\s+listed|listed\s+today/i.test(text) ||
+             /just\s+listed|new\s+listing/i.test(subject || "")) {
+    result.days_on_market = 0;
+  } else if (/listed\s+yesterday/i.test(text)) {
+    result.days_on_market = 1;
+  }
+  // listing_date_iso: today minus days_on_market, or today if unknown
+  if (result.days_on_market !== undefined) {
+    const d = new Date();
+    d.setUTCDate(d.getUTCDate() - result.days_on_market);
+    result.listing_date_iso = d.toISOString().slice(0, 10);
+  }
 
   // --- Listing URL (from anchor tags in raw HTML) ---
   // Prefer real listing-detail URLs (homedetails / homes/for_sale / property)
@@ -2127,19 +2182,56 @@ async function handleConversationInit(req: Request, env: Env): Promise<Response>
           cfMap[CF_TIMELINE] ? `Timeline: ${cfMap[CF_TIMELINE]}` : null,
         ].filter(Boolean) as string[];
 
-        // Pull the latest APG Lead Summary note (Blake's own prior call notes)
-        try {
-          const lastSummary = await getLatestApgLeadSummary(env.BLAKE_GHL_PIT, contact.id);
-          if (lastSummary) {
-            sellerFileLines.push("");
-            sellerFileLines.push("Last Blake call notes:");
-            sellerFileLines.push(lastSummary);
-          }
-        } catch (e) {
-          // best-effort; ignore failures
+        // Per-call prompt enrichment (per user direction 2026-05-24):
+        // Blake needs the FRESHEST context before every call. We refresh
+        // three layers in parallel:
+        //   (a) Latest APG Lead Summary note (Blake's own structured prior-call notes)
+        //   (b) Last 5 contact notes of any kind (manual notes from Adam/RJ, etc.)
+        //   (c) Last 10 SMS messages on the conversation (what's been texted recently)
+        // All three layers run in parallel to keep init webhook latency low
+        // (ElevenLabs times out ~5 sec). Each layer is best-effort — failures
+        // don't block the call from happening.
+        const [lastSummary, recentNotes, recentSms] = await Promise.all([
+          getLatestApgLeadSummary(env.BLAKE_GHL_PIT, contact.id).catch(() => null),
+          getRecentNotes(env.BLAKE_GHL_PIT, contact.id, 5).catch(() => []),
+          getRecentSmsConversation(env.BLAKE_GHL_PIT, contact.id, 10).catch(() => []),
+        ]);
+
+        if (lastSummary) {
+          sellerFileLines.push("");
+          sellerFileLines.push("=== Last APG call summary ===");
+          sellerFileLines.push(lastSummary);
         }
 
-        const sellerFile = sellerFileLines.join("\n");
+        // Filter recentNotes to NOT duplicate the APG Lead Summary already shown above
+        const otherNotes = recentNotes.filter((n) => !n.body.startsWith("APG Lead Summary"));
+        if (otherNotes.length > 0) {
+          sellerFileLines.push("");
+          sellerFileLines.push(`=== Other recent notes on this contact (${otherNotes.length}) ===`);
+          for (const n of otherNotes) {
+            const when = n.addedAt ? n.addedAt.slice(0, 10) : "?";
+            sellerFileLines.push(`[${when}] ${n.body}`);
+          }
+        }
+
+        if (recentSms.length > 0) {
+          sellerFileLines.push("");
+          sellerFileLines.push(`=== Recent SMS history (${recentSms.length} most recent) ===`);
+          for (const m of recentSms) {
+            const arrow = m.direction === "inbound" ? "← seller" : "→ APG";
+            const when = m.at ? m.at.slice(0, 10) : "?";
+            sellerFileLines.push(`[${when}] ${arrow}: ${m.body}`);
+          }
+        }
+
+        // Cap the total seller_file size so it doesn't blow up the prompt.
+        // Sonnet+Opus can take huge prompts but Blake's first message latency
+        // matters more — keep it lean.
+        let sellerFile = sellerFileLines.join("\n");
+        if (sellerFile.length > 6000) {
+          sellerFile = sellerFile.slice(0, 6000) + "\n... [truncated to keep call init fast]";
+        }
+        console.log(`[init] seller_file enriched: ${sellerFile.length} chars (${otherNotes.length} notes + ${recentSms.length} SMS)`);
 
         vars = {
           first_name: firstName,
@@ -2240,6 +2332,63 @@ async function getLatestApgLeadSummary(pit: string, contactId: string): Promise<
   body = body.replace(/🎧 Recording:.*$/m, "").trim();
   // Cap length so the prompt doesn't balloon
   return body.length > 2000 ? body.slice(0, 2000) + "...(truncated)" : body;
+}
+
+// Pull the most recent N notes on a contact (any kind, not just APG Lead Summary)
+// so Blake's prompt has the freshest context. Includes the note author,
+// timestamp (relative), and trimmed body.
+async function getRecentNotes(
+  pit: string,
+  contactId: string,
+  limit: number = 5
+): Promise<Array<{ body: string; addedAt: string; author?: string }>> {
+  const res = await fetch(`${GHL_BASE}/contacts/${contactId}/notes`, {
+    method: "GET",
+    headers: ghlHeaders(pit),
+  });
+  if (!res.ok) return [];
+  const json: any = await res.json();
+  const notes: any[] = json?.notes || [];
+  const sorted = [...notes].sort((a, b) => (b?.dateAdded || "").localeCompare(a?.dateAdded || ""));
+  return sorted.slice(0, limit).map((n) => ({
+    body: String(n?.body || "").slice(0, 600),
+    addedAt: String(n?.dateAdded || ""),
+    author: n?.userId,
+  }));
+}
+
+// Pull the most recent N SMS messages on a contact's conversation so Blake
+// knows what's been texted back and forth before the call.
+async function getRecentSmsConversation(
+  pit: string,
+  contactId: string,
+  limit: number = 10
+): Promise<Array<{ direction: "inbound" | "outbound"; body: string; at: string }>> {
+  // First find the conversation id for this contact
+  const convSearch = await fetch(
+    `${GHL_BASE}/conversations/search?locationId=${APG_LOCATION_ID}&contactId=${contactId}&limit=1`,
+    { headers: ghlHeaders(pit) }
+  );
+  if (!convSearch.ok) return [];
+  const convJson: any = await convSearch.json();
+  const convId = (convJson?.conversations?.[0]?.id) || (convJson?.conversation?.[0]?.id);
+  if (!convId) return [];
+  // Now pull messages on that conversation
+  const msgRes = await fetch(
+    `${GHL_BASE}/conversations/${convId}/messages?limit=${limit}`,
+    { headers: ghlHeaders(pit) }
+  );
+  if (!msgRes.ok) return [];
+  const msgJson: any = await msgRes.json();
+  const msgs: any[] = (msgJson?.messages?.messages || msgJson?.messages || []);
+  return msgs
+    .filter((m) => m?.type === 1 || m?.type === "SMS" || m?.messageType === "SMS")
+    .slice(0, limit)
+    .map((m) => ({
+      direction: (m?.direction || "outbound") as "inbound" | "outbound",
+      body: String(m?.body || "").slice(0, 300),
+      at: String(m?.dateAdded || ""),
+    }));
 }
 
 async function handleWebhook(req: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
