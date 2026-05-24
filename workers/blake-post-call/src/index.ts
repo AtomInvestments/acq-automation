@@ -3437,9 +3437,16 @@ function applyApgShell(html: string, activeTab: string): string {
   const tokens = apgDesignTokens();
   const nav = apgTopNav(activeTab);
   const overrideCss = `
-  /* APG shell override — hide the dashboard's original in-page top nav so
-     the apgTopNav becomes the single navigation source. The dashboards'
-     existing brand mastheads (logo + title under the nav) stay visible. */
+  /* APG shell override — three jobs:
+     1. Hide each dashboard's original in-page top nav so apgTopNav is the
+        single navigation source.
+     2. Alias the existing CSS variable names (--ink / --gold / --paper /
+        --text / --muted / etc.) to the new apg-* tokens so existing CSS
+        rules automatically pick up the new palette without rewrites.
+     3. Promote Fira Sans to the page body so typography matches the nav.
+   */
+
+  /* === Job 1: hide existing in-page navs === */
   nav.dashboard-nav,
   nav.topnav,
   nav.site-nav,
@@ -3451,11 +3458,41 @@ function applyApgShell(html: string, activeTab: string): string {
   .navbar.dashboard {
     display: none !important;
   }
-  /* Restore body padding-top so content doesn't slide under the sticky
-     apgTopNav. */
+
+  /* === Job 2: variable remap (existing names -> new APG tokens) === */
+  :root {
+    --ink:        var(--apg-ink) !important;
+    --ink-deep:   var(--apg-ink-deep) !important;
+    --ink-soft:   var(--apg-fg-soft) !important;
+    --gold:       var(--apg-gold) !important;
+    --gold-soft:  var(--apg-gold-soft) !important;
+    --gold-wash:  var(--apg-gold-soft) !important;
+    --cream:      var(--apg-paper) !important;
+    --cream-deep: var(--apg-muted) !important;
+    --paper:      var(--apg-surface) !important;
+    --rule:       var(--apg-border) !important;
+    --rule-soft:  var(--apg-border) !important;
+    --muted:      var(--apg-fg-muted) !important;
+    --muted-soft: var(--apg-fg-subtle) !important;
+    --text:       var(--apg-fg) !important;
+    --line:       var(--apg-border) !important;
+    --line-soft:  var(--apg-border) !important;
+    --bg:         var(--apg-bg) !important;
+    --fg:         var(--apg-fg) !important;
+  }
+
+  /* === Job 3: typography === */
+  html, body {
+    font-family: var(--apg-font-sans) !important;
+    background: var(--apg-bg) !important;
+    color: var(--apg-fg) !important;
+  }
   body { padding-top: 0 !important; }
-  /* Ensure consistent body bg even if the dashboard set its own */
-  body { background: var(--apg-bg) !important; }
+
+  /* Mono-numeric polish on KPI values + code blocks */
+  .num, .mono, .kpi-value, .v, code, kbd, samp, pre {
+    font-family: var(--apg-font-mono) !important;
+  }
   `;
   const injectionHead = `\n<style>${tokens}</style>\n<style>${overrideCss}</style>\n`;
   const headRe = /<\/head>/i;
