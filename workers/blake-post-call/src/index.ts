@@ -208,6 +208,46 @@ export default {
       });
     }
 
+    // --- JSON data routes -----------------------------------------------
+    // Dashboards' JS fetches these from relative URLs. Before, gh-pages
+    // served them at github.io. Now that gh-pages is retired, we proxy
+    // from raw.githubusercontent.com. Auth-gated to match the dashboard
+    // auth (cookies ride along on same-origin fetches).
+    //
+    // Critical: on miss we return JSON 404 (not plaintext "Not Found")
+    // so the dashboard's `r.json()` doesn't crash with a parse error.
+    const JSON_DATA_ROUTES: Record<string, string> = {
+      "/markets.json":           "site/markets.json",
+      "/priorities.json":        "site/priorities.json",
+      "/priority_activity.json": "site/priority_activity.json",  // may 404
+    };
+    if (req.method === "GET" && JSON_DATA_ROUTES[url.pathname]) {
+      const auth = await requireAuth(req, env);
+      if (!auth.ok) {
+        return new Response(JSON.stringify({ error: "unauthorized" }), {
+          status: 401, headers: { "content-type": "application/json" },
+        });
+      }
+      return proxyGithubRawJson(JSON_DATA_ROUTES[url.pathname]);
+    }
+    // /weekly/<file>.json — weekly snapshots live at repo-root /weekly/
+    if (req.method === "GET" && url.pathname.startsWith("/weekly/") && url.pathname.endsWith(".json")) {
+      const auth = await requireAuth(req, env);
+      if (!auth.ok) {
+        return new Response(JSON.stringify({ error: "unauthorized" }), {
+          status: 401, headers: { "content-type": "application/json" },
+        });
+      }
+      // Filename sanitization — only allow [A-Za-z0-9._-] characters
+      const filename = url.pathname.slice("/weekly/".length).replace(/[^\w\-.]/g, "");
+      if (!filename) {
+        return new Response(JSON.stringify({ error: "bad_filename" }), {
+          status: 400, headers: { "content-type": "application/json" },
+        });
+      }
+      return proxyGithubRawJson(`weekly/${filename}`);
+    }
+
     // /login — GET shows the form, POST validates the password.
     if (req.method === "GET" && url.pathname === "/login") {
       const next = url.searchParams.get("next") || "";
@@ -4156,6 +4196,30 @@ async function proxyGithubPagesAsset(path: string, contentType: string): Promise
     headers: {
       "content-type": contentType,
       "cache-control": "public, max-age=3600",
+    },
+  });
+}
+
+// Proxy a JSON file from raw.githubusercontent.com. Used to serve the
+// dashboards' data files (markets.json / priorities.json / weekly/*.json)
+// now that gh-pages is retired. Returns a JSON-shaped 404 on miss so the
+// dashboard's r.json() doesn't crash with 'Unexpected token N' (the prior
+// failure mode when gh-pages 404'd with plaintext "Not Found").
+async function proxyGithubRawJson(repoPath: string): Promise<Response> {
+  const upstream = `https://raw.githubusercontent.com/AtomInvestments/acq-automation/main/${repoPath}`;
+  const res = await fetch(upstream, { cf: { cacheTtl: 60, cacheEverything: true } as any });
+  if (!res.ok) {
+    return new Response(
+      JSON.stringify({ error: "not_found", path: repoPath, upstream_status: res.status }),
+      { status: 404, headers: { "content-type": "application/json" } }
+    );
+  }
+  const body = await res.text();
+  return new Response(body, {
+    status: 200,
+    headers: {
+      "content-type": "application/json; charset=utf-8",
+      "cache-control": "public, max-age=60",
     },
   });
 }
