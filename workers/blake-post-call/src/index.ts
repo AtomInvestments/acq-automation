@@ -325,7 +325,21 @@ export default {
       // ElevenLabs creds at generation time and are only baked by the cron.
       const inline = DASHBOARDS[filename];
       if (inline) {
-        return new Response(inline, {
+        // Detect activeTab from filename for the unified top nav
+        const tabMap: Record<string, string> = {
+          "blake.html": "blake",
+          "progress.html": "progress",
+          "weekly.html": "weekly",
+          "priorities.html": "priorities",
+          "markets.html": "markets",
+          "deals.html": "deals",
+          "index.html": "followups",
+          "about.html": "",
+          "setup.html": "",
+          "ai-agents-plan.html": "",
+        };
+        const wrapped = applyApgShell(inline, tabMap[filename] || "");
+        return new Response(wrapped, {
           status: 200,
           headers: {
             "content-type": "text/html; charset=utf-8",
@@ -3407,6 +3421,61 @@ function apgDesignTokens(): string {
 }
 
 // Shared APG top navigation — used by hub + (next session) all dashboards.
+// applyApgShell — server-side transform that wraps a baked-in dashboard HTML
+// with the unified APG design system. Approach:
+//   1. Inject apgDesignTokens() CSS into <head> so Fira fonts + neutral
+//      colors + spacing scale + focus rings + reduced-motion apply.
+//   2. Inject a small "shell override" CSS that hides the dashboard's
+//      existing in-page top nav and softens its masthead so the apgTopNav
+//      becomes the single source of navigation. Existing dashboards have
+//      their own <nav class="dashboard-nav"> / <nav class="topnav"> etc;
+//      we hide them by class+tag selectors without breaking the body.
+//   3. Prepend apgTopNav inside <body>.
+// Reversible: if it visually breaks a page, removing applyApgShell from the
+// route handler instantly restores the original dashboard HTML.
+function applyApgShell(html: string, activeTab: string): string {
+  const tokens = apgDesignTokens();
+  const nav = apgTopNav(activeTab);
+  const overrideCss = `
+  /* APG shell override — hide the dashboard's original in-page top nav so
+     the apgTopNav becomes the single navigation source. The dashboards'
+     existing brand mastheads (logo + title under the nav) stay visible. */
+  nav.dashboard-nav,
+  nav.topnav,
+  nav.site-nav,
+  .nav-strip,
+  .top-nav,
+  .global-nav,
+  header.dashboard-nav,
+  header > nav,
+  .navbar.dashboard {
+    display: none !important;
+  }
+  /* Restore body padding-top so content doesn't slide under the sticky
+     apgTopNav. */
+  body { padding-top: 0 !important; }
+  /* Ensure consistent body bg even if the dashboard set its own */
+  body { background: var(--apg-bg) !important; }
+  `;
+  const injectionHead = `\n<style>${tokens}</style>\n<style>${overrideCss}</style>\n`;
+  const headRe = /<\/head>/i;
+  if (headRe.test(html)) {
+    html = html.replace(headRe, `${injectionHead}</head>`);
+  } else {
+    // No </head>? Prepend everything inside <html>.
+    html = html.replace(/<html[^>]*>/i, (m) => `${m}<head>${injectionHead}</head>`);
+  }
+  // Prepend apgTopNav inside <body>
+  const bodyRe = /(<body[^>]*>)/i;
+  if (bodyRe.test(html)) {
+    html = html.replace(bodyRe, `$1\n${nav}\n`);
+  } else {
+    // No <body>? Just prepend.
+    html = nav + html;
+  }
+  return html;
+}
+
 function apgTopNav(activeTab: string = ""): string {
   const tabs = [
     { href: "/",          key: "hub",        label: "Home" },
