@@ -199,7 +199,13 @@ export default {
       });
     }
     if (req.method === "GET" && url.pathname === "/logo.svg") {
-      return proxyGithubPagesAsset("logo.svg", "image/svg+xml");
+      return new Response(INLINE_LOGO_SVG, {
+        status: 200,
+        headers: {
+          "content-type": "image/svg+xml",
+          "cache-control": "public, max-age=86400",
+        },
+      });
     }
 
     // /login — GET shows the form, POST validates the password.
@@ -3481,13 +3487,13 @@ function applyApgShell(html: string, activeTab: string): string {
 
 function apgTopNav(activeTab: string = ""): string {
   const tabs = [
-    { href: "/",          key: "hub",        label: "Home" },
+    { href: "/",          key: "hub",        label: "Desk" },
     { href: "/blake",     key: "blake",      label: "Blake" },
-    { href: "/progress",  key: "progress",   label: "Progress" },
+    { href: "/progress",  key: "progress",   label: "Tracker" },
     { href: "/followups", key: "followups",  label: "Follow-ups" },
     { href: "/deals",     key: "deals",      label: "Deals" },
-    { href: "/weekly",    key: "weekly",     label: "Weekly" },
-    { href: "/priorities", key: "priorities", label: "Priorities" },
+    { href: "/weekly",    key: "weekly",     label: "Docket" },
+    { href: "/priorities", key: "priorities", label: "Priority" },
     { href: "/markets",   key: "markets",    label: "Markets" },
   ];
   const tabHtml = tabs.map((t) => {
@@ -3516,37 +3522,37 @@ function apgTopNav(activeTab: string = ""): string {
       font-family: Georgia, "Times New Roman", serif;
     }
     .apg-nav-inner {
-      max-width: 1240px;
+      max-width: 1400px;
       margin: 0 auto;
-      padding: 0 32px;
+      padding: 0 24px;
       display: flex;
       align-items: stretch;
-      gap: 24px;
-      height: 62px;
+      gap: 16px;
+      height: 60px;
     }
     .apg-nav-brand {
       display: flex;
       align-items: center;
-      gap: 14px;
+      gap: 10px;
       color: #FAF7EC;
       text-decoration: none;
       white-space: nowrap;
       padding-right: 4px;
       border-right: 1px solid rgba(245, 197, 24, 0.25);
       position: relative;
+      flex-shrink: 0;
     }
     .apg-nav-brand img {
-      width: 28px; height: 28px;
-      /* Tiny gold-leaf glow on the favicon to match the gold accent */
+      width: 26px; height: 26px;
       filter: drop-shadow(0 0 6px rgba(245, 197, 24, 0.35));
     }
     .apg-nav-brand-text {
       font-family: Georgia, "Times New Roman", serif;
-      font-size: 19px;
+      font-size: 17px;
       font-weight: 700;
       letter-spacing: -0.01em;
       line-height: 1;
-      padding-right: 14px;
+      padding-right: 10px;
     }
     .apg-nav-brand-text .accent {
       color: #F5C518;
@@ -3557,23 +3563,25 @@ function apgTopNav(activeTab: string = ""): string {
       align-items: stretch;
       gap: 0;
       flex: 1;
-      overflow-x: auto;
+      min-width: 0;          /* lets flex children shrink below content width */
+      overflow: hidden;       /* no scrollbar even on narrow viewports */
     }
     .apg-nav-tab {
       display: flex;
       align-items: center;
-      padding: 0 16px;
-      color: rgba(250, 247, 236, 0.65);
+      padding: 0 11px;
+      color: rgba(250, 247, 236, 0.7);
       text-decoration: none;
       font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-      font-size: 10.5px;
+      font-size: 10px;
       font-weight: 700;
-      letter-spacing: 0.22em;
+      letter-spacing: 0.16em;
       text-transform: uppercase;
       border-bottom: 2px solid transparent;
       transition: color 140ms, border-color 140ms, background 140ms;
       white-space: nowrap;
       position: relative;
+      flex-shrink: 1;        /* allow shrinking on narrow viewports */
     }
     .apg-nav-tab:hover {
       color: #FAF7EC;
@@ -3587,18 +3595,18 @@ function apgTopNav(activeTab: string = ""): string {
       /* tiny italic serif marker behind the active tab — adds character */
       content: "§";
       position: absolute;
-      left: 6px; top: 50%;
+      left: 4px; top: 50%;
       transform: translateY(-50%);
       font-family: Georgia, serif;
       font-style: italic;
-      font-size: 14px;
+      font-size: 12px;
       font-weight: 400;
       letter-spacing: 0;
       color: #F5C518;
-      opacity: 0.6;
+      opacity: 0.55;
       pointer-events: none;
     }
-    .apg-nav-tab--active { padding-left: 22px; }
+    .apg-nav-tab--active { padding-left: 17px; }
     .apg-nav-actions {
       display: flex;
       flex-direction: column;
@@ -3606,28 +3614,38 @@ function apgTopNav(activeTab: string = ""): string {
       align-items: flex-end;
       gap: 2px;
       font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      flex-shrink: 0;
     }
     .apg-nav-dateline {
-      font-size: 9.5px;
+      font-size: 9px;
       font-weight: 700;
-      letter-spacing: 0.18em;
+      letter-spacing: 0.15em;
       color: rgba(245, 197, 24, 0.7);
+      white-space: nowrap;
     }
     .apg-nav-signout {
-      color: rgba(250, 247, 236, 0.65);
+      color: rgba(250, 247, 236, 0.7);
       text-decoration: none;
-      font-size: 11px;
+      font-size: 10px;
       font-weight: 700;
-      letter-spacing: 0.18em;
+      letter-spacing: 0.16em;
       text-transform: uppercase;
       transition: color 120ms;
     }
     .apg-nav-signout:hover { color: #F5C518; }
-    @media (max-width: 820px) {
+
+    /* Drop the dateline first on mid-width screens to free up tab space */
+    @media (max-width: 1180px) {
       .apg-nav-dateline { display: none; }
-      .apg-nav-brand-text { font-size: 16px; }
-      .apg-nav-tab { padding: 0 10px; font-size: 9.5px; letter-spacing: 0.18em; }
-      .apg-nav-inner { padding: 0 16px; gap: 12px; }
+    }
+    @media (max-width: 980px) {
+      .apg-nav-brand-text { font-size: 0; }
+      .apg-nav-brand-text::after { content: "APG"; font-size: 16px; }
+      .apg-nav-tab { padding: 0 8px; font-size: 9.5px; letter-spacing: 0.12em; }
+    }
+    @media (max-width: 720px) {
+      .apg-nav-tab { padding: 0 6px; font-size: 9px; }
+      .apg-nav-inner { padding: 0 12px; gap: 8px; }
     }
   </style>
   <nav class="apg-nav" aria-label="Primary">
@@ -4163,4 +4181,32 @@ const INLINE_FAVICON_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0
     <circle class="gold" cx="-46" cy="-80" r="11" />
     <circle class="ink" cx="0" cy="0" r="22" />
   </g>
+</svg>`;
+
+// Horizontal logo (with "ATOM PROPERTY GROUP" wordmark) — inlined so the
+// dashboards' in-page <img src="logo.svg"> mastheads stop showing a broken
+// image after gh-pages was retired. Same content as site/logo.svg.
+const INLINE_LOGO_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 220" preserveAspectRatio="xMidYMid meet" aria-label="Atom Property Group">
+  <defs>
+    <style>
+      .ink   { fill: #0A1F44; }
+      .gold  { fill: #F5C518; }
+      .orbit { stroke: #F5C518; stroke-width: 6.5; fill: none; stroke-linecap: round; }
+    </style>
+  </defs>
+  <text x="40" y="130" font-family="Arial Black, Helvetica, sans-serif"
+        font-weight="900" font-size="120" class="ink" letter-spacing="-3">AT</text>
+  <g transform="translate(340, 80)">
+    <ellipse class="orbit" cx="0" cy="0" rx="56" ry="20" />
+    <ellipse class="orbit" cx="0" cy="0" rx="56" ry="20" transform="rotate(60)" />
+    <ellipse class="orbit" cx="0" cy="0" rx="56" ry="20" transform="rotate(-60)" />
+    <circle class="gold" cx="56" cy="0"   r="7" />
+    <circle class="gold" cx="-28" cy="48.5" r="7" />
+    <circle class="gold" cx="-28" cy="-48.5" r="7" />
+    <circle class="ink"  cx="0"  cy="0"   r="13" />
+  </g>
+  <text x="416" y="130" font-family="Arial Black, Helvetica, sans-serif"
+        font-weight="900" font-size="120" class="ink" letter-spacing="-3">M</text>
+  <text x="40" y="195" font-family="Arial, Helvetica, sans-serif"
+        font-weight="700" font-size="26" class="ink" letter-spacing="11">PROPERTY GROUP</text>
 </svg>`;
