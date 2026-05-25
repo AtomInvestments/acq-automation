@@ -4176,6 +4176,7 @@ function apgTopNav(activeTab: string = ""): string {
     { href: "/weekly",    key: "weekly",     label: "Docket" },
     { href: "/priorities", key: "priorities", label: "Priority" },
     { href: "/markets",   key: "markets",    label: "Markets" },
+    { href: "/insights",  key: "insights",   label: "Insights" },
   ];
   const tabHtml = tabs.map((t) => {
     const active = t.key === activeTab ? " apg-nav-tab--active" : "";
@@ -4387,6 +4388,7 @@ function landingHubHtml(): string {
     { href: "/weekly",     title: "The Docket",       subtitle: "Operator briefing. KPIs, charts, action items for the week.",        section: "BRIEFING · WEEKLY",  verb: "Read the docket" },
     { href: "/priorities", title: "Priority",         subtitle: "Today's queue — click-through to contacts that need attention.",     section: "TODAY · TOP-OF-MIND", verb: "Start the day" },
     { href: "/markets",    title: "Markets",          subtitle: "PA, TN, GA, OH — activity rollup by geography.",                      section: "GEO · ROLLUP",       verb: "Survey markets" },
+    { href: "/insights",   title: "Insights",         subtitle: "Auto-snapshots of every page change. Clarity heatmaps. Where users actually stop.", live: true, section: "WEBSITE · LIVE",   verb: "See the site" },
   ];
 
   const cardHtml = cards.map((c) => `
