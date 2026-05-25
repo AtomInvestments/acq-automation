@@ -431,7 +431,14 @@ export default {
           tz: new Date().toISOString(),
           secrets_bound: {
             elevenlabs_webhook_secret: Boolean(env.ELEVENLABS_WEBHOOK_SECRET),
-            blake_ghl_pit: Boolean(env.BLAKE_GHL_PIT),
+            elevenlabs_api_key:        Boolean(env.ELEVENLABS_API_KEY),
+            anthropic_api_key:         Boolean(env.ANTHROPIC_API_KEY),
+            blake_ghl_pit:             Boolean(env.BLAKE_GHL_PIT),
+            slack_bot_token:           Boolean(env.SLACK_BOT_TOKEN),
+            dashboard_password:        Boolean(env.DASHBOARD_PASSWORD),
+            dashboard_session_secret:  Boolean(env.DASHBOARD_SESSION_SECRET),
+            wp_auth_header:            Boolean(env.WP_AUTH_HEADER),
+            attom_api_key:             Boolean(env.ATTOM_API_KEY),
           },
         }),
         { status: 200, headers: { "content-type": "application/json" } }
