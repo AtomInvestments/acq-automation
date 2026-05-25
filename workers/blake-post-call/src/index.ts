@@ -33,7 +33,7 @@ import {
   buildBlogPrompt, pickNextTopic, markTopicUsed, pickImageForTopic,
   pickInlineImages, isReadyToPost, recordLastPosted, BlogTopic,
 } from "./auto-blog";
-import { enrichPropertyViaAttom, formatEnrichmentForSellerFile } from "./attom";
+import { enrichPropertyViaAttom, formatEnrichmentForSellerFile, scoreMotivatedSignals } from "./attom";
 
 export interface Env {
   BLAKE_GHL_PIT: string;
@@ -859,7 +859,10 @@ async function handleListingEmail(req: Request, env: Env): Promise<Response> {
 
   // 1. MAO calculation — now backed by ATTOM AVM when available, with
   //    graceful fallback to asking-price-as-ARV-proxy if ATTOM can't match.
+  //    Also scores 4 motivated-seller signals (absentee / high equity / recent
+  //    transfer / tax delinquent) so we can tag the opp + customize SMS angle.
   let attomEnrichment: any = null;
+  let motivated: ReturnType<typeof scoreMotivatedSignals> | null = null;
   let arvSource: "attom_avm" | "asking_price_proxy" = "asking_price_proxy";
   let arvProxy = asking;
   let attomSqft: number | undefined;
@@ -874,6 +877,14 @@ async function handleListingEmail(req: Request, env: Env): Promise<Response> {
     }
     if (attomEnrichment?.sqft && (!sqft || attomEnrichment.sqft > sqft * 0.5)) {
       attomSqft = attomEnrichment.sqft;
+    }
+    // Motivated-seller scoring (runs even when AVM is missing — the absentee
+    // check only needs owner data, etc.)
+    if (attomEnrichment && !attomEnrichment.error) {
+      motivated = scoreMotivatedSignals(attomEnrichment);
+      if (motivated.score > 0) {
+        console.log(`[listing] motivated signals (score ${motivated.score}/4): ${motivated.flags.join(" | ")}`);
+      }
     }
   } catch (e: any) {
     console.warn(`[listing] ATTOM enrichment threw: ${e?.message || e}`);
@@ -986,17 +997,30 @@ async function handleListingEmail(req: Request, env: Env): Promise<Response> {
   const baths = Number(body.baths) || 0;
 
   // SMS body — Mike-with-APG copy per direct user instruction (2026-05-24).
-  // The B2B realtor outreach uses a different persona than Blake (the voice
-  // agent for seller calls): "active buyer backed by private capital" frames
-  // APG as a serious cash buyer rather than a generic wholesaler.
-  // Specific to the listing, ends with a clear non-pressuring CTA.
+  // When ATTOM motivated-seller signals are present, swap in a more specific
+  // opener so the agent recognizes we've done our homework. Generic template
+  // otherwise.
   const addrShort = body.property_address || "your listing";
-  const smsBody =
-    `Hi ${realtorFirst}, this is Mike with APG. ` +
-    `I'm an active buyer backed by private capital — ` +
-    `saw your listing at ${addrShort}. ` +
-    `Our offer as-is, close in 14 days, is ${fmtK(mao)}. ` +
-    `Let me know your thoughts. Thanks.`;
+  const motivatedOpener = (() => {
+    if (!motivated || motivated.score === 0) return null;
+    if (motivated.absentee) {
+      return `Hi ${realtorFirst}, this is Mike with APG. I work fast on out-of-state owner situations — saw your listing at ${addrShort}.`;
+    }
+    if (motivated.recentTransfer) {
+      return `Hi ${realtorFirst}, this is Mike with APG. I work a lot of probate / inherited-property sales — saw your listing at ${addrShort}.`;
+    }
+    if (motivated.highEquity) {
+      return `Hi ${realtorFirst}, this is Mike with APG. Looks like the owner has significant equity here — saw your listing at ${addrShort}.`;
+    }
+    return null;
+  })();
+  const smsBody = motivatedOpener
+    ? `${motivatedOpener} Our cash offer as-is, close in 14 days, is ${fmtK(mao)}. No fees. Let me know your thoughts. Thanks.`
+    : `Hi ${realtorFirst}, this is Mike with APG. ` +
+      `I'm an active buyer backed by private capital — ` +
+      `saw your listing at ${addrShort}. ` +
+      `Our offer as-is, close in 14 days, is ${fmtK(mao)}. ` +
+      `Let me know your thoughts. Thanks.`;
 
   const sms = realtorContactId
     ? await sendGhlSms(env, realtorContactId, smsBody)
@@ -1060,8 +1084,15 @@ async function handleListingEmail(req: Request, env: Env): Promise<Response> {
   const lookupTag = realtorLookupResult
     ? (realtorPhone ? " :mag: via web-search" : " :mag: web-search returned nothing")
     : "";
+  // Motivated-seller block — only show if ATTOM flagged at least one signal.
+  // Goes near the top of the Slack message so it's the first thing reviewers see.
+  const motivatedHeader = motivated && motivated.score > 0
+    ? `:fire: *MOTIVATED SELLER (score ${motivated.score}/4)* — ${motivated.flags.join(" · ")}\n`
+    : "";
+
   const slackText =
     `:house: *New listing landed* — ${fullAddress}\n` +
+    motivatedHeader +
     propertyLine +
     `> Asking *${fmtK(asking)}* · MAO *${fmtK(mao)}* (ARV ${fmtK(arvProxy)}${arvSource === "attom_avm" ? ` :white_check_mark:ATTOM` : ` :warning:asking-proxy`} × 0.70 − rehab ${fmtK(rehabEstimate)} − ${fmtK(MAO_BUFFER)} buffer)\n` +
     `> Realtor: ${realtorName || "(unknown)"} ${realtorPhone || ""} ${realtorEmail ? `<${realtorEmail}>` : ""}${lookupTag}\n` +
@@ -1070,6 +1101,18 @@ async function handleListingEmail(req: Request, env: Env): Promise<Response> {
     (body.listing_url ? `> Listing: ${body.listing_url}\n` : "") +
     `> GHL opp: \`${opportunityId}\` (Realtor Listings → 1. New Listing) [${oppAction}]`;
   const slack = await postSlackMessage(env, SLACK_LISTINGS_CHANNEL, slackText);
+
+  // Tag the realtor contact when motivated signals are present so this listing
+  // surfaces in GHL "motivated-seller" filtered views. Tag is best-effort.
+  if (motivated && motivated.score > 0 && realtorContactId) {
+    const motivatedTags: string[] = ["motivated-seller"];
+    if (motivated.absentee)       motivatedTags.push("absentee-owner");
+    if (motivated.highEquity)     motivatedTags.push("high-equity");
+    if (motivated.recentTransfer) motivatedTags.push("recent-transfer-probate");
+    for (const t of motivatedTags) {
+      await addTag(env.BLAKE_GHL_PIT, realtorContactId, t).catch(() => {});
+    }
+  }
 
   return new Response(
     JSON.stringify({

@@ -192,6 +192,68 @@ export async function enrichPropertyViaAttom(
   return result;
 }
 
+// Score a property against the 4 motivated-seller signals.
+// Returns flags + a 0-4 score. Caller decides what threshold means "motivated."
+export interface MotivatedSignals {
+  score: number;                  // 0-4
+  flags: string[];                // human-readable flag list for Slack/notes
+  absentee:        boolean;
+  highEquity:      boolean;
+  recentTransfer:  boolean;       // best-effort — based on saleTransDate < 12mo
+  taxDelinquent:   boolean;       // requires Foreclosure tier — usually false on trial
+  equityAmount?:   number;        // AVM - lastSaleAmt when both known
+  equityMultiple?: number;        // AVM / lastSaleAmt
+}
+
+export function scoreMotivatedSignals(e: AttomEnrichment): MotivatedSignals {
+  const out: MotivatedSignals = {
+    score: 0, flags: [],
+    absentee: false, highEquity: false, recentTransfer: false, taxDelinquent: false,
+  };
+
+  // 1. Absentee owner — mailing address doesn't match property address
+  if (e.ownerMailing && e.resolvedAddress) {
+    const propStreet = (e.resolvedAddress.split(",")[0] || "").trim().toLowerCase();
+    const mailStreet = (e.ownerMailing.split(",")[0] || "").trim().toLowerCase();
+    if (propStreet && mailStreet && propStreet !== mailStreet) {
+      out.absentee = true;
+      out.score += 1;
+      out.flags.push(`🏠➡📦 Absentee owner (mailing: ${e.ownerMailing})`);
+    }
+  }
+
+  // 2. High equity — AVM significantly above last sale price
+  if (e.avmValue && e.lastSaleAmt && e.lastSaleAmt > 0) {
+    const multiple = e.avmValue / e.lastSaleAmt;
+    out.equityAmount   = e.avmValue - e.lastSaleAmt;
+    out.equityMultiple = multiple;
+    if (multiple >= 1.5) {
+      out.highEquity = true;
+      out.score += 1;
+      out.flags.push(`💰 High equity (~$${(out.equityAmount).toLocaleString()}, ${multiple.toFixed(1)}x last sale of $${e.lastSaleAmt.toLocaleString()})`);
+    }
+  }
+
+  // 3. Recent transfer (likely inherited / death-of-owner) — sale date in last 12 months
+  if (e.lastSaleDate) {
+    const saleDate = new Date(e.lastSaleDate);
+    const monthsAgo = (Date.now() - saleDate.getTime()) / (1000 * 60 * 60 * 24 * 30);
+    // Recent sale AND no real sale price → likely a $0 deed transfer (inheritance/quitclaim)
+    if (monthsAgo >= 0 && monthsAgo < 12 && (!e.lastSaleAmt || e.lastSaleAmt < 1000)) {
+      out.recentTransfer = true;
+      out.score += 1;
+      out.flags.push(`⚰ Recent deed transfer (${monthsAgo.toFixed(1)} months ago, no sale price → likely probate / quitclaim)`);
+    }
+  }
+
+  // 4. Tax delinquent — requires the Foreclosure tier; usually undefined in the
+  //    trial Property API. Reserved for when we have richer data.
+  //    (Placeholder — would set out.taxDelinquent = true based on ATTOM's
+  //    /foreclosure/snapshot endpoint, not /property/detail.)
+
+  return out;
+}
+
 // Format an enrichment for Blake's seller_file injection (compact human-readable).
 export function formatEnrichmentForSellerFile(e: AttomEnrichment): string | null {
   if (e.error || !e.attomId) return null;
