@@ -39,6 +39,7 @@ export interface Env {
   SLACK_BOT_TOKEN: string;          // Pillar B: post new-listing alerts to #base1-sms-leadgen
   DASHBOARD_PASSWORD: string;       // Plaintext password for /login (single-tenant, single-user auth)
   DASHBOARD_SESSION_SECRET: string; // HMAC-SHA256 key for signing session cookies
+  WP_AUTH_HEADER: string;           // Pre-base64 'Basic <token>' header for WP REST API (used by /insights cron + landing-page builder). Rotated 2026-05-25 after a leaked-secret incident.
   DIAL_STATE: KVNamespace;          // KV for warm-up quota + dial dedupe
 }
 
@@ -4946,15 +4947,17 @@ const INSIGHTS_TRACKED_PAGES: Array<{ id: number; label: string }> = [
 
 const CLARITY_PROJECT_ID = "wwbe84z9my";
 const WP_REST_BASE = "https://atompropertygroup.com/wp-json/wp/v2";
-// btoa('uxamx11:6948 LPYD YwGx aqC2 djgU Sy56')
-const WP_AUTH_HEADER = "Basic dXhhbXgxMTo2OTQ4IExQWUQgWXdHeCBhcUMyIGRqZ1UgU3k1Ng==";
 
-async function fetchWpPageMeta(pageId: number): Promise<{
+async function fetchWpPageMeta(env: Env, pageId: number): Promise<{
   id: number; modified: string; link: string; title: string; slug: string;
 } | null> {
+  if (!env.WP_AUTH_HEADER) {
+    console.warn("[insights] WP_AUTH_HEADER not configured");
+    return null;
+  }
   const res = await fetch(
     `${WP_REST_BASE}/pages/${pageId}?_fields=id,modified,link,title,slug`,
-    { headers: { Authorization: WP_AUTH_HEADER } }
+    { headers: { Authorization: env.WP_AUTH_HEADER } }
   );
   if (!res.ok) return null;
   const p: any = await res.json();
@@ -5005,7 +5008,7 @@ async function captureAndStoreSnapshot(
 async function pollInsightsForChanges(env: Env): Promise<void> {
   for (const { id, label } of INSIGHTS_TRACKED_PAGES) {
     try {
-      const meta = await fetchWpPageMeta(id);
+      const meta = await fetchWpPageMeta(env, id);
       if (!meta) continue;
       const lastModKey = `insights:lastmod:${id}`;
       const lastMod = await env.DIAL_STATE.get(lastModKey);
@@ -5028,7 +5031,7 @@ async function handleInsightsListPages(env: Env): Promise<Response> {
   const result: any[] = [];
   for (const { id, label } of INSIGHTS_TRACKED_PAGES) {
     try {
-      const meta = await fetchWpPageMeta(id);
+      const meta = await fetchWpPageMeta(env, id);
       if (!meta) {
         result.push({ id, label, error: "wp_fetch_failed" });
         continue;
@@ -5077,7 +5080,7 @@ async function handleInsightsCapture(req: Request, env: Env): Promise<Response> 
       status: 400, headers: { "content-type": "application/json" },
     });
   }
-  const meta = await fetchWpPageMeta(pageId);
+  const meta = await fetchWpPageMeta(env, pageId);
   if (!meta) {
     return new Response(JSON.stringify({ error: "wp_fetch_failed" }), {
       status: 502, headers: { "content-type": "application/json" },
