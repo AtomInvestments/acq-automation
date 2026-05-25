@@ -33,6 +33,7 @@ import {
   buildBlogPrompt, pickNextTopic, markTopicUsed, pickImageForTopic,
   isReadyToPost, recordLastPosted, BlogTopic,
 } from "./auto-blog";
+import { enrichPropertyViaAttom, formatEnrichmentForSellerFile } from "./attom";
 
 export interface Env {
   BLAKE_GHL_PIT: string;
@@ -45,6 +46,7 @@ export interface Env {
   DASHBOARD_PASSWORD: string;       // Plaintext password for /login (single-tenant, single-user auth)
   DASHBOARD_SESSION_SECRET: string; // HMAC-SHA256 key for signing session cookies
   WP_AUTH_HEADER: string;           // Pre-base64 'Basic <token>' header for WP REST API (used by /insights cron + landing-page builder). Rotated 2026-05-25 after a leaked-secret incident.
+  ATTOM_API_KEY: string;            // ATTOM Data Property API key — listing-pipeline ARV + Blake pre-call enrichment. Trial key, expires 2026-06-23.
   DIAL_STATE: KVNamespace;          // KV for warm-up quota + dial dedupe
 }
 
@@ -657,6 +659,24 @@ export default {
       return handleInsightsCapture(req, env);
     }
 
+    // /admin/attom/lookup?address=... — manually query ATTOM for an address.
+    // Returns the same enrichment payload the listing pipeline + Blake init use.
+    // KV-cached for 24h per address; useful for testing + debugging.
+    if (req.method === "GET" && url.pathname === "/admin/attom/lookup") {
+      const auth = await requireAuth(req, env);
+      if (!auth.ok) return new Response(JSON.stringify({ error: "unauthorized" }), {
+        status: 401, headers: { "content-type": "application/json" },
+      });
+      const address = url.searchParams.get("address");
+      if (!address) return new Response(JSON.stringify({ error: "missing ?address=..." }), {
+        status: 400, headers: { "content-type": "application/json" },
+      });
+      const result = await enrichPropertyViaAttom(env, address);
+      return new Response(JSON.stringify(result, null, 2), {
+        status: 200, headers: { "content-type": "application/json" },
+      });
+    }
+
     // /admin/blog/generate — manually trigger a blog generation (force=true bypasses
     // the cadence check so we can test without waiting 3 days). Posts as DRAFT by
     // default so Adam reviews before publish.
@@ -813,10 +833,38 @@ async function handleListingEmail(req: Request, env: Env): Promise<Response> {
     }
   }
 
-  // 1. MAO calculation. For MVP: treat asking_price as ARV proxy. Later when
-  //    Apify/RentCast is wired we'll compute a real ARV from comps.
-  const arvProxy = asking;
-  const rehabEstimate = sqft * MAO_REHAB_PER_SQFT;
+  // Build full address up-front — needed for both ATTOM enrichment (next) and
+  // the Slack alert further down.
+  const fullAddress =
+    body.property_address +
+    (body.city ? `, ${body.city}` : "") +
+    (body.state ? `, ${body.state}` : "") +
+    (body.postal_code ? ` ${body.postal_code}` : "");
+
+  // 1. MAO calculation — now backed by ATTOM AVM when available, with
+  //    graceful fallback to asking-price-as-ARV-proxy if ATTOM can't match.
+  let attomEnrichment: any = null;
+  let arvSource: "attom_avm" | "asking_price_proxy" = "asking_price_proxy";
+  let arvProxy = asking;
+  let attomSqft: number | undefined;
+  try {
+    attomEnrichment = await enrichPropertyViaAttom(env, fullAddress);
+    if (attomEnrichment && !attomEnrichment.error && attomEnrichment.avmValue) {
+      arvProxy = attomEnrichment.avmValue;
+      arvSource = "attom_avm";
+      console.log(`[listing] ATTOM AVM hit: $${attomEnrichment.avmValue.toLocaleString()} (confidence ${attomEnrichment.avmConfidence}/100, cache=${attomEnrichment.cacheHit})`);
+    } else {
+      console.log(`[listing] ATTOM no match for "${fullAddress}" — falling back to asking price as ARV proxy. error=${attomEnrichment?.error}`);
+    }
+    if (attomEnrichment?.sqft && (!sqft || attomEnrichment.sqft > sqft * 0.5)) {
+      attomSqft = attomEnrichment.sqft;
+    }
+  } catch (e: any) {
+    console.warn(`[listing] ATTOM enrichment threw: ${e?.message || e}`);
+  }
+  // Use ATTOM sqft if email parser couldn't get one, otherwise prefer the parsed value
+  const sqftForRehab = sqft || attomSqft || 0;
+  const rehabEstimate = sqftForRehab * MAO_REHAB_PER_SQFT;
   const mao = Math.max(0, Math.round(arvProxy * MAO_ARV_MULTIPLIER - rehabEstimate - MAO_BUFFER));
 
   // 2. Upsert realtor contact.
@@ -951,6 +999,7 @@ async function handleListingEmail(req: Request, env: Env): Promise<Response> {
       : "") +
     `Asking: ${fmtK(asking)}\n` +
     `MAO: ${fmtK(mao)}  (= ${fmtK(arvProxy)} × 0.70 − rehab ${fmtK(rehabEstimate)} − ${fmtK(MAO_BUFFER)} buffer)\n` +
+    `ARV source: ${arvSource === "attom_avm" ? `ATTOM AVM (confidence ${attomEnrichment?.avmConfidence}/100, range ${fmtK(attomEnrichment?.avmLow)} – ${fmtK(attomEnrichment?.avmHigh)})` : "asking-price proxy (ATTOM didn't match this address)"}\n` +
     `Offer sent via SMS: ${sms.ok ? "yes" : "FAILED — " + sms.body.slice(0, 80)}\n` +
     (body.listing_url ? `Listing URL: ${body.listing_url}\n` : "") +
     `Realtor: ${realtorName || "(unknown)"}` +
@@ -980,13 +1029,7 @@ async function handleListingEmail(req: Request, env: Env): Promise<Response> {
     await setContactCustomField(env.BLAKE_GHL_PIT, realtorContactId, CF_LISTING_DATE, listingDateIso).catch(() => {});
   }
 
-  // 7. Slack alert in #listed-leads. Now includes the property details line
-  //    (beds / baths / sqft) — was missing in v1.
-  const fullAddress =
-    body.property_address +
-    (body.city ? `, ${body.city}` : "") +
-    (body.state ? `, ${body.state}` : "") +
-    (body.postal_code ? ` ${body.postal_code}` : "");
+  // 7. Slack alert in #listed-leads. (fullAddress was declared earlier for ATTOM lookup.)
   // DOM display: highlight stale listings — gold flag at 30+ days, red at 60+
   const domDisplay = daysOnMarket !== null
     ? (daysOnMarket >= 60 ? ` · :red_circle: *${daysOnMarket} days on market*`
@@ -1004,7 +1047,7 @@ async function handleListingEmail(req: Request, env: Env): Promise<Response> {
   const slackText =
     `:house: *New listing landed* — ${fullAddress}\n` +
     propertyLine +
-    `> Asking *${fmtK(asking)}* · MAO *${fmtK(mao)}* (ARV ${fmtK(arvProxy)} × 0.70 − rehab ${fmtK(rehabEstimate)} − ${fmtK(MAO_BUFFER)} buffer)\n` +
+    `> Asking *${fmtK(asking)}* · MAO *${fmtK(mao)}* (ARV ${fmtK(arvProxy)}${arvSource === "attom_avm" ? ` :white_check_mark:ATTOM` : ` :warning:asking-proxy`} × 0.70 − rehab ${fmtK(rehabEstimate)} − ${fmtK(MAO_BUFFER)} buffer)\n` +
     `> Realtor: ${realtorName || "(unknown)"} ${realtorPhone || ""} ${realtorEmail ? `<${realtorEmail}>` : ""}${lookupTag}\n` +
     (realtorLookupResult?.brokerage ? `> Brokerage: ${realtorLookupResult.brokerage}\n` : "") +
     `> SMS to realtor: ${sms.ok ? ":white_check_mark: sent via GHL (conversation on contact)" : `:x: ${sms.status} ${sms.body.slice(0, 100)}`}\n` +
@@ -2524,11 +2567,15 @@ async function handleConversationInit(req: Request, env: Env): Promise<Response>
         // All four layers run in parallel to keep init webhook latency low
         // (ElevenLabs times out ~5 sec). Each layer is best-effort — failures
         // don't block the call from happening.
-        const [lastSummary, recentNotes, recentSms, slackMentions] = await Promise.all([
+        const [lastSummary, recentNotes, recentSms, slackMentions, attomEnrich] = await Promise.all([
           getLatestApgLeadSummary(env.BLAKE_GHL_PIT, contact.id).catch(() => null),
           getRecentNotes(env.BLAKE_GHL_PIT, contact.id, 5).catch(() => []),
           getRecentSmsConversation(env.BLAKE_GHL_PIT, contact.id, 10).catch(() => []),
           getSlackMentions(env, `${firstName} ${lastName}`.trim(), callerPhone, 5).catch(() => []),
+          // ATTOM enrichment — only attempt if we have an address on file
+          address
+            ? enrichPropertyViaAttom(env, address).catch(() => null)
+            : Promise.resolve(null),
         ]);
 
         if (lastSummary) {
@@ -2569,6 +2616,14 @@ async function handleConversationInit(req: Request, env: Env): Promise<Response>
           }
         }
 
+        if (attomEnrich) {
+          const block = formatEnrichmentForSellerFile(attomEnrich);
+          if (block) {
+            sellerFileLines.push("");
+            sellerFileLines.push(block);
+          }
+        }
+
         // Cap the total seller_file size so it doesn't blow up the prompt.
         // Sonnet+Opus can take huge prompts but Blake's first message latency
         // matters more — keep it lean.
@@ -2576,7 +2631,8 @@ async function handleConversationInit(req: Request, env: Env): Promise<Response>
         if (sellerFile.length > 6000) {
           sellerFile = sellerFile.slice(0, 6000) + "\n... [truncated to keep call init fast]";
         }
-        console.log(`[init] seller_file enriched: ${sellerFile.length} chars (${otherNotes.length} notes + ${recentSms.length} SMS + ${slackMentions.length} slack)`);
+        const attomHit = attomEnrich && !attomEnrich.error && attomEnrich.attomId ? "yes" : "no";
+        console.log(`[init] seller_file enriched: ${sellerFile.length} chars (${otherNotes.length} notes + ${recentSms.length} SMS + ${slackMentions.length} slack + attom:${attomHit})`);
 
         vars = {
           first_name: firstName,
