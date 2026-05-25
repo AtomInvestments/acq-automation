@@ -4932,9 +4932,17 @@ const INLINE_LOGO_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 72
 // or drop off on each version.
 
 // WP page IDs we monitor. Add new ones here — auto-picked-up on next cron.
+// Note: some pages were delete+recreate'd to clear Elementor postmeta + LiteSpeed
+// cache (2026-05-25), so IDs may not be sequential.
 const INSIGHTS_TRACKED_PAGES: Array<{ id: number; label: string }> = [
   { id: 1213, label: "Homepage" },
-  { id: 946,  label: "Construction Services" },
+  { id: 1355, label: "About Us" },
+  { id: 1356, label: "Services" },
+  { id: 1362, label: "Construction Services" },
+  { id: 1358, label: "Invest With Us" },
+  { id: 1357, label: "Contact Us" },
+  { id: 1359, label: "Career" },
+  { id: 1361, label: "Blog" },
   { id: 1201, label: "Thank You" },
   { id: 1191, label: "City — Newark" },
   { id: 1192, label: "City — Trenton" },
