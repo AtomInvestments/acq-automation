@@ -2,10 +2,14 @@ name = "acq-automation"
 main = "src/index.ts"
 compatibility_date = "2026-05-20"
 
-# Cron Trigger: every 15 min, the scheduled handler attempts a small batch of
-# dials respecting the warm-up curve and TCPA call windows. No-op if quota met.
+# Cron Triggers:
+#   - Every 15 min: dial batch + dashboard cache refresh + insights change-detection
+#     poll + auto-blog cadence check.
+#   - Daily at 04:00 UTC (= 12:00 AM EDT / midnight Eastern): end-of-day baseline
+#     snapshot of every tracked Insights page, regardless of whether WP modified
+#     changed. Gives us a permanent daily history record.
 [triggers]
-crons = ["*/15 * * * *"]
+crons = ["*/15 * * * *", "0 4 * * *"]
 
 # KV namespace for dial state — tracks today's count, contact dedupe, anchor.
 [[kv_namespaces]]

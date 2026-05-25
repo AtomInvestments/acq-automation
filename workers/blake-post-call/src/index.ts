@@ -729,7 +729,23 @@ export default {
   //   1. Attempt a small batch of dials (warm-up quota + TCPA windows)
   //   2. Refresh the dashboard cache (so the dashboard never goes stale even
   //      if no calls have happened recently)
-  async scheduled(_event: ScheduledEvent, env: Env, ctx: ExecutionContext) {
+  async scheduled(event: ScheduledEvent, env: Env, ctx: ExecutionContext) {
+    // Cron dispatcher — event.cron tells us which schedule fired:
+    //   "*/15 * * * *"  → every 15 min (dial batch, dashboard refresh, change-poll, blog cadence)
+    //   "0 4 * * *"      → daily at 04:00 UTC (= midnight Eastern) → end-of-day baseline snapshot
+    const isDailyTick = event.cron === "0 4 * * *";
+
+    if (isDailyTick) {
+      try {
+        await dailyInsightsBaseline(env);
+      } catch (e) {
+        console.error(`[cron-daily-baseline] failed: ${e}`);
+      }
+      // Don't run the every-15-min tasks on the daily tick — they run on their own schedule
+      return;
+    }
+
+    // Every-15-min tick
     try {
       const result = await runDialBatch(env, { source: "cron", batchSize: 5, dryRun: false });
       console.log(`[cron-dial] ${JSON.stringify(result)}`);
@@ -5088,6 +5104,55 @@ async function captureAndStoreSnapshot(
     { expirationTtl: 60 * 60 * 24 * 180 }
   );
   return { key, bytes };
+}
+
+// Daily end-of-day baseline — captures EVERY tracked page once per day,
+// regardless of whether WP modified timestamp changed. This guarantees a
+// permanent daily snapshot record even on pages that don't get edited often,
+// so when we look at the timeline weeks later we have continuous coverage.
+// Dedupe: if today's daily key was already set, skip (prevents double-runs
+// if cron fires twice due to CF retry).
+async function dailyInsightsBaseline(env: Env): Promise<void> {
+  const today = new Date().toISOString().slice(0, 10);  // YYYY-MM-DD UTC
+  const sentinelKey = `insights:daily_done:${today}`;
+  const already = await env.DIAL_STATE.get(sentinelKey);
+  if (already) {
+    console.log(`[daily-baseline] already ran today (${today}) — skipping`);
+    return;
+  }
+  console.log(`[daily-baseline] starting for ${today} — ${INSIGHTS_TRACKED_PAGES.length} pages`);
+  let captured = 0;
+  let failed = 0;
+  for (const { id, label } of INSIGHTS_TRACKED_PAGES) {
+    try {
+      const meta = await fetchWpPageMeta(env, id);
+      if (!meta) {
+        console.warn(`[daily-baseline] WP meta fetch failed for ${label} (id=${id})`);
+        failed++;
+        continue;
+      }
+      const result = await captureAndStoreSnapshot(env, id, meta.link, meta.modified);
+      if (result) {
+        captured++;
+        console.log(`[daily-baseline] captured ${label}: ${result.bytes} bytes`);
+      } else {
+        failed++;
+      }
+      // Also bump last-known modified so the change-poll doesn't immediately
+      // re-capture on its next tick
+      await env.DIAL_STATE.put(`insights:lastmod:${id}`, meta.modified, {
+        expirationTtl: 60 * 60 * 24 * 180,
+      });
+    } catch (e: any) {
+      console.warn(`[daily-baseline] failed ${label}: ${e?.message || e}`);
+      failed++;
+    }
+  }
+  // Sentinel TTL = 25h (longer than 24 so we don't accidentally re-fire if cron is slow)
+  await env.DIAL_STATE.put(sentinelKey, new Date().toISOString(), {
+    expirationTtl: 60 * 60 * 25,
+  });
+  console.log(`[daily-baseline] done: ${captured} captured, ${failed} failed`);
 }
 
 async function pollInsightsForChanges(env: Env): Promise<void> {
