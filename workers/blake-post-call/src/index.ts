@@ -28,6 +28,11 @@
 // instead of proxying github.io. Falls back to proxy if a key is missing.
 import { DASHBOARDS } from "./dashboards";
 import { INSIGHTS_DASHBOARD_HTML as INSIGHTS_DASHBOARD_HTML_RAW } from "./insights-html";
+import {
+  BLOG_DEFAULT_STATUS, BLOG_AUTHOR_USER_ID, BLOG_CTA_BOX,
+  buildBlogPrompt, pickNextTopic, markTopicUsed, pickImageForTopic,
+  isReadyToPost, recordLastPosted, BlogTopic,
+} from "./auto-blog";
 
 export interface Env {
   BLAKE_GHL_PIT: string;
@@ -652,6 +657,17 @@ export default {
       return handleInsightsCapture(req, env);
     }
 
+    // /admin/blog/generate — manually trigger a blog generation (force=true bypasses
+    // the cadence check so we can test without waiting 3 days). Posts as DRAFT by
+    // default so Adam reviews before publish.
+    if (req.method === "POST" && url.pathname === "/admin/blog/generate") {
+      const auth = await requireAuth(req, env);
+      if (!auth.ok) return new Response(JSON.stringify({ error: "unauthorized" }), {
+        status: 401, headers: { "content-type": "application/json" },
+      });
+      return handleAdminBlogGenerate(req, env);
+    }
+
     if (req.method === "GET" && url.pathname.startsWith("/insights/snap/")) {
       const auth = await requireAuth(req, env);
       if (!auth.ok) {
@@ -709,6 +725,11 @@ export default {
       await pollInsightsForChanges(env);
     } catch (e) {
       console.error(`[cron-insights] failed: ${e}`);
+    }
+    try {
+      await autoBlogTick(env);
+    } catch (e) {
+      console.error(`[cron-blog] failed: ${e}`);
     }
   },
 };
@@ -5124,3 +5145,192 @@ async function handleInsightsSnap(env: Env, key: string): Promise<Response> {
 }
 
 const INSIGHTS_DASHBOARD_HTML = INSIGHTS_DASHBOARD_HTML_RAW;
+
+// ============================================================================
+// Auto-blog — generate + publish a value-driven post every BLOG_CADENCE_DAYS
+// ============================================================================
+
+// Cron tick: if it's been long enough since the last post, generate a new one.
+// Runs every 15 min (piggy-backs on existing cron); the cadence check inside
+// means we only actually generate once per BLOG_CADENCE_DAYS days.
+async function autoBlogTick(env: Env): Promise<void> {
+  if (!(await isReadyToPost(env))) {
+    return;  // not enough time has passed since last post
+  }
+  console.log(`[cron-blog] cadence check passed — generating new post`);
+  try {
+    const result = await generateAndPublishBlogPost(env);
+    if (result.ok) {
+      await recordLastPosted(env);
+      console.log(`[cron-blog] published draft "${result.title}" → post_id=${result.postId}`);
+    } else {
+      console.warn(`[cron-blog] failed: ${result.error}`);
+    }
+  } catch (e: any) {
+    console.error(`[cron-blog] threw: ${e?.message || e}`);
+  }
+}
+
+// Manual trigger from /admin/blog/generate. Accepts body {force?: boolean,
+// topicSlug?: string} for testing — force bypasses the cadence check, topicSlug
+// picks a specific topic instead of the next-unused one.
+async function handleAdminBlogGenerate(req: Request, env: Env): Promise<Response> {
+  let body: any = {};
+  try { body = await req.json(); } catch {}
+  const force = body.force === true;
+  if (!force && !(await isReadyToPost(env))) {
+    return new Response(JSON.stringify({
+      error: "cadence_not_met",
+      hint: "Pass {force: true} to bypass the 3-day cadence check.",
+    }), { status: 409, headers: { "content-type": "application/json" } });
+  }
+
+  const result = await generateAndPublishBlogPost(env, body.topicSlug);
+  if (result.ok) {
+    await recordLastPosted(env);
+    return new Response(JSON.stringify({
+      ok: true, postId: result.postId, title: result.title,
+      status: result.status, link: result.link,
+    }, null, 2), { status: 200, headers: { "content-type": "application/json" } });
+  }
+  return new Response(JSON.stringify({ ok: false, error: result.error }), {
+    status: 502, headers: { "content-type": "application/json" },
+  });
+}
+
+// Core generation + publish flow.
+async function generateAndPublishBlogPost(
+  env: Env,
+  forceTopicSlug?: string,
+): Promise<
+  | { ok: true; postId: number; title: string; status: string; link: string }
+  | { ok: false; error: string }
+> {
+  // 1. Pick topic
+  let topic: BlogTopic | null;
+  if (forceTopicSlug) {
+    const { BLOG_TOPIC_POOL } = await import("./auto-blog");
+    topic = BLOG_TOPIC_POOL.find((t) => t.slug === forceTopicSlug) || null;
+    if (!topic) return { ok: false, error: `topic_not_found: ${forceTopicSlug}` };
+  } else {
+    topic = await pickNextTopic(env);
+  }
+  if (!topic) return { ok: false, error: "no_topic_available" };
+
+  console.log(`[blog] generating: ${topic.slug}`);
+
+  // 2. Call Claude to write the post
+  if (!env.ANTHROPIC_API_KEY) {
+    return { ok: false, error: "ANTHROPIC_API_KEY not configured" };
+  }
+  const prompt = buildBlogPrompt(topic);
+  let claudeJson: any;
+  try {
+    const claudeRes = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: {
+        "x-api-key": env.ANTHROPIC_API_KEY,
+        "anthropic-version": "2023-06-01",
+        "content-type": "application/json",
+      },
+      body: JSON.stringify({
+        model: "claude-sonnet-4-6",
+        max_tokens: 2500,
+        messages: [{ role: "user", content: prompt }],
+      }),
+    });
+    if (!claudeRes.ok) {
+      const txt = await claudeRes.text();
+      return { ok: false, error: `claude_${claudeRes.status}: ${txt.slice(0, 300)}` };
+    }
+    const claudeData: any = await claudeRes.json();
+    const text = claudeData?.content?.[0]?.text || "";
+    // Strip any markdown code fences
+    const cleaned = text.replace(/^```(?:json)?\s*/i, "").replace(/```\s*$/, "").trim();
+    try {
+      claudeJson = JSON.parse(cleaned);
+    } catch (e) {
+      return { ok: false, error: `claude_invalid_json: ${cleaned.slice(0, 300)}` };
+    }
+  } catch (e: any) {
+    return { ok: false, error: `claude_fetch_threw: ${e?.message || e}` };
+  }
+
+  if (!claudeJson.title || !claudeJson.body_html) {
+    return { ok: false, error: "claude_missing_fields" };
+  }
+
+  // 3. Append the standardized CTA box (defense-in-depth — even if Claude omits it)
+  const fullBody = claudeJson.body_html + BLOG_CTA_BOX;
+
+  // 4. Pick image + upload to WP media library so it can be set as featured image
+  const imageUrl = pickImageForTopic(topic.slug);
+  let featuredMediaId: number | undefined;
+  try {
+    featuredMediaId = await uploadImageToWp(env, imageUrl, topic.slug);
+  } catch (e: any) {
+    console.warn(`[blog] image upload failed (continuing without featured image): ${e?.message || e}`);
+  }
+
+  // 5. POST to WP
+  const postBody: any = {
+    title: claudeJson.title,
+    slug: topic.slug,
+    status: BLOG_DEFAULT_STATUS,
+    content: fullBody,
+    excerpt: claudeJson.excerpt || "",
+    author: BLOG_AUTHOR_USER_ID,
+    categories: [],   // (could set up a real-estate-tips category later)
+    tags: [],         // ditto
+  };
+  if (featuredMediaId) postBody.featured_media = featuredMediaId;
+
+  const wpRes = await fetch(`${WP_REST_BASE}/posts`, {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      Authorization: env.WP_AUTH_HEADER,
+    },
+    body: JSON.stringify(postBody),
+  });
+  if (!wpRes.ok) {
+    const txt = await wpRes.text();
+    return { ok: false, error: `wp_post_${wpRes.status}: ${txt.slice(0, 300)}` };
+  }
+  const wpJson: any = await wpRes.json();
+  await markTopicUsed(env, topic.slug);
+
+  return {
+    ok: true,
+    postId: wpJson.id,
+    title: wpJson.title?.rendered || claudeJson.title,
+    status: wpJson.status,
+    link: wpJson.link,
+  };
+}
+
+// Upload a remote image to the WP media library. Returns the new media ID.
+async function uploadImageToWp(env: Env, sourceUrl: string, filenameSlug: string): Promise<number> {
+  const imgRes = await fetch(sourceUrl);
+  if (!imgRes.ok) throw new Error(`image fetch ${imgRes.status}`);
+  const imgBytes = await imgRes.arrayBuffer();
+  const contentType = imgRes.headers.get("content-type") || "image/jpeg";
+  const ext = contentType.includes("png") ? "png" : "jpg";
+  const filename = `${filenameSlug}-${Date.now()}.${ext}`;
+
+  const uploadRes = await fetch(`${WP_REST_BASE}/media`, {
+    method: "POST",
+    headers: {
+      "content-type": contentType,
+      "content-disposition": `attachment; filename="${filename}"`,
+      Authorization: env.WP_AUTH_HEADER,
+    },
+    body: imgBytes,
+  });
+  if (!uploadRes.ok) {
+    const txt = await uploadRes.text();
+    throw new Error(`wp media upload ${uploadRes.status}: ${txt.slice(0, 200)}`);
+  }
+  const j: any = await uploadRes.json();
+  return j.id;
+}
