@@ -659,6 +659,18 @@ export default {
       return handleInsightsCapture(req, env);
     }
 
+    // /admin/attom/backfill — paginated ATTOM enrichment of every ACQ pipeline
+    // opportunity. Each batch processes up to body.batchSize (default 25) opps
+    // and returns a cursor for the next call. Caller (UI button) loops until
+    // cursor is null. ATTOM-cached so repeat runs are cheap.
+    if (req.method === "POST" && url.pathname === "/admin/attom/backfill") {
+      const auth = await requireAuth(req, env);
+      if (!auth.ok) return new Response(JSON.stringify({ error: "unauthorized" }), {
+        status: 401, headers: { "content-type": "application/json" },
+      });
+      return handleAdminAttomBackfill(req, env);
+    }
+
     // /admin/attom/lookup?address=... — manually query ATTOM for an address.
     // Returns the same enrichment payload the listing pipeline + Blake init use.
     // KV-cached for 24h per address; useful for testing + debugging.
@@ -5590,6 +5602,133 @@ async function fetchWpMediaSourceUrl(env: Env, mediaId: number): Promise<{ sourc
   if (!res.ok) return null;
   const j: any = await res.json();
   return j.source_url ? { sourceUrl: j.source_url } : null;
+}
+
+// ---- ATTOM backfill of ACQ pipeline ----
+// Iterates ACQ opps and enriches each contact + opp with ATTOM data.
+// Run via /admin/attom/backfill (POST). Paginated — caller loops until
+// the response has cursor:null.
+
+async function handleAdminAttomBackfill(req: Request, env: Env): Promise<Response> {
+  let body: any = {};
+  try { body = await req.json(); } catch {}
+  const batchSize = Math.max(1, Math.min(50, Number(body.batchSize) || 25));
+  const startAfter   = body.startAfter   || undefined;
+  const startAfterId = body.startAfterId || undefined;
+
+  // 1. Fetch a page of opportunities in the ACQ pipeline.
+  const params = new URLSearchParams({
+    location_id: APG_LOCATION_ID,
+    pipeline_id: ACQ_PIPELINE_ID,
+    limit:       String(batchSize),
+  });
+  if (startAfter)   params.set("startAfter",   String(startAfter));
+  if (startAfterId) params.set("startAfterId", String(startAfterId));
+  const oppRes = await fetch(`${GHL_BASE}/opportunities/search?${params.toString()}`, {
+    method: "GET", headers: ghlHeaders(env.BLAKE_GHL_PIT),
+  });
+  if (!oppRes.ok) {
+    const t = await oppRes.text();
+    return new Response(JSON.stringify({ error: `ghl_search_${oppRes.status}`, detail: t.slice(0, 300) }), {
+      status: 502, headers: { "content-type": "application/json" },
+    });
+  }
+  const oppJson: any = await oppRes.json();
+  const opps: any[] = oppJson?.opportunities ?? [];
+  const meta = oppJson?.meta || {};
+  const nextCursor = (opps.length === batchSize && meta.startAfter)
+    ? { startAfter: meta.startAfter, startAfterId: meta.startAfterId }
+    : null;
+
+  // 2. For each opp, fetch the contact's address + run ATTOM enrichment + write back.
+  const results: any[] = [];
+  for (const opp of opps) {
+    const contactId = opp?.contact?.id || opp?.contactId;
+    if (!contactId) { results.push({ oppId: opp.id, skipped: "no_contact" }); continue; }
+
+    try {
+      // Pull the full contact to get the address
+      const contact = await getContactDetail(env.BLAKE_GHL_PIT, contactId);
+      if (!contact) { results.push({ oppId: opp.id, skipped: "contact_fetch_failed" }); continue; }
+
+      // Compose full address
+      const addrParts = [contact.address1, contact.city, contact.state, contact.postalCode]
+        .map((s: any) => String(s || "").trim())
+        .filter(Boolean);
+      const fullAddress = addrParts.join(", ");
+      if (!fullAddress || addrParts.length < 2) {
+        results.push({ oppId: opp.id, contactId, skipped: "no_address" });
+        continue;
+      }
+
+      // ATTOM lookup (KV-cached)
+      const attom = await enrichPropertyViaAttom(env, fullAddress);
+      if (!attom || attom.error) {
+        results.push({ oppId: opp.id, contactId, address: fullAddress, attom_error: attom?.error || "unknown" });
+        continue;
+      }
+
+      // Write beds/baths/sqft onto the contact's custom fields
+      const cfUpdates: Array<{ id: string; value: string }> = [];
+      if (attom.beds)  cfUpdates.push({ id: CF_BEDS,  value: String(attom.beds)  });
+      if (attom.baths) cfUpdates.push({ id: CF_BATHS, value: String(attom.baths) });
+      if (attom.sqft)  cfUpdates.push({ id: CF_SQFT,  value: String(attom.sqft)  });
+      if (cfUpdates.length > 0) {
+        await updateContactFields(env.BLAKE_GHL_PIT, contactId, { customFields: cfUpdates }).catch(() => {});
+      }
+
+      // Compute MAO + update opp monetaryValue
+      let computedMao: number | null = null;
+      if (attom.avmValue && attom.sqft) {
+        const rehab = attom.sqft * 30;  // MAO_REHAB_PER_SQFT
+        computedMao = Math.max(0, Math.round(attom.avmValue * 0.70 - rehab - 10000));
+      } else if (attom.avmValue) {
+        computedMao = Math.max(0, Math.round(attom.avmValue * 0.70 - attom.avmValue * 0.12 - 10000));
+      }
+      if (computedMao !== null) {
+        await fetch(`${GHL_BASE}/opportunities/${opp.id}`, {
+          method: "PUT",
+          headers: ghlHeaders(env.BLAKE_GHL_PIT),
+          body: JSON.stringify({ monetaryValue: computedMao }),
+        }).catch(() => {});
+      }
+
+      // Motivated-seller signals → tag the contact
+      const signals = scoreMotivatedSignals(attom);
+      if (signals.score > 0) {
+        const tagSet: string[] = ["motivated-seller"];
+        if (signals.absentee)       tagSet.push("absentee-owner");
+        if (signals.highEquity)     tagSet.push("high-equity");
+        if (signals.recentTransfer) tagSet.push("recent-transfer-probate");
+        for (const t of tagSet) {
+          await addTag(env.BLAKE_GHL_PIT, contactId, t).catch(() => {});
+        }
+      }
+
+      results.push({
+        oppId: opp.id, contactId,
+        address: attom.resolvedAddress || fullAddress,
+        avm: attom.avmValue, sqft: attom.sqft, beds: attom.beds, baths: attom.baths,
+        mao: computedMao, score: signals.score, flags: signals.flags,
+      });
+    } catch (e: any) {
+      results.push({ oppId: opp.id, error: String(e?.message || e) });
+    }
+  }
+
+  const enriched = results.filter((r) => r.avm || r.beds).length;
+  const skipped  = results.filter((r) => r.skipped).length;
+  const errored  = results.filter((r) => r.error || r.attom_error).length;
+
+  return new Response(JSON.stringify({
+    processed: opps.length,
+    enriched, skipped, errored,
+    results,
+    nextCursor,
+  }, null, 2), {
+    status: 200,
+    headers: { "content-type": "application/json" },
+  });
 }
 
 // Upload a remote image to the WP media library. Returns the new media ID.

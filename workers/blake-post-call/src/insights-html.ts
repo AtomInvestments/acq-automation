@@ -61,6 +61,7 @@ export const INSIGHTS_DASHBOARD_HTML = `<!doctype html>
   <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px;padding:14px;background:white;border:1px solid var(--rule);border-radius:8px;">
     <button id="blog-now" style="padding:10px 18px;background:linear-gradient(135deg,#BF7BFF,#7B5BFF);color:white;border:none;border-radius:6px;cursor:pointer;font-size:13px;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;font-family:inherit;">+ Generate Blog Post Now</button>
     <button id="snap-all" style="padding:10px 18px;background:var(--ink);color:var(--paper);border:none;border-radius:6px;cursor:pointer;font-size:13px;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;font-family:inherit;">Snap All Pages</button>
+    <button id="backfill-acq" style="padding:10px 18px;background:linear-gradient(135deg,#FFC72C,#E5A800);color:#1A2840;border:none;border-radius:6px;cursor:pointer;font-size:13px;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;font-family:inherit;">Backfill ACQ via ATTOM</button>
     <form id="attom-form" style="display:inline-flex;gap:6px;align-items:center;margin-left:auto;">
       <input id="attom-addr" type="text" placeholder="Test ATTOM: 36 BILLIE ELLIS LN, PRINCETON, NJ" style="width:340px;height:36px;padding:0 10px;border:1px solid var(--rule);border-radius:6px;font-family:inherit;font-size:12px;">
       <button type="submit" style="height:36px;padding:0 14px;background:white;color:var(--ink);border:1px solid var(--ink);border-radius:6px;cursor:pointer;font-size:12px;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;font-family:inherit;">Lookup</button>
@@ -114,16 +115,31 @@ export const INSIGHTS_DASHBOARD_HTML = `<!doctype html>
   }
 
   function load() {
-    return fetch('/insights/api/pages')
-      .then(function(r){ if(!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+    // Show transient loading status so users see *something* happening
+    setStatus('Loading pages…');
+    // Manual 15-second timeout — without it, a hung fetch leaves "Loading…"
+    // in the grid forever with no feedback
+    var controller = new AbortController();
+    var timer = setTimeout(function(){
+      controller.abort();
+    }, 15000);
+    return fetch('/insights/api/pages', { signal: controller.signal })
+      .then(function(r){ clearTimeout(timer); if(!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
       .then(function(data){
         pageData = data.pages || [];
         render();
+        setStatus('');  // clear the "Loading pages..." once the grid renders
       })
       .catch(function(e){
-        setStatus('Failed to load: ' + e.message, 'error');
+        clearTimeout(timer);
+        var msg = e.name === 'AbortError' ? 'API call took longer than 15s — check Worker logs' : e.message;
+        setStatus('Failed to load: ' + msg, 'error');
+        // Replace the perpetual "Loading…" in the grid with a useful error
+        $('pages').innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:60px;color:var(--ash);"><div style="color:#8b1a1a;font-weight:700;margin-bottom:8px;">Failed to load pages</div><div style="font-size:13px;">' + msg + '</div><button onclick="load()" style="margin-top:16px;padding:10px 18px;background:var(--ink);color:white;border:none;border-radius:6px;cursor:pointer;">Retry</button></div>';
       });
   }
+  // Expose load() globally so the Retry button in the error state can call it
+  window.load = load;
 
   function render() {
     var html = pageData.map(function(p, i){
@@ -267,6 +283,62 @@ export const INSIGHTS_DASHBOARD_HTML = `<!doctype html>
         .catch(function(){ next(i + 1); });
     }
     next(0);
+  });
+
+  // Admin: Backfill ACQ pipeline via ATTOM (paginated)
+  $('backfill-acq').addEventListener('click', function(){
+    if (!confirm('Run ATTOM backfill on the ACQ pipeline?\\n\\nThis enriches every opportunity in ACQ with property facts (beds/baths/sqft + AVM-based MAO + motivated-seller tags). Takes ~1-2 sec per opp. Will keep batching until done.\\n\\nContinue?')) return;
+    var btn = $('backfill-acq');
+    var orig = btn.innerHTML;
+    btn.disabled = true;
+    var totalProcessed = 0, totalEnriched = 0, totalSkipped = 0, totalErrored = 0;
+    var motivatedSummary = [];
+
+    function batch(cursor) {
+      btn.innerHTML = 'Backfilling… ' + totalProcessed;
+      setStatus('Backfilling ACQ via ATTOM… ' + totalProcessed + ' processed (' + totalEnriched + ' enriched, ' + totalSkipped + ' skipped, ' + totalErrored + ' errors)');
+      var body = { batchSize: 25 };
+      if (cursor) { body.startAfter = cursor.startAfter; body.startAfterId = cursor.startAfterId; }
+      return fetch('/admin/attom/backfill', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      })
+        .then(function(r){ return r.json(); })
+        .then(function(d){
+          if (d.error) throw new Error(d.error);
+          totalProcessed += d.processed || 0;
+          totalEnriched  += d.enriched  || 0;
+          totalSkipped   += d.skipped   || 0;
+          totalErrored   += d.errored   || 0;
+          // Collect motivated-seller hits
+          (d.results || []).forEach(function(r){
+            if (r.score && r.score > 0) {
+              motivatedSummary.push((r.address || '?') + ' — score ' + r.score + '/4');
+            }
+          });
+          if (d.nextCursor) {
+            return batch(d.nextCursor);
+          }
+          // Done
+          btn.disabled = false; btn.innerHTML = orig;
+          var msg = '✓ Backfill complete\\n' +
+            'Processed: ' + totalProcessed + '\\n' +
+            'Enriched (ATTOM matched): ' + totalEnriched + '\\n' +
+            'Skipped (no address): ' + totalSkipped + '\\n' +
+            'Errors: ' + totalErrored;
+          if (motivatedSummary.length) {
+            msg += '\\n\\n🔥 ' + motivatedSummary.length + ' motivated sellers flagged:\\n  ' +
+              motivatedSummary.slice(0, 10).join('\\n  ') +
+              (motivatedSummary.length > 10 ? '\\n  ... +' + (motivatedSummary.length - 10) + ' more' : '');
+          }
+          setStatus(msg, 'ok');
+        });
+    }
+    batch(null).catch(function(e){
+      btn.disabled = false; btn.innerHTML = orig;
+      setStatus('Backfill failed at batch ' + totalProcessed + ': ' + e.message, 'error');
+    });
   });
 
   // Admin: ATTOM lookup
