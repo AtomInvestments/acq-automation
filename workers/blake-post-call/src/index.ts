@@ -2046,6 +2046,38 @@ async function handleLandingLead(req: Request, env: Env): Promise<Response> {
     console.warn(`[landing-lead] addNote threw: ${e}`);
   }
 
+  // 4b. ATTOM enrichment — look up the property + update GHL custom fields with
+  //     beds/baths/sqft/year_built and compute a real MAO from AVM. Falls back
+  //     gracefully when ATTOM can't match the address.
+  let attomInfo: any = null;
+  let attomMao: number | null = null;
+  try {
+    attomInfo = await enrichPropertyViaAttom(env, address);
+    if (attomInfo && !attomInfo.error) {
+      // Push facts onto the GHL contact's custom fields
+      const cfUpdates: Array<{ id: string; value: string | number }> = [];
+      if (attomInfo.beds)       cfUpdates.push({ id: CF_BEDS,  value: String(attomInfo.beds)  });
+      if (attomInfo.baths)      cfUpdates.push({ id: CF_BATHS, value: String(attomInfo.baths) });
+      if (attomInfo.sqft)       cfUpdates.push({ id: CF_SQFT,  value: String(attomInfo.sqft)  });
+      if (cfUpdates.length > 0) {
+        await updateContactFields(pit, contactId, { customFields: cfUpdates }).catch(() => {});
+      }
+      // Compute MAO from real ATTOM AVM (if available)
+      if (attomInfo.avmValue && attomInfo.sqft) {
+        const rehab = attomInfo.sqft * 30;  // MAO_REHAB_PER_SQFT
+        attomMao = Math.max(0, Math.round(attomInfo.avmValue * 0.70 - rehab - 10000));
+      } else if (attomInfo.avmValue) {
+        // No sqft for rehab estimate — use a flat 12% of AVM as repair allowance
+        attomMao = Math.max(0, Math.round(attomInfo.avmValue * 0.70 - attomInfo.avmValue * 0.12 - 10000));
+      }
+      console.log(`[landing-lead] ATTOM hit: AVM=$${attomInfo.avmValue} sqft=${attomInfo.sqft} MAO=$${attomMao}`);
+    } else {
+      console.log(`[landing-lead] ATTOM no match for "${address}" — skipping enrichment`);
+    }
+  } catch (e: any) {
+    console.warn(`[landing-lead] ATTOM enrichment threw: ${e?.message || e}`);
+  }
+
   // 5. ACQ opportunity — create at Unqualified if none exists.
   let oppCreated = false;
   try {
@@ -2056,11 +2088,44 @@ async function handleLandingLead(req: Request, env: Env): Promise<Response> {
         name: oppName,
         pipelineStageId: STAGE_UNQUALIFIED,
       });
-      if (opp.ok) oppCreated = true;
-      else console.warn(`[landing-lead] createOpportunity ${opp.status}: ${opp.body.slice(0, 200)}`);
+      if (opp.ok) {
+        oppCreated = true;
+        // Set monetary value on the new opp if we have an ATTOM-based MAO
+        if (attomMao && opp.oppId) {
+          await fetch(`${GHL_BASE}/opportunities/${opp.oppId}`, {
+            method: "PUT",
+            headers: ghlHeaders(pit),
+            body: JSON.stringify({ monetaryValue: attomMao }),
+          }).catch(() => {});
+        }
+      } else {
+        console.warn(`[landing-lead] createOpportunity ${opp.status}: ${opp.body.slice(0, 200)}`);
+      }
     }
   } catch (e) {
     console.warn(`[landing-lead] opp create threw: ${e}`);
+  }
+
+  // 5b. Add ATTOM enrichment summary as a note if we got any data
+  if (attomInfo && !attomInfo.error) {
+    const attomNoteLines = [
+      `=== ATTOM property enrichment ===`,
+      attomInfo.resolvedAddress ? `Resolved: ${attomInfo.resolvedAddress}` : null,
+      [
+        attomInfo.beds ? `${attomInfo.beds}bd` : null,
+        attomInfo.baths ? `${attomInfo.baths}ba` : null,
+        attomInfo.sqft ? `${attomInfo.sqft.toLocaleString()} sqft` : null,
+        attomInfo.yearBuilt ? `built ${attomInfo.yearBuilt}` : null,
+      ].filter(Boolean).join(" · ") || null,
+      attomInfo.avmValue ? `AVM: $${attomInfo.avmValue.toLocaleString()} (range $${(attomInfo.avmLow || 0).toLocaleString()} – $${(attomInfo.avmHigh || 0).toLocaleString()}, conf ${attomInfo.avmConfidence}/100)` : null,
+      attomMao ? `Computed MAO: $${attomMao.toLocaleString()} (= AVM × 0.70 − rehab − $10K)` : null,
+      attomInfo.lastSaleAmt ? `Last sale: $${attomInfo.lastSaleAmt.toLocaleString()} on ${(attomInfo.lastSaleDate || "").slice(0, 10)}` : null,
+      attomInfo.assessedTotal ? `Tax assessed: $${attomInfo.assessedTotal.toLocaleString()}` : null,
+      attomInfo.ownerName ? `Owner of record: ${attomInfo.ownerName.trim()}` : null,
+      attomInfo.ownerMailing && attomInfo.resolvedAddress && !attomInfo.ownerMailing.includes(attomInfo.resolvedAddress.slice(0, 10))
+        ? `⚠ ABSENTEE OWNER — mailing: ${attomInfo.ownerMailing}` : null,
+    ].filter(Boolean).join("\n");
+    await addNote(pit, contactId, attomNoteLines).catch(() => {});
   }
 
   // 6. Immediate Blake dial — best-effort. Respect TCPA window.
@@ -5178,19 +5243,20 @@ async function pollInsightsForChanges(env: Env): Promise<void> {
 }
 
 async function handleInsightsListPages(env: Env): Promise<Response> {
-  const result: any[] = [];
-  for (const { id, label } of INSIGHTS_TRACKED_PAGES) {
-    try {
-      const meta = await fetchWpPageMeta(env, id);
-      if (!meta) {
-        result.push({ id, label, error: "wp_fetch_failed" });
-        continue;
-      }
-      const timelineRaw = await env.DIAL_STATE.get(`insights:timeline:${id}`);
+  // Parallel fetch: was sequential which timed out at ~16 pages × 500ms each.
+  // Each page is independent — fan out, fan in. Total wall time ≈ slowest
+  // single call instead of sum of all calls.
+  const settled = await Promise.allSettled(
+    INSIGHTS_TRACKED_PAGES.map(async ({ id, label }) => {
+      const [meta, timelineRaw] = await Promise.all([
+        fetchWpPageMeta(env, id),
+        env.DIAL_STATE.get(`insights:timeline:${id}`),
+      ]);
+      if (!meta) return { id, label, error: "wp_fetch_failed" };
       const timeline = timelineRaw ? JSON.parse(timelineRaw) : [];
       const latest = timeline[0] || null;
       const claritySlug = encodeURIComponent(meta.link);
-      result.push({
+      return {
         id, label,
         title: meta.title,
         slug: meta.slug,
@@ -5201,11 +5267,17 @@ async function handleInsightsListPages(env: Env): Promise<Response> {
         latestCapturedAt: latest?.capturedAt,
         clarityHeatmapUrl: `https://clarity.microsoft.com/projects/view/${CLARITY_PROJECT_ID}/heatmaps?date=Last+7+days&Page=${claritySlug}`,
         clarityRecordingsUrl: `https://clarity.microsoft.com/projects/view/${CLARITY_PROJECT_ID}/recordings?date=Last+7+days&Page=${claritySlug}`,
-      });
-    } catch (e: any) {
-      result.push({ id, label, error: String(e?.message || e) });
-    }
-  }
+      };
+    })
+  );
+
+  const result = settled.map((s, i) => {
+    const tracked = INSIGHTS_TRACKED_PAGES[i];
+    return s.status === "fulfilled"
+      ? s.value
+      : { id: tracked.id, label: tracked.label, error: String((s as any).reason?.message || (s as any).reason) };
+  });
+
   return new Response(JSON.stringify({ pages: result }, null, 2), {
     status: 200,
     headers: { "content-type": "application/json", "cache-control": "no-store" },
