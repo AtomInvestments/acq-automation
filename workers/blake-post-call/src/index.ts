@@ -29,7 +29,7 @@
 import { DASHBOARDS } from "./dashboards";
 import { INSIGHTS_DASHBOARD_HTML as INSIGHTS_DASHBOARD_HTML_RAW } from "./insights-html";
 import {
-  BLOG_DEFAULT_STATUS, BLOG_AUTHOR_USER_ID, BLOG_CTA_BOX,
+  BLOG_DEFAULT_STATUS, BLOG_AUTHOR_USER_ID, BLOG_CTA_BOX, BLOG_TOPIC_POOL,
   buildBlogPrompt, pickNextTopic, markTopicUsed, pickImageForTopic,
   isReadyToPost, recordLastPosted, BlogTopic,
 } from "./auto-blog";
@@ -5209,7 +5209,6 @@ async function generateAndPublishBlogPost(
   // 1. Pick topic
   let topic: BlogTopic | null;
   if (forceTopicSlug) {
-    const { BLOG_TOPIC_POOL } = await import("./auto-blog");
     topic = BLOG_TOPIC_POOL.find((t) => t.slug === forceTopicSlug) || null;
     if (!topic) return { ok: false, error: `topic_not_found: ${forceTopicSlug}` };
   } else {
