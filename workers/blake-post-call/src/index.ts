@@ -631,7 +631,11 @@ export default {
           headers: { Location: `/login?next=${encodeURIComponent("/insights")}` },
         });
       }
-      const wrapped = applyApgShell(INSIGHTS_DASHBOARD_HTML, "insights");
+      // Server-render the cards directly into the HTML. No client-side fetch =
+      // no "Loading..." state possible. If WP or ATTOM are broken, the cards
+      // render with the error inline so the operator can see what's happening.
+      const html = await renderInsightsDashboardServerSide(env);
+      const wrapped = applyApgShell(html, "insights");
       return new Response(wrapped, {
         status: 200,
         headers: { "content-type": "text/html; charset=utf-8", "cache-control": "no-store" },
@@ -5609,6 +5613,200 @@ async function fetchWpMediaSourceUrl(env: Env, mediaId: number): Promise<{ sourc
   if (!res.ok) return null;
   const j: any = await res.json();
   return j.source_url ? { sourceUrl: j.source_url } : null;
+}
+
+// Server-render the Insights dashboard HTML — fetches all WP metadata + KV
+// timeline counts in parallel, then emits a static HTML page with the cards
+// already rendered. No client-side fetch, no Loading state. Buttons + ATTOM
+// lookup form remain JS-driven (those are POST actions).
+async function renderInsightsDashboardServerSide(env: Env): Promise<string> {
+  const buildTs = new Date().toISOString();
+
+  // Fetch all page metadata + their timeline lengths in parallel
+  const settled = await Promise.allSettled(
+    INSIGHTS_TRACKED_PAGES.map(async ({ id, label }) => {
+      const [meta, timelineRaw] = await Promise.all([
+        fetchWpPageMeta(env, id),
+        env.DIAL_STATE.get(`insights:timeline:${id}`),
+      ]);
+      const timeline = timelineRaw ? JSON.parse(timelineRaw) : [];
+      const latest = timeline[0] || null;
+      return { id, label, meta, latest, snapshotCount: timeline.length };
+    })
+  );
+
+  const fmtDate = (iso: string | undefined) => {
+    if (!iso) return "—";
+    try {
+      const d = new Date(iso);
+      return d.toLocaleString("en-US", { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" });
+    } catch { return "?"; }
+  };
+  const esc = (s: any) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" } as any)[c]);
+
+  // Render each card
+  const cardsHtml = settled.map((s, i) => {
+    const tracked = INSIGHTS_TRACKED_PAGES[i];
+    if (s.status === "rejected" || !s.value.meta) {
+      return `<div class="card" style="border:1px solid #f5c2c2;background:#fff5f5;">
+        <div class="thumb" style="aspect-ratio:16/10;background:#fdecec;display:flex;align-items:center;justify-content:center;color:#8b1a1a;font-size:12px;text-align:center;padding:16px;">Unable to fetch WP metadata<br>(id ${tracked.id})</div>
+        <div class="body" style="padding:14px 16px 16px;">
+          <div style="font-family:'Playfair Display',serif;font-weight:700;font-size:14px;margin-bottom:6px;">${esc(tracked.label)}</div>
+          <div style="font-size:11px;color:#8b1a1a;">${esc(s.status === "rejected" ? (s as any).reason?.message : "wp_fetch_failed")}</div>
+        </div>
+      </div>`;
+    }
+    const v = s.value;
+    const meta = v.meta!;
+    const latest = v.latest;
+    const claritySlug = encodeURIComponent(meta.link);
+    const thumb = latest?.key
+      ? `<img src="/insights/snap/${encodeURIComponent(latest.key)}" alt="" style="width:100%;height:100%;object-fit:cover;object-position:top;display:block;">`
+      : `<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#6B7280;font-style:italic;font-size:13px;padding:16px;text-align:center;">No snapshot yet — click "Snap now"</div>`;
+    return `<div class="card" style="background:white;border:1px solid #E5E1D8;border-radius:12px;overflow:hidden;">
+      <div class="thumb" style="background:#f5f1e8;aspect-ratio:16/10;position:relative;overflow:hidden;">${thumb}</div>
+      <div class="body" style="padding:14px 16px 16px;">
+        <div style="font-family:'Playfair Display',serif;font-weight:700;font-size:14px;margin-bottom:2px;">${esc(v.label)}</div>
+        <div style="font-size:11px;color:#6B7280;margin-bottom:10px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${esc(meta.link)}</div>
+        <div style="display:flex;justify-content:space-between;font-size:11px;color:#6B7280;margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid #E5E1D8;">
+          <span>WP modified: <strong style="color:#1A2840;">${fmtDate(meta.modified)}</strong></span>
+          <span><strong style="color:#1A2840;">${v.snapshotCount}</strong> snap${v.snapshotCount === 1 ? "" : "s"}</span>
+        </div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;">
+          <button onclick="snapPage(${tracked.id}, this)" style="font-size:10px;padding:6px 10px;border-radius:4px;border:none;background:#1A2840;color:#FAFAF7;cursor:pointer;letter-spacing:0.05em;text-transform:uppercase;font-weight:700;font-family:inherit;">Snap now</button>
+          <a href="https://clarity.microsoft.com/projects/view/${CLARITY_PROJECT_ID}/heatmaps?date=Last+7+days&Page=${claritySlug}" target="_blank" rel="noopener" style="font-size:10px;padding:6px 10px;border-radius:4px;background:linear-gradient(135deg,#BF7BFF,#7B5BFF);color:white;text-decoration:none;letter-spacing:0.05em;text-transform:uppercase;font-weight:700;">Heatmap &#8599;</a>
+          <a href="https://clarity.microsoft.com/projects/view/${CLARITY_PROJECT_ID}/recordings?date=Last+7+days&Page=${claritySlug}" target="_blank" rel="noopener" style="font-size:10px;padding:6px 10px;border-radius:4px;background:linear-gradient(135deg,#BF7BFF,#7B5BFF);color:white;text-decoration:none;letter-spacing:0.05em;text-transform:uppercase;font-weight:700;">Sessions &#8599;</a>
+          <a href="${esc(meta.link)}" target="_blank" rel="noopener" style="font-size:10px;padding:6px 10px;border-radius:4px;border:1px solid #E5E1D8;background:white;color:#1A2840;text-decoration:none;letter-spacing:0.05em;text-transform:uppercase;font-weight:700;">Visit &#8599;</a>
+        </div>
+      </div>
+    </div>`;
+  }).join("\n");
+
+  return `<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Insights · APG</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+<style>
+  body { margin:0; font-family: 'Inter', -apple-system, sans-serif; background: #FAFAF7; color: #1A2840; }
+  .wrap { max-width: 1400px; margin: 0 auto; padding: 28px; }
+  h1 { font-family: 'Playfair Display', Georgia, serif; font-size: 38px; margin: 0 0 4px; }
+  h1 em { color: #B58800; font-style: italic; }
+  .sub { color: #6B7280; font-size: 14px; margin-bottom: 24px; }
+  .pages { display: grid; grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); gap: 20px; }
+  .toolbar { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 16px; padding: 14px; background: white; border: 1px solid #E5E1D8; border-radius: 8px; align-items: center; }
+  .toolbar button { padding: 10px 18px; border: none; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; font-family: inherit; }
+  .status { padding: 10px 14px; background: #1A2840; color: #FAFAF7; border-radius: 6px; font-size: 12px; margin-bottom: 16px; display: none; white-space: pre-wrap; }
+  .status.show { display: block; }
+  .status.ok { background: #0e6e2f; }
+  .status.error { background: #8b1a1a; }
+  .footer-tag { margin-top: 28px; font-size: 11px; color: #9CA3AF; text-align: center; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Website <em>Insights</em></h1>
+  <div class="sub">Server-rendered ${INSIGHTS_TRACKED_PAGES.length} tracked pages &middot; auto-snapshots on every WP page change &middot; Microsoft Clarity heatmaps + sessions</div>
+
+  <div class="toolbar">
+    <button onclick="generateBlog(this)" style="background:linear-gradient(135deg,#BF7BFF,#7B5BFF);color:white;">+ Generate Blog Post Now</button>
+    <button onclick="snapAll(this)" style="background:#1A2840;color:#FAFAF7;">Snap All Pages</button>
+    <button onclick="backfillAcq(this)" style="background:linear-gradient(135deg,#FFC72C,#E5A800);color:#1A2840;">Backfill ACQ via ATTOM</button>
+    <form onsubmit="return attomLookup(event)" style="display:inline-flex;gap:6px;align-items:center;margin-left:auto;">
+      <input id="attom-addr" type="text" placeholder="Test ATTOM: 36 BILLIE ELLIS LN, PRINCETON, NJ" style="width:340px;height:36px;padding:0 10px;border:1px solid #E5E1D8;border-radius:6px;font-family:inherit;font-size:12px;">
+      <button type="submit" style="height:36px;padding:0 14px;background:white;color:#1A2840;border:1px solid #1A2840;border-radius:6px;cursor:pointer;font-size:12px;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;font-family:inherit;">Lookup</button>
+    </form>
+  </div>
+
+  <div class="status" id="status"></div>
+
+  <div class="pages">
+${cardsHtml}
+  </div>
+
+  <div class="footer-tag">build ${buildTs} · server-rendered · ${INSIGHTS_TRACKED_PAGES.length} pages</div>
+</div>
+
+<script>
+  function setStatus(text, kind) {
+    var el = document.getElementById('status');
+    el.textContent = text || '';
+    el.className = 'status' + (text ? ' show' : '') + (kind ? ' ' + kind : '');
+    if (text && kind === 'ok') setTimeout(function(){ setStatus(''); }, 4000);
+  }
+
+  function snapPage(id, btn) {
+    var orig = btn.innerHTML; btn.disabled = true; btn.innerHTML = 'Snapping...';
+    fetch('/insights/api/capture', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ pageId: id }) })
+      .then(function(r){ return r.json(); })
+      .then(function(d){ btn.disabled = false; btn.innerHTML = orig; if (d.ok) { setStatus('✓ Captured (' + Math.round(d.bytes/1024) + ' KB) — reload page to see new thumbnail.', 'ok'); } else { setStatus('Capture failed: ' + (d.error || '?'), 'error'); } })
+      .catch(function(e){ btn.disabled = false; btn.innerHTML = orig; setStatus('Capture error: ' + e.message, 'error'); });
+  }
+
+  function snapAll(btn) {
+    if (!confirm('Capture every tracked page now? ~1-2 min.')) return;
+    btn.disabled = true; var orig = btn.innerHTML; btn.innerHTML = 'Snapping...';
+    var ids = ${JSON.stringify(INSIGHTS_TRACKED_PAGES.map((p) => p.id))};
+    function next(i) {
+      if (i >= ids.length) { btn.disabled = false; btn.innerHTML = orig; setStatus('✓ Snapped ' + ids.length + ' pages. Reload to see thumbnails.', 'ok'); return; }
+      setStatus('Capturing ' + (i+1) + '/' + ids.length + '...');
+      fetch('/insights/api/capture', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ pageId: ids[i] }) })
+        .finally(function(){ next(i+1); });
+    }
+    next(0);
+  }
+
+  function generateBlog(btn) {
+    if (!confirm('Generate a blog draft now? Calls Claude API.')) return;
+    var orig = btn.innerHTML; btn.disabled = true; btn.innerHTML = 'Generating... ~30s';
+    setStatus('Generating blog post... please wait ~30 seconds.');
+    fetch('/admin/blog/generate', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ force: true }) })
+      .then(function(r){ return r.json().then(function(d){ return { ok: r.ok, data: d }; }); })
+      .then(function(res){ btn.disabled = false; btn.innerHTML = orig; if (res.data.ok) { setStatus('✓ Draft: ' + res.data.title + '\\n' + res.data.link, 'ok'); if (confirm('Open the draft in WP?')) { window.open('https://atompropertygroup.com/wp-admin/post.php?post=' + res.data.postId + '&action=edit', '_blank'); } } else { setStatus('Blog failed: ' + (res.data.error || '?'), 'error'); } })
+      .catch(function(e){ btn.disabled = false; btn.innerHTML = orig; setStatus('Blog error: ' + e.message, 'error'); });
+  }
+
+  function backfillAcq(btn) {
+    if (!confirm('Backfill every ACQ opportunity with ATTOM data? Will batch until done.')) return;
+    var orig = btn.innerHTML; btn.disabled = true;
+    var totals = { processed: 0, enriched: 0, skipped: 0, errored: 0 };
+    function batch(cursor) {
+      btn.innerHTML = 'Backfilling... ' + totals.processed;
+      setStatus('Backfilling... ' + totals.processed + ' processed (' + totals.enriched + ' enriched)');
+      var body = { batchSize: 25 };
+      if (cursor) { body.startAfter = cursor.startAfter; body.startAfterId = cursor.startAfterId; }
+      return fetch('/admin/attom/backfill', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body) })
+        .then(function(r){ return r.json(); })
+        .then(function(d){ if (d.error) throw new Error(d.error); totals.processed += d.processed||0; totals.enriched += d.enriched||0; totals.skipped += d.skipped||0; totals.errored += d.errored||0; if (d.nextCursor) return batch(d.nextCursor); btn.disabled = false; btn.innerHTML = orig; setStatus('✓ Backfill complete: ' + totals.enriched + ' enriched of ' + totals.processed, 'ok'); });
+    }
+    batch(null).catch(function(e){ btn.disabled = false; btn.innerHTML = orig; setStatus('Backfill failed at ' + totals.processed + ': ' + e.message, 'error'); });
+  }
+
+  function attomLookup(e) {
+    e.preventDefault();
+    var addr = document.getElementById('attom-addr').value.trim();
+    if (!addr) return false;
+    setStatus('Looking up ATTOM...');
+    fetch('/admin/attom/lookup?address=' + encodeURIComponent(addr))
+      .then(function(r){ return r.json(); })
+      .then(function(d){
+        if (d.error) { setStatus('ATTOM: ' + d.error + ' for ' + addr, 'error'); return; }
+        var lines = ['✓ ' + (d.resolvedAddress || addr)];
+        if (d.avmValue) lines.push('  AVM: $' + d.avmValue.toLocaleString() + ' (range $' + (d.avmLow||0).toLocaleString() + ' – $' + (d.avmHigh||0).toLocaleString() + ', confidence ' + d.avmConfidence + '/100)');
+        if (d.sqft) lines.push('  ' + d.sqft.toLocaleString() + ' sqft' + (d.beds ? ' · ' + d.beds + 'bd' : '') + (d.baths ? ' · ' + d.baths + 'ba' : ''));
+        if (d.lastSaleAmt) lines.push('  Last sale: $' + d.lastSaleAmt.toLocaleString() + ' on ' + (d.lastSaleDate||'').slice(0,10));
+        if (d.ownerName) lines.push('  Owner: ' + d.ownerName.trim());
+        setStatus(lines.join('\\n'), 'ok');
+      })
+      .catch(function(e){ setStatus('ATTOM error: ' + e.message, 'error'); });
+    return false;
+  }
+</script>
+</body>
+</html>`;
 }
 
 // ---- ATTOM backfill of ACQ pipeline ----
