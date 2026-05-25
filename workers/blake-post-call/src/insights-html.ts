@@ -57,6 +57,16 @@ export const INSIGHTS_DASHBOARD_HTML = `<!doctype html>
   <h1>Website <em>Insights</em></h1>
   <div class="sub">Auto-snapshots on every WP page change &middot; click <strong>Heatmap</strong> or <strong>Sessions</strong> to see where users actually stop scrolling, click, and drop off (Microsoft Clarity)</div>
 
+  <!-- Admin tools bar -->
+  <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px;padding:14px;background:white;border:1px solid var(--rule);border-radius:8px;">
+    <button id="blog-now" style="padding:10px 18px;background:linear-gradient(135deg,#BF7BFF,#7B5BFF);color:white;border:none;border-radius:6px;cursor:pointer;font-size:13px;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;font-family:inherit;">+ Generate Blog Post Now</button>
+    <button id="snap-all" style="padding:10px 18px;background:var(--ink);color:var(--paper);border:none;border-radius:6px;cursor:pointer;font-size:13px;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;font-family:inherit;">Snap All Pages</button>
+    <form id="attom-form" style="display:inline-flex;gap:6px;align-items:center;margin-left:auto;">
+      <input id="attom-addr" type="text" placeholder="Test ATTOM: 36 BILLIE ELLIS LN, PRINCETON, NJ" style="width:340px;height:36px;padding:0 10px;border:1px solid var(--rule);border-radius:6px;font-family:inherit;font-size:12px;">
+      <button type="submit" style="height:36px;padding:0 14px;background:white;color:var(--ink);border:1px solid var(--ink);border-radius:6px;cursor:pointer;font-size:12px;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;font-family:inherit;">Lookup</button>
+    </form>
+  </div>
+
   <div class="status" id="status"></div>
 
   <div class="pages" id="pages">
@@ -200,6 +210,91 @@ export const INSIGHTS_DASHBOARD_HTML = `<!doctype html>
 
   document.addEventListener('keydown', function(e){
     if (e.key === 'Escape') closeModal();
+  });
+
+  // Admin: Generate Blog Now
+  $('blog-now').addEventListener('click', function(){
+    if (!confirm('Generate a blog post now? Calls Claude API (~$0.50 per call) and creates a DRAFT in WP. Continue?')) return;
+    var btn = $('blog-now');
+    var orig = btn.innerHTML;
+    btn.disabled = true; btn.innerHTML = 'Generating… ~30s';
+    setStatus('Generating blog post via Claude API… please wait ~30 seconds.');
+    fetch('/admin/blog/generate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ force: true })
+    })
+      .then(function(r){ return r.json().then(function(d){ return { ok: r.ok, data: d }; }); })
+      .then(function(res){
+        btn.disabled = false; btn.innerHTML = orig;
+        if (res.data.ok) {
+          var msg = '✓ Blog draft created!\nTitle: ' + res.data.title + '\nID: ' + res.data.postId + '\nEdit: ' + res.data.link;
+          setStatus(msg, 'ok');
+          if (confirm('Blog created. Open the WP edit page now?')) {
+            window.open('https://atompropertygroup.com/wp-admin/post.php?post=' + res.data.postId + '&action=edit', '_blank');
+          }
+        } else {
+          setStatus('Blog generation failed:\n' + (res.data.error || 'unknown error'), 'error');
+        }
+      })
+      .catch(function(e){
+        btn.disabled = false; btn.innerHTML = orig;
+        setStatus('Blog generation network error: ' + e.message, 'error');
+      });
+  });
+
+  // Admin: Snap All Pages
+  $('snap-all').addEventListener('click', function(){
+    if (!confirm('Capture a fresh snapshot of all ' + pageData.length + ' pages? Takes ~1-2 min.')) return;
+    var btn = $('snap-all');
+    btn.disabled = true; btn.innerHTML = 'Snapping…';
+    var total = pageData.length;
+    function next(i) {
+      if (i >= total) {
+        btn.disabled = false; btn.innerHTML = 'Snap All Pages';
+        setStatus('✓ All ' + total + ' pages captured.', 'ok');
+        load();
+        return;
+      }
+      var p = pageData[i];
+      setStatus('Capturing ' + (i+1) + '/' + total + ': ' + p.label + '…');
+      fetch('/insights/api/capture', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pageId: p.id })
+      })
+        .then(function(){ next(i + 1); })
+        .catch(function(){ next(i + 1); });
+    }
+    next(0);
+  });
+
+  // Admin: ATTOM lookup
+  $('attom-form').addEventListener('submit', function(e){
+    e.preventDefault();
+    var addr = $('attom-addr').value.trim();
+    if (!addr) return;
+    setStatus('Looking up "' + addr + '" in ATTOM…');
+    fetch('/admin/attom/lookup?address=' + encodeURIComponent(addr))
+      .then(function(r){ return r.json(); })
+      .then(function(d){
+        var lines = [];
+        if (d.error) {
+          lines.push('ATTOM ' + d.error + ' for: ' + addr);
+        } else {
+          lines.push('✓ ' + (d.resolvedAddress || addr));
+          if (d.avmValue) lines.push('  AVM: $' + d.avmValue.toLocaleString() + ' (range $' + (d.avmLow||0).toLocaleString() + ' – $' + (d.avmHigh||0).toLocaleString() + ', confidence ' + d.avmConfidence + '/100)');
+          if (d.sqft) lines.push('  ' + d.sqft.toLocaleString() + ' sqft' + (d.beds ? ' · ' + d.beds + 'bd' : '') + (d.baths ? ' · ' + d.baths + 'ba' : '') + (d.yearBuilt ? ' · built ' + d.yearBuilt : ''));
+          if (d.lastSaleAmt) lines.push('  Last sale: $' + d.lastSaleAmt.toLocaleString() + ' on ' + (d.lastSaleDate||'').slice(0,10));
+          if (d.assessedTotal) lines.push('  Tax assessed: $' + d.assessedTotal.toLocaleString());
+          if (d.ownerName) lines.push('  Owner: ' + d.ownerName.trim() + (d.ownerMailing ? ' (mailing: ' + d.ownerMailing + ')' : ''));
+          if (d.cacheHit) lines.push('  (from KV cache)');
+        }
+        setStatus(lines.join('\n'), d.error ? 'error' : 'ok');
+      })
+      .catch(function(e){
+        setStatus('ATTOM error: ' + e.message, 'error');
+      });
   });
 
   load();
