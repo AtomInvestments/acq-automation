@@ -27,6 +27,7 @@
 // Lets /blake, /progress, /weekly, etc. serve from the Worker bundle directly
 // instead of proxying github.io. Falls back to proxy if a key is missing.
 import { DASHBOARDS } from "./dashboards";
+import { INSIGHTS_DASHBOARD_HTML as INSIGHTS_DASHBOARD_HTML_RAW } from "./insights-html";
 
 export interface Env {
   BLAKE_GHL_PIT: string;
@@ -595,6 +596,73 @@ export default {
       return handleProgressToggle(req, env);
     }
 
+    // ---- /insights — APG website snapshot + heatmap dashboard ----
+    //
+    // Tracks every WP page change with a snapshot (auto-captured by the cron)
+    // and deep-links into Microsoft Clarity heatmaps + session recordings per
+    // URL so we can see WHERE users actually stop scrolling / click / drop off.
+    //
+    // Routes:
+    //   GET  /insights                       — main dashboard HTML (auth required)
+    //   GET  /insights/api/pages             — JSON list of tracked pages + latest snapshot info
+    //   GET  /insights/api/snapshots?id=X    — JSON timeline of all snapshots for a page
+    //   POST /insights/api/capture           — manually trigger a fresh capture for a page
+    //   GET  /insights/snap/:key             — serve a stored snapshot image (PNG bytes from KV)
+    if (req.method === "GET" && url.pathname === "/insights") {
+      const auth = await requireAuth(req, env);
+      if (!auth.ok) {
+        return new Response(null, {
+          status: 302,
+          headers: { Location: `/login?next=${encodeURIComponent("/insights")}` },
+        });
+      }
+      const wrapped = applyApgShell(INSIGHTS_DASHBOARD_HTML, "insights");
+      return new Response(wrapped, {
+        status: 200,
+        headers: { "content-type": "text/html; charset=utf-8", "cache-control": "no-store" },
+      });
+    }
+
+    if (req.method === "GET" && url.pathname === "/insights/api/pages") {
+      const auth = await requireAuth(req, env);
+      if (!auth.ok) return new Response(JSON.stringify({ error: "unauthorized" }), {
+        status: 401, headers: { "content-type": "application/json" },
+      });
+      return handleInsightsListPages(env);
+    }
+
+    if (req.method === "GET" && url.pathname === "/insights/api/snapshots") {
+      const auth = await requireAuth(req, env);
+      if (!auth.ok) return new Response(JSON.stringify({ error: "unauthorized" }), {
+        status: 401, headers: { "content-type": "application/json" },
+      });
+      const id = url.searchParams.get("id");
+      if (!id) return new Response(JSON.stringify({ error: "missing id" }), {
+        status: 400, headers: { "content-type": "application/json" },
+      });
+      return handleInsightsSnapshots(env, id);
+    }
+
+    if (req.method === "POST" && url.pathname === "/insights/api/capture") {
+      const auth = await requireAuth(req, env);
+      if (!auth.ok) return new Response(JSON.stringify({ error: "unauthorized" }), {
+        status: 401, headers: { "content-type": "application/json" },
+      });
+      return handleInsightsCapture(req, env);
+    }
+
+    if (req.method === "GET" && url.pathname.startsWith("/insights/snap/")) {
+      const auth = await requireAuth(req, env);
+      if (!auth.ok) {
+        return new Response(null, {
+          status: 302,
+          headers: { Location: "/login" },
+        });
+      }
+      const key = url.pathname.slice("/insights/snap/".length);
+      return handleInsightsSnap(env, key);
+    }
+
     // /admin/refresh-dashboard — manual trigger to populate the dashboard
     // cache on demand (instead of waiting for next call or cron tick).
     // No auth — the side effect is just reading public-ish data + writing
@@ -635,6 +703,11 @@ export default {
       await refreshDashboardCache(env);
     } catch (e) {
       console.error(`[cron-dashboard] failed: ${e}`);
+    }
+    try {
+      await pollInsightsForChanges(env);
+    } catch (e) {
+      console.error(`[cron-insights] failed: ${e}`);
     }
   },
 };
@@ -4842,3 +4915,199 @@ const INLINE_LOGO_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 72
   <text x="40" y="195" font-family="Arial, Helvetica, sans-serif"
         font-weight="700" font-size="26" class="ink" letter-spacing="11">PROPERTY GROUP</text>
 </svg>`;
+
+// ============================================================================
+// /insights — APG website snapshot + analytics dashboard
+// ============================================================================
+//
+// Tracks every WP page change. On cron tick (every 15 min), checks each tracked
+// page's WP `modified` timestamp. If it changed since last poll → captures the
+// current screenshot from thum.io and stores the PNG bytes in KV under a
+// timestamped key. The dashboard renders the latest snapshot + a timeline of
+// historical versions, and deep-links into Microsoft Clarity heatmaps +
+// session recordings so we can see WHERE users actually stop scrolling, click,
+// or drop off on each version.
+
+// WP page IDs we monitor. Add new ones here — auto-picked-up on next cron.
+const INSIGHTS_TRACKED_PAGES: Array<{ id: number; label: string }> = [
+  { id: 1213, label: "Homepage" },
+  { id: 946,  label: "Construction Services" },
+  { id: 1201, label: "Thank You" },
+  { id: 1191, label: "City — Newark" },
+  { id: 1192, label: "City — Trenton" },
+  { id: 1198, label: "City — Philadelphia" },
+  { id: 1246, label: "County — Mercer" },
+  { id: 1242, label: "County — Essex" },
+  { id: 1244, label: "County — Hudson" },
+  { id: 1257, label: "County — Philadelphia" },
+];
+
+const CLARITY_PROJECT_ID = "wwbe84z9my";
+const WP_REST_BASE = "https://atompropertygroup.com/wp-json/wp/v2";
+// btoa('uxamx11:6948 LPYD YwGx aqC2 djgU Sy56')
+const WP_AUTH_HEADER = "Basic dXhhbXgxMTo2OTQ4IExQWUQgWXdHeCBhcUMyIGRqZ1UgU3k1Ng==";
+
+async function fetchWpPageMeta(pageId: number): Promise<{
+  id: number; modified: string; link: string; title: string; slug: string;
+} | null> {
+  const res = await fetch(
+    `${WP_REST_BASE}/pages/${pageId}?_fields=id,modified,link,title,slug`,
+    { headers: { Authorization: WP_AUTH_HEADER } }
+  );
+  if (!res.ok) return null;
+  const p: any = await res.json();
+  return {
+    id: p.id,
+    modified: p.modified,
+    link: p.link,
+    title: p.title?.rendered || "",
+    slug: p.slug || "",
+  };
+}
+
+async function captureAndStoreSnapshot(
+  env: Env,
+  pageId: number,
+  pageUrl: string,
+  modifiedAt: string,
+  width: number = 1440,
+): Promise<{ key: string; bytes: number } | null> {
+  const thumUrl =
+    "https://image.thum.io/get/width/" + width +
+    "/crop/2400/png/" + pageUrl;
+  const imgRes = await fetch(thumUrl);
+  if (!imgRes.ok) {
+    console.warn(`[insights] thum.io failed ${imgRes.status} for ${pageUrl}`);
+    return null;
+  }
+  const buf = await imgRes.arrayBuffer();
+  const bytes = buf.byteLength;
+  const captureIso = new Date().toISOString();
+  const key = `insights:snap:${pageId}:${captureIso}`;
+  await env.DIAL_STATE.put(key, buf, {
+    expirationTtl: 60 * 60 * 24 * 90,
+    metadata: { pageId, pageUrl, modifiedAt, capturedAt: captureIso, width, bytes },
+  });
+  const timelineKey = `insights:timeline:${pageId}`;
+  const timelineRaw = await env.DIAL_STATE.get(timelineKey);
+  const timeline: any[] = timelineRaw ? JSON.parse(timelineRaw) : [];
+  timeline.unshift({ key, capturedAt: captureIso, modifiedAt, pageUrl, width, bytes });
+  await env.DIAL_STATE.put(
+    timelineKey,
+    JSON.stringify(timeline.slice(0, 50)),
+    { expirationTtl: 60 * 60 * 24 * 180 }
+  );
+  return { key, bytes };
+}
+
+async function pollInsightsForChanges(env: Env): Promise<void> {
+  for (const { id, label } of INSIGHTS_TRACKED_PAGES) {
+    try {
+      const meta = await fetchWpPageMeta(id);
+      if (!meta) continue;
+      const lastModKey = `insights:lastmod:${id}`;
+      const lastMod = await env.DIAL_STATE.get(lastModKey);
+      if (lastMod === meta.modified) continue;
+      console.log(`[insights] change detected: ${label} (id=${id}) was=${lastMod || "(never)"} now=${meta.modified}`);
+      const result = await captureAndStoreSnapshot(env, id, meta.link, meta.modified);
+      if (result) {
+        await env.DIAL_STATE.put(lastModKey, meta.modified, {
+          expirationTtl: 60 * 60 * 24 * 180,
+        });
+        console.log(`[insights] captured ${label}: ${result.bytes} bytes`);
+      }
+    } catch (e) {
+      console.warn(`[insights] failed for ${label}: ${e}`);
+    }
+  }
+}
+
+async function handleInsightsListPages(env: Env): Promise<Response> {
+  const result: any[] = [];
+  for (const { id, label } of INSIGHTS_TRACKED_PAGES) {
+    try {
+      const meta = await fetchWpPageMeta(id);
+      if (!meta) {
+        result.push({ id, label, error: "wp_fetch_failed" });
+        continue;
+      }
+      const timelineRaw = await env.DIAL_STATE.get(`insights:timeline:${id}`);
+      const timeline = timelineRaw ? JSON.parse(timelineRaw) : [];
+      const latest = timeline[0] || null;
+      const claritySlug = encodeURIComponent(meta.link);
+      result.push({
+        id, label,
+        title: meta.title,
+        slug: meta.slug,
+        link: meta.link,
+        modified: meta.modified,
+        snapshotCount: timeline.length,
+        latestKey: latest?.key,
+        latestCapturedAt: latest?.capturedAt,
+        clarityHeatmapUrl: `https://clarity.microsoft.com/projects/view/${CLARITY_PROJECT_ID}/heatmaps?date=Last+7+days&Page=${claritySlug}`,
+        clarityRecordingsUrl: `https://clarity.microsoft.com/projects/view/${CLARITY_PROJECT_ID}/recordings?date=Last+7+days&Page=${claritySlug}`,
+      });
+    } catch (e: any) {
+      result.push({ id, label, error: String(e?.message || e) });
+    }
+  }
+  return new Response(JSON.stringify({ pages: result }, null, 2), {
+    status: 200,
+    headers: { "content-type": "application/json", "cache-control": "no-store" },
+  });
+}
+
+async function handleInsightsSnapshots(env: Env, pageId: string): Promise<Response> {
+  const timelineRaw = await env.DIAL_STATE.get(`insights:timeline:${pageId}`);
+  const timeline = timelineRaw ? JSON.parse(timelineRaw) : [];
+  return new Response(JSON.stringify({ pageId: Number(pageId), timeline }, null, 2), {
+    status: 200,
+    headers: { "content-type": "application/json", "cache-control": "no-store" },
+  });
+}
+
+async function handleInsightsCapture(req: Request, env: Env): Promise<Response> {
+  let body: any = {};
+  try { body = await req.json(); } catch {}
+  const pageId = Number(body.pageId);
+  if (!pageId || !INSIGHTS_TRACKED_PAGES.find(p => p.id === pageId)) {
+    return new Response(JSON.stringify({ error: "invalid pageId" }), {
+      status: 400, headers: { "content-type": "application/json" },
+    });
+  }
+  const meta = await fetchWpPageMeta(pageId);
+  if (!meta) {
+    return new Response(JSON.stringify({ error: "wp_fetch_failed" }), {
+      status: 502, headers: { "content-type": "application/json" },
+    });
+  }
+  const result = await captureAndStoreSnapshot(env, pageId, meta.link, meta.modified);
+  if (!result) {
+    return new Response(JSON.stringify({ error: "capture_failed" }), {
+      status: 502, headers: { "content-type": "application/json" },
+    });
+  }
+  await env.DIAL_STATE.put(`insights:lastmod:${pageId}`, meta.modified, {
+    expirationTtl: 60 * 60 * 24 * 180,
+  });
+  return new Response(JSON.stringify({ ok: true, key: result.key, bytes: result.bytes }), {
+    status: 200, headers: { "content-type": "application/json" },
+  });
+}
+
+async function handleInsightsSnap(env: Env, key: string): Promise<Response> {
+  const fullKey = key.startsWith("insights:snap:") ? key : `insights:snap:${key}`;
+  const bytes = await env.DIAL_STATE.get(fullKey, "arrayBuffer");
+  if (!bytes) {
+    return new Response("Not Found", { status: 404 });
+  }
+  return new Response(bytes, {
+    status: 200,
+    headers: {
+      "content-type": "image/png",
+      "cache-control": "public, max-age=86400",
+    },
+  });
+}
+
+const INSIGHTS_DASHBOARD_HTML = INSIGHTS_DASHBOARD_HTML_RAW;
