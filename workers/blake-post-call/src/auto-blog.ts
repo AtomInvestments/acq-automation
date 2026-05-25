@@ -103,6 +103,13 @@ ${topic.brief}
 - Voice: confident, honest, practical. Acknowledge tradeoffs. Don't pretend cash sale is always best.
 - Never use these phrases: "in today's market", "in this article", "let's dive in", "stay tuned"
 
+# Inline images
+Insert EXACTLY 2 image placeholders at natural breaks between sub-headings (NOT at the very top — the featured image already lives there, and NOT inside the closing CTA). Use this exact format on its own line:
+
+  <p><!-- INLINE_IMAGE --></p>
+
+The Worker will replace each <!-- INLINE_IMAGE --> with a relevant photo from APG's curated stock pool, uploaded to WP. Do NOT insert your own <img> tags or stock URLs.
+
 # Format
 Return ONLY a JSON object with this exact shape:
 {
@@ -145,6 +152,20 @@ export function pickImageForTopic(slug: string): string {
   for (let i = 0; i < slug.length; i++) h = ((h << 5) - h + slug.charCodeAt(i)) | 0;
   const idx = Math.abs(h) % BLOG_IMAGE_POOL.length;
   return BLOG_IMAGE_POOL[idx];
+}
+
+// Pick N additional images for inline body placement. Guaranteed not to repeat
+// the featured image; cycles through the pool starting from the index AFTER
+// the featured one (deterministic per slug so re-runs are stable).
+export function pickInlineImages(slug: string, count: number): string[] {
+  let h = 0;
+  for (let i = 0; i < slug.length; i++) h = ((h << 5) - h + slug.charCodeAt(i)) | 0;
+  const featuredIdx = Math.abs(h) % BLOG_IMAGE_POOL.length;
+  const out: string[] = [];
+  for (let i = 1; i <= count; i++) {
+    out.push(BLOG_IMAGE_POOL[(featuredIdx + i) % BLOG_IMAGE_POOL.length]);
+  }
+  return out;
 }
 
 // Whether enough time has passed since the last published post.

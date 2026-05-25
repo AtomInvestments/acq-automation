@@ -31,7 +31,7 @@ import { INSIGHTS_DASHBOARD_HTML as INSIGHTS_DASHBOARD_HTML_RAW } from "./insigh
 import {
   BLOG_DEFAULT_STATUS, BLOG_AUTHOR_USER_ID, BLOG_CTA_BOX, BLOG_TOPIC_POOL,
   buildBlogPrompt, pickNextTopic, markTopicUsed, pickImageForTopic,
-  isReadyToPost, recordLastPosted, BlogTopic,
+  pickInlineImages, isReadyToPost, recordLastPosted, BlogTopic,
 } from "./auto-blog";
 import { enrichPropertyViaAttom, formatEnrichmentForSellerFile } from "./attom";
 
@@ -5380,10 +5380,46 @@ async function generateAndPublishBlogPost(
     return { ok: false, error: "claude_missing_fields" };
   }
 
-  // 3. Append the standardized CTA box (defense-in-depth — even if Claude omits it)
-  const fullBody = claudeJson.body_html + BLOG_CTA_BOX;
+  // 3. Replace inline image placeholders with uploaded WP media URLs.
+  //    Claude inserts `<p><!-- INLINE_IMAGE --></p>` at natural breaks; we split
+  //    the body on those markers, upload one image per gap, and rejoin.
+  let bodyHtml = claudeJson.body_html as string;
+  const placeholderRe = /<p>\s*<!--\s*INLINE_IMAGE\s*-->\s*<\/p>/gi;
+  const segments = bodyHtml.split(placeholderRe);
+  const placeholderCount = segments.length - 1;  // N markers split into N+1 segments
+  if (placeholderCount > 0) {
+    const inlineCount = Math.min(placeholderCount, 2);  // cap at 2 images
+    const inlineUrls = pickInlineImages(topic.slug, inlineCount);
+    const imgTags: string[] = [];
+    for (let i = 0; i < inlineCount; i++) {
+      try {
+        const mediaId = await uploadImageToWp(env, inlineUrls[i], `${topic.slug}-inline-${i + 1}`);
+        const meta = await fetchWpMediaSourceUrl(env, mediaId);
+        if (meta?.sourceUrl) {
+          imgTags.push(`<figure style="margin:32px 0;"><img src="${meta.sourceUrl}" alt="${(claudeJson.title || topic.title).replace(/"/g, "&quot;")}" style="width:100%;height:auto;border-radius:8px;display:block;" loading="lazy"></figure>`);
+        } else {
+          imgTags.push("");  // empty replacement if media URL lookup failed
+        }
+      } catch (e: any) {
+        console.warn(`[blog] inline image upload failed: ${e?.message || e}`);
+        imgTags.push("");
+      }
+    }
+    // Rejoin: segment[0] + img[0] + segment[1] + img[1] + ... + segment[N]
+    // Any placeholders beyond inlineCount get a blank replacement.
+    while (imgTags.length < placeholderCount) imgTags.push("");
+    let rebuilt = segments[0];
+    for (let i = 0; i < imgTags.length; i++) {
+      rebuilt += imgTags[i] + (segments[i + 1] || "");
+    }
+    bodyHtml = rebuilt;
+    console.log(`[blog] inline images: ${inlineCount} embedded (of ${placeholderCount} placeholders)`);
+  }
 
-  // 4. Pick image + upload to WP media library so it can be set as featured image
+  // 4. Append the standardized CTA box (defense-in-depth — even if Claude omits it)
+  const fullBody = bodyHtml + BLOG_CTA_BOX;
+
+  // 5. Pick image + upload to WP media library so it can be set as featured image
   const imageUrl = pickImageForTopic(topic.slug);
   let featuredMediaId: number | undefined;
   try {
@@ -5427,6 +5463,18 @@ async function generateAndPublishBlogPost(
     status: wpJson.status,
     link: wpJson.link,
   };
+}
+
+// After uploading via uploadImageToWp(), fetch the canonical source_url so we
+// embed the WP-hosted URL in the post body (not the original Unsplash URL).
+async function fetchWpMediaSourceUrl(env: Env, mediaId: number): Promise<{ sourceUrl: string } | null> {
+  if (!env.WP_AUTH_HEADER) return null;
+  const res = await fetch(`${WP_REST_BASE}/media/${mediaId}?_fields=source_url`, {
+    headers: { Authorization: env.WP_AUTH_HEADER },
+  });
+  if (!res.ok) return null;
+  const j: any = await res.json();
+  return j.source_url ? { sourceUrl: j.source_url } : null;
 }
 
 // Upload a remote image to the WP media library. Returns the new media ID.
