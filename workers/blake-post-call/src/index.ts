@@ -5769,12 +5769,6 @@ async function renderInsightsDashboardServerSide(env: Env): Promise<string> {
   <div class="toolbar">
     <button onclick="generateBlog(this)" style="background:linear-gradient(135deg,#BF7BFF,#7B5BFF);color:white;">+ Generate Blog Post Now</button>
     <button onclick="snapAll(this)" style="background:#1A2840;color:#FAFAF7;">Snap All Pages</button>
-    <button onclick="backfillAcq(this)" style="background:linear-gradient(135deg,#FFC72C,#E5A800);color:#1A2840;">Backfill ACQ via ATTOM</button>
-    <a href="/admin/csv/motivated-sellers" download style="display:inline-block;padding:10px 18px;background:#0e6e2f;color:white;border:none;border-radius:6px;cursor:pointer;font-size:13px;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;font-family:inherit;text-decoration:none;">⬇ Motivated Sellers CSV</a>
-    <form onsubmit="return attomLookup(event)" style="display:inline-flex;gap:6px;align-items:center;margin-left:auto;">
-      <input id="attom-addr" type="text" placeholder="Test ATTOM: 36 BILLIE ELLIS LN, PRINCETON, NJ" style="width:340px;height:36px;padding:0 10px;border:1px solid #E5E1D8;border-radius:6px;font-family:inherit;font-size:12px;">
-      <button type="submit" style="height:36px;padding:0 14px;background:white;color:#1A2840;border:1px solid #1A2840;border-radius:6px;cursor:pointer;font-size:12px;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;font-family:inherit;">Lookup</button>
-    </form>
   </div>
 
   <div class="status" id="status"></div>
@@ -5825,41 +5819,10 @@ ${cardsHtml}
       .catch(function(e){ btn.disabled = false; btn.innerHTML = orig; setStatus('Blog error: ' + e.message, 'error'); });
   }
 
-  function backfillAcq(btn) {
-    if (!confirm('Backfill every ACQ opportunity with ATTOM data? Will batch until done.')) return;
-    var orig = btn.innerHTML; btn.disabled = true;
-    var totals = { processed: 0, enriched: 0, skipped: 0, errored: 0 };
-    function batch(cursor) {
-      btn.innerHTML = 'Backfilling... ' + totals.processed;
-      setStatus('Backfilling... ' + totals.processed + ' processed (' + totals.enriched + ' enriched)');
-      var body = { batchSize: 25 };
-      if (cursor) { body.startAfter = cursor.startAfter; body.startAfterId = cursor.startAfterId; }
-      return fetch('/admin/attom/backfill', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body) })
-        .then(function(r){ return r.json(); })
-        .then(function(d){ if (d.error) throw new Error(d.error); totals.processed += d.processed||0; totals.enriched += d.enriched||0; totals.skipped += d.skipped||0; totals.errored += d.errored||0; if (d.nextCursor) return batch(d.nextCursor); btn.disabled = false; btn.innerHTML = orig; setStatus('✓ Backfill complete: ' + totals.enriched + ' enriched of ' + totals.processed, 'ok'); });
-    }
-    batch(null).catch(function(e){ btn.disabled = false; btn.innerHTML = orig; setStatus('Backfill failed at ' + totals.processed + ': ' + e.message, 'error'); });
-  }
-
-  function attomLookup(e) {
-    e.preventDefault();
-    var addr = document.getElementById('attom-addr').value.trim();
-    if (!addr) return false;
-    setStatus('Looking up ATTOM...');
-    fetch('/admin/attom/lookup?address=' + encodeURIComponent(addr))
-      .then(function(r){ return r.json(); })
-      .then(function(d){
-        if (d.error) { setStatus('ATTOM: ' + d.error + ' for ' + addr, 'error'); return; }
-        var lines = ['✓ ' + (d.resolvedAddress || addr)];
-        if (d.avmValue) lines.push('  AVM: $' + d.avmValue.toLocaleString() + ' (range $' + (d.avmLow||0).toLocaleString() + ' – $' + (d.avmHigh||0).toLocaleString() + ', confidence ' + d.avmConfidence + '/100)');
-        if (d.sqft) lines.push('  ' + d.sqft.toLocaleString() + ' sqft' + (d.beds ? ' · ' + d.beds + 'bd' : '') + (d.baths ? ' · ' + d.baths + 'ba' : ''));
-        if (d.lastSaleAmt) lines.push('  Last sale: $' + d.lastSaleAmt.toLocaleString() + ' on ' + (d.lastSaleDate||'').slice(0,10));
-        if (d.ownerName) lines.push('  Owner: ' + d.ownerName.trim());
-        setStatus(lines.join('\\n'), 'ok');
-      })
-      .catch(function(e){ setStatus('ATTOM error: ' + e.message, 'error'); });
-    return false;
-  }
+  // Note: backfillAcq() and attomLookup() removed from /insights toolbar per
+  // operator direction (2026-05-26). These belong on a CRM-management dashboard
+  // (probably /deals) not website-Insights. The endpoints still exist server-
+  // side; just no UI on this page.
 </script>
 </body>
 </html>`;
