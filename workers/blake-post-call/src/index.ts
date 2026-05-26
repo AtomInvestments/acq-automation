@@ -5389,7 +5389,12 @@ async function handleInsightsCapture(req: Request, env: Env): Promise<Response> 
 }
 
 async function handleInsightsSnap(env: Env, key: string): Promise<Response> {
-  const fullKey = key.startsWith("insights:snap:") ? key : `insights:snap:${key}`;
+  // Critical: url.pathname keeps colons URL-encoded (%3A), so the key arrives
+  // looking like "insights%3Asnap%3A1213%3A..." even though the stored KV key
+  // uses literal colons. Decode before lookup.
+  let decoded: string;
+  try { decoded = decodeURIComponent(key); } catch { decoded = key; }
+  const fullKey = decoded.startsWith("insights:snap:") ? decoded : `insights:snap:${decoded}`;
   const bytes = await env.DIAL_STATE.get(fullKey, "arrayBuffer");
   if (!bytes) {
     return new Response("Not Found", { status: 404 });
