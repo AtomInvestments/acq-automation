@@ -670,6 +670,17 @@ export default {
       return handleInsightsCapture(req, env);
     }
 
+    // /admin/csv/motivated-sellers — download a CSV of every ACQ contact
+    // flagged as a motivated seller, joined with their ATTOM enrichment + opp.
+    // Used by RJ to prioritize callbacks. Auth-gated.
+    if (req.method === "GET" && url.pathname === "/admin/csv/motivated-sellers") {
+      const auth = await requireAuth(req, env);
+      if (!auth.ok) return new Response(JSON.stringify({ error: "unauthorized" }), {
+        status: 401, headers: { "content-type": "application/json" },
+      });
+      return handleMotivatedSellersCsv(env);
+    }
+
     // /admin/attom/backfill — paginated ATTOM enrichment of every ACQ pipeline
     // opportunity. Each batch processes up to body.batchSize (default 25) opps
     // and returns a cursor for the next call. Caller (UI button) loops until
@@ -5720,6 +5731,7 @@ async function renderInsightsDashboardServerSide(env: Env): Promise<string> {
     <button onclick="generateBlog(this)" style="background:linear-gradient(135deg,#BF7BFF,#7B5BFF);color:white;">+ Generate Blog Post Now</button>
     <button onclick="snapAll(this)" style="background:#1A2840;color:#FAFAF7;">Snap All Pages</button>
     <button onclick="backfillAcq(this)" style="background:linear-gradient(135deg,#FFC72C,#E5A800);color:#1A2840;">Backfill ACQ via ATTOM</button>
+    <a href="/admin/csv/motivated-sellers" download style="display:inline-block;padding:10px 18px;background:#0e6e2f;color:white;border:none;border-radius:6px;cursor:pointer;font-size:13px;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;font-family:inherit;text-decoration:none;">⬇ Motivated Sellers CSV</a>
     <form onsubmit="return attomLookup(event)" style="display:inline-flex;gap:6px;align-items:center;margin-left:auto;">
       <input id="attom-addr" type="text" placeholder="Test ATTOM: 36 BILLIE ELLIS LN, PRINCETON, NJ" style="width:340px;height:36px;padding:0 10px;border:1px solid #E5E1D8;border-radius:6px;font-family:inherit;font-size:12px;">
       <button type="submit" style="height:36px;padding:0 14px;background:white;color:#1A2840;border:1px solid #1A2840;border-radius:6px;cursor:pointer;font-size:12px;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;font-family:inherit;">Lookup</button>
@@ -5812,6 +5824,177 @@ ${cardsHtml}
 </script>
 </body>
 </html>`;
+}
+
+// ---- /admin/csv/motivated-sellers — RJ's call list ----
+//
+// Pages through every opp in the ACQ pipeline, filters to contacts tagged
+// motivated-seller (or any per-signal tag), joins their ATTOM enrichment from
+// KV cache + GHL contact details, and emits a CSV download.
+//
+// Columns: opp_id, contact_name, phone, email, address, city, state, zip,
+//   stage, motivated_flags, avm, mao, beds, baths, sqft, year_built,
+//   last_sale_amt, last_sale_date, tax_assessed, owner_of_record,
+//   owner_mailing_absentee, equity_amount, equity_multiple, ghl_contact_url
+async function handleMotivatedSellersCsv(env: Env): Promise<Response> {
+  const pit = env.BLAKE_GHL_PIT;
+  const rows: string[][] = [];
+
+  // CSV header
+  const header = [
+    "opp_id", "stage_id", "contact_name", "phone", "email",
+    "address", "city", "state", "zip",
+    "motivated_flags", "absentee", "high_equity", "recent_transfer",
+    "avm_value", "avm_low", "avm_high", "avm_confidence",
+    "mao_computed", "equity_amount", "equity_multiple",
+    "beds", "baths", "sqft", "year_built", "lot_acres",
+    "last_sale_amount", "last_sale_date", "tax_assessed",
+    "owner_of_record", "owner_mailing",
+    "ghl_contact_url",
+  ];
+  rows.push(header);
+
+  // Paginate through every opp in ACQ
+  let startAfter: any = undefined;
+  let startAfterId: any = undefined;
+  let safetyCounter = 0;
+  while (safetyCounter++ < 100) {  // hard cap at 100 batches (= 5000 opps)
+    const params = new URLSearchParams({
+      location_id: APG_LOCATION_ID,
+      pipeline_id: ACQ_PIPELINE_ID,
+      limit: "50",
+    });
+    if (startAfter)   params.set("startAfter",   String(startAfter));
+    if (startAfterId) params.set("startAfterId", String(startAfterId));
+
+    const oppRes = await fetch(`${GHL_BASE}/opportunities/search?${params.toString()}`, {
+      method: "GET", headers: ghlHeaders(pit),
+    });
+    if (!oppRes.ok) {
+      console.warn(`[csv] ghl search failed ${oppRes.status}`);
+      break;
+    }
+    const oppJson: any = await oppRes.json();
+    const opps: any[] = oppJson?.opportunities ?? [];
+    if (opps.length === 0) break;
+
+    for (const opp of opps) {
+      const contactId = opp?.contact?.id || opp?.contactId;
+      if (!contactId) continue;
+
+      // Check the embedded contact tags first to filter early
+      const embeddedTags: string[] = opp?.contact?.tags ?? [];
+      const hasMotivatedTag = embeddedTags.some((t) =>
+        t === "motivated-seller" || t === "absentee-owner" ||
+        t === "high-equity" || t === "recent-transfer-probate"
+      );
+
+      // For contacts without tags, also try the ATTOM cache as fallback —
+      // they might be motivated but not yet tagged (if backfill hasn't run).
+      // To keep the CSV focused, only include if tagged OR cached ATTOM shows
+      // a signal. We need the full contact for the address.
+      const contact = await getContactDetail(pit, contactId);
+      if (!contact) continue;
+
+      const addrParts = [contact.address1, contact.city, contact.state, contact.postalCode]
+        .map((s: any) => String(s || "").trim()).filter(Boolean);
+      const fullAddress = addrParts.join(", ");
+
+      // Cheap KV cache check — if ATTOM enrichment was done before, get it
+      let attom: any = null;
+      let motivated: any = null;
+      if (fullAddress && addrParts.length >= 2) {
+        const cacheKey = "attom:enrich:" + fullAddress.toLowerCase().replace(/\s+/g, " ").trim();
+        const cachedRaw = await env.DIAL_STATE.get(cacheKey);
+        if (cachedRaw) {
+          try { attom = JSON.parse(cachedRaw); } catch {}
+        }
+        if (attom && !attom.error) {
+          motivated = scoreMotivatedSignals(attom);
+        }
+      }
+
+      // Include row if EITHER GHL has a motivated tag OR ATTOM score > 0
+      const isMotivated = hasMotivatedTag || (motivated && motivated.score > 0);
+      if (!isMotivated) continue;
+
+      const motivatedFlags: string[] = [];
+      if (motivated?.absentee || embeddedTags.includes("absentee-owner")) motivatedFlags.push("absentee");
+      if (motivated?.highEquity || embeddedTags.includes("high-equity")) motivatedFlags.push("high_equity");
+      if (motivated?.recentTransfer || embeddedTags.includes("recent-transfer-probate")) motivatedFlags.push("recent_transfer");
+
+      const ghlContactUrl = `https://app.gohighlevel.com/v2/location/${APG_LOCATION_ID}/contacts/detail/${contactId}`;
+      const contactName = [contact.firstName, contact.lastName].filter(Boolean).join(" ") || (contact.contactName || "");
+
+      // Compute MAO from ATTOM
+      let mao: number | "" = "";
+      if (attom?.avmValue) {
+        const rehab = (attom.sqft || 0) * 30;
+        mao = Math.max(0, Math.round(attom.avmValue * 0.70 - rehab - 10000));
+      }
+
+      rows.push([
+        String(opp.id || ""),
+        String(opp.pipelineStageId || opp.pipeline_stage_id || ""),
+        contactName,
+        String(contact.phone || ""),
+        String(contact.email || ""),
+        String(contact.address1 || ""),
+        String(contact.city || ""),
+        String(contact.state || ""),
+        String(contact.postalCode || ""),
+        motivatedFlags.join("|"),
+        motivatedFlags.includes("absentee") ? "yes" : "",
+        motivatedFlags.includes("high_equity") ? "yes" : "",
+        motivatedFlags.includes("recent_transfer") ? "yes" : "",
+        attom?.avmValue ? String(attom.avmValue) : "",
+        attom?.avmLow   ? String(attom.avmLow)   : "",
+        attom?.avmHigh  ? String(attom.avmHigh)  : "",
+        attom?.avmConfidence != null ? String(attom.avmConfidence) : "",
+        mao !== "" ? String(mao) : "",
+        motivated?.equityAmount   ? String(Math.round(motivated.equityAmount))   : "",
+        motivated?.equityMultiple ? motivated.equityMultiple.toFixed(2)          : "",
+        attom?.beds  ? String(attom.beds)  : "",
+        attom?.baths ? String(attom.baths) : "",
+        attom?.sqft  ? String(attom.sqft)  : "",
+        attom?.yearBuilt ? String(attom.yearBuilt) : "",
+        attom?.lotAcres  ? attom.lotAcres.toFixed(2) : "",
+        attom?.lastSaleAmt  ? String(attom.lastSaleAmt) : "",
+        attom?.lastSaleDate ? String(attom.lastSaleDate).slice(0, 10) : "",
+        attom?.assessedTotal ? String(attom.assessedTotal) : "",
+        attom?.ownerName    ? String(attom.ownerName).trim() : "",
+        attom?.ownerMailing && attom?.resolvedAddress &&
+          !attom.ownerMailing.includes(attom.resolvedAddress.slice(0, 10))
+          ? String(attom.ownerMailing) : "",
+        ghlContactUrl,
+      ]);
+    }
+
+    // Pagination cursor
+    const meta = oppJson?.meta || {};
+    if (opps.length < 50 || !meta.startAfter) break;
+    startAfter   = meta.startAfter;
+    startAfterId = meta.startAfterId;
+  }
+
+  // CSV escape: wrap in quotes if contains comma, quote, or newline; double internal quotes
+  const escapeCsv = (s: string): string => {
+    if (s.includes(",") || s.includes('"') || s.includes("\n") || s.includes("\r")) {
+      return `"${s.replace(/"/g, '""')}"`;
+    }
+    return s;
+  };
+  const csv = rows.map((row) => row.map(escapeCsv).join(",")).join("\n");
+
+  const filename = `motivated-sellers-${new Date().toISOString().slice(0, 10)}.csv`;
+  return new Response(csv, {
+    status: 200,
+    headers: {
+      "content-type": "text/csv; charset=utf-8",
+      "content-disposition": `attachment; filename="${filename}"`,
+      "cache-control": "no-store",
+    },
+  });
 }
 
 // ---- ATTOM backfill of ACQ pipeline ----
