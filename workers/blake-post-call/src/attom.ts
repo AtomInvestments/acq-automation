@@ -254,6 +254,89 @@ export function scoreMotivatedSignals(e: AttomEnrichment): MotivatedSignals {
   return out;
 }
 
+// Format an enrichment as a Slack message section (multi-line, ">"-quoted).
+// Returns "" when ATTOM didn't match (so the caller can drop it cleanly).
+export function formatEnrichmentForSlack(e: AttomEnrichment): string {
+  if (e.error || !e.attomId) return "";
+  const lines: string[] = ["> *ATTOM property record* —"];
+  if (e.avmValue) {
+    let avmLine = `>   AVM \`$${e.avmValue.toLocaleString()}\``;
+    if (e.avmLow && e.avmHigh) {
+      avmLine += ` (range $${e.avmLow.toLocaleString()} – $${e.avmHigh.toLocaleString()}, confidence ${e.avmConfidence ?? "?"}/100)`;
+    }
+    lines.push(avmLine);
+  }
+  const facts: string[] = [];
+  if (e.beds)      facts.push(`${e.beds}bd`);
+  if (e.baths)     facts.push(`${e.baths}ba`);
+  if (e.sqft)      facts.push(`${e.sqft.toLocaleString()} sqft`);
+  if (e.yearBuilt) facts.push(`built ${e.yearBuilt}`);
+  if (e.lotAcres)  facts.push(`${e.lotAcres.toFixed(2)} acres`);
+  if (facts.length) lines.push(`>   ${facts.join(" · ")}`);
+  if (e.lastSaleAmt && e.lastSaleDate) {
+    lines.push(`>   Last sale: \`$${e.lastSaleAmt.toLocaleString()}\` on ${e.lastSaleDate.slice(0, 10)}`);
+  }
+  if (e.assessedTotal) lines.push(`>   Tax assessed: $${e.assessedTotal.toLocaleString()}`);
+  if (e.ownerName) {
+    let line = `>   Owner of record: ${e.ownerName.trim()}`;
+    if (e.ownerMailing && e.resolvedAddress &&
+        !e.ownerMailing.includes(e.resolvedAddress.slice(0, 10))) {
+      line += ` (:exclamation: absentee — mailing: ${e.ownerMailing})`;
+    }
+    lines.push(line);
+  }
+  return lines.join("\n");
+}
+
+// Format as a GHL contact-note body (plain text, multi-line).
+export function formatEnrichmentForGhlNote(e: AttomEnrichment, propertyAddress: string, mao?: number | null): string {
+  if (e.error || !e.attomId) {
+    return `=== ATTOM property check ===\nNo match for "${propertyAddress}" (${e.error || "unknown error"}).`;
+  }
+  const parts: string[] = [];
+  parts.push(`=== ATTOM property record — ${propertyAddress} ===`);
+  if (e.resolvedAddress && e.resolvedAddress !== propertyAddress) {
+    parts.push(`ATTOM normalized address: ${e.resolvedAddress}`);
+  }
+  const facts: string[] = [];
+  if (e.beds)      facts.push(`${e.beds}bd`);
+  if (e.baths)     facts.push(`${e.baths}ba`);
+  if (e.sqft)      facts.push(`${e.sqft.toLocaleString()} sqft`);
+  if (e.yearBuilt) facts.push(`built ${e.yearBuilt}`);
+  if (e.lotAcres)  facts.push(`${e.lotAcres.toFixed(2)} acres`);
+  if (facts.length) parts.push(facts.join(" · "));
+  if (e.avmValue) {
+    let line = `AVM: $${e.avmValue.toLocaleString()}`;
+    if (e.avmLow && e.avmHigh) {
+      line += ` (range $${e.avmLow.toLocaleString()} – $${e.avmHigh.toLocaleString()}`;
+      if (e.avmConfidence) line += `, confidence ${e.avmConfidence}/100`;
+      line += `)`;
+    }
+    parts.push(line);
+  }
+  if (mao != null) parts.push(`Computed MAO: $${mao.toLocaleString()} (= AVM × 0.70 − rehab − $10K)`);
+  if (e.lastSaleAmt && e.lastSaleDate) {
+    parts.push(`Last sale: $${e.lastSaleAmt.toLocaleString()} on ${e.lastSaleDate.slice(0, 10)}`);
+  }
+  if (e.assessedTotal) parts.push(`Tax assessed: $${e.assessedTotal.toLocaleString()}`);
+  if (e.ownerName) {
+    let line = `Owner of record: ${e.ownerName.trim()}`;
+    if (e.ownerMailing && e.resolvedAddress &&
+        !e.ownerMailing.includes(e.resolvedAddress.slice(0, 10))) {
+      line += `\n⚠ ABSENTEE OWNER — mailing address: ${e.ownerMailing}`;
+    }
+    parts.push(line);
+  }
+  // Motivated-seller summary
+  const sig = scoreMotivatedSignals(e);
+  if (sig.score > 0) {
+    parts.push("");
+    parts.push(`🔥 Motivated-seller score: ${sig.score}/4`);
+    sig.flags.forEach((f) => parts.push(`  • ${f}`));
+  }
+  return parts.join("\n");
+}
+
 // Format an enrichment for Blake's seller_file injection (compact human-readable).
 export function formatEnrichmentForSellerFile(e: AttomEnrichment): string | null {
   if (e.error || !e.attomId) return null;

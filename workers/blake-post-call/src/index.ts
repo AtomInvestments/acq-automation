@@ -33,7 +33,10 @@ import {
   buildBlogPrompt, pickNextTopic, markTopicUsed, pickImageForTopic,
   pickInlineImages, isReadyToPost, recordLastPosted, BlogTopic,
 } from "./auto-blog";
-import { enrichPropertyViaAttom, formatEnrichmentForSellerFile, scoreMotivatedSignals } from "./attom";
+import {
+  enrichPropertyViaAttom, formatEnrichmentForSellerFile, scoreMotivatedSignals,
+  formatEnrichmentForSlack, formatEnrichmentForGhlNote,
+} from "./attom";
 
 export interface Env {
   BLAKE_GHL_PIT: string;
@@ -1016,6 +1019,34 @@ async function handleListingEmail(req: Request, env: Env): Promise<Response> {
     }
   }
 
+  // 3b. Write the comprehensive ATTOM property note onto the realtor contact
+  //     BEFORE the SMS goes out. When RJ or anyone opens the contact in GHL
+  //     they immediately see: AVM, beds/baths/sqft, last sale, tax assessed,
+  //     owner of record, absentee-owner flag, motivated-seller score — all
+  //     without leaving GHL.
+  if (attomEnrichment) {
+    try {
+      const attomNote = formatEnrichmentForGhlNote(attomEnrichment, fullAddress, mao);
+      await addNote(env.BLAKE_GHL_PIT, realtorContactId, attomNote).catch(() => {});
+    } catch (e) {
+      console.warn(`[listing] ATTOM note write failed: ${e}`);
+    }
+  }
+
+  // 3c. Set property custom fields on the realtor contact too (so they're
+  //     searchable in GHL filters). These are the same CF_BEDS/CF_BATHS/
+  //     CF_SQFT we use for sellers — fine to reuse on the realtor contact
+  //     since each realtor contact in this pipeline represents one listing.
+  if (attomEnrichment && !attomEnrichment.error) {
+    const cf: Array<{ id: string; value: string }> = [];
+    if (attomEnrichment.beds)  cf.push({ id: CF_BEDS,  value: String(attomEnrichment.beds)  });
+    if (attomEnrichment.baths) cf.push({ id: CF_BATHS, value: String(attomEnrichment.baths) });
+    if (attomEnrichment.sqft)  cf.push({ id: CF_SQFT,  value: String(attomEnrichment.sqft)  });
+    if (cf.length > 0) {
+      await updateContactFields(env.BLAKE_GHL_PIT, realtorContactId, { customFields: cf }).catch(() => {});
+    }
+  }
+
   // 4. SMS the listing realtor with the cash offer.
   //    Sent via GHL conversations API (NOT direct Twilio) so:
   //    - Uses GHL's registered SMS number (+1 609-699-8437), not Blake's
@@ -1124,11 +1155,19 @@ async function handleListingEmail(req: Request, env: Env): Promise<Response> {
     ? `:fire: *MOTIVATED SELLER (score ${motivated.score}/4)* — ${motivated.flags.join(" · ")}\n`
     : "";
 
+  // Full ATTOM enrichment section (AVM range, beds/baths/sqft, last sale,
+  // tax assessed, owner-of-record + absentee flag). Empty string when ATTOM
+  // didn't match — Slack message stays clean.
+  const attomSection = attomEnrichment
+    ? formatEnrichmentForSlack(attomEnrichment)
+    : "";
+
   const slackText =
     `:house: *New listing landed* — ${fullAddress}\n` +
     motivatedHeader +
     propertyLine +
     `> Asking *${fmtK(asking)}* · MAO *${fmtK(mao)}* (ARV ${fmtK(arvProxy)}${arvSource === "attom_avm" ? ` :white_check_mark:ATTOM` : ` :warning:asking-proxy`} × 0.70 − rehab ${fmtK(rehabEstimate)} − ${fmtK(MAO_BUFFER)} buffer)\n` +
+    (attomSection ? attomSection + "\n" : "") +
     `> Realtor: ${realtorName || "(unknown)"} ${realtorPhone || ""} ${realtorEmail ? `<${realtorEmail}>` : ""}${lookupTag}\n` +
     (realtorLookupResult?.brokerage ? `> Brokerage: ${realtorLookupResult.brokerage}\n` : "") +
     `> SMS to realtor: ${sms.ok ? ":white_check_mark: sent via GHL (conversation on contact)" : `:x: ${sms.status} ${sms.body.slice(0, 100)}`}\n` +
