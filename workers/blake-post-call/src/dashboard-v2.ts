@@ -1065,30 +1065,95 @@ ${warmup ? `<div class="kpi-row" style="margin-top:-8px;">
       mount.innerHTML = '<div class="notice danger">Tracker error: ' + (e && e.message ? e.message : String(e)) + '</div>';
     }
   }
+  function statusPillClass(status) {
+    switch ((status || '').toLowerCase()) {
+      case 'shipped-verified':   return { klass: 'tracker-green', label: 'verified' };
+      case 'shipped-unverified': return { klass: 'tracker-amber', label: 'unverified' };
+      case 'broken':             return { klass: 'tracker-red',   label: 'broken' };
+      case 'deferred':           return { klass: 'tracker-muted', label: 'deferred' };
+      default:                   return { klass: 'tracker-gray',  label: 'not started' };
+    }
+  }
   function renderTracker(mount, data) {
     var pillars = data.pillars || [];
     if (!pillars.length) {
       mount.innerHTML = '<div class="notice">No pillars defined in progress_state.json.</div>';
       return;
     }
+    if (!document.getElementById('tracker-styles')) {
+      var st = document.createElement('style');
+      st.id = 'tracker-styles';
+      st.textContent =
+        '.tp{display:inline-block;padding:2px 8px;border-radius:3px;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;border:1px solid;white-space:nowrap;}' +
+        '.tp.tracker-green{background:#DCFCE7;color:#0e6e2f;border-color:#86EFAC;}' +
+        '.tp.tracker-amber{background:#FEF3C7;color:#92400E;border-color:#FCD34D;}' +
+        '.tp.tracker-red{background:#FEE2E2;color:#991B1B;border-color:#FCA5A5;}' +
+        '.tp.tracker-gray{background:#F4F4F5;color:#525B6E;border-color:#D4D4D8;}' +
+        '.tp.tracker-muted{background:transparent;color:#9CA3AF;border-color:#E5E7EB;}' +
+        '.tracker-row{display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-bottom:1px dotted var(--border);font-size:13px;}' +
+        '.tracker-row:last-of-type{border-bottom:0;}' +
+        '.tracker-row .label{flex:1;color:var(--ink);}' +
+        '.tracker-row.muted .label{color:var(--text-dim);text-decoration:line-through;}' +
+        '.tracker-row .meta{color:var(--text-mute);font-size:10px;font-style:italic;display:block;margin-top:3px;}' +
+        '.broken-block{background:#FEF2F2;border-left:4px solid #B91C1C;padding:12px 14px;margin-bottom:14px;border-radius:2px;}' +
+        '.broken-block .root{color:#7F1D1D;font-size:12px;font-style:italic;margin-top:4px;line-height:1.5;}';
+      document.head.appendChild(st);
+    }
     var html = '';
+
+    // Top summary banner
+    var c = { 'shipped-verified': 0, 'shipped-unverified': 0, 'broken': 0, 'not-started': 0, 'deferred': 0 };
     pillars.forEach(function(p) {
-      var done = (p.tasks || []).filter(function(t){ return t.done; }).length;
+      (p.tasks || []).forEach(function(t) {
+        var s = (t.status || 'not-started').toLowerCase();
+        if (c[s] != null) c[s]++;
+        else c['not-started']++;
+      });
+    });
+    var brokenItems = pillars.reduce(function(a, p) { return a + (p.broken || []).length; }, 0);
+    html += '<div style="display:flex;gap:18px;flex-wrap:wrap;margin-bottom:22px;padding:14px 16px;background:var(--cream);border:1px solid var(--border);border-radius:4px;">';
+    html += '<div><span class="tp tracker-green">verified</span> <strong style="font-family:Playfair Display,serif;font-size:20px;color:var(--ink);">' + c['shipped-verified'] + '</strong></div>';
+    html += '<div><span class="tp tracker-amber">unverified</span> <strong style="font-family:Playfair Display,serif;font-size:20px;color:var(--ink);">' + c['shipped-unverified'] + '</strong></div>';
+    html += '<div><span class="tp tracker-red">broken</span> <strong style="font-family:Playfair Display,serif;font-size:20px;color:var(--ink);">' + (c['broken'] + brokenItems) + '</strong></div>';
+    html += '<div><span class="tp tracker-gray">not-started</span> <strong style="font-family:Playfair Display,serif;font-size:20px;color:var(--ink);">' + c['not-started'] + '</strong></div>';
+    html += '<div><span class="tp tracker-muted">deferred</span> <strong style="font-family:Playfair Display,serif;font-size:20px;color:var(--ink);">' + c['deferred'] + '</strong></div>';
+    html += '<div style="margin-left:auto;color:var(--text-mute);font-size:11px;align-self:center;">schema v' + (data.schema_version || 1) + ' · last updated ' + (data.last_updated || '?') + '</div>';
+    html += '</div>';
+
+    pillars.forEach(function(p) {
       var total = (p.tasks || []).length;
-      var statusPill = p.status === 'active' ? 'warm' : p.status === 'planned' ? 'unknown' : 'cold';
+      var verified = (p.tasks || []).filter(function(t) { return (t.status || '').toLowerCase() === 'shipped-verified'; }).length;
+      var statusKlass = p.status === 'active' ? 'tracker-green' : p.status === 'deferred' ? 'tracker-muted' : 'tracker-gray';
       html += '<div style="margin-bottom:28px;">';
-      html += '<div style="display:flex;justify-content:space-between;align-items:baseline;border-bottom:2px solid var(--ink);padding-bottom:8px;margin-bottom:12px;">';
-      html += '<div><span class="serif" style="font-size:18px;font-weight:700;color:var(--ink);">' + escapeText(p.name || p.id) + '</span>';
-      html += ' <span class="pill ' + statusPill + '">' + escapeText(p.status || '?') + '</span></div>';
-      html += '<div class="mono" style="color:var(--text-mute);font-size:12px;">' + done + ' / ' + total + ' done</div>';
+      html += '<div style="display:flex;justify-content:space-between;align-items:baseline;border-bottom:2px solid var(--ink);padding-bottom:10px;margin-bottom:14px;">';
+      html += '<div><span class="serif" style="font-size:20px;font-weight:700;color:var(--ink);">' + escapeText(p.name || p.id) + '</span> ';
+      html += '<span class="tp ' + statusKlass + '">' + escapeText(p.status || '?') + '</span></div>';
+      html += '<div class="mono" style="color:var(--text-mute);font-size:12px;">' + verified + ' / ' + total + ' verified</div>';
       html += '</div>';
-      if (p.summary) html += '<div style="color:var(--text-dim);font-size:12px;margin-bottom:10px;font-style:italic;">' + escapeText(p.summary) + '</div>';
+      if (p.summary) html += '<div style="color:var(--text-dim);font-size:12px;margin-bottom:14px;font-style:italic;">' + escapeText(p.summary) + '</div>';
+
+      // Broken section AT THE TOP of the pillar (per v4 brief).
+      (p.broken || []).forEach(function(b) {
+        html += '<div class="broken-block">';
+        html += '<strong style="color:#7F1D1D;">⚠ BROKEN — ' + escapeText(b.label) + '</strong>';
+        html += '<div class="root">Root cause: ' + escapeText(b.root_cause || '(unknown)') + '</div>';
+        html += '</div>';
+      });
+
       (p.tasks || []).forEach(function(t) {
         var taskKey = p.id + '::' + t.label;
-        html += '<label style="display:flex;gap:10px;align-items:flex-start;padding:6px 0;cursor:pointer;font-size:13px;color:' + (t.done ? 'var(--text-dim)' : 'var(--ink)') + ';' + (t.done ? 'text-decoration:line-through;' : '') + '">';
+        var s = (t.status || 'not-started').toLowerCase();
+        var pill = statusPillClass(s);
+        var muted = (s === 'deferred' || s === 'shipped-verified');
+        html += '<div class="tracker-row' + (muted ? ' muted' : '') + '">';
         html += '<input type="checkbox"' + (t.done ? ' checked' : '') + ' data-key="' + escapeText(taskKey) + '" style="margin-top:3px;accent-color:var(--gold);width:14px;height:14px;flex-shrink:0;">';
-        html += '<span>' + escapeText(t.label) + '</span>';
-        html += '</label>';
+        html += '<div class="label">' + escapeText(t.label);
+        if (t.verify_by) html += '<span class="meta">verify by ' + escapeText(t.verify_by) + (t.verify_method ? ' — ' + escapeText(t.verify_method) : '') + '</span>';
+        if (t.deferred_by) html += '<span class="meta">deferred: ' + escapeText(t.deferred_by) + '</span>';
+        if (t.root_cause) html += '<span class="meta">root cause: ' + escapeText(t.root_cause) + '</span>';
+        html += '</div>';
+        html += '<span class="tp ' + pill.klass + '" style="flex-shrink:0;margin-left:8px;">' + pill.label + '</span>';
+        html += '</div>';
       });
       html += '</div>';
     });
@@ -1107,13 +1172,6 @@ ${warmup ? `<div class="kpi-row" style="margin-top:-8px;">
           if (!r.ok) {
             cb.checked = !newDone;
             alert('Save failed (HTTP ' + r.status + ')');
-            return;
-          }
-          // Update visual style on the label
-          var label = cb.closest('label');
-          if (label) {
-            label.style.color = newDone ? 'var(--text-dim)' : 'var(--ink)';
-            label.style.textDecoration = newDone ? 'line-through' : '';
           }
         } catch (e) {
           cb.checked = !newDone;
