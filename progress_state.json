@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "last_updated": "2026-05-21",
+  "last_updated": "2026-05-27",
   "pillars": [
     {
       "id": "pillar-a-blake",
@@ -56,17 +56,18 @@
     {
       "id": "pillar-c-vault-self-improvement",
       "name": "Pillar C — Vault + Self-Improvement",
-      "status": "planned",
-      "summary": "Every conversation live-syncs to APG-Vault as markdown. Self-improvement loop fires when 50+ new transcripts accumulate — Claude reads the batch, drafts Blake v1.4, A/B tests, promotes winner.",
+      "status": "active",
+      "summary": "Every conversation live-syncs to APG-Vault as markdown via Worker → KV queue → local Python daemon. Manual self-improvement loop: Claude Opus reviews recent transcripts on demand, writes proposed prompt edits into vault for Mike to batch-apply.",
       "tasks": [
-        { "label": "Vault sync: every Blake conversation → APG-Vault markdown", "done": false },
+        { "label": "Vault sync: Blake calls + landing leads + listings + GHL messages → APG-Vault markdown (live since 2026-05-26)", "done": true },
         { "label": "Vault sync: every SmarterContact thread → vault", "done": false },
         { "label": "Vault sync: every #base1-sms-leadgen Slack message → vault", "done": false },
-        { "label": "Self-improvement trigger: fire on 50+ new transcripts", "done": false },
-        { "label": "Claude prompt-iteration loop: draft new Blake version", "done": false },
+        { "label": "Self-improvement trigger: manual POST /admin/blake/self-improve?sample=N (Adam vetoed full automation; manual batching per May 26 meeting)", "done": true },
+        { "label": "Claude Opus 4.7 prompt-iteration loop: reviews recent calls + writes proposed edits to _system/Blake/iterations/", "done": true },
         { "label": "A/B test infrastructure: 20-30% of calls on new version", "done": false },
-        { "label": "Auto-promote winning version", "done": false },
-        { "label": "Daily Slack summary of Blake calls", "done": false }
+        { "label": "Auto-promote winning version (DEFERRED — Adam vetoed in May 26 meeting; manual apply only)", "done": false },
+        { "label": "Daily Slack summary of Blake calls + GHL conversations → #listed-leads (cron 0 4 * * *)", "done": true },
+        { "label": "Local vault-sync daemon installed as Windows scheduled task (APGVaultSync, restart-on-failure)", "done": true }
       ]
     },
     {
@@ -91,8 +92,8 @@
       "tasks": [
         { "label": "AtomInvestments GitHub account + acq-automation repo (transferred from Mid0117)", "done": true },
         { "label": "Cloudflare account on mithchell@atompropertygroup.org", "done": true },
-        { "label": "CF Workers Builds → auto-deploy on push", "done": true },
-        { "label": "CF Worker secrets: BLAKE_GHL_PIT, ELEVENLABS_API_KEY, ELEVENLABS_WEBHOOK_SECRET, ANTHROPIC_API_KEY", "done": true },
+        { "label": "CF Workers Builds → auto-deploy on push (BROKEN — bypassed via direct `wrangler deploy` with CF API token)", "done": false },
+        { "label": "CF Worker secrets: BLAKE_GHL_PIT, ELEVENLABS_API_KEY, ELEVENLABS_WEBHOOK_SECRET, ANTHROPIC_API_KEY, TWILIO_*, SLACK_BOT_TOKEN, WP_AUTH_HEADER, ATTOM_API_KEY, DASHBOARD_*, VAULT_SYNC_TOKEN", "done": true },
         { "label": "DIAL_STATE KV namespace for warm-up + dedupe", "done": true },
         { "label": "GHL Private Integration Token + scopes", "done": true },
         { "label": "Master credentials inventory in APG-Vault/_internal/credentials.md", "done": true },
