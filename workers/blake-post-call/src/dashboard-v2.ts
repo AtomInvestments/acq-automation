@@ -380,8 +380,10 @@ export async function renderDashboardV2(env: {
 
   // Voice A/B stats — populated by /conversation-init + post-call attribution.
   const voiceStats = await readVoiceAbStats(env);
-  // Per-agent activity stub — PR C will fill this from GHL aggregations.
-  const agentStub = readAgentActivityStub(env);
+  // Per-agent activity — reads `agent:activity:<user_id>:weekly` + `:latest`
+  // from KV. Falls back to zero-stat placeholders when the aggregator hasn't
+  // run yet.
+  const agentStub = await readAgentActivity(env);
 
   return `${dashboardHead()}
 <body>
@@ -729,15 +731,58 @@ interface AgentActivity {
 }
 
 function readAgentActivityStub(_env: { DIAL_STATE: KVNamespace }): AgentActivity[] {
-  // PR C will hydrate from KV `agent:activity:<user_id>:weekly` after the
-  // daily aggregator runs. Until then, render the cast list so users can see
-  // the shape of what's coming.
+  // Synchronous fallback used only when the async reader can't fire (e.g. KV
+  // is unavailable). Returns the 4-agent placeholder list.
   return [
     { name: "RJ Fonseca",      role: "Acquisitions Partner", opps_assigned: 0, opps_moved: 0, tasks_completed: 0, outbound_msgs: 0, ai_review: null },
     { name: "Mike (Yasser)",   role: "PM / Marketing Systems", opps_assigned: 0, opps_moved: 0, tasks_completed: 0, outbound_msgs: 0, ai_review: null },
     { name: "Justus",          role: "VA — Acquisitions",      opps_assigned: 0, opps_moved: 0, tasks_completed: 0, outbound_msgs: 0, ai_review: null },
     { name: "Brady",           role: "Apprentice",             opps_assigned: 0, opps_moved: 0, tasks_completed: 0, outbound_msgs: 0, ai_review: null },
   ];
+}
+
+// PR C — async reader that pulls real activity + reviews from KV. Falls back
+// to the stub when nothing has been aggregated yet (KV empty).
+export async function readAgentActivity(env: { DIAL_STATE: KVNamespace }): Promise<AgentActivity[]> {
+  const ROSTER = [
+    { user_id: "EvxJmnll1hlJtzpW14BE", name: "RJ Fonseca",    role: "Acquisitions Partner" },
+    { user_id: "Vj4WwH1ovxGN5Hv5Kq17", name: "Mike (Yasser)", role: "PM / Marketing Systems" },
+  ];
+  const out: AgentActivity[] = [];
+  for (const u of ROSTER) {
+    const [aRaw, rRaw] = await Promise.all([
+      env.DIAL_STATE.get(`agent:activity:${u.user_id}:weekly`),
+      env.DIAL_STATE.get(`agent:review:${u.user_id}:latest`),
+    ]);
+    let activity: any = null;
+    let review: any = null;
+    try { if (aRaw) activity = JSON.parse(aRaw); } catch {}
+    try { if (rRaw) review = JSON.parse(rRaw); } catch {}
+    // Pull a one-line teaser from the review markdown (first "## What should
+    // have gone better" bullet, or fall back to one-line summary).
+    let teaser: string | null = null;
+    if (review?.review_md) {
+      const md = String(review.review_md);
+      const m = md.match(/## What should have gone better[^\n]*\n+1\.\s*\*\*([^*]+)\*\*([^\n]*)/i);
+      if (m) {
+        teaser = (m[1] + " — " + (m[2] || "").trim()).slice(0, 200);
+      } else {
+        const first = md.split(/\n+/).filter((l) => l.trim() && !l.startsWith("#"))[0];
+        if (first) teaser = first.slice(0, 200);
+      }
+    }
+    out.push({
+      name: u.name,
+      role: u.role,
+      ghl_user_id: u.user_id,
+      opps_assigned:   activity?.opps_assigned ?? 0,
+      opps_moved:      activity?.opps_moved ?? 0,
+      tasks_completed: activity?.tasks_completed ?? 0,
+      outbound_msgs:   activity?.outbound_msgs ?? 0,
+      ai_review:       teaser,
+    });
+  }
+  return out;
 }
 
 function escapeHtml(s: string): string {
