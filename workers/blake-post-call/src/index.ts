@@ -7265,9 +7265,10 @@ Produce the review now. Markdown only, no preamble.`;
       "content-type": "application/json",
     },
     body: JSON.stringify({
+      // Opus 4.7 deprecated the `temperature` field (per API error 400 on
+      // 2026-05-27). Omit it.
       model: "claude-opus-4-7",
       max_tokens: 3000,
-      temperature: 0.4,
       system: systemPrompt,
       messages: [{ role: "user", content: userPrompt }],
     }),
