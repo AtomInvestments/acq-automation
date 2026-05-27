@@ -953,11 +953,13 @@ export default {
             tts: {
               // Row 2 default: Brian (primary A/B candidate)
               voice_id: VOICE_AB_BRIAN_ID,
-              // Row 3: Flash v2 (English-only fast TTS). ElevenLabs Conv AI
-              // requires "eleven_flash_v2" or "eleven_turbo_v2" for English
-              // agents — the v2_5 IDs were rejected with
-              // "English Agents must use turbo or flash v2" on 2026-05-27.
-              model_id: "eleven_flash_v2",
+              // Row 3: Turbo v2 — natural sound at ~250ms latency.
+              // Initial pick was eleven_flash_v2 (~75ms) but Mido reported
+              // it sounded "so robotic" on the live call 2026-05-27. Turbo
+              // v2 keeps latency in the acceptable range while restoring
+              // the natural expressiveness Brian's voice was designed for.
+              // (Flash v2 strips most prosody for speed.)
+              model_id: "eleven_turbo_v2",
             },
             asr: {
               // Row 4: en-US locked
