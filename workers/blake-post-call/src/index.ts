@@ -825,7 +825,7 @@ export default {
             status: 503, headers: { "content-type": "application/json" },
           });
         }
-        const CACHE_KEY = "calltools:summary:v1";
+        const CACHE_KEY = "calltools:summary:v2";   // bumped 2026-05-27 to invalidate stale .io-domain attempts
         const cached = await env.DIAL_STATE.get(CACHE_KEY);
         if (cached) {
           return new Response(cached, { status: 200, headers: { "content-type": "application/json" } });
