@@ -173,14 +173,13 @@ const GHL_FORWARD_NUMBERS = new Set([
   "+16096998437", // Location primary (used for outbound SMS)
 ]);
 
-// Slack channel for Pillar B listing alerts. APG bot (@apg_automations) must
-// be /invite'd to this channel for chat.postMessage to succeed.
+// Slack channels. APG bot must be /invite'd to each one.
+// 2026-05-27 Mido directive: #listed-leads is LISTINGS-ONLY (Pillar B
+// realtor listings). All other operational alerts (qualified-stage,
+// drip replies, escalations, daily summaries, agent reviews) go to
+// #apg-alerts.
 const SLACK_LISTINGS_CHANNEL = "#listed-leads";
-
-// Slice I / Audit 1.6 — channel for "hot lead replied" alerts.
-// Per v4 brief: create #apg-alerts; until that channel exists, fall back
-// to #listed-leads so we don't lose the alert.
-const SLACK_ALERTS_CHANNEL = "#listed-leads";
+const SLACK_ALERTS_CHANNEL   = "#apg-alerts";
 
 // Warm-up curve: max outbound dials per UTC day, indexed by days since the
 // dialer's first run. After WARMUP_CURVE.length days we stay at the last
@@ -7769,7 +7768,7 @@ async function runDailySlackSummary(env: Env): Promise<{ ok: boolean; posted: bo
     `:speech_balloon: GHL conversations updated: *${inboundCount + outboundCount}* (inbound ${inboundCount}, outbound ${outboundCount})\n` +
     `:link: <https://acq-automation.mithchell.workers.dev/blake.html|live dashboard> · <https://acq-automation.mithchell.workers.dev/insights|website insights>`;
 
-  const slack = await postSlackMessage(env, SLACK_LISTINGS_CHANNEL, text);
+  const slack = await postSlackMessage(env, SLACK_ALERTS_CHANNEL, text);
   return { ok: true, posted: slack.ok, error: slack.ok ? undefined : `slack ${slack.status}` };
 }
 
@@ -7782,7 +7781,7 @@ async function runDailySlackSummary(env: Env): Promise<{ ok: boolean; posted: bo
 // Aggregate → KV `agent:activity:<user_id>:weekly`.
 // Then ask Opus 4.7 for a short "what should have gone better" review per
 // agent → KV `agent:review:<user_id>:latest` + vault event `agent_review`.
-// Slack teaser posts to #listed-leads when reviews land.
+// Slack teaser posts to #apg-alerts when reviews land.
 
 interface AgentWeeklyActivity {
   user_id: string;
@@ -8018,7 +8017,7 @@ async function runAllAgentReviews(env: Env): Promise<{
     const teaser =
       `:notebook: *Agent reviews refreshed* — ${out.reviewed}/${APG_AGENT_ROSTER.length} agents reviewed\n` +
       `Open the dashboard's Agents tab to read: https://acq-automation.mithchell.workers.dev/dashboard#agents`;
-    await postSlackMessage(env, SLACK_LISTINGS_CHANNEL, teaser).catch(() => {});
+    await postSlackMessage(env, SLACK_ALERTS_CHANNEL, teaser).catch(() => {});
   }
   return out;
 }
