@@ -99,6 +99,21 @@ const MAO_BUFFER         = 10000;  // negotiation buffer
 const BLAKE_AGENT_ID = "agent_5001ks3cp069f9rtfz6e81ypgnrd";
 const BLAKE_PHONE_NUMBER_ID = "phnum_8001ks3fhbbpe4vadtrdmparejgw";
 
+// Workstream 4a — A/B voice test. Mido approved Brian + Roger on 2026-05-27.
+// 50/50 split; per-conversation override goes out from /conversation-init,
+// and post-call webhook tags the GHL contact with `voice-brian` or
+// `voice-roger` for conversion-rate attribution.
+const VOICE_AB_BRIAN_ID = "nPczCjzI2devNBz1zQrb";   // primary
+const VOICE_AB_ROGER_ID = "CwhRBWXzGAHq8TQ4Fs17";   // A/B counterpart
+const VOICE_AB_VARIANTS = ["brian", "roger"] as const;
+type VoiceVariant = (typeof VOICE_AB_VARIANTS)[number];
+function voiceIdFor(v: VoiceVariant): string {
+  return v === "brian" ? VOICE_AB_BRIAN_ID : VOICE_AB_ROGER_ID;
+}
+function pickAbVoice(): VoiceVariant {
+  return Math.random() < 0.5 ? "brian" : "roger";
+}
+
 // Blake's outbound voice number (APG-owned, Twilio-registered, voice-only).
 // NOT used for SMS — listing-realtor SMS goes via GHL Conversations API which
 // auto-routes from GHL's location SMS number (+1 609-699-8437).
@@ -735,6 +750,95 @@ export default {
       }
       const key = url.pathname.slice("/insights/snap/".length);
       return handleInsightsSnap(env, key);
+    }
+
+    // Workstream 4a — apply the audit-approved Blake agent config + voice A/B.
+    // POST /admin/blake/agent-config-apply → PATCH /v1/convai/agents/{id}
+    // with the recommended TTS/ASR/turn/LLM settings. Mido approved 2026-05-27
+    // (see docs/blake-elevenlabs-audit.md). Base voice = Brian; per-call
+    // override in /conversation-init flips 50/50 between Brian + Roger.
+    if (req.method === "POST" && url.pathname === "/admin/blake/agent-config-apply") {
+      return (async () => {
+        if (!env.ELEVENLABS_API_KEY) {
+          return new Response(JSON.stringify({ ok: false, error: "ELEVENLABS_API_KEY not bound" }), {
+            status: 503, headers: { "content-type": "application/json" },
+          });
+        }
+        const body = {
+          conversation_config: {
+            agent: {
+              language: "en",
+              // Row 1: LLM → Gemini 2.0 Flash for sub-300ms first-token latency.
+              llm: "gemini-2.0-flash",
+            },
+            tts: {
+              // Row 2 default: Brian (primary A/B candidate)
+              voice_id: VOICE_AB_BRIAN_ID,
+              // Row 3: Flash v2.5 (~75ms vs Multilingual v2's ~1000ms)
+              model_id: "eleven_flash_v2_5",
+            },
+            asr: {
+              // Row 4: en-US locked
+              user_input_audio_format: "ulaw_8000",
+              quality: "high",
+              provider: "elevenlabs",
+              // Row 5: real-estate + city-name keyword biasing
+              keywords: [
+                "MAO", "ARV", "wholesale", "assignment", "escrow", "as-is",
+                "closing costs", "liens", "probate", "quitclaim", "lockbox",
+                "Trenton", "Newark", "Camden", "Hoboken", "Allentown",
+                "Philadelphia", "Wilkes-Barre",
+                "Birmingham", "Bessemer", "Forestdale", "Pinson", "Trussville",
+                "Fairfield", "Montgomery", "Mobile",
+              ],
+            },
+            turn: {
+              // Rows 6-8: patient endpointing + low interruption + 6s timeout
+              turn_timeout: 6,
+              silence_end_call_timeout: 30,
+              // Lower mode_sensitivity = less likely to interrupt
+              mode: "turn",
+            },
+          },
+        };
+        const r = await fetch(
+          `https://api.elevenlabs.io/v1/convai/agents/${BLAKE_AGENT_ID}`,
+          {
+            method: "PATCH",
+            headers: {
+              "xi-api-key": env.ELEVENLABS_API_KEY,
+              "content-type": "application/json",
+            },
+            body: JSON.stringify(body),
+          }
+        );
+        const respText = await r.text();
+        return new Response(JSON.stringify({
+          ok: r.ok,
+          status: r.status,
+          applied_keys: Object.keys(body.conversation_config),
+          response: respText.slice(0, 4000),
+        }, null, 2), {
+          status: r.ok ? 200 : 502,
+          headers: { "content-type": "application/json" },
+        });
+      })();
+    }
+
+    // Workstream 4a — A/B voice stats. Quick GET that returns per-voice
+    // counters so the dashboard can show conversion math during the test.
+    if (req.method === "GET" && url.pathname === "/admin/blake/ab-stats") {
+      return (async () => {
+        const stats: Record<string, any> = {};
+        for (const v of VOICE_AB_VARIANTS) {
+          const sent      = Number((await env.DIAL_STATE.get(`blake:ab_stats:${v}:sent`))      || "0");
+          const completed = Number((await env.DIAL_STATE.get(`blake:ab_stats:${v}:completed`)) || "0");
+          stats[v] = { sent, completed, completion_pct: sent ? Math.round((completed / sent) * 100) : 0 };
+        }
+        return new Response(JSON.stringify({ ok: true, stats }, null, 2), {
+          status: 200, headers: { "content-type": "application/json" },
+        });
+      })();
     }
 
     // Workstream 4a — Blake ElevenLabs agent config (read-only audit endpoint).
@@ -2876,12 +2980,38 @@ async function handleConversationInit(req: Request, env: Env): Promise<Response>
     }
   }
 
+  // Workstream 4a — A/B voice test. 50/50 split between Brian and Roger.
+  // Picked here at call-init so the conversation uses one voice consistently.
+  // We persist the choice keyed by call_sid + (best-effort) caller phone so
+  // post-call attribution can tag the GHL contact.
+  const abVoice = pickAbVoice();
+  const abVoiceId = voiceIdFor(abVoice);
+  try {
+    const ttl = 60 * 60 * 24 * 30;  // 30 days — plenty for post-call attribution
+    if (callSid) {
+      await env.DIAL_STATE.put(`blake:ab_voice:sid:${callSid}`, abVoice, { expirationTtl: ttl });
+    }
+    if (callerPhone) {
+      await env.DIAL_STATE.put(`blake:ab_voice:phone:${callerPhone}`, abVoice, { expirationTtl: ttl });
+    }
+    // Increment a simple sent counter for the dashboard funnel
+    const counterKey = `blake:ab_stats:${abVoice}:sent`;
+    const prev = Number((await env.DIAL_STATE.get(counterKey)) || "0");
+    await env.DIAL_STATE.put(counterKey, String(prev + 1));
+  } catch (e) {
+    console.warn(`[init] ab_voice persist failed: ${e}`);
+  }
+  console.log(`[init] A/B voice → ${abVoice} (${abVoiceId})`);
+
   const response = {
     type: "conversation_initiation_client_data",
     dynamic_variables: vars,
     conversation_config_override: {
       agent: {
         first_message: firstMessage,
+      },
+      tts: {
+        voice_id: abVoiceId,
       },
     },
   };
@@ -3228,6 +3358,26 @@ async function handleWebhook(req: Request, env: Env, ctx: ExecutionContext): Pro
         },
         (err) => console.error(`[blake-post-call] tag write threw: ${err}`)
       ),
+      // Workstream 4a A/B — tag the contact with whichever voice this call
+      // ran on so we can compare conversion rates downstream. Look up by
+      // phone first (works for inbound + outbound), fall back to no-op.
+      (async () => {
+        try {
+          if (!callerPhone) return;
+          const v = await env.DIAL_STATE.get(`blake:ab_voice:phone:${callerPhone}`);
+          if (v === "brian" || v === "roger") {
+            await addTag(env.BLAKE_GHL_PIT, contactId, `voice-${v}`);
+            // Bump the per-voice "completed" counter so dashboard math is honest
+            // (sent vs completed catches early-hang-up bias).
+            const ck = `blake:ab_stats:${v}:completed`;
+            const prev = Number((await env.DIAL_STATE.get(ck)) || "0");
+            await env.DIAL_STATE.put(ck, String(prev + 1));
+            console.log(`[blake-post-call] A/B voice attribution: ${v}`);
+          }
+        } catch (e) {
+          console.warn(`[blake-post-call] A/B voice tag threw: ${e}`);
+        }
+      })(),
       recordingUrl
         ? setContactCustomField(env.BLAKE_GHL_PIT, contactId, CF_BLAKE_RECORDING, recordingUrl).then(
             (res) => {
