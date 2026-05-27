@@ -1658,9 +1658,13 @@ async function handleListingEmail(req: Request, env: Env): Promise<Response> {
       `Our offer as-is, close in 14 days, is ${fmtK(mao)}. ` +
       `Let me know your thoughts. Thanks.`;
 
-  const sms = realtorContactId
+  // Mido directive (2026-05-27): don't try to send when we have no phone.
+  // Was polluting #listed-leads with 422 "Missing phone number" errors on
+  // every listing where web-search couldn't find the realtor's contact.
+  const haveRealtorPhone = !!realtorPhone && realtorPhone.length >= 10;
+  const sms = (realtorContactId && haveRealtorPhone)
     ? await sendGhlSms(env, realtorContactId, smsBody)
-    : { ok: false, status: 0, body: "no_realtor_contact_id" };
+    : { ok: false, status: 0, body: haveRealtorPhone ? "no_realtor_contact_id" : "no_realtor_phone_skipped" };
 
   // 5. Write a structured listing brief as a NOTE on the realtor contact, so
   //    RJ/Adam can see the deal context when they open the contact card.
@@ -1741,7 +1745,13 @@ async function handleListingEmail(req: Request, env: Env): Promise<Response> {
     (attomSection ? attomSection + "\n" : "") +
     `> Realtor: ${realtorName || "(unknown)"} ${realtorPhone || ""} ${realtorEmail ? `<${realtorEmail}>` : ""}${lookupTag}\n` +
     (realtorLookupResult?.brokerage ? `> Brokerage: ${realtorLookupResult.brokerage}\n` : "") +
-    `> SMS to realtor: ${sms.ok ? ":white_check_mark: sent via GHL (conversation on contact)" : `:x: ${sms.status} ${sms.body.slice(0, 100)}`}\n` +
+    `> SMS to realtor: ${
+      sms.ok
+        ? ":white_check_mark: sent via GHL (conversation on contact)"
+        : sms.body === "no_realtor_phone_skipped"
+          ? ":grey_question: skipped (no realtor phone — opp logged, manual follow-up needed)"
+          : `:x: ${sms.status} ${sms.body.slice(0, 100)}`
+    }\n` +
     (body.listing_url ? `> Listing: ${body.listing_url}\n` : "") +
     `> GHL opp: \`${opportunityId}\` (Realtor Listings → 1. New Listing) [${oppAction}]`;
   const slack = await postSlackMessage(env, SLACK_LISTINGS_CHANNEL, slackText);
@@ -7493,6 +7503,20 @@ Produce the review now. Markdown only, no preamble.`;
     review_markdown: reviewMd,
     sample_ids: samples.map((s) => s.id),
   });
+
+  // 5. Workstream 6 followup — write the latest-pointer KV so the dashboard's
+  //    "What Blake can improve on" cards have data to read. Previously the
+  //    section always rendered the empty-state placeholder because nothing
+  //    populated this key.
+  await env.DIAL_STATE.put(
+    "blake:iteration:latest",
+    JSON.stringify({
+      generated_at: new Date().toISOString(),
+      review_markdown: reviewMd,
+      sample_size: samples.length,
+    }),
+    { expirationTtl: 60 * 60 * 24 * 14 }   // 14d — next review supersedes
+  );
 
   return { ok: true, analyzed: samples.length };
 }
