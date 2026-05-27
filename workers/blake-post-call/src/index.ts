@@ -811,69 +811,90 @@ export default {
     }
 
     // Workstream PR C followup — backfill assignedTo on existing opps.
-    // POST /admin/agents/backfill-assignments?pipeline=acq|listings&assignee=RJ|MIKE
-    // Pages through all opps in the chosen pipeline and assigns the chosen
-    // user to any opp where assignedTo is currently empty. Dry-run by default;
-    // add ?apply=1 to actually write.
+    // POST /admin/agents/backfill-assignments?pipeline=acq|listings&assignee=RJ|MIKE&page=1
+    // Processes ONE pipeline page (up to 100 opps) per invocation so we stay
+    // under the 50-subrequest Worker cap. The response includes `has_next`
+    // so the caller (curl loop or daemon) knows to call again with the next
+    // page until exhausted. Dry-run by default; ?apply=1 to write.
     if (req.method === "POST" && url.pathname === "/admin/agents/backfill-assignments") {
       return (async () => {
         const pipeline = (url.searchParams.get("pipeline") || "acq").toLowerCase();
         const assignee = (url.searchParams.get("assignee") || "RJ").toUpperCase();
         const apply    = url.searchParams.get("apply") === "1";
+        const page     = Math.max(1, Number(url.searchParams.get("page") || "1"));
         const pipelineId = pipeline === "listings" ? REALTOR_LISTINGS_PIPELINE_ID : ACQ_PIPELINE_ID;
         const userId    = assignee === "MIKE" ? USER_MIKE : USER_RJ;
 
         let updated = 0;
-        let scanned = 0;
         let alreadyAssigned = 0;
+        let scanned = 0;
         const errors: string[] = [];
 
-        for (let page = 1; page <= 5; page++) {  // up to 500 opps
-          const res = await fetch(
-            `${GHL_BASE}/opportunities/search?` +
-              new URLSearchParams({
-                location_id: APG_LOCATION_ID,
-                pipeline_id: pipelineId,
-                limit: "100",
-                page: String(page),
-              }).toString(),
-            { headers: ghlHeaders(env.BLAKE_GHL_PIT) }
-          );
-          if (!res.ok) {
-            errors.push(`page ${page}: ${res.status}`);
-            break;
-          }
-          const j: any = await res.json();
-          const opps: any[] = j?.opportunities ?? [];
-          if (!opps.length) break;
-          for (const o of opps) {
-            scanned += 1;
-            if (o?.assignedTo) { alreadyAssigned += 1; continue; }
-            if (!apply) { updated += 1; continue; }
-            try {
-              const r = await fetch(`${GHL_BASE}/opportunities/${o.id}`, {
-                method: "PUT",
-                headers: ghlHeaders(env.BLAKE_GHL_PIT),
-                body: JSON.stringify({ assignedTo: userId }),
-              });
-              if (r.ok) updated += 1;
-              else errors.push(`opp ${o.id}: ${r.status}`);
-            } catch (e: any) {
-              errors.push(`opp ${o.id} threw: ${String(e?.message || e).slice(0, 60)}`);
-            }
-          }
-          if (opps.length < 100) break;
+        // Cap at ~40 writes per invocation (1 search + 40 PUTs = 41 subreqs,
+        // safe under the 50-subreq cap on the Workers paid plan, and well
+        // under 1000 on enterprise).
+        const MAX_WRITES_PER_INVOCATION = 40;
+
+        const res = await fetch(
+          `${GHL_BASE}/opportunities/search?` +
+            new URLSearchParams({
+              location_id: APG_LOCATION_ID,
+              pipeline_id: pipelineId,
+              limit: "100",
+              page: String(page),
+            }).toString(),
+          { headers: ghlHeaders(env.BLAKE_GHL_PIT) }
+        );
+        if (!res.ok) {
+          return new Response(JSON.stringify({ ok: false, error: `page ${page}: ${res.status}` }), {
+            status: 502, headers: { "content-type": "application/json" },
+          });
         }
+        const j: any = await res.json();
+        const opps: any[] = j?.opportunities ?? [];
+
+        for (const o of opps) {
+          scanned += 1;
+          if (o?.assignedTo) { alreadyAssigned += 1; continue; }
+          if (!apply) { updated += 1; continue; }
+          if (updated >= MAX_WRITES_PER_INVOCATION) break;
+          try {
+            const r = await fetch(`${GHL_BASE}/opportunities/${o.id}`, {
+              method: "PUT",
+              headers: ghlHeaders(env.BLAKE_GHL_PIT),
+              body: JSON.stringify({ assignedTo: userId }),
+            });
+            if (r.ok) updated += 1;
+            else errors.push(`opp ${o.id}: ${r.status}`);
+          } catch (e: any) {
+            errors.push(`opp ${o.id} threw: ${String(e?.message || e).slice(0, 60)}`);
+          }
+        }
+
+        // has_next: either we capped this invocation (and need to re-call
+        // the same page) OR we exhausted this page but there's a next page.
+        const cappedThisInvocation = apply && updated >= MAX_WRITES_PER_INVOCATION && scanned < opps.length;
+        const moreOnSamePage = cappedThisInvocation;
+        const morePages = opps.length === 100;
+        const has_next = moreOnSamePage || morePages;
+        const next_page = moreOnSamePage ? page : (morePages ? page + 1 : null);
 
         return new Response(JSON.stringify({
           ok: true,
           dry_run: !apply,
           pipeline,
           assignee,
+          page,
+          page_size: opps.length,
           scanned,
           already_assigned: alreadyAssigned,
           updated,
           errors: errors.slice(0, 10),
+          has_next,
+          next_page,
+          tip: has_next
+            ? `Call again with ?page=${next_page}&apply=${apply ? "1" : "0"}`
+            : "done",
         }, null, 2), { status: 200, headers: { "content-type": "application/json" } });
       })();
     }
