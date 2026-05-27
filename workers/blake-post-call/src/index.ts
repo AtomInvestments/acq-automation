@@ -741,6 +741,61 @@ export default {
     // cache on demand (instead of waiting for next call or cron tick).
     // No auth — the side effect is just reading public-ish data + writing
     // to KV. Worst case someone keeps the cache fresh for us.
+    // Workstream 3 — end-to-end test for mentioned-contact extraction.
+    // POST /admin/extract-test { contact_id, transcript: [{role, message}, ...] }
+    // Runs the same Claude extraction + GHL apply chain the webhook runs, but
+    // skips the HMAC check so a curl from Mike's terminal can validate the
+    // whole flow. Returns the structured extraction + GHL write log.
+    if (req.method === "POST" && url.pathname === "/admin/extract-test") {
+      return (async () => {
+        let body: any = {};
+        try { body = await req.json(); } catch {
+          return new Response(JSON.stringify({ ok: false, error: "invalid_json" }), {
+            status: 400, headers: { "content-type": "application/json" },
+          });
+        }
+        const contactId = (body.contact_id || "").trim();
+        const transcript = Array.isArray(body.transcript) ? body.transcript : [];
+        if (!contactId || !transcript.length) {
+          return new Response(JSON.stringify({
+            ok: false,
+            error: "missing_required",
+            details: "body must include {contact_id: string, transcript: [{role, message}, ...]}",
+          }), { status: 400, headers: { "content-type": "application/json" } });
+        }
+        if (!env.ANTHROPIC_API_KEY) {
+          return new Response(JSON.stringify({ ok: false, error: "ANTHROPIC_API_KEY not bound" }), {
+            status: 503, headers: { "content-type": "application/json" },
+          });
+        }
+        const extraction = await extractStructuredFromTranscript(
+          env.ANTHROPIC_API_KEY, transcript, "", new Date().toISOString()
+        );
+        if (!extraction) {
+          return new Response(JSON.stringify({ ok: false, error: "extraction_failed" }), {
+            status: 502, headers: { "content-type": "application/json" },
+          });
+        }
+        const applyLog = await applyExtractionToGhl(env.BLAKE_GHL_PIT, contactId, extraction);
+        let referralLog: string[] = [];
+        const mentioned = Array.isArray(extraction.mentioned_contacts) ? extraction.mentioned_contacts : [];
+        if (mentioned.length) {
+          const origDetail = await getContactDetail(env.BLAKE_GHL_PIT, contactId);
+          const oc = (origDetail?.contact ?? origDetail) || {};
+          const origFullName = `${(oc.firstName || "").trim()} ${(oc.lastName || "").trim()}`.trim() || contactId;
+          referralLog = await applyMentionedContactsToGhl(
+            env.BLAKE_GHL_PIT, contactId, origFullName, extraction
+          );
+        }
+        return new Response(JSON.stringify({
+          ok: true,
+          extraction,
+          apply_log: applyLog,
+          referral_log: referralLog,
+        }, null, 2), { status: 200, headers: { "content-type": "application/json" } });
+      })();
+    }
+
     if (req.method === "POST" && url.pathname === "/admin/refresh-dashboard") {
       return (async () => {
         try {
@@ -3237,8 +3292,26 @@ async function handleWebhook(req: Request, env: Env, ctx: ExecutionContext): Pro
             const log = await applyExtractionToGhl(env.BLAKE_GHL_PIT, contactId, extraction);
             console.log(
               `[extract] contact=${contactId} temp=${extraction.lead_temp} ` +
-              `callback=${extraction.callback_promised} writes=[${log.join(", ")}]`
+              `callback=${extraction.callback_promised} mentioned=${(extraction.mentioned_contacts || []).length} ` +
+              `writes=[${log.join(", ")}]`
             );
+
+            // Workstream 3 — process mentioned contacts. Needs the original
+            // contact's display name to thread the referral notes/tasks.
+            const mentioned = Array.isArray(extraction.mentioned_contacts) ? extraction.mentioned_contacts : [];
+            if (mentioned.length > 0) {
+              try {
+                const origDetail = await getContactDetail(env.BLAKE_GHL_PIT, contactId);
+                const oc = (origDetail?.contact ?? origDetail) || {};
+                const origFullName = `${(oc.firstName || "").trim()} ${(oc.lastName || "").trim()}`.trim() || callerPhone || contactId;
+                const referralLog = await applyMentionedContactsToGhl(
+                  env.BLAKE_GHL_PIT, contactId, origFullName, extraction
+                );
+                console.log(`[referrals] contact=${contactId} n=${mentioned.length} writes=[${referralLog.join(", ")}]`);
+              } catch (e) {
+                console.error(`[referrals] failed: ${e}`);
+              }
+            }
           })().catch((e) => console.error(`[extract] failed: ${e}`))
         : Promise.resolve(console.log("[extract] ANTHROPIC_API_KEY not bound; skipping structured extraction")),
       // 5. Refresh the live dashboard cache so the SPA at /blake.html sees
@@ -3470,6 +3543,13 @@ function buildOpportunityName(
 // is the SAFETY NET that ensures every call ends with a complete GHL record,
 // independent of whether Blake remembered to fire his in-call tools.
 
+interface MentionedContact {
+  name: string;
+  phone: string | null;        // normalized E.164 if Blake captured one
+  relationship: string;        // e.g. "brother", "tenant", "neighbor", "agent"
+  context: string;             // one-line "why they came up", quote-style if possible
+}
+
 interface ExtractionResult {
   address1: string | null;
   city: string | null;
@@ -3490,6 +3570,7 @@ interface ExtractionResult {
   is_owner: boolean;
   rating_1_to_10: number | null;
   one_line_summary: string;
+  mentioned_contacts: MentionedContact[];   // Workstream 3 — referrals surfaced by Blake mid-call
 }
 
 async function extractStructuredFromTranscript(
@@ -3516,6 +3597,12 @@ Rules:
 - callback_promised: true ONLY if Blake explicitly proposed a time AND seller agreed.
 - callback_time_iso: best-effort ISO 8601 timestamp. The contact's state is "${contactState || "unknown"}", current time is ${nowIso}. "Tomorrow morning" = 9am next day in that state's timezone. "Later today around 4pm" = 4pm today.
 - one_line_summary: 1 sentence, Blake's voice.
+- mentioned_contacts: a NEW person the seller surfaces as the right contact ("call my brother", "the tenant handles it", "talk to my agent Sarah", "my mother-in-law owns it now"). For each, capture:
+    name         — best-effort, capitalized
+    phone        — only if the seller explicitly spoke a number; else null. Normalize to E.164 (+1NNNNNNNNNN).
+    relationship — short label ("brother", "tenant", "agent", "executor", "co-owner", "POA")
+    context      — one-sentence quote-style "why they came up", e.g. "Owner said his brother Mike handles the property and has the keys"
+  Only include people who could be a NEW lead or callable contact. Do NOT include third-party services ("the title company"), dead/deceased relatives, or people who are clearly off-limits ("don't call my wife").
 - DO NOT invent data. Conservative wins.`;
 
   const userPrompt = `Conversation transcript:
@@ -3544,8 +3631,13 @@ Schema:
   "requested_dnc": boolean,
   "is_owner": boolean,
   "rating_1_to_10": integer|null,
-  "one_line_summary": string
-}`;
+  "one_line_summary": string,
+  "mentioned_contacts": [
+    { "name": string, "phone": string|null, "relationship": string, "context": string }
+  ]
+}
+
+mentioned_contacts MUST be an array (use [] when nothing was mentioned). Do NOT include the seller themselves or Blake.`;
 
   const res = await fetch("https://api.anthropic.com/v1/messages", {
     method: "POST",
@@ -3556,7 +3648,10 @@ Schema:
     },
     body: JSON.stringify({
       model: "claude-sonnet-4-6",
-      max_tokens: 1500,
+      // Bumped from 1500 → 2200 to leave headroom for the mentioned_contacts
+      // array (Workstream 3). Typical extractions clear in ~600 tokens; the
+      // extra cap covers cases where Blake collected 3-4 referrals.
+      max_tokens: 2200,
       system: systemPrompt,
       messages: [{ role: "user", content: userPrompt }],
     }),
@@ -3692,6 +3787,174 @@ async function applyExtractionToGhl(
     // Create new ACQ opportunity for this contact at the target stage
     const r = await createOpportunity(pit, contactId, { name: oppName, pipelineStageId: targetStage });
     log.push(`opp_create stage=${targetStage.slice(0, 8)}: ${r.ok ? `ok (id=${r.oppId})` : `${r.status} ${r.body.slice(0, 80)}`}`);
+  }
+
+  return log;
+}
+
+// ---- Workstream 3: mentioned-contact processing ----------------------------
+//
+// When Blake surfaces a new person mid-call ("call my brother", "the tenant
+// handles it"), the extraction schema captures them as `mentioned_contacts`.
+// This function:
+//   1. Looks up by phone (if provided) to avoid duplicating
+//   2. Creates a new GHL contact when missing, with tags + a note linking
+//      back to the original
+//   3. Opens an ACQ opportunity at STAGE_UNQUALIFIED (treated as "Mentioned
+//      Referral" until that stage gets provisioned in GHL — see PR notes)
+//   4. Creates Task 1 on RJ (4h due) and Task 2 on Mike (28h due — follows
+//      up on Task 1)
+//   5. Cross-links the original contact with a note about the referral
+//
+// Returns a list of brief outcome strings for logging.
+async function applyMentionedContactsToGhl(
+  pit: string,
+  originalContactId: string,
+  originalFullName: string,
+  extraction: ExtractionResult
+): Promise<string[]> {
+  const log: string[] = [];
+  const mentioned = Array.isArray(extraction.mentioned_contacts) ? extraction.mentioned_contacts : [];
+  if (!mentioned.length) return log;
+
+  for (const m of mentioned) {
+    const name = (m.name || "").trim();
+    if (!name) continue;
+    const relationship = (m.relationship || "unknown").trim().toLowerCase();
+    const context = (m.context || "").trim();
+    const phone = (m.phone || "").trim();
+    // Best-effort name split
+    const parts = name.split(/\s+/).filter(Boolean);
+    const firstName = parts[0] || name;
+    const lastName  = parts.slice(1).join(" ") || "";
+
+    // 1. Dedupe by phone if provided. If a GHL contact already has this phone
+    //    we re-use that contact rather than creating a fork.
+    let newContactId = "";
+    if (phone) {
+      try {
+        newContactId = (await findContactByPhone(pit, phone)) || "";
+      } catch {}
+    }
+
+    // 2. Create the contact if we couldn't find one.
+    if (!newContactId) {
+      try {
+        const createRes = await fetch(`${GHL_BASE}/contacts/`, {
+          method: "POST",
+          headers: ghlHeaders(pit),
+          body: JSON.stringify({
+            locationId: APG_LOCATION_ID,
+            firstName,
+            lastName,
+            phone:    phone || undefined,
+            source:   "Blake referral — mentioned during call",
+            tags:     ["mentioned-referral", "blake-referral", `relationship-${relationship.replace(/[^a-z0-9-]+/g, "-")}`],
+          }),
+        });
+        const createText = await createRes.text();
+        try {
+          newContactId =
+            JSON.parse(createText)?.contact?.id ||
+            JSON.parse(createText)?.id ||
+            "";
+        } catch {}
+        if (!newContactId) {
+          log.push(`referral_create_failed[${name}]: ${createRes.status} ${createText.slice(0, 80)}`);
+          continue;
+        }
+      } catch (e) {
+        log.push(`referral_create_threw[${name}]: ${String(e).slice(0, 80)}`);
+        continue;
+      }
+    } else {
+      // Existing contact — re-tag so they surface in the mentioned-referral filter
+      await addTag(pit, newContactId, "mentioned-referral").catch(() => {});
+    }
+
+    // 3. Note on the NEW contact pointing back to the original.
+    const referralNoteForNew = [
+      `REFERRED FROM Blake call`,
+      `Original contact ID: ${originalContactId}`,
+      `Original contact name: ${originalFullName}`,
+      `Relationship to original: ${relationship}`,
+      context ? `Context: ${context}` : null,
+      phone ? `Phone (as captured by Blake): ${phone}` : "Phone: not captured — RJ to find",
+      `Recorded: ${new Date().toISOString()}`,
+    ].filter(Boolean).join("\n");
+    await addNote(pit, newContactId, referralNoteForNew).catch(() => {});
+
+    // 4. Note on the ORIGINAL contact pointing forward to the referral.
+    const referralNoteForOriginal = [
+      `REFERRED TO: ${name} (${relationship})`,
+      `New contact ID: ${newContactId}`,
+      context ? `Context: ${context}` : null,
+      phone ? `Phone provided: ${phone}` : `Phone: not captured`,
+      `Recorded: ${new Date().toISOString()}`,
+    ].filter(Boolean).join("\n");
+    await addNote(pit, originalContactId, referralNoteForOriginal).catch(() => {});
+
+    // 5. Open opportunity for the new contact. Use UNQUALIFIED stage as the
+    //    placeholder until a "Mentioned Referral" stage exists in the ACQ
+    //    pipeline. The opp name encodes the referral source so RJ doesn't need
+    //    to click into the contact to know where this came from.
+    const oppName = `REFERRAL — ${name} (${relationship}) / referred by ${originalFullName}`.slice(0, 180);
+    try {
+      const opp = await createOpportunity(pit, newContactId, {
+        name: oppName,
+        pipelineStageId: STAGE_UNQUALIFIED,
+      });
+      log.push(`referral_opp[${name}]: ${opp.ok ? `ok (${(opp.oppId || "").slice(0, 8)})` : `${opp.status}`}`);
+    } catch (e) {
+      log.push(`referral_opp[${name}]: threw`);
+    }
+
+    // 6. Task 1 → RJ (4h due). If no phone, the task title shifts to
+    //    "Find phone number" so RJ doesn't get a dead task.
+    const task1Title = phone
+      ? `Call ${name} — referred by ${originalFullName} (${relationship})`
+      : `Find phone number for ${name} — referred by ${originalFullName} (${relationship})`;
+    const task1DueIso = new Date(Date.now() + 4 * 3600 * 1000).toISOString();
+    let task1Id = "";
+    try {
+      const t1 = await createTaskOnContact(pit, newContactId, {
+        title: task1Title,
+        body: [
+          `Mentioned-contact referral surfaced by Blake during a call with ${originalFullName}.`,
+          `Relationship: ${relationship}`,
+          context ? `Context: ${context}` : null,
+          phone ? `Phone (Blake-captured): ${phone}` : `No phone captured — start by finding it.`,
+          `Original contact ID: ${originalContactId}`,
+        ].filter(Boolean).join("\n"),
+        dueDate: task1DueIso,
+        assignedTo: USER_RJ,
+      });
+      task1Id = (t1 as any).taskId || "";
+      log.push(`referral_task1[${name}]: ${t1.ok ? "ok" : `${t1.status}`}`);
+    } catch (e) {
+      log.push(`referral_task1[${name}]: threw`);
+    }
+
+    // 7. Task 2 → Mike, due 24h AFTER task 1 (so 28h from now). Includes the
+    //    task 1 reference so Mike can scroll right to it.
+    const task2DueIso = new Date(Date.now() + 28 * 3600 * 1000).toISOString();
+    try {
+      const t2 = await createTaskOnContact(pit, newContactId, {
+        title: `Follow up with RJ — did the call to ${name} happen? Outcome?`,
+        body: [
+          `Check whether RJ's task 1 (assigned ${task1DueIso}) was completed.`,
+          task1Id ? `Task 1 reference: ${task1Id}` : null,
+          `Original contact ID: ${originalContactId}`,
+          `Original contact name: ${originalFullName}`,
+          `If RJ didn't reach ${name}, capture the blocker and re-queue.`,
+        ].filter(Boolean).join("\n"),
+        dueDate: task2DueIso,
+        assignedTo: USER_MIKE,
+      });
+      log.push(`referral_task2[${name}]: ${t2.ok ? "ok" : `${t2.status}`}`);
+    } catch (e) {
+      log.push(`referral_task2[${name}]: threw`);
+    }
   }
 
   return log;
