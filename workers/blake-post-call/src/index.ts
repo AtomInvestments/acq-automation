@@ -737,6 +737,29 @@ export default {
       return handleInsightsSnap(env, key);
     }
 
+    // Workstream 4a — Blake ElevenLabs agent config (read-only audit endpoint).
+    // GET /admin/blake/agent-config → returns the live agent config JSON.
+    // Used to populate docs/blake-elevenlabs-audit.md "current" column.
+    // No auth gate (matches the other /admin endpoints — secret-by-URL).
+    if (req.method === "GET" && url.pathname === "/admin/blake/agent-config") {
+      return (async () => {
+        if (!env.ELEVENLABS_API_KEY) {
+          return new Response(JSON.stringify({ ok: false, error: "ELEVENLABS_API_KEY not bound" }), {
+            status: 503, headers: { "content-type": "application/json" },
+          });
+        }
+        const r = await fetch(
+          `https://api.elevenlabs.io/v1/convai/agents/${BLAKE_AGENT_ID}`,
+          { headers: { "xi-api-key": env.ELEVENLABS_API_KEY } }
+        );
+        const text = await r.text();
+        return new Response(text, {
+          status: r.status,
+          headers: { "content-type": "application/json" },
+        });
+      })();
+    }
+
     // /admin/refresh-dashboard — manual trigger to populate the dashboard
     // cache on demand (instead of waiting for next call or cron tick).
     // No auth — the side effect is just reading public-ish data + writing
