@@ -1404,13 +1404,19 @@ function readAgentActivityStub(_env: { DIAL_STATE: KVNamespace }): AgentActivity
 // PR C — async reader that pulls real activity + reviews from KV. Falls back
 // to the stub when nothing has been aggregated yet (KV empty).
 export async function readAgentActivity(env: { DIAL_STATE: KVNamespace }): Promise<AgentActivity[]> {
-  // Mirrors APG_AGENT_ROSTER in index.ts. Adam was added 2026-05-27 after
-  // we discovered ~224 opps are owned by his GHL user from the Podio
-  // import.
+  // Mirrors APG_AGENT_ROSTER in index.ts. Corrected 2026-05-27 after Mido
+  // pasted GHL Settings → My Staff. Bug fixes:
+  //   - vDKOqPSkA8nLkia5skd0 is Jef De los Santos, NOT Adam (was mis-labeled)
+  //   - Real Adam is vCjuvuuQ7p7K5GUODujQ
+  //   - RJ id had l/I visual collision; correct char is capital I
+  //   - Added John Williams (360 Synergy Tech) — owns 923 opps incl. the
+  //     9 stale Qualified ones
   const ROSTER = [
-    { user_id: "EvxJmnll1hlJtzpW14BE", name: "RJ Fonseca",    role: "Acquisitions Partner" },
-    { user_id: "Vj4WwH1ovxGN5Hv5Kq17", name: "Mike (Yasser)", role: "PM / Marketing Systems" },
-    { user_id: "vDKOqPSkA8nLkia5skd0", name: "Adam Chodes",   role: "Owner — APG" },
+    { user_id: "EvxJmnll1hIJtzpW14BE", name: "RJ Fonseca",        role: "Acquisitions Partner" },
+    { user_id: "Vj4WwH1ovxGN5Hv5Kq17", name: "Mike Yasser",       role: "PM / Marketing Systems" },
+    { user_id: "vCjuvuuQ7p7K5GUODujQ", name: "Adam Chodes",       role: "Owner — APG" },
+    { user_id: "vDKOqPSkA8nLkia5skd0", name: "Jef De los Santos", role: "ACQ Workhorse — 858 opps" },
+    { user_id: "1X0bfFpMocO5hRewdjV0", name: "John Williams",     role: "External (360 Synergy) — 923 opps" },
   ];
   const out: AgentActivity[] = [];
   for (const u of ROSTER) {
