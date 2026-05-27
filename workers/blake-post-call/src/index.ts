@@ -804,8 +804,33 @@ export default {
     // started polling.
     if (req.method === "POST" && url.pathname === "/admin/qualified-alerts/run") {
       return (async () => {
+        // KILL-SWITCH: require ?confirm=YES query param to actually run.
+        const confirm = url.searchParams.get("confirm");
+        if (confirm !== "YES") {
+          return new Response(JSON.stringify({
+            ok: false,
+            error: "killswitch_engaged",
+            message: "Qualified-stage alerts are DISABLED. Re-enable by posting `qualified_alerts:enabled = true` to KV, then call this endpoint with ?confirm=YES.",
+          }), { status: 423, headers: { "content-type": "application/json" } });
+        }
         await pollQualifiedStageAlerts(env);
         return new Response(JSON.stringify({ ok: true, ran_at: new Date().toISOString() }), {
+          status: 200, headers: { "content-type": "application/json" },
+        });
+      })();
+    }
+
+    // Kill-switch toggle. POST /admin/qualified-alerts/enable?value=true|false
+    if (req.method === "POST" && url.pathname === "/admin/qualified-alerts/enable") {
+      return (async () => {
+        const val = (url.searchParams.get("value") || "").toLowerCase();
+        if (val !== "true" && val !== "false") {
+          return new Response(JSON.stringify({ ok: false, error: "value must be true or false" }), {
+            status: 400, headers: { "content-type": "application/json" },
+          });
+        }
+        await env.DIAL_STATE.put("qualified_alerts:enabled", val);
+        return new Response(JSON.stringify({ ok: true, enabled: val === "true" }), {
           status: 200, headers: { "content-type": "application/json" },
         });
       })();
@@ -1447,8 +1472,13 @@ export default {
       console.error(`[cron-vault-ghl] failed: ${e}`);
     }
     // Slice I (P0) — Qualified-stage alerts + RJ auto-task + Mike escalation.
+    // KILL-SWITCH: Mido stopped this 2026-05-27 23:07 UTC ("stop it").
+    // Gated on KV key `qualified_alerts:enabled` === "true". Default OFF.
     try {
-      await pollQualifiedStageAlerts(env);
+      const enabled = await env.DIAL_STATE.get("qualified_alerts:enabled");
+      if (enabled === "true") {
+        await pollQualifiedStageAlerts(env);
+      }
     } catch (e) {
       console.error(`[cron-qualified-alerts] failed: ${e}`);
     }
