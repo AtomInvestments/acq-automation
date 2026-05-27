@@ -18,7 +18,7 @@
         { "label": "Post-call webhook → GHL backup note + recording URL + blake-called tag", "done": true },
         { "label": "/conversation-init webhook with Seller File pre-call briefing", "done": true },
         { "label": "Post-call structured extractor (Claude) → auto-writes address / lead temp / RJ task / opportunity stage", "done": true },
-        { "label": "Auto-create opportunity in ACQ pipeline with APG-format name 'Name / Address / Phone'", "done": true },
+        { "label": "Auto-create opportunity in ACQ pipeline with APG-format name 'NAME - ADDRESS - NUMBER' (hyphens, 2026-05-27)", "done": true },
         { "label": "Voice prompt v1.3 (no narration / read Seller File / end-call confirmation read-back)", "done": true },
         { "label": "Outbound dialer Worker (warm-up curve, TCPA windows, ElevenLabs outbound API)", "done": true },
         { "label": "Cron Trigger every 15 min — auto-dial unqualified contacts within quota", "done": true },
@@ -26,7 +26,13 @@
         { "label": "Adam records 30-min voice clone session (hard gate before scaling)", "done": false },
         { "label": "RJ's GHL user ID provisioned (replaces Mike fallback on callback tasks)", "done": true },
         { "label": "TCPA consent triage on the 398 unqualified (Adam review)", "done": false },
-        { "label": "Pilot 10 real outbound dials + transcript review", "done": false }
+        { "label": "Pilot 10 real outbound dials + transcript review", "done": false },
+        { "label": "ElevenLabs agent audit applied 2026-05-27: voice=Brian (A/B w/ Roger), TTS=eleven_turbo_v2, LLM=gemini-2.5-flash, ASR=26 keywords, turn_timeout=6s, max_tokens=-1", "done": true },
+        { "label": "Auto-publish endpoint for /admin/blake/agent-config-apply (currently requires manual Publish click in ElevenLabs dashboard)", "done": false },
+        { "label": "Cold-inbound contact auto-create on /webhook — Blake calls from unknown numbers now land in GHL (was silently dropped)", "done": true },
+        { "label": "condition_notes from extraction written to CF_VA_NOTES (was extracted but discarded)", "done": true },
+        { "label": "Dialer picker fix: drop permanent 'blake-called' tag filter; 30-day last_attempt KV is the cadence control", "done": true },
+        { "label": "Mentioned-contact referrals: extraction schema captures {name, phone, relationship, context}; auto-creates contact + opp + RJ task (4h) + Mike follow-up (28h)", "done": true }
       ]
     },
     {
@@ -49,8 +55,12 @@
         { "label": "SMS message: Mike-with-APG B2B template ('active buyer backed by private capital', signed Mike) — single variant per user direction", "done": true },
         { "label": "Title-case realtor name (VEERA BODAVULA → Veera Bodavula) for SMS + opp name + GHL contact", "done": true },
         { "label": "Strip 'Sq Ft' / 'bd' metadata prefix from parsed street address (fixes '604 Sq Ft 544 Westgate Dr' bug)", "done": true },
+        { "label": "Skip SMS when realtor phone is missing (2026-05-27 — no more 422 'Missing phone number' errors flooding #listed-leads)", "done": true },
+        { "label": "Listing opp assignedTo defaults to RJ (was unassigned; now visible in per-agent reviews)", "done": true },
+        { "label": "ATTOM enrichment: AVM as ARV, motivated-seller scoring (absentee / high-equity / recent-transfer), full property note on contact + custom fields", "done": true },
         { "label": "Realtor SMS reply handler: realtor replies in GHL conversation → auto-thread reply on the original #listed-leads Slack alert + bump opp stage", "done": false },
-        { "label": "Future: Apify / RentCast ARV integration (replace flat $30/sqft assumption with real comp data)", "done": false }
+        { "label": "Future: Apify / RentCast ARV integration (replace flat $30/sqft assumption with real comp data)", "done": false },
+        { "label": "ATTOM paid tier (Property Pro + Foreclosure) — DEFERRED until MLS access lands per 2026-05-26 meeting", "done": false }
       ]
     },
     {
@@ -68,6 +78,41 @@
         { "label": "Auto-promote winning version (DEFERRED — Adam vetoed in May 26 meeting; manual apply only)", "done": false },
         { "label": "Daily Slack summary of Blake calls + GHL conversations → #listed-leads (cron 0 4 * * *)", "done": true },
         { "label": "Local vault-sync daemon installed as Windows scheduled task (APGVaultSync, restart-on-failure)", "done": true }
+      ]
+    },
+    {
+      "id": "workstreams-may-26-27",
+      "name": "Workstreams — May 26-27 brief",
+      "status": "active",
+      "summary": "Adam's May 26 meeting brief + Mido's May 27 dashboard rebuild. Six numbered workstreams plus ongoing follow-ups.",
+      "tasks": [
+        { "label": "WS1a Personas doc — 5 personas (Heir / Tired Landlord / Long-Time Owner / Birmingham Out-of-State / Distressed) → friendly/professional/traditional voice mapping", "done": true },
+        { "label": "WS1b Variant briefs — 1-paragraph positioning + hero headline + form CTA per variant. Awaiting Mido approval before any HTML.", "done": false },
+        { "label": "WS1c Edge routing — cookie-based 33/33/33 split at Worker edge + Clarity custom tag", "done": false },
+        { "label": "WS1d Variant copy live on home + landing pages", "done": false },
+        { "label": "WS1e Conversion tracking per variant (unique visitors only)", "done": false },
+        { "label": "WS1f Internal-IP filter (Egypt/India/Taiwan excluded from variant metrics)", "done": false },
+        { "label": "WS2 Google Places autofill + 3-variant SMS (friendly/professional/traditional) + RJ task + re-submit dedupe note on /landing-lead", "done": true },
+        { "label": "WS2 Google Places API key provisioned + restricted to atompropertygroup.com referrer", "done": false },
+        { "label": "WS2 Re-push 30 zip landing pages with autofill JS (python push_zip_pages.py)", "done": false },
+        { "label": "WS3 Mentioned-contact extraction → contact + opp + dual task chain (RJ 4h + Mike 28h follow-up)", "done": true },
+        { "label": "WS3 GHL provisioning — create 'Mentioned Referral' stage + 'referred_by_contact_id' custom field", "done": false },
+        { "label": "WS4a ElevenLabs agent audit table (14 rows) + read-only /admin/blake/agent-config endpoint", "done": true },
+        { "label": "WS4a Apply audit recommendations: Brian voice + Turbo v2 + Gemini 2.5 Flash + ASR keywords + 6s turn", "done": true },
+        { "label": "WS4a Brian vs Roger A/B (50/50 per call via /conversation-init override) + post-call attribution tags", "done": true },
+        { "label": "WS4b Vault-driven prompt iteration (Slack + GHL + calls aggregator) + Opus 4.7 review with unified diff output", "done": true },
+        { "label": "WS4b blake:iteration:latest KV pointer (populates 'What Blake can improve on' cards on dashboard)", "done": true },
+        { "label": "WS4b Per-prompt-version conversion tracking", "done": false },
+        { "label": "WS5a docs/attom-capabilities.md", "done": true },
+        { "label": "WS5b docs/listing-bot-workflow.md", "done": true },
+        { "label": "WS5c Repo docs sync: GitHub docs/*.md → APG-Vault/Docs/ via APGRepoDocsSync scheduled task (15-min cadence)", "done": true },
+        { "label": "WS6 Dashboard rebuild — tabs (Overview / Blake Calls / GHL Activity / Websites / Figma / Team / Voice A/B / Costs / Tracker / Variants)", "done": true },
+        { "label": "WS6 APG brand recolor (cream + ink navy + gold — was generic dark blue)", "done": true },
+        { "label": "WS6 Per-agent activity aggregator + Opus AI review (RJ + Mike + Adam) → APG-Vault/Operations/Agent-Reviews/", "done": true },
+        { "label": "WS6 Calltools API integration (per-number cost + minutes + assignee on Costs tab)", "done": true },
+        { "label": "WS6 Dashboard auto-refresh every 60s when idle + interactive tracker checkboxes", "done": true },
+        { "label": "WS6 Justus + Brady GHL user_ids — add to APG_AGENT_ROSTER when known", "done": false },
+        { "label": "WS6 RJ deep-view: per-period drill-down on opps moved + realtors connected with + $ values", "done": false }
       ]
     },
     {
@@ -102,7 +147,9 @@
         { "label": "APG logo wired into Blake dashboard", "done": true },
         { "label": "SmarterContact account email migration to mithchell@atompropertygroup.org", "done": false },
         { "label": "Worker #3: slack-listener replaces slack.yml cron", "done": false },
-        { "label": "Worker #4: sms-reply-handler replaces sms.yml cron", "done": false }
+        { "label": "Worker #4: sms-reply-handler replaces sms.yml cron", "done": false },
+        { "label": "Calltools API integration: CALLTOOLS_API_KEY Worker secret + /admin/costs/calltools endpoint + dashboard Costs tab", "done": true },
+        { "label": "Google Places API: GOOGLE_PLACES_API_KEY provisioning + edge proxy /places/autocomplete + /places/details", "done": false }
       ]
     }
   ]

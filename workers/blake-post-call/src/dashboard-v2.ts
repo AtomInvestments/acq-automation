@@ -130,27 +130,43 @@ function dashboardHead(): string {
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>APG ACQ — Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
+/* APG editorial brand — cream paper + ink navy + gold accents.
+   Mirrors /insights and /blake.html. Mido feedback 2026-05-27:
+   "coloring scheme is really bad. It feels so AI made." Generic dark
+   mode out, brand palette in. */
 :root {
-  --bg:        #0A0E14;
-  --bg-2:      #0F141C;
-  --bg-3:      #161D28;
-  --panel:     #131A24;
-  --border:    #1F2937;
-  --border-2:  #2A3441;
-  --text:      #E5E7EB;
-  --text-dim:  #9CA3AF;
-  --text-mute: #6B7280;
-  --accent:    #60A5FA;
-  --accent-2:  #A78BFA;
-  --good:      #34D399;
-  --warn:      #FBBF24;
-  --bad:       #F87171;
-  --hot:       #EF4444;
-  --warm:      #F59E0B;
-  --nurture:   #38BDF8;
-  --cold:      #6B7280;
-  --dnc:       #94A3B8;
+  --paper:     #FFFFFF;
+  --cream:     #FAF7EC;
+  --cream-2:   #F3EED8;
+  --bg:        #FAF7EC;
+  --bg-2:      #FFFFFF;
+  --bg-3:      #F3EED8;
+  --panel:     #FFFFFF;
+  --border:    #E5E0C8;
+  --border-2:  #C9C2A8;
+  --ink:       #0A1F44;
+  --ink-soft:  #1A2840;
+  --text:      #101827;
+  --text-dim:  #5A6786;
+  --text-mute: #8A93AA;
+  --gold:      #F5C518;
+  --gold-soft: #FFE58A;
+  --gold-wash: #FFF6D0;
+  --gold-deep: #B58800;
+  --accent:    #0A1F44;
+  --accent-2:  #B58800;
+  --good:      #0e6e2f;
+  --warn:      #C77B00;
+  --bad:       #8b1a1a;
+  --hot:       #B91C1C;
+  --warm:      #EA580C;
+  --nurture:   #2563EB;
+  --cold:      #5A6786;
+  --dnc:       #6B625A;
 }
 * { box-sizing: border-box; }
 html, body {
@@ -158,189 +174,313 @@ html, body {
   padding: 0;
   background: var(--bg);
   color: var(--text);
-  font-family: -apple-system, "Inter", "Segoe UI", system-ui, sans-serif;
+  font-family: "Inter", -apple-system, "Segoe UI", system-ui, sans-serif;
   font-size: 13px;
-  line-height: 1.45;
+  line-height: 1.5;
   -webkit-font-smoothing: antialiased;
 }
+.serif { font-family: "Playfair Display", Georgia, serif; }
 .mono, .num { font-family: "IBM Plex Mono", "JetBrains Mono", "SF Mono", Consolas, monospace; font-variant-numeric: tabular-nums; }
-a { color: var(--accent); text-decoration: none; }
-a:hover { text-decoration: underline; }
+a { color: var(--ink); text-decoration: none; border-bottom: 1px solid var(--gold); }
+a:hover { color: var(--gold-deep); }
 
-/* Layout */
+/* Editorial masthead */
 header.topbar {
   display: flex; align-items: center; justify-content: space-between;
-  padding: 12px 24px;
+  padding: 22px 32px 18px;
+  border-top: 5px solid var(--ink);
   border-bottom: 1px solid var(--border);
-  background: var(--bg-2);
+  background: var(--paper);
+  position: relative;
 }
-header.topbar .brand { font-weight: 600; letter-spacing: 0.02em; font-size: 14px; }
-header.topbar .meta  { color: var(--text-mute); font-size: 12px; }
+header.topbar::before {
+  content: ""; position: absolute; left: 0; top: 0;
+  width: 160px; height: 5px; background: var(--gold);
+}
+header.topbar .brand {
+  font-family: "Playfair Display", Georgia, serif;
+  font-weight: 700; font-size: 22px; color: var(--ink);
+  letter-spacing: -0.01em;
+}
+header.topbar .brand em { color: var(--gold-deep); font-style: italic; font-weight: 600; }
+header.topbar .meta  {
+  color: var(--text-mute); font-size: 11px;
+  text-transform: uppercase; letter-spacing: 0.18em;
+}
 
-main { padding: 20px 24px; max-width: 1600px; margin: 0 auto; }
+main { padding: 24px 32px 80px; max-width: 1500px; margin: 0 auto; }
 
 /* KPI strip */
-.kpi-row { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; margin-bottom: 24px; }
+.kpi-row { display: grid; grid-template-columns: repeat(6, 1fr); gap: 14px; margin-bottom: 28px; }
 .kpi {
-  background: var(--panel);
+  background: var(--paper);
   border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 14px 16px;
+  border-radius: 4px;
+  padding: 16px 18px;
+  position: relative;
 }
-.kpi .label { color: var(--text-mute); font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px; }
-.kpi .value { font-size: 22px; font-weight: 600; font-family: "IBM Plex Mono", monospace; }
+.kpi::before {
+  content: ""; position: absolute; left: 0; top: 0;
+  width: 100%; height: 2px; background: var(--gold);
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.kpi:hover::before { opacity: 1; }
+.kpi .label { color: var(--text-mute); font-size: 10px; text-transform: uppercase; letter-spacing: 0.14em; margin-bottom: 8px; font-weight: 600; }
+.kpi .value { font-size: 26px; font-weight: 700; font-family: "Playfair Display", Georgia, serif; color: var(--ink); }
 .kpi .delta { color: var(--text-dim); font-size: 11px; margin-top: 4px; }
 
 /* Sections */
 section.panel {
-  background: var(--panel);
+  background: var(--paper);
   border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 18px 20px;
-  margin-bottom: 20px;
+  border-radius: 4px;
+  padding: 22px 24px;
+  margin-bottom: 22px;
 }
 section.panel h2 {
-  font-size: 13px; text-transform: uppercase; letter-spacing: 0.1em;
-  color: var(--text-dim); margin: 0 0 14px 0; font-weight: 600;
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 22px; font-weight: 700;
+  color: var(--ink); margin: 0 0 16px 0;
+  letter-spacing: -0.01em;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 12px;
 }
+section.panel h2 em { color: var(--gold-deep); font-style: italic; font-weight: 600; }
 
-/* Funnel */
-.funnel { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+/* Funnel — editorial newspaper boxes */
+.funnel { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
 .funnel .step {
-  background: var(--bg-3);
-  border: 1px solid var(--border-2);
-  border-radius: 6px;
-  padding: 10px 12px;
+  background: var(--cream); border: 1px solid var(--border);
+  border-radius: 4px; padding: 14px 14px;
+  position: relative; overflow: hidden;
 }
-.funnel .step .name { color: var(--text-mute); font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; }
-.funnel .step .count { font-size: 20px; font-weight: 600; font-family: "IBM Plex Mono", monospace; margin-top: 2px; }
-.funnel .step .pct { color: var(--text-dim); font-size: 11px; margin-top: 2px; }
+.funnel .step::before {
+  content: ""; position: absolute; left: 0; top: 0;
+  width: 3px; height: 100%; background: var(--gold);
+}
+.funnel .step .name { color: var(--text-mute); font-size: 9px; text-transform: uppercase; letter-spacing: 0.14em; font-weight: 700; }
+.funnel .step .count { font-size: 28px; font-weight: 700; font-family: "Playfair Display", Georgia, serif; color: var(--ink); margin-top: 4px; }
+.funnel .step .pct { color: var(--gold-deep); font-size: 11px; margin-top: 2px; font-weight: 600; }
 
 /* Two-column */
 .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
 @media (max-width: 1100px) { .grid-2 { grid-template-columns: 1fr; } }
 
 /* Filters */
-.filters { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; align-items: center; }
+.filters { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 16px; align-items: center; }
 .filters .group { display: flex; align-items: center; gap: 6px; }
-.filters label { color: var(--text-mute); font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; }
+.filters label { color: var(--text-mute); font-size: 10px; text-transform: uppercase; letter-spacing: 0.12em; font-weight: 600; }
 .filters select, .filters input {
-  background: var(--bg-3);
+  background: var(--paper);
   border: 1px solid var(--border-2);
-  color: var(--text);
-  padding: 5px 8px;
+  color: var(--ink);
+  padding: 6px 10px;
   font-size: 12px;
-  border-radius: 4px;
+  border-radius: 3px;
+  font-family: "Inter", sans-serif;
 }
 .filters .toggle { color: var(--text-dim); font-size: 12px; cursor: pointer; user-select: none; }
-.filters .toggle input { margin-right: 4px; vertical-align: middle; }
+.filters .toggle input { margin-right: 4px; vertical-align: middle; accent-color: var(--ink); }
 
-/* Table */
+/* Table — editorial paper feel */
 table.calls {
-  width: 100%; border-collapse: collapse; font-size: 12px;
+  width: 100%; border-collapse: collapse; font-size: 13px;
+  background: var(--paper);
 }
 table.calls thead th {
-  text-align: left; color: var(--text-mute); font-weight: 500;
-  text-transform: uppercase; letter-spacing: 0.06em; font-size: 10px;
-  padding: 8px 10px; border-bottom: 1px solid var(--border-2);
+  text-align: left; color: var(--text-mute); font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.12em; font-size: 10px;
+  padding: 12px 14px; border-bottom: 2px solid var(--ink);
+  background: var(--cream);
 }
 table.calls tbody td {
-  padding: 8px 10px; border-bottom: 1px solid var(--border);
+  padding: 11px 14px; border-bottom: 1px solid var(--border);
   vertical-align: top;
 }
-table.calls tbody tr { cursor: pointer; }
-table.calls tbody tr:hover { background: var(--bg-3); }
+table.calls tbody tr { cursor: pointer; transition: background 0.1s; }
+table.calls tbody tr:hover { background: var(--gold-wash); }
 
-/* Pills */
-.pill { display: inline-block; padding: 2px 7px; border-radius: 10px; font-size: 10px;
-  font-weight: 500; text-transform: uppercase; letter-spacing: 0.04em; }
-.pill.hot      { background: rgba(239,68,68,0.15);   color: #FCA5A5; }
-.pill.warm     { background: rgba(245,158,11,0.15);  color: #FCD34D; }
-.pill.nurture  { background: rgba(56,189,248,0.15);  color: #93C5FD; }
-.pill.cold     { background: rgba(107,114,128,0.18); color: #D1D5DB; }
-.pill.dnc      { background: rgba(148,163,184,0.18); color: #CBD5E1; }
-.pill.unknown  { background: rgba(107,114,128,0.18); color: #D1D5DB; }
+/* Pills — editorial badges */
+.pill { display: inline-block; padding: 3px 9px; border-radius: 3px; font-size: 10px;
+  font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; }
+.pill.hot      { background: #FEE2E2; color: #B91C1C; border: 1px solid #FCA5A5; }
+.pill.warm     { background: #FED7AA; color: #C2410C; border: 1px solid #FDBA74; }
+.pill.nurture  { background: #DBEAFE; color: #1D4ED8; border: 1px solid #93C5FD; }
+.pill.cold     { background: #E5E0C8; color: #5A6786; border: 1px solid #C9C2A8; }
+.pill.dnc      { background: #F4F4F5; color: #525B6E; border: 1px solid #D4D4D8; }
+.pill.unknown  { background: var(--cream); color: var(--text-mute); border: 1px solid var(--border); }
 
 /* Cost table */
-table.cost { width: 100%; border-collapse: collapse; font-size: 12px; }
-table.cost th, table.cost td { padding: 6px 10px; text-align: right; }
+table.cost { width: 100%; border-collapse: collapse; font-size: 13px; }
+table.cost th, table.cost td { padding: 10px 12px; text-align: right; }
 table.cost th:first-child, table.cost td:first-child { text-align: left; }
-table.cost thead th { color: var(--text-mute); font-weight: 500; text-transform: uppercase; font-size: 10px; letter-spacing: 0.06em; border-bottom: 1px solid var(--border-2); }
-table.cost tbody td { border-bottom: 1px solid var(--border); font-family: "IBM Plex Mono", monospace; }
-table.cost tfoot td { padding-top: 10px; font-weight: 600; }
+table.cost thead th { color: var(--text-mute); font-weight: 700; text-transform: uppercase; font-size: 10px; letter-spacing: 0.12em; border-bottom: 2px solid var(--ink); background: var(--cream); }
+table.cost tbody td { border-bottom: 1px solid var(--border); font-family: "IBM Plex Mono", monospace; color: var(--ink); }
+table.cost tfoot td { padding-top: 14px; font-weight: 700; color: var(--ink); border-top: 2px solid var(--ink); }
 
-/* Improve cards */
-.improve-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+/* Improve cards — editorial pull-quote feel */
+.improve-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
 .improve-cards .card {
-  background: var(--bg-3); border: 1px solid var(--border-2); border-radius: 6px;
-  padding: 12px 14px; font-size: 12px; color: var(--text-dim); line-height: 1.5;
+  background: var(--cream); border-left: 3px solid var(--gold);
+  border-radius: 2px;
+  padding: 16px 18px; font-size: 13px; color: var(--ink); line-height: 1.55;
+  font-style: italic;
 }
-.improve-cards .card .rank { color: var(--accent); font-weight: 600; margin-right: 6px; }
-.improve-cards .empty { color: var(--text-mute); font-style: italic; }
+.improve-cards .card .rank { color: var(--gold-deep); font-weight: 700; margin-right: 6px; font-style: normal; }
+.improve-cards .empty { color: var(--text-mute); font-style: italic; background: var(--paper); border-left-color: var(--border); }
+
+/* Realtor activity rows */
+table.activity {
+  width: 100%; border-collapse: collapse; font-size: 13px;
+}
+table.activity thead th {
+  text-align: left; color: var(--text-mute); font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.12em; font-size: 10px;
+  padding: 12px 14px; border-bottom: 2px solid var(--ink); background: var(--cream);
+}
+table.activity tbody td {
+  padding: 11px 14px; border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+table.activity tbody tr:hover { background: var(--gold-wash); }
+table.activity .addr { font-family: "IBM Plex Mono", monospace; font-size: 12px; color: var(--ink-soft); }
+table.activity .money { font-family: "IBM Plex Mono", monospace; font-weight: 600; color: var(--gold-deep); }
 
 /* Modal */
-/* Tab nav */
+/* Tab nav — editorial section dividers */
 .tabnav {
-  display: flex; gap: 4px;
+  display: flex; gap: 0;
   border-bottom: 1px solid var(--border);
-  background: var(--bg-2);
-  padding: 0 24px;
+  background: var(--paper);
+  padding: 0 32px;
   overflow-x: auto;
 }
 .tabnav button {
-  background: transparent; border: 0; color: var(--text-mute);
-  padding: 12px 14px; font-size: 12px; font-weight: 500;
-  text-transform: uppercase; letter-spacing: 0.08em; cursor: pointer;
-  border-bottom: 2px solid transparent; transition: color 0.15s, border-color 0.15s;
+  background: transparent; border: 0;
+  color: var(--text-dim);
+  padding: 14px 18px; font-size: 11px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.14em; cursor: pointer;
+  border-bottom: 3px solid transparent;
+  transition: color 0.15s, border-color 0.15s;
+  font-family: "Inter", sans-serif;
 }
-.tabnav button:hover { color: var(--text); }
-.tabnav button.active { color: var(--accent); border-bottom-color: var(--accent); }
+.tabnav button:hover { color: var(--ink); }
+.tabnav button.active { color: var(--ink); border-bottom-color: var(--gold); }
 .tabnav .badge {
-  display: inline-block; margin-left: 6px; padding: 1px 6px;
-  background: var(--bg-3); border-radius: 8px; font-size: 10px;
-  color: var(--text-dim); font-weight: 500; letter-spacing: 0;
+  display: inline-block; margin-left: 6px; padding: 1px 7px;
+  background: var(--gold-wash); color: var(--ink-soft);
+  border-radius: 10px; font-size: 10px; font-weight: 600;
+  letter-spacing: 0;
 }
 .tab-panel { display: none; }
 .tab-panel.active { display: block; }
 
+/* Period selector — shown on tabs that filter by time */
+.period-bar {
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 18px; padding: 10px 14px;
+  background: var(--cream); border: 1px solid var(--border);
+  border-radius: 4px;
+  font-size: 12px;
+}
+.period-bar label {
+  color: var(--text-mute); text-transform: uppercase;
+  letter-spacing: 0.1em; font-size: 10px; font-weight: 600;
+  margin-right: 4px;
+}
+.period-bar .preset {
+  background: transparent; border: 1px solid var(--border-2);
+  color: var(--ink); padding: 5px 10px; font-size: 11px;
+  cursor: pointer; border-radius: 3px;
+  font-family: "Inter", sans-serif; font-weight: 500;
+}
+.period-bar .preset.active {
+  background: var(--ink); color: var(--paper); border-color: var(--ink);
+}
+.period-bar input[type="date"] {
+  background: var(--paper); border: 1px solid var(--border-2);
+  color: var(--ink); padding: 5px 8px; font-size: 11px;
+  font-family: "IBM Plex Mono", monospace; border-radius: 3px;
+}
+
 /* Voice A/B */
 .voice-card {
-  background: var(--bg-3); border: 1px solid var(--border-2); border-radius: 8px;
-  padding: 18px 20px; min-width: 220px;
+  background: var(--cream); border: 1px solid var(--border);
+  border-top: 3px solid var(--gold);
+  border-radius: 4px;
+  padding: 20px 22px; min-width: 240px;
 }
-.voice-card .name { font-size: 14px; font-weight: 600; margin-bottom: 8px; }
-.voice-card .row { display: flex; justify-content: space-between; align-items: baseline; margin: 6px 0; }
-.voice-card .row .label { color: var(--text-mute); font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; }
-.voice-card .row .value { font-family: "IBM Plex Mono", monospace; font-size: 16px; }
-.voice-card .winner { color: var(--good); font-size: 11px; margin-top: 6px; text-transform: uppercase; letter-spacing: 0.08em; }
+.voice-card .name { font-family: "Playfair Display", Georgia, serif; font-size: 20px; font-weight: 700; color: var(--ink); margin-bottom: 12px; }
+.voice-card .row { display: flex; justify-content: space-between; align-items: baseline; margin: 8px 0; }
+.voice-card .row .label { color: var(--text-mute); font-size: 10px; text-transform: uppercase; letter-spacing: 0.12em; font-weight: 600; }
+.voice-card .row .value { font-family: "IBM Plex Mono", monospace; font-size: 18px; font-weight: 600; color: var(--ink); }
+.voice-card .winner { color: var(--good); font-size: 11px; margin-top: 8px; text-transform: uppercase; letter-spacing: 0.12em; font-weight: 700; }
 
-/* Agent cards */
-.agent-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
+/* Agent cards — editorial profile blocks */
+.agent-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 14px; }
 .agent-card {
-  background: var(--bg-3); border: 1px solid var(--border-2); border-radius: 8px;
-  padding: 14px 16px;
+  background: var(--paper); border: 1px solid var(--border);
+  border-top: 3px solid var(--ink); border-radius: 2px;
+  padding: 18px 20px;
 }
-.agent-card .name { font-size: 14px; font-weight: 600; margin-bottom: 8px; }
-.agent-card .role { color: var(--text-mute); font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 12px; }
-.agent-card .stat { display: flex; justify-content: space-between; font-size: 12px; padding: 4px 0; }
+.agent-card .name { font-family: "Playfair Display", Georgia, serif; font-size: 19px; font-weight: 700; color: var(--ink); margin-bottom: 4px; }
+.agent-card .role { color: var(--gold-deep); font-size: 10px; text-transform: uppercase; letter-spacing: 0.14em; font-weight: 700; margin-bottom: 14px; }
+.agent-card .stat { display: flex; justify-content: space-between; font-size: 13px; padding: 5px 0; border-bottom: 1px dotted var(--border); }
+.agent-card .stat:last-of-type { border-bottom: 0; }
 .agent-card .stat .label { color: var(--text-dim); }
-.agent-card .stat .value { font-family: "IBM Plex Mono", monospace; color: var(--text); }
-.agent-card .review { color: var(--text-mute); font-size: 11px; font-style: italic; margin-top: 10px; line-height: 1.5; }
+.agent-card .stat .value { font-family: "IBM Plex Mono", monospace; color: var(--ink); font-weight: 600; }
+.agent-card .review { color: var(--ink-soft); font-size: 12px; font-style: italic; margin-top: 12px; line-height: 1.6; padding-top: 10px; border-top: 1px solid var(--border); }
+
+/* WP page card (Websites tab) */
+.wp-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 16px; }
+.wp-card {
+  background: var(--paper); border: 1px solid var(--border); border-radius: 4px;
+  overflow: hidden;
+}
+.wp-card .thumb {
+  aspect-ratio: 16 / 10; background: var(--cream); position: relative; overflow: hidden;
+  border-bottom: 1px solid var(--border);
+}
+.wp-card .thumb img { width: 100%; height: 100%; object-fit: cover; object-position: top; display: block; }
+.wp-card .thumb .empty { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: var(--text-mute); font-style: italic; font-size: 13px; }
+.wp-card .body { padding: 14px 16px; }
+.wp-card .label-row { font-family: "Playfair Display", Georgia, serif; font-weight: 700; font-size: 16px; color: var(--ink); margin-bottom: 4px; }
+.wp-card .url { font-size: 11px; color: var(--text-mute); margin-bottom: 12px; word-break: break-all; }
+.wp-card .meta { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-dim); padding-top: 10px; border-top: 1px solid var(--border); }
+.wp-card .meta strong { color: var(--ink); font-weight: 600; }
+.wp-card .actions { display: flex; gap: 6px; margin-top: 10px; }
+.wp-card .actions a { font-size: 10px; padding: 6px 10px; border-radius: 3px; text-decoration: none; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 700; border: 1px solid var(--ink); color: var(--ink); }
+.wp-card .actions a:hover { background: var(--gold-wash); }
+.wp-card .actions a.primary { background: var(--ink); color: var(--paper); }
+.wp-card .actions a.primary:hover { background: var(--ink-soft); color: var(--paper); }
+
+/* Notice banner */
+.notice {
+  padding: 14px 18px; background: var(--gold-wash); border-left: 4px solid var(--gold);
+  border-radius: 2px; margin-bottom: 16px; font-size: 13px; color: var(--ink-soft);
+}
+.notice strong { color: var(--ink); }
+.notice.danger { background: #FEE2E2; border-left-color: #B91C1C; }
+.notice.info   { background: var(--cream); border-left-color: var(--ink); }
 
 .modal-backdrop {
   display: none;
-  position: fixed; inset: 0; background: rgba(0,0,0,0.6);
+  position: fixed; inset: 0; background: rgba(10, 31, 68, 0.5);
   z-index: 100; align-items: flex-start; justify-content: center; padding: 60px 20px;
   overflow-y: auto;
 }
 .modal-backdrop.open { display: flex; }
 .modal {
-  background: var(--panel); border: 1px solid var(--border-2);
-  border-radius: 8px; padding: 22px 26px; max-width: 800px; width: 100%;
+  background: var(--paper); border: 1px solid var(--border);
+  border-top: 4px solid var(--gold);
+  border-radius: 4px; padding: 26px 30px; max-width: 820px; width: 100%;
+  box-shadow: 0 12px 48px rgba(10,31,68,0.18);
 }
-.modal h3 { margin-top: 0; font-size: 16px; }
-.modal pre { background: var(--bg); border: 1px solid var(--border); padding: 10px; border-radius: 4px; font-size: 11px; overflow-x: auto; white-space: pre-wrap; }
-.modal .close { float: right; cursor: pointer; color: var(--text-mute); font-size: 18px; line-height: 1; }
+.modal h3 { font-family: "Playfair Display", Georgia, serif; margin-top: 0; font-size: 22px; color: var(--ink); }
+.modal pre { background: var(--cream); border: 1px solid var(--border); padding: 14px; border-radius: 3px; font-size: 11px; overflow-x: auto; white-space: pre-wrap; color: var(--ink); }
+.modal .close { float: right; cursor: pointer; color: var(--text-mute); font-size: 24px; line-height: 1; }
+.modal .close:hover { color: var(--ink); }
 </style>
 </head>`;
 }
@@ -418,19 +558,28 @@ export async function renderDashboardV2(env: {
   // from KV. Falls back to zero-stat placeholders when the aggregator hasn't
   // run yet.
   const agentStub = await readAgentActivity(env);
+  // New tabs Mido asked for 2026-05-27.
+  const ghlActivity = await readGhlActivity(env).catch((e) => ({
+    listings: [], error: String(e?.message || e), fetched_at: null,
+  }));
+  const websites = await readWebsitesData(env).catch(() => ({ pages: [] }));
 
   return `${dashboardHead()}
 <body>
 <header class="topbar">
-  <div class="brand">APG ACQ · Dashboard</div>
+  <div class="brand">Atom Property Group · <em>Live Dashboard</em></div>
   <div class="meta mono">Updated ${updatedDisp}</div>
 </header>
 <nav class="tabnav" id="tabnav">
   <button data-tab="overview" class="active">Overview</button>
-  <button data-tab="calls">Calls <span class="badge">${calls.length}</span></button>
+  <button data-tab="calls">Blake Calls <span class="badge">${calls.length}</span></button>
+  <button data-tab="ghl">GHL Activity</button>
+  <button data-tab="websites">Websites</button>
+  <button data-tab="figma">Figma</button>
+  <button data-tab="agents">Team</button>
   <button data-tab="voice">Voice A/B</button>
-  <button data-tab="agents">Agents</button>
   <button data-tab="costs">Costs</button>
+  <button data-tab="tracker">Tracker</button>
   <button data-tab="variants">Variants</button>
 </nav>
 <main>
@@ -569,6 +718,108 @@ ${warmup ? `<div class="kpi-row" style="margin-top:-8px;">
 </section>
 </div><!-- /Calls -->
 
+<!-- TAB: GHL Activity (realtor listings + connections) -->
+<div class="tab-panel" data-tab="ghl">
+<section class="panel">
+  <h2>GHL Activity — <em>realtor connections</em></h2>
+  <div style="color:var(--text-dim);font-size:13px;margin-bottom:14px;">Latest listings from the Realtor Listings pipeline, sorted by most recent. Each row: realtor, property, MAO sent, SMS status.</div>
+  ${ghlActivity.error ? `<div class="notice danger"><strong>Error loading GHL listings:</strong> ${escapeHtml(ghlActivity.error)}</div>` : ""}
+  <table class="activity">
+    <thead><tr>
+      <th>Updated</th>
+      <th>Realtor</th>
+      <th>Property</th>
+      <th>Asking</th>
+      <th>MAO</th>
+      <th>Stage</th>
+      <th>SMS</th>
+    </tr></thead>
+    <tbody>
+      ${ghlActivity.listings.length === 0
+        ? `<tr><td colspan="7" style="text-align:center;color:var(--text-mute);font-style:italic;padding:24px;">No realtor listings in the pipeline yet.</td></tr>`
+        : ghlActivity.listings.map((l) => `
+          <tr>
+            <td class="mono" style="color:var(--text-dim);">${l.updated ? new Date(l.updated).toLocaleString() : "—"}</td>
+            <td><strong>${escapeHtml(l.realtor_name)}</strong>${l.realtor_phone ? `<br><span class="mono" style="color:var(--text-mute);font-size:11px;">${escapeHtml(l.realtor_phone)}</span>` : ""}</td>
+            <td class="addr">${escapeHtml(l.address)}</td>
+            <td class="money">${l.asking ? fmtUsd(l.asking) : "—"}</td>
+            <td class="money">${l.mao ? fmtUsd(l.mao) : "—"}</td>
+            <td><span style="font-size:11px;color:var(--ink-soft);">${escapeHtml(l.stage)}</span></td>
+            <td>${l.sms_status === "sent" ? '<span class="pill warm">SMS Sent</span>' : l.sms_status === "skipped_no_phone" ? '<span class="pill unknown">No Phone</span>' : '<span class="pill cold">—</span>'}</td>
+          </tr>`).join("")}
+    </tbody>
+  </table>
+  <div class="mono" style="color:var(--text-mute);font-size:11px;margin-top:12px;">
+    Pipeline: <code>Realtor Listings</code> · ${ghlActivity.listings.length} active opps shown · Pulled at ${ghlActivity.fetched_at || "unknown"}
+  </div>
+</section>
+</div><!-- /GHL -->
+
+<!-- TAB: Websites (was /insights) -->
+<div class="tab-panel" data-tab="websites">
+<section class="panel">
+  <h2>Websites — <em>page snapshots + Clarity</em></h2>
+  <div style="color:var(--text-dim);font-size:13px;margin-bottom:14px;">Tracked WordPress pages on atompropertygroup.com. Snapshots refresh nightly + on every WP modification. Click Heatmap / Sessions to jump to Microsoft Clarity.</div>
+  <div class="wp-grid">
+    ${websites.pages.length === 0
+      ? `<div class="notice info">No tracked pages yet. Configure <code>INSIGHTS_TRACKED_PAGES</code> in index.ts.</div>`
+      : websites.pages.map((p) => `
+        <div class="wp-card">
+          <div class="thumb">${p.thumb_key
+            ? `<img src="/insights/snap/${encodeURIComponent(p.thumb_key)}" alt="" />`
+            : `<div class="empty">No snapshot yet</div>`}
+          </div>
+          <div class="body">
+            <div class="label-row">${escapeHtml(p.label)}</div>
+            <div class="url">${escapeHtml(p.url || "")}</div>
+            <div class="meta">
+              <span>WP modified <strong>${p.modified_disp || "—"}</strong></span>
+              <span><strong>${p.snapshot_count}</strong> snap${p.snapshot_count === 1 ? "" : "s"}</span>
+            </div>
+            <div class="actions">
+              <a href="${escapeHtml(p.url || "")}" target="_blank" rel="noopener">Visit ↗</a>
+              ${p.clarity_url ? `<a class="primary" href="${escapeHtml(p.clarity_url)}" target="_blank" rel="noopener">Heatmap ↗</a>` : ""}
+              ${p.clarity_sessions ? `<a href="${escapeHtml(p.clarity_sessions)}" target="_blank" rel="noopener">Sessions ↗</a>` : ""}
+            </div>
+          </div>
+        </div>`).join("")}
+  </div>
+</section>
+</div><!-- /Websites -->
+
+<!-- TAB: Figma -->
+<div class="tab-panel" data-tab="figma">
+<section class="panel">
+  <h2>Figma — <em>snapshot sync</em></h2>
+  <div class="notice info">
+    Figma plugin lives at <code>APG-Vault/_internal/figma-plugin/</code>. Opens in your Figma desktop app. On open, it auto-syncs page screenshots from atompropertygroup.com into your Figma file. Last sync info displays inside the plugin.
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+    <div class="wp-card">
+      <div class="body">
+        <div class="label-row">Open in Figma</div>
+        <div class="url" style="margin-bottom:14px;">Auto-syncs the latest snapshots of the 4 tracked WP pages.</div>
+        <div class="actions">
+          <a class="primary" href="https://www.figma.com/" target="_blank" rel="noopener">Open Figma ↗</a>
+        </div>
+      </div>
+    </div>
+    <div class="wp-card">
+      <div class="body">
+        <div class="label-row">Plugin source</div>
+        <div class="url" style="margin-bottom:14px;">manifest.json + code.js + ui.html. To reinstall: Figma → Plugins → Development → Import plugin from manifest.</div>
+        <div class="actions">
+          <a href="https://www.figma.com/plugin-docs/manage-plugins/" target="_blank" rel="noopener">Import docs ↗</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="notice" style="margin-top:14px;">
+    <strong>Note:</strong> Annotating Figma frames with conversion counts was vetoed in the May 26 meeting with Adam — the snapshots are for design reference, not the conversion metric. Variant analytics live in the Variants tab.
+  </div>
+</section>
+</div><!-- /Figma -->
+
 <!-- TAB: Voice A/B -->
 <div class="tab-panel" data-tab="voice">
 <section class="panel">
@@ -625,7 +876,7 @@ ${warmup ? `<div class="kpi-row" style="margin-top:-8px;">
 <!-- TAB: Costs -->
 <div class="tab-panel" data-tab="costs">
 <section class="panel">
-  <h2>Tech stack — cost per active user</h2>
+  <h2>Tech stack — <em>cost per active user</em></h2>
   <table class="cost">
     <thead><tr><th>Tool</th><th>Monthly</th><th>Seats</th><th>Per active user</th></tr></thead>
     <tbody>
@@ -641,16 +892,48 @@ ${warmup ? `<div class="kpi-row" style="margin-top:-8px;">
       <tr><td>Total / Active users (${cost.active_users})</td><td>${fmtUsd(totalMonthly)}</td><td>—</td><td>${fmtUsd(perUser)}/user</td></tr>
     </tfoot>
   </table>
-  <div class="mono" style="color:var(--text-mute);font-size:11px;margin-top:8px;">Config last updated ${cost.last_updated}. Edit DEFAULT_COST_CONFIG in dashboard-v2.ts.</div>
+  <div class="mono" style="color:var(--text-mute);font-size:11px;margin-top:10px;">Config last updated ${cost.last_updated}. Edit DEFAULT_COST_CONFIG in dashboard-v2.ts.</div>
+</section>
+<section class="panel">
+  <h2>Calltools — <em>per-number breakdown</em></h2>
+  <div style="color:var(--text-dim);font-size:13px;margin-bottom:14px;">Live data from Calltools API. Cached 5 min. Numbers, monthly cost, minutes used, who's assigned.</div>
+  <div id="calltools-mount" style="min-height:140px;">
+    <div style="color:var(--text-mute);font-style:italic;text-align:center;padding:30px;">Loading Calltools data…</div>
+  </div>
 </section>
 </div><!-- /Costs -->
+
+<!-- TAB: Tracker -->
+<div class="tab-panel" data-tab="tracker">
+<section class="panel">
+  <h2>Tracker — <em>where we are</em></h2>
+  <div style="color:var(--text-dim);font-size:13px;margin-bottom:14px;">
+    Live progress across all 4 pillars + infrastructure. Click any checkbox to toggle. Changes persist in KV and feed the daily Slack summary. Canonical source: <code>progress_state.json</code> on the AtomInvestments repo + KV overrides.
+  </div>
+  <div id="tracker-mount" style="min-height:200px;">
+    <div style="color:var(--text-mute);font-style:italic;text-align:center;padding:30px;">Loading tracker…</div>
+  </div>
+</section>
+</div><!-- /Tracker -->
 
 <!-- TAB: Variants -->
 <div class="tab-panel" data-tab="variants">
 <section class="panel">
-  <h2>Website variants — A/B/C (Workstream 1)</h2>
-  <div style="color:var(--text-mute);font-size:12px;">
-    Friendly / Professional / Traditional routing not yet shipped. Once Workstream 1 lands at the edge, this section surfaces conversions per variant + Clarity engagement metrics (unique visitors only).
+  <h2>Website variants — <em>A/B/C</em></h2>
+  <div class="notice info"><strong>Workstream 1 status:</strong> Personas doc shipped (5 personas → 3 voice variants). Variant briefs + edge routing + Clarity tagging not yet shipped.</div>
+  <table class="activity">
+    <thead><tr><th>Step</th><th>Status</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr><td><strong>1a. Personas doc</strong></td><td><span class="pill warm">Shipped</span></td><td>5 personas → friendly/professional/traditional · <a href="https://github.com/AtomInvestments/acq-automation/blob/main/docs/user-personas.md" target="_blank" rel="noopener">docs/user-personas.md</a></td></tr>
+      <tr><td><strong>1b. Variant briefs</strong></td><td><span class="pill unknown">Drafting</span></td><td>1-paragraph positioning + hero headline + form CTA per variant. Awaiting Mido approval before any HTML.</td></tr>
+      <tr><td><strong>1c. Edge routing</strong></td><td><span class="pill cold">Not started</span></td><td>Cookie-based 33/33/33 split at the Worker edge. Sets <code>apg_variant</code> cookie. Auto-injects Clarity custom tag.</td></tr>
+      <tr><td><strong>1d. Variant copy</strong></td><td><span class="pill cold">Not started</span></td><td>3 variants of the home + landing pages. Pushed via push_zip_pages.py and equivalents.</td></tr>
+      <tr><td><strong>1e. Conversion tracking</strong></td><td><span class="pill cold">Not started</span></td><td>Per-variant form submissions, Clarity rage clicks, scroll depth (unique visitors only).</td></tr>
+      <tr><td><strong>1f. Internal-IP filter</strong></td><td><span class="pill cold">Not started</span></td><td>Egypt / India / Taiwan IPs excluded from variant metrics (Adam was explicit).</td></tr>
+    </tbody>
+  </table>
+  <div class="notice" style="margin-top:18px;">
+    Once <strong>1c</strong> ships, this tab will populate with: <em>per-variant unique visitors, form submissions, conversion rate, Clarity engagement score. Currently nothing to show.</em>
   </div>
 </section>
 </div><!-- /Variants -->
@@ -746,9 +1029,19 @@ ${warmup ? `<div class="kpi-row" style="margin-top:-8px;">
   // are share-able (e.g. /dashboard#calls).
   var tabs = document.querySelectorAll('#tabnav button');
   var panels = document.querySelectorAll('.tab-panel');
+  var trackerLoaded = false;
+  var calltoolsLoaded = false;
   function activate(name) {
     tabs.forEach(function(t){ t.classList.toggle('active', t.dataset.tab === name); });
     panels.forEach(function(p){ p.classList.toggle('active', p.dataset.tab === name); });
+    if (name === 'tracker' && !trackerLoaded) {
+      trackerLoaded = true;
+      loadTracker();
+    }
+    if (name === 'costs' && !calltoolsLoaded) {
+      calltoolsLoaded = true;
+      loadCalltools();
+    }
   }
   tabs.forEach(function(t){
     t.addEventListener('click', function(){
@@ -758,10 +1051,239 @@ ${warmup ? `<div class="kpi-row" style="margin-top:-8px;">
   });
   var fromHash = (location.hash || '').replace('#','');
   if (fromHash) activate(fromHash);
+
+  // ---- Tracker (progress) — interactive checkboxes that persist via KV --
+  async function loadTracker() {
+    var mount = document.getElementById('tracker-mount');
+    if (!mount) return;
+    try {
+      var r = await fetch('/api/progress', { credentials: 'same-origin' });
+      if (!r.ok) { mount.innerHTML = '<div class="notice danger">Tracker unavailable (HTTP ' + r.status + ').</div>'; return; }
+      var data = await r.json();
+      renderTracker(mount, data);
+    } catch (e) {
+      mount.innerHTML = '<div class="notice danger">Tracker error: ' + (e && e.message ? e.message : String(e)) + '</div>';
+    }
+  }
+  function renderTracker(mount, data) {
+    var pillars = data.pillars || [];
+    if (!pillars.length) {
+      mount.innerHTML = '<div class="notice">No pillars defined in progress_state.json.</div>';
+      return;
+    }
+    var html = '';
+    pillars.forEach(function(p) {
+      var done = (p.tasks || []).filter(function(t){ return t.done; }).length;
+      var total = (p.tasks || []).length;
+      var statusPill = p.status === 'active' ? 'warm' : p.status === 'planned' ? 'unknown' : 'cold';
+      html += '<div style="margin-bottom:28px;">';
+      html += '<div style="display:flex;justify-content:space-between;align-items:baseline;border-bottom:2px solid var(--ink);padding-bottom:8px;margin-bottom:12px;">';
+      html += '<div><span class="serif" style="font-size:18px;font-weight:700;color:var(--ink);">' + escapeText(p.name || p.id) + '</span>';
+      html += ' <span class="pill ' + statusPill + '">' + escapeText(p.status || '?') + '</span></div>';
+      html += '<div class="mono" style="color:var(--text-mute);font-size:12px;">' + done + ' / ' + total + ' done</div>';
+      html += '</div>';
+      if (p.summary) html += '<div style="color:var(--text-dim);font-size:12px;margin-bottom:10px;font-style:italic;">' + escapeText(p.summary) + '</div>';
+      (p.tasks || []).forEach(function(t) {
+        var taskKey = p.id + '::' + t.label;
+        html += '<label style="display:flex;gap:10px;align-items:flex-start;padding:6px 0;cursor:pointer;font-size:13px;color:' + (t.done ? 'var(--text-dim)' : 'var(--ink)') + ';' + (t.done ? 'text-decoration:line-through;' : '') + '">';
+        html += '<input type="checkbox"' + (t.done ? ' checked' : '') + ' data-key="' + escapeText(taskKey) + '" style="margin-top:3px;accent-color:var(--gold);width:14px;height:14px;flex-shrink:0;">';
+        html += '<span>' + escapeText(t.label) + '</span>';
+        html += '</label>';
+      });
+      html += '</div>';
+    });
+    mount.innerHTML = html;
+    mount.querySelectorAll('input[type="checkbox"]').forEach(function(cb) {
+      cb.addEventListener('change', async function() {
+        var key = cb.dataset.key;
+        var newDone = cb.checked;
+        try {
+          var r = await fetch('/api/progress/toggle', {
+            method: 'POST',
+            credentials: 'same-origin',
+            headers: { 'content-type': 'application/json' },
+            body: JSON.stringify({ key: key, done: newDone }),
+          });
+          if (!r.ok) {
+            cb.checked = !newDone;
+            alert('Save failed (HTTP ' + r.status + ')');
+            return;
+          }
+          // Update visual style on the label
+          var label = cb.closest('label');
+          if (label) {
+            label.style.color = newDone ? 'var(--text-dim)' : 'var(--ink)';
+            label.style.textDecoration = newDone ? 'line-through' : '';
+          }
+        } catch (e) {
+          cb.checked = !newDone;
+          alert('Save failed: ' + e);
+        }
+      });
+    });
+  }
+  function escapeText(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  // ---- Calltools loader -------------------------------------------------
+  async function loadCalltools() {
+    var mount = document.getElementById('calltools-mount');
+    if (!mount) return;
+    try {
+      var r = await fetch('/admin/costs/calltools', { credentials: 'same-origin' });
+      if (!r.ok) { mount.innerHTML = '<div class="notice danger">Calltools API error (HTTP ' + r.status + ').</div>'; return; }
+      var data = await r.json();
+      if (!data.ok || !data.numbers || data.numbers.length === 0) {
+        mount.innerHTML =
+          '<div class="notice"><strong>Calltools returned no numbers.</strong> Either the account has none active or the API base URL changed. Last error: <code>' +
+          escapeText(data.last_error || 'none') + '</code></div>';
+        return;
+      }
+      var totalCost = data.numbers.reduce(function(a, n){ return a + Number(n.cost_mo || 0); }, 0);
+      var totalMin  = data.numbers.reduce(function(a, n){ return a + Number(n.minutes || 0); }, 0);
+      var html = '';
+      html += '<table class="cost"><thead><tr><th>Number</th><th>Label</th><th>Assigned</th><th>Minutes</th><th>$ / mo</th></tr></thead><tbody>';
+      data.numbers.forEach(function(n) {
+        html += '<tr>';
+        html += '<td><code>' + escapeText(n.number || '—') + '</code></td>';
+        html += '<td>' + escapeText(n.label || '—') + '</td>';
+        html += '<td>' + escapeText(n.assigned || 'unassigned') + '</td>';
+        html += '<td>' + (n.minutes != null ? n.minutes : '—') + '</td>';
+        html += '<td>' + (n.cost_mo != null ? '$' + Number(n.cost_mo).toFixed(2) : '—') + '</td>';
+        html += '</tr>';
+      });
+      html += '</tbody><tfoot><tr><td colspan="3">Total — ' + data.number_count + ' numbers</td>';
+      html += '<td>' + totalMin + '</td><td>$' + totalCost.toFixed(2) + '</td></tr></tfoot></table>';
+      html += '<div class="mono" style="color:var(--text-mute);font-size:11px;margin-top:10px;">Fetched ' + (data.fetched_at || '—') + ' · cached 5 min</div>';
+      mount.innerHTML = html;
+    } catch (e) {
+      mount.innerHTML = '<div class="notice danger">Calltools fetch error: ' + (e && e.message ? e.message : String(e)) + '</div>';
+    }
+  }
 })();
 </script>
 </body>
 </html>`;
+}
+
+// ---- GHL Activity reader (Realtor Listings pipeline) ----------------------
+
+interface GhlListingRow {
+  updated: string;
+  realtor_name: string;
+  realtor_phone: string;
+  address: string;
+  asking: number;
+  mao: number;
+  stage: string;
+  sms_status: "sent" | "skipped_no_phone" | "unknown";
+}
+
+async function readGhlActivity(env: any): Promise<{
+  listings: GhlListingRow[];
+  fetched_at: string | null;
+  error?: string;
+}> {
+  // KV-cached for 5 min so dashboard reload is fast.
+  const CACHE_KEY = "dashboard:ghl_activity:v1";
+  const cached = await env.DIAL_STATE.get(CACHE_KEY);
+  if (cached) {
+    try { return JSON.parse(cached); } catch {}
+  }
+  const REALTOR_PIPELINE = "Br9cCXPJRNvtm3egHmwh";
+  const LOCATION = "RCkiUmWqXX4BYQ39JXmm";
+  const PIT = env.BLAKE_GHL_PIT;
+  if (!PIT) return { listings: [], fetched_at: null, error: "no PIT" };
+
+  const r = await fetch(
+    `https://services.leadconnectorhq.com/opportunities/search?` +
+      new URLSearchParams({
+        location_id: LOCATION,
+        pipeline_id: REALTOR_PIPELINE,
+        limit: "50",
+      }).toString(),
+    { headers: { Authorization: `Bearer ${PIT}`, Version: "2021-07-28", Accept: "application/json" } }
+  );
+  if (!r.ok) {
+    return { listings: [], fetched_at: new Date().toISOString(), error: `ghl ${r.status}` };
+  }
+  const j: any = await r.json();
+  const opps: any[] = j?.opportunities ?? [];
+  const rows: GhlListingRow[] = opps.map((o) => {
+    const contact = o?.contact || {};
+    const tags: string[] = contact?.tags || [];
+    const sms_status =
+      tags.includes("30006 - landline/incapable to receive sms") ? "skipped_no_phone" :
+      tags.includes("listing-pipeline") ? "sent" : "unknown";
+    // Opp name is now "Realtor Name - Address - Phone" (PR #24)
+    const nameParts = (o?.name || "").split(" - ").map((s: string) => s.trim());
+    return {
+      updated: o?.updatedAt || o?.dateUpdated || "",
+      realtor_name: nameParts[0] || contact?.name || "(unknown)",
+      realtor_phone: contact?.phone || nameParts[2] || "",
+      address: nameParts[1] || "",
+      asking: 0,
+      mao: Number(o?.monetaryValue || 0),
+      stage: o?.pipelineStageUId ? "1. New Listing" : (o?.status || "open"),
+      sms_status: sms_status as GhlListingRow["sms_status"],
+    };
+  }).sort((a, b) => new Date(b.updated).getTime() - new Date(a.updated).getTime()).slice(0, 30);
+
+  const out = { listings: rows, fetched_at: new Date().toISOString() };
+  await env.DIAL_STATE.put(CACHE_KEY, JSON.stringify(out), { expirationTtl: 300 });
+  return out;
+}
+
+// ---- Websites tab reader (uses /insights cache) ----------------------------
+
+interface WebsitePageRow {
+  id: number;
+  label: string;
+  url: string;
+  modified_disp: string;
+  snapshot_count: number;
+  thumb_key: string;
+  clarity_url: string;
+  clarity_sessions: string;
+}
+
+async function readWebsitesData(env: any): Promise<{ pages: WebsitePageRow[] }> {
+  // Source list of tracked pages — mirrors INSIGHTS_TRACKED_PAGES in index.ts.
+  // Hard-coded here so dashboard-v2 doesn't depend on index.ts internals.
+  const TRACKED = [
+    { id: 1340, label: "Home" },
+    { id: 1343, label: "About" },
+    { id: 1383, label: "Sell — 08611 Trenton" },
+    { id: 1397, label: "Sell — 19132 Philadelphia" },
+  ];
+  const CLARITY_PROJECT_ID = "san6yebog2";
+  const pages: WebsitePageRow[] = [];
+  for (const { id, label } of TRACKED) {
+    const [metaRaw, timelineRaw] = await Promise.all([
+      env.DIAL_STATE.get(`insights:meta:${id}`),
+      env.DIAL_STATE.get(`insights:timeline:${id}`),
+    ]);
+    let meta: any = null;
+    try { if (metaRaw) meta = JSON.parse(metaRaw); } catch {}
+    let timeline: any[] = [];
+    try { if (timelineRaw) timeline = JSON.parse(timelineRaw); } catch {}
+    const latest = timeline[0];
+    const url = meta?.link || "";
+    const claritySlug = url ? encodeURIComponent(url) : "";
+    pages.push({
+      id,
+      label,
+      url,
+      modified_disp: meta?.modified ? new Date(meta.modified).toLocaleString() : "—",
+      snapshot_count: timeline.length,
+      thumb_key: latest?.key || "",
+      clarity_url: claritySlug ? `https://clarity.microsoft.com/projects/view/${CLARITY_PROJECT_ID}/heatmaps?date=Last+7+days&Page=${claritySlug}` : "",
+      clarity_sessions: claritySlug ? `https://clarity.microsoft.com/projects/view/${CLARITY_PROJECT_ID}/recordings?date=Last+7+days&Page=${claritySlug}` : "",
+    });
+  }
+  return { pages };
 }
 
 // ---- Voice A/B reader -------------------------------------------------------

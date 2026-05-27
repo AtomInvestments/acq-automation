@@ -53,6 +53,7 @@ export interface Env {
   ATTOM_API_KEY: string;            // ATTOM Data Property API key — listing-pipeline ARV + Blake pre-call enrichment. Trial key, expires 2026-06-23.
   VAULT_SYNC_TOKEN: string;         // Pillar C: bearer token gating /vault/queue + /vault/ack for the local vault-sync daemon.
   GOOGLE_PLACES_API_KEY?: string;   // Workstream 2: server-side proxy for Google Places autocomplete + details. Browser hits the Worker, never Google directly.
+  CALLTOOLS_API_KEY?: string;       // Calltools API for per-number cost + usage on Costs tab. Provided 2026-05-27.
   DIAL_STATE: KVNamespace;          // KV for warm-up quota + dial dedupe
 }
 
@@ -809,6 +810,73 @@ export default {
         const r = await runAllAgentReviews(env);
         return new Response(JSON.stringify(r, null, 2), {
           status: r.ok ? 200 : 207, headers: { "content-type": "application/json" },
+        });
+      })();
+    }
+
+    // Calltools API proxy — per-number cost + usage breakdown.
+    // GET /admin/costs/calltools → returns numbers + minutes used + cost.
+    // Auth via CALLTOOLS_API_KEY secret. 5-min KV cache to keep the
+    // dashboard fast + stay under any rate limits.
+    if (req.method === "GET" && url.pathname === "/admin/costs/calltools") {
+      return (async () => {
+        if (!env.CALLTOOLS_API_KEY) {
+          return new Response(JSON.stringify({ ok: false, error: "CALLTOOLS_API_KEY not set" }), {
+            status: 503, headers: { "content-type": "application/json" },
+          });
+        }
+        const CACHE_KEY = "calltools:summary:v1";
+        const cached = await env.DIAL_STATE.get(CACHE_KEY);
+        if (cached) {
+          return new Response(cached, { status: 200, headers: { "content-type": "application/json" } });
+        }
+        // Calltools API base + endpoints (per their public docs).
+        // We try a couple known endpoint shapes since their URL has shifted.
+        const TOKEN = env.CALLTOOLS_API_KEY;
+        const BASES = [
+          "https://api.calltools.io/api/v2",
+          "https://app.calltools.io/api/v2",
+          "https://api.calltools.io/api/v1",
+        ];
+        let numbers: any[] = [];
+        let lastErr = "";
+        for (const base of BASES) {
+          try {
+            const r = await fetch(`${base}/numbers/?page_size=100`, {
+              headers: { Authorization: `Token ${TOKEN}`, Accept: "application/json" },
+            });
+            if (r.ok) {
+              const j: any = await r.json();
+              numbers = j?.results || j?.numbers || [];
+              if (numbers.length > 0 || (Array.isArray(j) && j.length > 0)) {
+                if (!numbers.length) numbers = j;
+                lastErr = "";
+                break;
+              }
+            } else {
+              lastErr = `${base}: HTTP ${r.status}`;
+            }
+          } catch (e: any) {
+            lastErr = `${base}: ${String(e?.message || e).slice(0, 100)}`;
+          }
+        }
+        const out = {
+          ok: numbers.length > 0,
+          fetched_at: new Date().toISOString(),
+          number_count: numbers.length,
+          numbers: numbers.slice(0, 50).map((n: any) => ({
+            number:    n.phone_number || n.number || n.did || "",
+            label:     n.label || n.name || "",
+            assigned:  n.assigned_to || n.user || "",
+            cost_mo:   n.monthly_cost || n.cost || null,
+            minutes:   n.minutes_used || n.minutes || null,
+            in_use:    n.in_use != null ? n.in_use : (n.status === "active"),
+          })),
+          last_error: lastErr || null,
+        };
+        await env.DIAL_STATE.put(CACHE_KEY, JSON.stringify(out), { expirationTtl: 300 });
+        return new Response(JSON.stringify(out, null, 2), {
+          status: 200, headers: { "content-type": "application/json" },
         });
       })();
     }
