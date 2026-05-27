@@ -759,6 +759,22 @@ export default {
       })();
     }
 
+    // Workstream 4b — Blake voice prompt KV pointer.
+    // POST /admin/blake/voice-prompt — sets the current prompt (body: {prompt, version?}).
+    // GET  /admin/blake/voice-prompt — returns the current pointer record.
+    // The self-improvement loop uses this to generate unified-diff edits.
+    if (req.method === "POST" && url.pathname === "/admin/blake/voice-prompt") {
+      return handleBlakeVoicePromptUpsert(req, env);
+    }
+    if (req.method === "GET" && url.pathname === "/admin/blake/voice-prompt") {
+      return (async () => {
+        const raw = await env.DIAL_STATE.get("blake:voice_prompt:current");
+        return new Response(raw || JSON.stringify({ ok: true, current: null }), {
+          status: 200, headers: { "content-type": "application/json" },
+        });
+      })();
+    }
+
     // --- Pillar C: Blake self-improvement (manual + cron-triggered) ----
     // POST /admin/blake/self-improve?sample=50 — Claude reviews recent calls,
     // proposes prompt edits, writes the review markdown to the vault.
@@ -868,6 +884,16 @@ export default {
         console.log(`[cron-daily-summary] ${JSON.stringify(r)}`);
       } catch (e) {
         console.error(`[cron-daily-summary] failed: ${e}`);
+      }
+      // Workstream 4b — piggyback the self-improvement review on the daily
+      // 04:00 cron. Aggregates last 24h of Blake calls + GHL inbound +
+      // Slack mentions, runs Opus 4.7, writes unified-diff prompt edits to
+      // the vault. Manual apply per Adam (May 26 meeting).
+      try {
+        const r = await runBlakeSelfImprovement(env, 20);
+        console.log(`[cron-blake-iteration] ${JSON.stringify(r)}`);
+      } catch (e) {
+        console.error(`[cron-blake-iteration] failed: ${e}`);
       }
       // Don't run the every-15-min tasks on the daily tick — they run on their own schedule
       return;
@@ -6547,6 +6573,96 @@ async function pollGhlMessagesForVault(env: Env): Promise<void> {
 //
 // We do NOT auto-swap the prompt. Mido reviews, then promotes manually.
 
+// ---- Workstream 4b: aggregator helpers --------------------------------------
+//
+// Pull the last 24h of GHL inbound messages (signal: did sellers actually
+// follow up after Blake's call?) and Slack messages from #listed-leads +
+// #base1-sms-leadgen (signal: did the team complain about specific calls?).
+// Both feed into the Opus review alongside the call transcripts.
+
+const SLACK_REVIEW_CHANNELS = ["listed-leads", "base1-sms-leadgen"];
+
+async function fetchRecentGhlInbound(env: Env, sinceMs: number): Promise<Array<{
+  contact_name: string; phone: string; body: string; date: string;
+}>> {
+  const out: Array<{ contact_name: string; phone: string; body: string; date: string }> = [];
+  const cr = await fetch(
+    `${GHL_BASE}/conversations/search?` +
+      new URLSearchParams({
+        locationId: APG_LOCATION_ID,
+        sortBy: "last_message_date",
+        sort: "desc",
+        limit: "30",
+        lastMessageDirection: "inbound",
+      }).toString(),
+    { headers: ghlHeaders(env.BLAKE_GHL_PIT) }
+  );
+  if (!cr.ok) return out;
+  const cj: any = await cr.json();
+  for (const cv of (cj?.conversations || [])) {
+    const lastMs = toMs(cv?.lastMessageDate);
+    if (!isFinite(lastMs) || lastMs < sinceMs) continue;
+    out.push({
+      contact_name: cv?.fullName || cv?.contactName || "(unknown)",
+      phone:        cv?.phone || "",
+      body:         (cv?.lastMessageBody || "").slice(0, 240),
+      date:         new Date(lastMs).toISOString(),
+    });
+    if (out.length >= 30) break;
+  }
+  return out;
+}
+
+async function fetchRecentSlackMessages(env: Env, sinceMs: number): Promise<Array<{
+  channel: string; user: string; text: string; ts: string;
+}>> {
+  const out: Array<{ channel: string; user: string; text: string; ts: string }> = [];
+  if (!env.SLACK_BOT_TOKEN) return out;
+  // Slack search by channel — uses search.messages with `in:#channel` qualifier.
+  // Token must have `search:read` scope.
+  for (const ch of SLACK_REVIEW_CHANNELS) {
+    try {
+      const q = `in:#${ch}`;
+      const r = await fetch(
+        `https://slack.com/api/search.messages?` +
+          new URLSearchParams({ query: q, count: "25", sort: "timestamp", sort_dir: "desc" }).toString(),
+        { headers: { Authorization: `Bearer ${env.SLACK_BOT_TOKEN}` } }
+      );
+      if (!r.ok) continue;
+      const j: any = await r.json();
+      const matches: any[] = j?.messages?.matches ?? [];
+      for (const m of matches) {
+        const tsSec = Number(m?.ts || "0");
+        const tsMs = tsSec * 1000;
+        if (!tsMs || tsMs < sinceMs) continue;
+        out.push({
+          channel: m?.channel?.name || ch,
+          user:    m?.username || m?.user || "(unknown)",
+          text:    (m?.text || "").slice(0, 240),
+          ts:      new Date(tsMs).toISOString(),
+        });
+      }
+    } catch (e) {
+      console.warn(`[blake-review] slack search ${ch} threw: ${e}`);
+    }
+  }
+  return out.slice(0, 50);
+}
+
+// Read the currently-applied Blake voice prompt from KV. Mike updates this via
+// POST /admin/blake/voice-prompt whenever he applies a new version in the
+// ElevenLabs dashboard. When KV is empty, the review still produces; it just
+// can't generate a unified diff (since there's nothing to diff against).
+async function getCurrentBlakeVoicePrompt(env: Env): Promise<{ version: number; prompt: string; deployedAt: string } | null> {
+  const raw = await env.DIAL_STATE.get("blake:voice_prompt:current");
+  if (!raw) return null;
+  try {
+    return JSON.parse(raw);
+  } catch {
+    return null;
+  }
+}
+
 async function runBlakeSelfImprovement(env: Env, sampleSize: number): Promise<{
   ok: boolean;
   analyzed: number;
@@ -6608,39 +6724,80 @@ async function runBlakeSelfImprovement(env: Env, sampleSize: number): Promise<{
     return { ok: false, analyzed: 0, error: "no transcripts to analyze" };
   }
 
-  // 3. Ask Claude to extract patterns + propose targeted edits.
-  const systemPrompt = `You are an SDR coach reviewing recent calls made by "Blake", APG's AI voice agent. Your job: spot recurring failure modes and propose specific, surgical edits to Blake's system prompt. Be concrete. Avoid platitudes.
+  // Workstream 4b — aggregate the corroborating signal: did sellers actually
+  // reply via SMS after the call? Did the team complain in Slack?
+  const since24hMs = Date.now() - 24 * 3600 * 1000;
+  const [ghlInbound, slackMsgs, currentPrompt] = await Promise.all([
+    fetchRecentGhlInbound(env, since24hMs).catch(() => []),
+    fetchRecentSlackMessages(env, since24hMs).catch(() => []),
+    getCurrentBlakeVoicePrompt(env).catch(() => null),
+  ]);
 
-Output STRICT markdown matching this skeleton:
+  // 3. Ask Opus to rate Blake on 5 dimensions + propose targeted edits in
+  //    unified-diff form (when we have the current prompt to diff against).
+  const dimensionRubric = `Rate Blake on each dimension 1-5 with one-line justification per score:
+- Rapport — does Blake build human warmth before pitching?
+- Objection handling — when sellers push back, does Blake address the actual concern or talk past it?
+- Callback rate — fraction of warm/qualified sellers where Blake actually nailed down a specific time
+- Mentioned-contact capture — when sellers mention a brother/tenant/agent, does Blake capture name + relationship + phone?
+- Closing consistency — does the call ending match how the seller later replied via SMS or Slack chatter? (Use the GHL inbound + Slack data below to cross-check.)`;
+
+  const diffInstruction = currentPrompt
+    ? `\n## Proposed prompt edits (unified diff)\nOutput a unified diff vs the current voice prompt below. Use standard diff format with --- and +++ headers, @@ section markers, and -/+ lines. ONLY change what evidence supports; keep diffs surgical (3-line context). NO whole-section rewrites.`
+    : `\n## Proposed prompt edits\n_(No current prompt available in KV — output a bulleted list of proposed changes instead. Mike will translate to a diff manually when he applies them in the ElevenLabs dashboard.)_`;
+
+  const systemPrompt = `You are an SDR coach reviewing recent calls made by "Blake", APG's AI voice agent. Your job: rate Blake across 5 dimensions, identify the top failure modes, and propose specific surgical prompt edits backed by transcript + cross-channel evidence.
+
+Be concrete. No platitudes. Every claim cites either a transcript snippet or a corroborating GHL/Slack message.
+
+Output STRICT markdown matching this skeleton (do not omit sections):
 
 # Blake call review — {{YYYY-MM-DD}}
 
 ## Sample
 - Calls analyzed: N
 - Avg duration: X sec
-- Outcomes: short list
+- GHL inbound msgs (last 24h, signal): N
+- Slack mentions (last 24h, signal): N
+- Current prompt version: ${currentPrompt ? `v${currentPrompt.version} (deployed ${currentPrompt.deployedAt})` : "unknown — KV empty"}
 
-## Failure modes (top 3)
-1. **Name** — what went wrong, frequency (X of N calls), one transcript snippet as evidence.
+## Dimension scores
+${dimensionRubric}
+
+## Failure modes (top 3, ranked by frequency)
+1. **Name** — what went wrong, evidence count (X of N), one transcript snippet, one cross-channel snippet if available.
 2. ...
 3. ...
 
 ## Working behaviors (top 3)
 1. **Name** — example snippet.
-
-## Proposed prompt edits
-For each edit, give: (a) section/heading to modify, (b) current line(s), (c) proposed replacement, (d) why.
+${diffInstruction}
 
 ## Risks
-Anything the proposed edits might break.`;
+What might break if these edits ship.`;
 
-  const userPrompt = `Sample of ${samples.length} recent Blake calls.
+  const userPrompt = `## Calls (${samples.length} samples)
 
 ${samples.map((s, i) => `--- Call ${i + 1} (id=${s.id} phone=${s.phone} duration=${s.duration}s)
 Summary: ${s.summary || "(none)"}
 Transcript (first 30 turns):
 ${s.turns}
 `).join("\n")}
+
+## GHL inbound messages last 24h (${ghlInbound.length})
+
+${ghlInbound.map((m) => `- ${m.date} | ${m.contact_name} (${m.phone}): ${m.body}`).join("\n") || "(none)"}
+
+## Slack messages last 24h in #listed-leads + #base1-sms-leadgen (${slackMsgs.length})
+
+${slackMsgs.map((m) => `- ${m.ts} | #${m.channel} @${m.user}: ${m.text}`).join("\n") || "(none)"}
+
+${currentPrompt ? `## Current Blake voice prompt (v${currentPrompt.version})
+
+\`\`\`
+${currentPrompt.prompt}
+\`\`\`
+` : ""}
 
 Produce the review now. Markdown only, no preamble.`;
 
@@ -6653,7 +6810,13 @@ Produce the review now. Markdown only, no preamble.`;
     },
     body: JSON.stringify({
       model: "claude-opus-4-7",
-      max_tokens: 4000,
+      // Bumped from 4000 → 8000 to leave headroom for the diff section + the
+      // dimension scores. The 5-channel input also pressures the budget.
+      max_tokens: 8000,
+      // Per the workstream 4 audit (docs/blake-elevenlabs-audit.md): review
+      // task wants slightly higher temperature than extraction for genuine
+      // critique — but not so high it hallucinates evidence.
+      temperature: 0.4,
       system: systemPrompt,
       messages: [{ role: "user", content: userPrompt }],
     }),
@@ -6674,9 +6837,71 @@ Produce the review now. Markdown only, no preamble.`;
     avg_duration_s: Math.round(samples.reduce((a, s) => a + s.duration, 0) / samples.length),
     review_markdown: reviewMd,
     sample_ids: samples.map((s) => s.id),
+    ghl_inbound_count: ghlInbound.length,
+    slack_signal_count: slackMsgs.length,
+    prompt_version: currentPrompt?.version ?? null,
   });
 
+  // 5. Post a one-line teaser to Slack so Mike sees the review landed.
+  if (env.SLACK_BOT_TOKEN) {
+    const headline = (reviewMd.match(/^# .+$/m) || [""])[0].replace(/^# /, "");
+    const teaser =
+      `:bookmark_tabs: *Blake iteration review* — ${headline || "new review"}\n` +
+      `Sample: ${samples.length} calls, ${ghlInbound.length} GHL inbound, ${slackMsgs.length} Slack signals` +
+      (currentPrompt ? ` · prompt v${currentPrompt.version}` : ` · no prompt in KV`) + `\n` +
+      `Full review landed in \`_system/Blake/iterations/\`.`;
+    await postSlackMessage(env, SLACK_LISTINGS_CHANNEL, teaser).catch(() => {});
+  }
+
   return { ok: true, analyzed: samples.length };
+}
+
+// Workstream 4b — write Blake's current voice prompt into KV so the
+// self-improvement loop has something to diff against. Body shape:
+//   { prompt: string, version?: number }
+// Version auto-increments when omitted. We track full history in KV under
+// `blake:prompt_version:{n}` so any version can be retrieved/rolled-back.
+async function handleBlakeVoicePromptUpsert(req: Request, env: Env): Promise<Response> {
+  let body: any = {};
+  try { body = await req.json(); } catch {
+    return new Response(JSON.stringify({ ok: false, error: "invalid_json" }), {
+      status: 400, headers: { "content-type": "application/json" },
+    });
+  }
+  const prompt = String(body.prompt || "").trim();
+  if (!prompt) {
+    return new Response(JSON.stringify({ ok: false, error: "prompt required" }), {
+      status: 400, headers: { "content-type": "application/json" },
+    });
+  }
+  // Auto-increment version if not provided.
+  const currentRaw = await env.DIAL_STATE.get("blake:voice_prompt:current");
+  let version = Number(body.version || 0);
+  if (!version) {
+    const current = currentRaw ? JSON.parse(currentRaw) : null;
+    version = (current?.version || 0) + 1;
+  }
+  const promptHash = await sha256Hex(prompt);
+  const deployedAt = new Date().toISOString();
+  const record = { version, prompt, deployedAt, promptHash };
+
+  // Write the current pointer + the versioned snapshot.
+  await Promise.all([
+    env.DIAL_STATE.put("blake:voice_prompt:current", JSON.stringify(record)),
+    env.DIAL_STATE.put(`blake:prompt_version:${version}`, JSON.stringify({
+      version, deployed_at: deployedAt, prompt_hash: promptHash,
+      outcomes_during_period: {},  // populated retroactively when the next version supersedes this one
+    })),
+  ]);
+  return new Response(JSON.stringify({ ok: true, version, prompt_hash: promptHash, deployed_at: deployedAt }), {
+    status: 200, headers: { "content-type": "application/json" },
+  });
+}
+
+async function sha256Hex(input: string): Promise<string> {
+  const enc = new TextEncoder().encode(input);
+  const buf = await crypto.subtle.digest("SHA-256", enc);
+  return Array.from(new Uint8Array(buf)).map((b) => b.toString(16).padStart(2, "0")).join("");
 }
 
 // ---- Daily Slack summary -----------------------------------------------------
