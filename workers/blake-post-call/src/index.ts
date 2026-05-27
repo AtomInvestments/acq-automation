@@ -52,6 +52,7 @@ export interface Env {
   WP_AUTH_HEADER: string;           // Pre-base64 'Basic <token>' header for WP REST API (used by /insights cron + landing-page builder). Rotated 2026-05-25 after a leaked-secret incident.
   ATTOM_API_KEY: string;            // ATTOM Data Property API key — listing-pipeline ARV + Blake pre-call enrichment. Trial key, expires 2026-06-23.
   VAULT_SYNC_TOKEN: string;         // Pillar C: bearer token gating /vault/queue + /vault/ack for the local vault-sync daemon.
+  GOOGLE_PLACES_API_KEY?: string;   // Workstream 2: server-side proxy for Google Places autocomplete + details. Browser hits the Worker, never Google directly.
   DIAL_STATE: KVNamespace;          // KV for warm-up quota + dial dedupe
 }
 
@@ -1053,10 +1054,6 @@ export default {
     }
 
     // --- Pillar C: vault sync queue (KV → local daemon → APG-Vault) ----
-    // The Worker emits events to KV under `vault:queue:<iso>:<type>:<id>`.
-    // A local Python daemon polls /vault/queue, writes markdown into the
-    // local APG-Vault, then POSTs /vault/ack with the consumed keys to
-    // delete them. Bearer auth via VAULT_SYNC_TOKEN secret.
     if (url.pathname === "/vault/queue" || url.pathname === "/vault/ack" || url.pathname === "/vault/test-emit" || url.pathname === "/vault/poll-ghl") {
       const authz = req.headers.get("authorization") || "";
       const token = authz.startsWith("Bearer ") ? authz.slice(7) : "";
@@ -1086,9 +1083,6 @@ export default {
         })();
       }
       if (req.method === "POST" && url.pathname === "/vault/poll-ghl") {
-        // Manual trigger for the GHL conversations poller — useful for the
-        // first sync after deploy to backfill any in-window messages.
-        // ?lookback_hours=N temporarily resets the cursor to N hours ago.
         return (async () => {
           try {
             const lookbackHours = Number(url.searchParams.get("lookback_hours") || "0");
@@ -1109,6 +1103,15 @@ export default {
           }
         })();
       }
+    }
+
+    // Workstream 2 — Google Places autofill proxy. Browser never sees
+    // GOOGLE_PLACES_API_KEY. CORS-open + 5-min edge cache.
+    if (req.method === "GET" && url.pathname === "/places/autocomplete") {
+      return handlePlacesAutocomplete(req, env);
+    }
+    if (req.method === "GET" && url.pathname === "/places/details") {
+      return handlePlacesDetails(req, env);
     }
 
     return new Response("Not Found", { status: 404 });
@@ -2528,10 +2531,13 @@ async function handleLandingLead(req: Request, env: Env): Promise<Response> {
 
   const pit = env.BLAKE_GHL_PIT;
   let contactId = "";
+  let existingContact = false;
+  const variant = pickLandingLeadVariant(req, fields);
 
   // 3. Upsert contact: search by phone first.
   try {
     contactId = (await findContactByPhone(pit, phoneE164)) || "";
+    existingContact = !!contactId;
   } catch (e) {
     console.warn(`[landing-lead] findContactByPhone threw: ${e}`);
   }
@@ -2588,9 +2594,14 @@ async function handleLandingLead(req: Request, env: Env): Promise<Response> {
     }
   }
 
-  // 4. Audit note — full payload + referrer.
+  // 4. Audit note — full payload + referrer. When the contact already exists
+  // (same phone re-submitted the form), flag it as a re-submit so RJ knows
+  // this isn't a fresh introduction.
   const noteBody = [
-    `Inbound lead from APG website form.`,
+    existingContact
+      ? `RE-SUBMITTED website form (existing contact — same phone)`
+      : `Inbound lead from APG website form.`,
+    `Variant: ${variant}`,
     `Source: ${source}${referrer ? ` (ref: ${referrer})` : ""}`,
     `Name: ${name}`,
     `Address: ${address}`,
@@ -2721,7 +2732,38 @@ async function handleLandingLead(req: Request, env: Env): Promise<Response> {
     dialOutcome = "dial_threw";
   }
 
-  console.log(`[landing-lead] OK contact=${contactId} source=${source} opp_created=${oppCreated} dial=${dialOutcome}`);
+  // 7. Workstream 2 — Auto-SMS the lead from +1 609-699-8437 (GHL Conversations).
+  // Sub-160-char, no STOP clause (form opt-in already obtained), one of three
+  // variants picked by form field / cookie / default to friendly.
+  let smsOutcome = "skipped";
+  try {
+    const body = landingLeadSmsBody(variant, firstName, address);
+    const sms = await sendGhlSms(env, contactId, body);
+    smsOutcome = sms.ok ? `sent_${variant}` : `sms_failed_${sms.status}`;
+    if (!sms.ok) console.warn(`[landing-lead] SMS failed: ${sms.status} ${sms.body.slice(0, 200)}`);
+  } catch (e) {
+    console.warn(`[landing-lead] SMS threw: ${e}`);
+    smsOutcome = "sms_threw";
+  }
+
+  // 8. Workstream 2 — RJ task: "Call new landing lead — introduce APG", due in 1h.
+  let taskOutcome = "skipped";
+  try {
+    const dueDate = new Date(Date.now() + 60 * 60 * 1000).toISOString();
+    const taskRes = await createTaskOnContact(pit, contactId, {
+      title: `Call new landing lead — introduce APG (${firstName})`,
+      body:  `New website lead via /landing-lead (variant: ${variant}).\n\nName: ${name}\nPhone: ${phoneE164}\nAddress: ${address}${city ? `, ${city}` : ""}${stateV ? `, ${stateV}` : ""}\nSource: ${source}\nSubmitted: ${new Date().toISOString()}\nAuto-SMS sent: ${smsOutcome}\nBlake dial: ${dialOutcome}`,
+      dueDate,
+      assignedTo: USER_RJ,
+    });
+    taskOutcome = taskRes.ok ? "created" : `task_failed_${taskRes.status}`;
+    if (!taskRes.ok) console.warn(`[landing-lead] RJ task create failed: ${taskRes.status} ${taskRes.body.slice(0, 200)}`);
+  } catch (e) {
+    console.warn(`[landing-lead] RJ task threw: ${e}`);
+    taskOutcome = "task_threw";
+  }
+
+  console.log(`[landing-lead] OK contact=${contactId} variant=${variant} source=${source} existing=${existingContact} opp_created=${oppCreated} dial=${dialOutcome} sms=${smsOutcome} rj_task=${taskOutcome}`);
 
   // Pillar C — emit a vault event for the new lead.
   await vaultEmit(env, "landing_lead", contactId, {
@@ -7585,4 +7627,158 @@ async function runAllAgentReviews(env: Env): Promise<{
     await postSlackMessage(env, SLACK_LISTINGS_CHANNEL, teaser).catch(() => {});
   }
   return out;
+}
+
+// ---- Workstream 2: Google Places proxy + SMS variants + RJ task --------------
+//
+// All 3 landing-lead enhancements landed together because they share state
+// (the form payload + the contact upsert flow). Form HTML changes live in
+// APG-Vault/_internal/website-v2/push_zip_pages.py and need a re-push after
+// this PR deploys.
+
+const CORS_HEADERS_PLACES: Record<string, string> = {
+  // The form lives on atompropertygroup.com but we also allow the Worker's own
+  // origin (for /insights and similar) and any sub-path testing.
+  "access-control-allow-origin":  "*",
+  "access-control-allow-methods": "GET, OPTIONS",
+  "access-control-allow-headers": "content-type",
+  "cache-control":                "public, max-age=300",
+};
+
+async function handlePlacesAutocomplete(req: Request, env: Env): Promise<Response> {
+  if (!env.GOOGLE_PLACES_API_KEY) {
+    return new Response(JSON.stringify({ ok: false, error: "GOOGLE_PLACES_API_KEY not configured" }), {
+      status: 503, headers: { "content-type": "application/json", ...CORS_HEADERS_PLACES },
+    });
+  }
+  const url = new URL(req.url);
+  const input = (url.searchParams.get("input") || "").trim();
+  if (input.length < 3) {
+    return new Response(JSON.stringify({ ok: true, predictions: [] }), {
+      status: 200, headers: { "content-type": "application/json", ...CORS_HEADERS_PLACES },
+    });
+  }
+  // Use the legacy Places Autocomplete endpoint — wider compatibility, lower
+  // latency than the new v1 endpoint for this address-only use case. US-only.
+  const gUrl =
+    "https://maps.googleapis.com/maps/api/place/autocomplete/json?" +
+    new URLSearchParams({
+      input,
+      types: "address",
+      components: "country:us",
+      key: env.GOOGLE_PLACES_API_KEY,
+    }).toString();
+  const res = await fetch(gUrl);
+  if (!res.ok) {
+    const t = await res.text();
+    console.warn(`[places-autocomplete] ${res.status}: ${t.slice(0, 200)}`);
+    return new Response(JSON.stringify({ ok: false, error: `google_${res.status}` }), {
+      status: 502, headers: { "content-type": "application/json", ...CORS_HEADERS_PLACES },
+    });
+  }
+  const j: any = await res.json();
+  // Pass back ONLY the fields the client needs — never the raw Google response,
+  // so we can revisit the upstream API without affecting the form.
+  const predictions = (j?.predictions || []).map((p: any) => ({
+    place_id:    p.place_id,
+    description: p.description,
+    main_text:   p.structured_formatting?.main_text || "",
+    secondary:   p.structured_formatting?.secondary_text || "",
+  }));
+  return new Response(JSON.stringify({ ok: true, predictions }), {
+    status: 200, headers: { "content-type": "application/json", ...CORS_HEADERS_PLACES },
+  });
+}
+
+async function handlePlacesDetails(req: Request, env: Env): Promise<Response> {
+  if (!env.GOOGLE_PLACES_API_KEY) {
+    return new Response(JSON.stringify({ ok: false, error: "GOOGLE_PLACES_API_KEY not configured" }), {
+      status: 503, headers: { "content-type": "application/json", ...CORS_HEADERS_PLACES },
+    });
+  }
+  const url = new URL(req.url);
+  const placeId = (url.searchParams.get("place_id") || "").trim();
+  if (!placeId) {
+    return new Response(JSON.stringify({ ok: false, error: "missing place_id" }), {
+      status: 400, headers: { "content-type": "application/json", ...CORS_HEADERS_PLACES },
+    });
+  }
+  const gUrl =
+    "https://maps.googleapis.com/maps/api/place/details/json?" +
+    new URLSearchParams({
+      place_id: placeId,
+      fields:   "address_components,formatted_address,geometry/location,place_id",
+      key:      env.GOOGLE_PLACES_API_KEY,
+    }).toString();
+  const res = await fetch(gUrl);
+  if (!res.ok) {
+    const t = await res.text();
+    console.warn(`[places-details] ${res.status}: ${t.slice(0, 200)}`);
+    return new Response(JSON.stringify({ ok: false, error: `google_${res.status}` }), {
+      status: 502, headers: { "content-type": "application/json", ...CORS_HEADERS_PLACES },
+    });
+  }
+  const j: any = await res.json();
+  const r = j?.result;
+  if (!r) {
+    return new Response(JSON.stringify({ ok: false, error: "no_result" }), {
+      status: 404, headers: { "content-type": "application/json", ...CORS_HEADERS_PLACES },
+    });
+  }
+  // Flatten address_components into the GHL contact field shape so the
+  // browser side has nothing to interpret. street_number + route → address1.
+  const comps: Array<{ types: string[]; long_name: string; short_name: string }> = r.address_components || [];
+  const pick = (t: string, short = false): string => {
+    const c = comps.find((x) => x.types.includes(t));
+    return c ? (short ? c.short_name : c.long_name) : "";
+  };
+  const streetNumber = pick("street_number");
+  const route        = pick("route");
+  const address1     = [streetNumber, route].filter(Boolean).join(" ") || r.formatted_address || "";
+  return new Response(JSON.stringify({
+    ok: true,
+    place_id:        r.place_id,
+    formatted:       r.formatted_address || "",
+    address1,
+    city:            pick("locality") || pick("sublocality") || pick("administrative_area_level_3"),
+    state:           pick("administrative_area_level_1", true),
+    postal_code:     pick("postal_code"),
+    country:         pick("country", true),
+    latitude:        r.geometry?.location?.lat ?? null,
+    longitude:       r.geometry?.location?.lng ?? null,
+  }), {
+    status: 200, headers: { "content-type": "application/json", ...CORS_HEADERS_PLACES },
+  });
+}
+
+// 3 SMS variants — Friendly default. Variant chosen by form field `variant`
+// (or cookie `apg_variant` on a future request). All from +1 609-699-8437 via
+// the GHL Conversations API (sendGhlSms wrapper).
+type LandingLeadVariant = "friendly" | "professional" | "traditional";
+
+function landingLeadSmsBody(variant: LandingLeadVariant, firstName: string, address: string): string {
+  const first = (firstName || "there").trim();
+  const addr  = (address || "your property").trim();
+  switch (variant) {
+    case "professional":
+      return `Hi ${first}, Mike with APG confirming we received your inquiry on ${addr}. Our team will follow up within 60 minutes with a cash offer range.`;
+    case "traditional":
+      return `Hello ${first}, this is Mike from Atom Property Group regarding your inquiry on ${addr}. Expect a call from our team within the hour.`;
+    case "friendly":
+    default:
+      return `Hey ${first}, Mike with APG — got your form for ${addr}. RJ will text within the hour with our cash range. Looking forward to it.`;
+  }
+}
+
+function pickLandingLeadVariant(req: Request, fields: Record<string, string>): LandingLeadVariant {
+  // Priority: explicit form field > apg_variant cookie > friendly default.
+  const raw = (fields["variant"] || readCookie(req, "apg_variant") || "").toLowerCase();
+  if (raw === "professional" || raw === "traditional" || raw === "friendly") return raw;
+  return "friendly";
+}
+
+function readCookie(req: Request, name: string): string {
+  const h = req.headers.get("cookie") || "";
+  const m = h.match(new RegExp(`(?:^|;\\s*)${name}=([^;]+)`));
+  return m ? decodeURIComponent(m[1]) : "";
 }
