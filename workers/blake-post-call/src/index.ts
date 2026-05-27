@@ -810,6 +810,74 @@ export default {
       })();
     }
 
+    // Workstream PR C followup — backfill assignedTo on existing opps.
+    // POST /admin/agents/backfill-assignments?pipeline=acq|listings&assignee=RJ|MIKE
+    // Pages through all opps in the chosen pipeline and assigns the chosen
+    // user to any opp where assignedTo is currently empty. Dry-run by default;
+    // add ?apply=1 to actually write.
+    if (req.method === "POST" && url.pathname === "/admin/agents/backfill-assignments") {
+      return (async () => {
+        const pipeline = (url.searchParams.get("pipeline") || "acq").toLowerCase();
+        const assignee = (url.searchParams.get("assignee") || "RJ").toUpperCase();
+        const apply    = url.searchParams.get("apply") === "1";
+        const pipelineId = pipeline === "listings" ? REALTOR_LISTINGS_PIPELINE_ID : ACQ_PIPELINE_ID;
+        const userId    = assignee === "MIKE" ? USER_MIKE : USER_RJ;
+
+        let updated = 0;
+        let scanned = 0;
+        let alreadyAssigned = 0;
+        const errors: string[] = [];
+
+        for (let page = 1; page <= 5; page++) {  // up to 500 opps
+          const res = await fetch(
+            `${GHL_BASE}/opportunities/search?` +
+              new URLSearchParams({
+                location_id: APG_LOCATION_ID,
+                pipeline_id: pipelineId,
+                limit: "100",
+                page: String(page),
+              }).toString(),
+            { headers: ghlHeaders(env.BLAKE_GHL_PIT) }
+          );
+          if (!res.ok) {
+            errors.push(`page ${page}: ${res.status}`);
+            break;
+          }
+          const j: any = await res.json();
+          const opps: any[] = j?.opportunities ?? [];
+          if (!opps.length) break;
+          for (const o of opps) {
+            scanned += 1;
+            if (o?.assignedTo) { alreadyAssigned += 1; continue; }
+            if (!apply) { updated += 1; continue; }
+            try {
+              const r = await fetch(`${GHL_BASE}/opportunities/${o.id}`, {
+                method: "PUT",
+                headers: ghlHeaders(env.BLAKE_GHL_PIT),
+                body: JSON.stringify({ assignedTo: userId }),
+              });
+              if (r.ok) updated += 1;
+              else errors.push(`opp ${o.id}: ${r.status}`);
+            } catch (e: any) {
+              errors.push(`opp ${o.id} threw: ${String(e?.message || e).slice(0, 60)}`);
+            }
+          }
+          if (opps.length < 100) break;
+        }
+
+        return new Response(JSON.stringify({
+          ok: true,
+          dry_run: !apply,
+          pipeline,
+          assignee,
+          scanned,
+          already_assigned: alreadyAssigned,
+          updated,
+          errors: errors.slice(0, 10),
+        }, null, 2), { status: 200, headers: { "content-type": "application/json" } });
+      })();
+    }
+
     // GET /admin/agents/activity — returns the latest activity + review for
     // every roster member. Used by the dashboard's Agents tab.
     if (req.method === "GET" && url.pathname === "/admin/agents/activity") {
@@ -1410,6 +1478,9 @@ async function handleListingEmail(req: Request, env: Env): Promise<Response> {
         monetaryValue: mao,
         status: "open",
         source: "Zillow / Redfin Listing",
+        // Mido directive (2026-05-27): default listing-pipeline opps to RJ
+        // so per-agent activity reflects realtor outreach.
+        assignedTo: USER_RJ,
       }),
     });
     const oppText = await oppRes.text();
@@ -4047,8 +4118,12 @@ async function updateOpportunityName(
 async function createOpportunity(
   pit: string,
   contactId: string,
-  args: { name: string; pipelineStageId: string }
+  args: { name: string; pipelineStageId: string; assignedTo?: string }
 ): Promise<{ ok: boolean; status: number; body: string; oppId?: string }> {
+  // Mido directive (2026-05-27): every ACQ opp must have an assignedTo so it
+  // shows up in per-agent search + per-agent reviews. Default = RJ (the
+  // acquisitions partner who owns post-Blake follow-up). Callers can pass an
+  // explicit assignedTo to override.
   const res = await fetch(`${GHL_BASE}/opportunities/`, {
     method: "POST",
     headers: ghlHeaders(pit),
@@ -4060,6 +4135,7 @@ async function createOpportunity(
       name: args.name,
       status: "open",
       source: "Blake AI",
+      assignedTo: args.assignedTo || USER_RJ,
     }),
   });
   const text = await res.text();
@@ -6049,26 +6125,47 @@ const INSIGHTS_TRACKED_PAGES: Array<{ id: number; label: string }> = [
 const CLARITY_PROJECT_ID = "wwbe84z9my";
 const WP_REST_BASE = "https://atompropertygroup.com/wp-json/wp/v2";
 
-async function fetchWpPageMeta(env: Env, pageId: number): Promise<{
+// KV-cached WP page meta. Mido reported /insights loading slowly on
+// 2026-05-27 — root cause was N parallel WP.com REST calls per page render.
+// Now we cache for 10 minutes (the cron at */15 refreshes when it polls
+// for changes). Pass `forceRefresh=true` from the cron path.
+async function fetchWpPageMeta(env: Env, pageId: number, forceRefresh = false): Promise<{
   id: number; modified: string; link: string; title: string; slug: string;
 } | null> {
   if (!env.WP_AUTH_HEADER) {
     console.warn("[insights] WP_AUTH_HEADER not configured");
     return null;
   }
+  const cacheKey = `insights:meta:${pageId}`;
+  if (!forceRefresh) {
+    try {
+      const cached = await env.DIAL_STATE.get(cacheKey);
+      if (cached) return JSON.parse(cached);
+    } catch {}
+  }
   const res = await fetch(
     `${WP_REST_BASE}/pages/${pageId}?_fields=id,modified,link,title,slug`,
     { headers: { Authorization: env.WP_AUTH_HEADER } }
   );
-  if (!res.ok) return null;
+  if (!res.ok) {
+    // On WP miss, return last cached value (better stale than blank) if any.
+    try {
+      const cached = await env.DIAL_STATE.get(cacheKey);
+      if (cached) return JSON.parse(cached);
+    } catch {}
+    return null;
+  }
   const p: any = await res.json();
-  return {
+  const meta = {
     id: p.id,
     modified: p.modified,
     link: p.link,
     title: p.title?.rendered || "",
     slug: p.slug || "",
   };
+  // 10-min TTL — cron refreshes every 15 min so this is mostly fresh.
+  await env.DIAL_STATE.put(cacheKey, JSON.stringify(meta), { expirationTtl: 600 });
+  return meta;
 }
 
 async function captureAndStoreSnapshot(
@@ -6158,7 +6255,9 @@ async function dailyInsightsBaseline(env: Env): Promise<void> {
 async function pollInsightsForChanges(env: Env): Promise<void> {
   for (const { id, label } of INSIGHTS_TRACKED_PAGES) {
     try {
-      const meta = await fetchWpPageMeta(env, id);
+      // Force a fresh WP fetch in the cron path so the cache is always
+      // populated with the latest modified timestamp.
+      const meta = await fetchWpPageMeta(env, id, true);
       if (!meta) continue;
       const lastModKey = `insights:lastmod:${id}`;
       const lastMod = await env.DIAL_STATE.get(lastModKey);
