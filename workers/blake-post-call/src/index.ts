@@ -37,6 +37,7 @@ import {
   enrichPropertyViaAttom, formatEnrichmentForSellerFile, scoreMotivatedSignals,
   formatEnrichmentForSlack, formatEnrichmentForGhlNote,
 } from "./attom";
+import { renderDashboardV2 } from "./dashboard-v2";
 
 export interface Env {
   BLAKE_GHL_PIT: string;
@@ -642,6 +643,24 @@ export default {
     //   GET  /insights/api/snapshots?id=X    — JSON timeline of all snapshots for a page
     //   POST /insights/api/capture           — manually trigger a fresh capture for a page
     //   GET  /insights/snap/:key             — serve a stored snapshot image (PNG bytes from KV)
+    // Workstream 6 — new server-rendered dashboard at /dashboard.
+    // Dark Linear/Stripe-style UI, filters, funnel, RJ stats, cost-per-user,
+    // and the "What Blake can improve on" cards sourced from blake_iteration.
+    if (req.method === "GET" && url.pathname === "/dashboard") {
+      const auth = await requireAuth(req, env);
+      if (!auth.ok) {
+        return new Response(null, {
+          status: 302,
+          headers: { Location: `/login?next=${encodeURIComponent("/dashboard")}` },
+        });
+      }
+      const html = await renderDashboardV2(env);
+      return new Response(html, {
+        status: 200,
+        headers: { "content-type": "text/html; charset=utf-8" },
+      });
+    }
+
     if (req.method === "GET" && url.pathname === "/insights") {
       const auth = await requireAuth(req, env);
       if (!auth.ok) {
