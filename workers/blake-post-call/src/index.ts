@@ -4884,15 +4884,26 @@ async function getUnqualifiedContacts(pit: string, limit: number): Promise<any[]
   const oppJson: any = await oppRes.json();
   const opps: any[] = oppJson?.opportunities ?? [];
 
-  // Pre-filter on embedded contact tags so we don't waste GET /contacts/{id} calls.
+  // Pre-filter on embedded contact tags.
+  //
+  // 2026-05-27 Mido reported 0 dials going out. Root cause was the
+  // `blake-called` tag filter — once Blake had touched a contact, they were
+  // permanently excluded from re-dial. With ~121 prior calls, the Unqualified
+  // stage's eligible pool dropped to ~3 (all of which were stuck in the
+  // 30-day dedupe).
+  //
+  // Fix: the `last_attempt:<contactId>` KV key already provides cadence
+  // control (30-day TTL — see runDialBatch). Drop the permanent tag filter
+  // and rely on KV dedupe. Keep `agent` + `dnd-opt-out` as hard excludes —
+  // those are real-do-not-call signals.
   const survivors = opps
     .map((o) => o?.contact)
     .filter((c): c is any => !!c && !!c.id && !!c.phone)
     .filter((c) => {
       const tags: string[] = c.tags ?? [];
-      if (tags.includes("blake-called")) return false;
-      if (tags.includes("agent")) return false;   // legacy filter — see automation memory
-      if (tags.includes("dnd-opt-out")) return false;
+      if (tags.includes("agent")) return false;        // legacy filter
+      if (tags.includes("dnd-opt-out")) return false;  // hard DND
+      if (tags.includes("wrong-number")) return false; // verified wrong number
       return true;
     });
 
