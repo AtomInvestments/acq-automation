@@ -833,37 +833,50 @@ export default {
         // Calltools API base + endpoints (per their public docs).
         // We try a couple known endpoint shapes since their URL has shifted.
         const TOKEN = env.CALLTOOLS_API_KEY;
-        const BASES = [
-          "https://api.calltools.io/api/v2",
-          "https://app.calltools.io/api/v2",
-          "https://api.calltools.io/api/v1",
+        // Calltools (calltools.com) — try several known API base + auth
+        // header combos since the URL hasn't been confirmed yet.
+        const ATTEMPTS: Array<{ url: string; auth: string }> = [
+          { url: "https://app.calltools.com/api/v1/numbers/?page_size=100",  auth: `Token ${TOKEN}` },
+          { url: "https://app.calltools.com/api/numbers/?page_size=100",     auth: `Token ${TOKEN}` },
+          { url: "https://api.calltools.com/v1/numbers?page_size=100",       auth: `Bearer ${TOKEN}` },
+          { url: "https://app.calltools.com/api/v1/phone-numbers/",          auth: `Token ${TOKEN}` },
+          { url: "https://app.calltools.com/api/v1/dids/",                   auth: `Token ${TOKEN}` },
+          { url: "https://app.calltools.com/api/v1/users/me/",               auth: `Token ${TOKEN}` },
         ];
         let numbers: any[] = [];
         let lastErr = "";
-        for (const base of BASES) {
+        let succeededUrl = "";
+        for (const attempt of ATTEMPTS) {
           try {
-            const r = await fetch(`${base}/numbers/?page_size=100`, {
-              headers: { Authorization: `Token ${TOKEN}`, Accept: "application/json" },
+            const r = await fetch(attempt.url, {
+              headers: { Authorization: attempt.auth, Accept: "application/json" },
             });
             if (r.ok) {
               const j: any = await r.json();
-              numbers = j?.results || j?.numbers || [];
+              numbers = j?.results || j?.numbers || j?.data || [];
               if (numbers.length > 0 || (Array.isArray(j) && j.length > 0)) {
-                if (!numbers.length) numbers = j;
+                if (!numbers.length && Array.isArray(j)) numbers = j;
+                succeededUrl = attempt.url;
                 lastErr = "";
                 break;
               }
+              // 200 but empty — still useful, record the URL so Mido sees
+              // the auth/endpoint combo that worked.
+              succeededUrl = attempt.url;
+              lastErr = `200 OK but empty: ${attempt.url}`;
             } else {
-              lastErr = `${base}: HTTP ${r.status}`;
+              const body = (await r.text()).slice(0, 120);
+              lastErr = `${attempt.url}: HTTP ${r.status} ${body}`;
             }
           } catch (e: any) {
-            lastErr = `${base}: ${String(e?.message || e).slice(0, 100)}`;
+            lastErr = `${attempt.url}: ${String(e?.message || e).slice(0, 100)}`;
           }
         }
         const out = {
           ok: numbers.length > 0,
           fetched_at: new Date().toISOString(),
           number_count: numbers.length,
+          succeeded_url: succeededUrl || null,
           numbers: numbers.slice(0, 50).map((n: any) => ({
             number:    n.phone_number || n.number || n.did || "",
             label:     n.label || n.name || "",
@@ -874,7 +887,10 @@ export default {
           })),
           last_error: lastErr || null,
         };
-        await env.DIAL_STATE.put(CACHE_KEY, JSON.stringify(out), { expirationTtl: 300 });
+        // Don't cache when failed — we want retries to hit fresh attempts.
+        if (out.ok) {
+          await env.DIAL_STATE.put(CACHE_KEY, JSON.stringify(out), { expirationTtl: 300 });
+        }
         return new Response(JSON.stringify(out, null, 2), {
           status: 200, headers: { "content-type": "application/json" },
         });
