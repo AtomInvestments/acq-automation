@@ -12,6 +12,12 @@
 // No SPA, no build step, single CSS block. Linear/Stripe density, dark mode,
 // no emojis in chrome.
 
+// Field names MUST match computeDashboardData() output in index.ts:3088 —
+// the cache writes `started_unix`, `duration_secs`, `caller_name`,
+// `outcome_tag`, etc., NOT `started_at`/`duration_s`/`lead_temp`. Earlier
+// version of dashboard-v2 read the wrong field names, so everything
+// rendered as zeros/blanks even though the cache was populated. Fixed
+// 2026-05-27 (Mido feedback: "dashboard is not good").
 interface DashboardV2Data {
   updated_at: string;
   kpis: {
@@ -22,18 +28,24 @@ interface DashboardV2Data {
     hot_count: number;
     engaged_pct: number;
   };
+  warmup?: {
+    day: number;
+    daily_quota: number;
+    dialed_today: number;
+    remaining_today: number;
+  };
   recent_calls: Array<{
-    id: string;
-    started_at: string;
-    duration_s: number;
+    conv_id: string;
+    started_unix: number;
+    duration_secs: number;
     caller_phone: string;
-    contact_id?: string;
-    contact_name?: string;
-    outcome?: string;
-    lead_temp?: string;
-    source?: string;
+    caller_name?: string;
+    caller_address?: string;
+    ghl_contact_id?: string;
+    outcome_tag?: string;      // "hot" | "warm" | "cold" | "dnd" | "voicemail" | "no_answer" | "unknown"
+    outcome_label?: string;
     summary?: string;
-    transcript_excerpt?: string;
+    hydrated?: boolean;
   }>;
 }
 
@@ -340,6 +352,18 @@ function pillFor(leadTemp: string): string {
   return `<span class="pill ${klass}">${v || "?"}</span>`;
 }
 
+// Map computeDashboardData outcome_tag → display pill.
+function outcomePillFor(tag: string, label: string): string {
+  const t = (tag || "unknown").toLowerCase();
+  const klassMap: Record<string, string> = {
+    hot: "hot", warm: "warm", cold: "cold", dnd: "dnc",
+    voicemail: "nurture", no_answer: "unknown", completed: "warm", unknown: "unknown",
+  };
+  const klass = klassMap[t] || "unknown";
+  const display = label || (t === "no_answer" ? "No Answer" : t === "dnd" ? "DNC" : t.charAt(0).toUpperCase() + t.slice(1));
+  return `<span class="pill ${klass}">${display}</span>`;
+}
+
 export async function renderDashboardV2(env: {
   DIAL_STATE: KVNamespace;
 }): Promise<string> {
@@ -359,15 +383,25 @@ export async function renderDashboardV2(env: {
     avg_duration_secs: 0, hot_count: 0, engaged_pct: 0,
   };
   const calls = data?.recent_calls || [];
+  const warmup = data?.warmup;
 
-  // Funnel — compute from the call list. Heuristic for now; can be replaced
-  // with real GHL pipeline counts when /dashboard-data exposes them.
+  // Funnel — real categorization from outcome_tag set by classifyOutcomeForDashboard:
+  //   "hot"       — Hot Lead per transcript_summary
+  //   "warm"      — engaged but not hot
+  //   "cold"      — not interested
+  //   "dnd"       — DNC requested
+  //   "voicemail" — left a message
+  //   "no_answer" — call dropped under 3s
+  //   "completed" — connected, neutral outcome
+  //   "unknown"   — not yet hydrated
   const dials      = calls.length;
-  const connects   = calls.filter((c) => (c.duration_s || 0) >= 15).length;
-  const qualified  = calls.filter((c) => c.lead_temp === "warm" || c.lead_temp === "hot").length;
-  const booked     = calls.filter((c) => c.lead_temp === "hot").length;
-  // Contracted is the long-tail outcome — we don't track it on call records;
-  // pull from a future GHL pipeline count. For now, 0 placeholder.
+  const connects   = calls.filter((c) => {
+    const t = c.outcome_tag || "";
+    return t === "hot" || t === "warm" || t === "cold" || t === "completed" || t === "dnd";
+  }).length;
+  const qualified  = calls.filter((c) => c.outcome_tag === "warm" || c.outcome_tag === "hot").length;
+  const booked     = calls.filter((c) => c.outcome_tag === "hot").length;
+  // Contracted requires a pipeline-stage lookup — leave at 0 until that's wired.
   const contracted = 0;
   const pct = (n: number, base: number) => base ? `${Math.round((n / base) * 100)}%` : "—";
 
@@ -413,6 +447,14 @@ export async function renderDashboardV2(env: {
   <div class="kpi"><div class="label">Engaged %</div><div class="value">${kpis.engaged_pct}%</div></div>
 </div>
 
+${warmup ? `<div class="kpi-row" style="margin-top:-8px;">
+  <div class="kpi"><div class="label">Warm-up Day</div><div class="value">${warmup.day}</div></div>
+  <div class="kpi"><div class="label">Daily Quota</div><div class="value">${warmup.daily_quota}</div></div>
+  <div class="kpi"><div class="label">Dialed Today</div><div class="value">${warmup.dialed_today}</div></div>
+  <div class="kpi"><div class="label">Remaining</div><div class="value">${warmup.remaining_today}</div></div>
+  <div class="kpi" style="grid-column:span 2;"><div class="label">Quota Used</div><div class="value">${warmup.daily_quota ? Math.round(100 * warmup.dialed_today / warmup.daily_quota) : 0}%</div></div>
+</div>` : ""}
+
 <section class="panel">
   <h2>Funnel — dials to contracted</h2>
   <div class="funnel">
@@ -453,36 +495,42 @@ export async function renderDashboardV2(env: {
 <section class="panel">
   <h2>Blake calls — recent</h2>
   <div class="filters">
+    <div class="group"><label>Range</label>
+      <select id="f-range">
+        <option value="all">All time</option>
+        <option value="today">Today</option>
+        <option value="yesterday">Yesterday</option>
+        <option value="7d">Last 7 days</option>
+        <option value="30d">Last 30 days</option>
+      </select>
+    </div>
     <div class="group"><label>Outcome</label>
       <select id="f-outcome">
-        <option value="">All</option>
-        <option value="connected">Connected (≥15s)</option>
-        <option value="voicemail">Voicemail (3-14s)</option>
-        <option value="no-answer">No answer (&lt;3s)</option>
-        <option value="dnc">DNC</option>
-      </select>
-    </div>
-    <div class="group"><label>Disposition</label>
-      <select id="f-temp">
-        <option value="">All</option>
-        <option value="hot">Hot</option>
+        <option value="">All outcomes</option>
+        <option value="hot">Hot Lead</option>
         <option value="warm">Warm</option>
-        <option value="nurture">Nurture</option>
-        <option value="cold">Cold</option>
-        <option value="dnc">DNC</option>
-      </select>
-    </div>
-    <div class="group"><label>Source</label>
-      <select id="f-source">
-        <option value="">All</option>
-        <option value="landing">Landing page</option>
-        <option value="listing">Listing pipeline</option>
-        <option value="referral">Referral</option>
+        <option value="cold">Not Interested</option>
+        <option value="dnd">DNC</option>
+        <option value="voicemail">Voicemail</option>
+        <option value="no_answer">No Answer</option>
+        <option value="completed">Completed (neutral)</option>
         <option value="unknown">Unknown</option>
       </select>
     </div>
-    <div class="group"><label>Since</label>
-      <input id="f-since" type="date" />
+    <div class="group"><label>Connected?</label>
+      <select id="f-connected">
+        <option value="">Either</option>
+        <option value="yes">Connected only</option>
+        <option value="no">Not connected only</option>
+      </select>
+    </div>
+    <div class="group"><label>Min duration</label>
+      <select id="f-mindur">
+        <option value="0">Any</option>
+        <option value="3">≥ 3s</option>
+        <option value="15">≥ 15s</option>
+        <option value="60">≥ 1 min</option>
+      </select>
     </div>
     <label class="toggle"><input type="checkbox" id="f-unique" /> Unique contacts only</label>
     <span id="f-count" class="mono" style="color:var(--text-mute);margin-left:auto;font-size:11px;"></span>
@@ -491,26 +539,26 @@ export async function renderDashboardV2(env: {
     <thead><tr>
       <th>When</th>
       <th>Caller</th>
+      <th>Phone</th>
       <th>Duration</th>
       <th>Outcome</th>
-      <th>Disposition</th>
-      <th>Source</th>
       <th>Summary</th>
     </tr></thead>
     <tbody id="calls-body">
       ${calls.map((c) => {
-        const dur = c.duration_s || 0;
-        const outcome = dur >= 15 ? "connected" : dur >= 3 ? "voicemail" : "no-answer";
-        const source = (c.source || "unknown").toLowerCase();
-        const caller = c.contact_name || c.caller_phone || "(unknown)";
-        const summary = (c.summary || c.transcript_excerpt || "").slice(0, 120);
-        return `<tr data-outcome="${outcome}" data-temp="${c.lead_temp || ''}" data-source="${source}" data-phone="${escapeHtml(c.caller_phone || '')}" data-ts="${c.started_at || ''}" data-call='${escapeAttr(JSON.stringify(c))}'>
-          <td class="mono" style="color:var(--text-dim);">${new Date(c.started_at || Date.now()).toLocaleString()}</td>
+        const dur = c.duration_secs || 0;
+        const tag = (c.outcome_tag || "unknown").toLowerCase();
+        const connected = (tag === "hot" || tag === "warm" || tag === "cold" || tag === "completed" || tag === "dnd") ? "yes" : "no";
+        const caller = c.caller_name || "(not in GHL)";
+        const phone = c.caller_phone || "—";
+        const summary = (c.summary || "").slice(0, 140);
+        const startedMs = (c.started_unix || 0) * 1000;
+        return `<tr data-outcome="${tag}" data-connected="${connected}" data-duration="${dur}" data-phone="${escapeHtml(phone)}" data-ts="${startedMs}" data-call='${escapeAttr(JSON.stringify(c))}'>
+          <td class="mono" style="color:var(--text-dim);">${startedMs ? new Date(startedMs).toLocaleString() : "—"}</td>
           <td>${escapeHtml(caller)}</td>
+          <td class="mono" style="color:var(--text-dim);">${escapeHtml(phone)}</td>
           <td class="mono">${fmtSec(dur)}</td>
-          <td>${outcome}</td>
-          <td>${pillFor(c.lead_temp || "")}</td>
-          <td style="color:var(--text-dim);">${source}</td>
+          <td>${outcomePillFor(tag, c.outcome_label || "")}</td>
           <td style="color:var(--text-dim);">${escapeHtml(summary)}</td>
         </tr>`;
       }).join("")}
@@ -620,23 +668,39 @@ export async function renderDashboardV2(env: {
 <script>
 (function(){
   var body = document.getElementById('calls-body');
+  var fRange = document.getElementById('f-range');
   var fOut = document.getElementById('f-outcome');
-  var fTemp = document.getElementById('f-temp');
-  var fSrc = document.getElementById('f-source');
-  var fSince = document.getElementById('f-since');
+  var fConnected = document.getElementById('f-connected');
+  var fMinDur = document.getElementById('f-mindur');
   var fUnique = document.getElementById('f-unique');
   var fCount = document.getElementById('f-count');
-  var seen = {};
+
+  function rangeCutoff(val) {
+    var now = Date.now();
+    var d = new Date(); d.setHours(0,0,0,0);
+    var startOfTodayMs = d.getTime();
+    switch (val) {
+      case 'today':     return [startOfTodayMs, now];
+      case 'yesterday': return [startOfTodayMs - 86400000, startOfTodayMs];
+      case '7d':        return [now - 7 * 86400000, now];
+      case '30d':       return [now - 30 * 86400000, now];
+      default:          return [0, Infinity];
+    }
+  }
+
   function filter(){
-    seen = {};
+    var seen = {};
     var rows = body.querySelectorAll('tr');
+    var range = rangeCutoff(fRange.value);
+    var minDur = Number(fMinDur.value || 0);
     var n = 0;
     rows.forEach(function(r){
       var ok = true;
-      if (fOut.value  && r.dataset.outcome !== fOut.value)  ok = false;
-      if (fTemp.value && r.dataset.temp    !== fTemp.value) ok = false;
-      if (fSrc.value  && r.dataset.source  !== fSrc.value)  ok = false;
-      if (fSince.value && r.dataset.ts && new Date(r.dataset.ts) < new Date(fSince.value)) ok = false;
+      var ts = Number(r.dataset.ts || 0);
+      if (ts && (ts < range[0] || ts > range[1])) ok = false;
+      if (fOut.value && r.dataset.outcome !== fOut.value) ok = false;
+      if (fConnected.value && r.dataset.connected !== fConnected.value) ok = false;
+      if (Number(r.dataset.duration || 0) < minDur) ok = false;
       if (fUnique.checked && r.dataset.phone) {
         if (seen[r.dataset.phone]) ok = false;
         else seen[r.dataset.phone] = 1;
@@ -646,7 +710,23 @@ export async function renderDashboardV2(env: {
     });
     fCount.textContent = n + ' of ' + rows.length + ' shown';
   }
-  [fOut, fTemp, fSrc, fSince, fUnique].forEach(function(el){ el.addEventListener('change', filter); });
+  [fRange, fOut, fConnected, fMinDur, fUnique].forEach(function(el){
+    if (el) el.addEventListener('change', filter);
+  });
+
+  // Auto-refresh the whole dashboard every 60s so the data is never more
+  // than a minute stale. Only reloads when the user isn't actively
+  // interacting (avoids clobbering an open modal or in-progress filter
+  // click).
+  var lastInteract = Date.now();
+  document.addEventListener('click', function(){ lastInteract = Date.now(); });
+  document.addEventListener('keydown', function(){ lastInteract = Date.now(); });
+  setInterval(function(){
+    var idleMs = Date.now() - lastInteract;
+    var modalOpen = document.getElementById('modal-backdrop').classList.contains('open');
+    if (idleMs > 5000 && !modalOpen) location.reload();
+  }, 60000);
+
   body.addEventListener('click', function(e){
     var tr = e.target.closest('tr');
     if (!tr || !tr.dataset.call) return;
