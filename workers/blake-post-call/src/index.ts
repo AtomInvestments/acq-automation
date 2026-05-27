@@ -937,12 +937,17 @@ export default {
           conversation_config: {
             agent: {
               language: "en",
-              // Row 1: LLM → Gemini 2.0 Flash for sub-300ms first-token latency.
-              // ElevenLabs Conv AI nests the LLM choice under agent.prompt.llm
-              // (NOT agent.llm — that field exists in the response shape but
-              // PATCHing it has no effect, learned 2026-05-27).
+              // Row 1: LLM → Gemini 2.5 Flash.
+              // ElevenLabs Conv AI nests LLM under agent.prompt.llm (NOT
+              // agent.llm — PATCH on agent.llm is a no-op per 2026-05-27).
+              // Switched from gemini-2.0-flash → gemini-2.5-flash on
+              // 2026-05-27 — ElevenLabs deprecated 2.0 and was auto-falling
+              // back to 2.5 anyway, dashboard surfaced the warning.
+              // max_tokens=-1 = no per-turn cap (default was 250 — too tight,
+              // would cut Blake off mid-sentence on long objection handling).
               prompt: {
-                llm: "gemini-2.0-flash",
+                llm: "gemini-2.5-flash",
+                max_tokens: -1,
               },
             },
             tts: {
@@ -990,11 +995,35 @@ export default {
           }
         );
         const respText = await r.text();
+        // Auto-publish so the changes go LIVE instead of sitting as a draft.
+        // ElevenLabs Conv AI keeps changes in draft state until publish is
+        // explicitly called — that's what bit us 2026-05-27 (Mido had to
+        // click Publish manually after the first apply).
+        let publishStatus: any = null;
+        if (r.ok) {
+          const pubRes = await fetch(
+            `https://api.elevenlabs.io/v1/convai/agents/${BLAKE_AGENT_ID}/publish`,
+            {
+              method: "POST",
+              headers: {
+                "xi-api-key": env.ELEVENLABS_API_KEY,
+                "content-type": "application/json",
+              },
+              body: JSON.stringify({}),
+            }
+          );
+          publishStatus = {
+            status: pubRes.status,
+            ok: pubRes.ok,
+            body: (await pubRes.text()).slice(0, 500),
+          };
+        }
         return new Response(JSON.stringify({
           ok: r.ok,
           status: r.status,
           applied_keys: Object.keys(body.conversation_config),
           response: respText.slice(0, 4000),
+          publish: publishStatus,
         }, null, 2), {
           status: r.ok ? 200 : 502,
           headers: { "content-type": "application/json" },
