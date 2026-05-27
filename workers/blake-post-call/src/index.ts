@@ -1018,6 +1018,42 @@ export default {
       })();
     }
 
+    // Debug: GET /admin/blake/recent-conv?n=1 → list recent conv summaries
+    // + GET /admin/blake/conv/{id} → full conversation detail (transcript +
+    // outcome). Used to diagnose call hang-ups.
+    if (req.method === "GET" && url.pathname === "/admin/blake/recent-conv") {
+      return (async () => {
+        if (!env.ELEVENLABS_API_KEY) {
+          return new Response(JSON.stringify({ ok: false, error: "ELEVENLABS_API_KEY not bound" }), {
+            status: 503, headers: { "content-type": "application/json" },
+          });
+        }
+        const n = Math.max(1, Math.min(20, Number(url.searchParams.get("n") || "5")));
+        const r = await fetch(
+          `https://api.elevenlabs.io/v1/convai/conversations?agent_id=${BLAKE_AGENT_ID}&page_size=${n}`,
+          { headers: { "xi-api-key": env.ELEVENLABS_API_KEY } }
+        );
+        const text = await r.text();
+        return new Response(text, { status: r.status, headers: { "content-type": "application/json" } });
+      })();
+    }
+    if (req.method === "GET" && url.pathname.startsWith("/admin/blake/conv/")) {
+      return (async () => {
+        const convId = url.pathname.slice("/admin/blake/conv/".length).trim();
+        if (!convId || !env.ELEVENLABS_API_KEY) {
+          return new Response(JSON.stringify({ ok: false, error: "bad request" }), {
+            status: 400, headers: { "content-type": "application/json" },
+          });
+        }
+        const r = await fetch(
+          `https://api.elevenlabs.io/v1/convai/conversations/${convId}`,
+          { headers: { "xi-api-key": env.ELEVENLABS_API_KEY } }
+        );
+        const text = await r.text();
+        return new Response(text, { status: r.status, headers: { "content-type": "application/json" } });
+      })();
+    }
+
     // Workstream 4a — Blake ElevenLabs agent config (read-only audit endpoint).
     // GET /admin/blake/agent-config → returns the live agent config JSON.
     // Used to populate docs/blake-elevenlabs-audit.md "current" column.
