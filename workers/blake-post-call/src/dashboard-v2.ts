@@ -1,17 +1,16 @@
-// dashboard-v2.ts — Workstream 6 dashboard upgrade.
+// dashboard-v2.ts — unified server-rendered dashboard at /dashboard.
 //
-// New server-rendered dashboard at /dashboard. Pulls live data from the
-// existing /dashboard-data cache + recent blake_iteration KV writes.
-// Pure inline HTML/CSS/JS (no SPA build), Linear/Stripe-style density,
-// dark mode default, no emojis in chrome.
+// Tabbed layout (Mido directive, 2026-05-27):
+//   Overview — KPIs + funnel + cost snapshot + improve cards
+//   Calls    — Blake calls table with filters (outcome / disp / source / date / unique)
+//   Voice    — Brian vs Roger A/B stats + per-voice tag
+//   Agents   — per-agent (RJ/Mike/Justus/Brady) call+msg+opp activity (PR C populates AI review)
+//   Costs    — tech-stack cost per active user (detailed breakdown)
+//   Variants — website A/B/C performance (placeholder until WS1 ships)
 //
-// Three sections:
-//   1. KPI strip (calls, avg duration, hot leads, callbacks, ELabs cost)
-//   2. Funnel — dials → connects → qualified → booked → contracted
-//   3. RJ performance / Blake call table with date+outcome+source filters
-//   4. Cost per user (Calltools/GHL/ElevenLabs/Claude/ATTOM monthly + per-active)
-//   5. What Blake can improve on (top 3 from latest iteration review)
-//   6. Variant performance (placeholder — populated when WS1 lands)
+// All tabs in one page, server-rendered, vanilla JS for tab switch + filters.
+// No SPA, no build step, single CSS block. Linear/Stripe density, dark mode,
+// no emojis in chrome.
 
 interface DashboardV2Data {
   updated_at: string;
@@ -268,6 +267,54 @@ table.cost tfoot td { padding-top: 10px; font-weight: 600; }
 .improve-cards .empty { color: var(--text-mute); font-style: italic; }
 
 /* Modal */
+/* Tab nav */
+.tabnav {
+  display: flex; gap: 4px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-2);
+  padding: 0 24px;
+  overflow-x: auto;
+}
+.tabnav button {
+  background: transparent; border: 0; color: var(--text-mute);
+  padding: 12px 14px; font-size: 12px; font-weight: 500;
+  text-transform: uppercase; letter-spacing: 0.08em; cursor: pointer;
+  border-bottom: 2px solid transparent; transition: color 0.15s, border-color 0.15s;
+}
+.tabnav button:hover { color: var(--text); }
+.tabnav button.active { color: var(--accent); border-bottom-color: var(--accent); }
+.tabnav .badge {
+  display: inline-block; margin-left: 6px; padding: 1px 6px;
+  background: var(--bg-3); border-radius: 8px; font-size: 10px;
+  color: var(--text-dim); font-weight: 500; letter-spacing: 0;
+}
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+/* Voice A/B */
+.voice-card {
+  background: var(--bg-3); border: 1px solid var(--border-2); border-radius: 8px;
+  padding: 18px 20px; min-width: 220px;
+}
+.voice-card .name { font-size: 14px; font-weight: 600; margin-bottom: 8px; }
+.voice-card .row { display: flex; justify-content: space-between; align-items: baseline; margin: 6px 0; }
+.voice-card .row .label { color: var(--text-mute); font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; }
+.voice-card .row .value { font-family: "IBM Plex Mono", monospace; font-size: 16px; }
+.voice-card .winner { color: var(--good); font-size: 11px; margin-top: 6px; text-transform: uppercase; letter-spacing: 0.08em; }
+
+/* Agent cards */
+.agent-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
+.agent-card {
+  background: var(--bg-3); border: 1px solid var(--border-2); border-radius: 8px;
+  padding: 14px 16px;
+}
+.agent-card .name { font-size: 14px; font-weight: 600; margin-bottom: 8px; }
+.agent-card .role { color: var(--text-mute); font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 12px; }
+.agent-card .stat { display: flex; justify-content: space-between; font-size: 12px; padding: 4px 0; }
+.agent-card .stat .label { color: var(--text-dim); }
+.agent-card .stat .value { font-family: "IBM Plex Mono", monospace; color: var(--text); }
+.agent-card .review { color: var(--text-mute); font-size: 11px; font-style: italic; margin-top: 10px; line-height: 1.5; }
+
 .modal-backdrop {
   display: none;
   position: fixed; inset: 0; background: rgba(0,0,0,0.6);
@@ -331,13 +378,29 @@ export async function renderDashboardV2(env: {
   const updatedAt = data?.updated_at || new Date().toISOString();
   const updatedDisp = new Date(updatedAt).toLocaleString();
 
+  // Voice A/B stats — populated by /conversation-init + post-call attribution.
+  const voiceStats = await readVoiceAbStats(env);
+  // Per-agent activity stub — PR C will fill this from GHL aggregations.
+  const agentStub = readAgentActivityStub(env);
+
   return `${dashboardHead()}
 <body>
 <header class="topbar">
   <div class="brand">APG ACQ · Dashboard</div>
   <div class="meta mono">Updated ${updatedDisp}</div>
 </header>
+<nav class="tabnav" id="tabnav">
+  <button data-tab="overview" class="active">Overview</button>
+  <button data-tab="calls">Calls <span class="badge">${calls.length}</span></button>
+  <button data-tab="voice">Voice A/B</button>
+  <button data-tab="agents">Agents</button>
+  <button data-tab="costs">Costs</button>
+  <button data-tab="variants">Variants</button>
+</nav>
 <main>
+
+<!-- TAB: Overview -->
+<div class="tab-panel active" data-tab="overview">
 
 <div class="kpi-row">
   <div class="kpi"><div class="label">Calls Today</div><div class="value">${kpis.calls_today}</div></div>
@@ -369,39 +432,22 @@ export async function renderDashboardV2(env: {
   ${cards.generated_at ? `<div class="mono" style="color:var(--text-mute);font-size:11px;margin-top:8px;">Latest review: ${cards.generated_at}</div>` : ""}
 </section>
 
-<div class="grid-2">
-  <section class="panel">
-    <h2>RJ Performance — last 7 days</h2>
-    <div class="kpi-row" style="grid-template-columns:repeat(3,1fr);margin:0;">
-      <div class="kpi"><div class="label">Callbacks Booked</div><div class="value">${booked}</div></div>
-      <div class="kpi"><div class="label">Avg Connect Time</div><div class="value">${fmtSec(kpis.avg_duration_secs)}</div></div>
-      <div class="kpi"><div class="label">Disposition Coverage</div><div class="value">${pct(qualified + booked, dials)}</div></div>
-    </div>
-    <div class="mono" style="color:var(--text-mute);font-size:11px;margin-top:14px;">
-      Connectivity flags: <span style="color:var(--text-dim);">awaiting Calltools webhook integration</span>
-    </div>
-  </section>
-  <section class="panel">
-    <h2>Tech stack — cost per active user</h2>
-    <table class="cost">
-      <thead><tr><th>Tool</th><th>Monthly</th><th>Seats</th><th>Per active user</th></tr></thead>
-      <tbody>
-        ${cost.tools.map((t) => `
-          <tr>
-            <td>${t.name}</td>
-            <td>${fmtUsd(t.monthly_usd)}</td>
-            <td>${t.seats}</td>
-            <td>${t.per_active === "shared" ? "shared" : t.per_active === "trial" ? "trial" : fmtUsd(Math.round(t.monthly_usd / Math.max(1, t.seats)))}</td>
-          </tr>`).join("")}
-      </tbody>
-      <tfoot>
-        <tr><td>Total / Active users (${cost.active_users})</td><td>${fmtUsd(totalMonthly)}</td><td>—</td><td>${fmtUsd(perUser)}/user</td></tr>
-      </tfoot>
-    </table>
-    <div class="mono" style="color:var(--text-mute);font-size:11px;margin-top:8px;">Config last updated ${cost.last_updated}. Edit DEFAULT_COST_CONFIG in dashboard-v2.ts.</div>
-  </section>
-</div>
+<section class="panel">
+  <h2>RJ Performance — last 7 days</h2>
+  <div class="kpi-row" style="grid-template-columns:repeat(3,1fr);margin:0;">
+    <div class="kpi"><div class="label">Callbacks Booked</div><div class="value">${booked}</div></div>
+    <div class="kpi"><div class="label">Avg Connect Time</div><div class="value">${fmtSec(kpis.avg_duration_secs)}</div></div>
+    <div class="kpi"><div class="label">Disposition Coverage</div><div class="value">${pct(qualified + booked, dials)}</div></div>
+  </div>
+  <div class="mono" style="color:var(--text-mute);font-size:11px;margin-top:14px;">
+    Connectivity flags: <span style="color:var(--text-dim);">awaiting Calltools webhook integration</span>
+  </div>
+</section>
 
+</div><!-- /Overview -->
+
+<!-- TAB: Calls -->
+<div class="tab-panel" data-tab="calls">
 <section class="panel">
   <h2>Blake calls — recent</h2>
   <div class="filters">
@@ -470,12 +516,94 @@ export async function renderDashboardV2(env: {
   </table>
 </section>
 
+</section>
+</div><!-- /Calls -->
+
+<!-- TAB: Voice A/B -->
+<div class="tab-panel" data-tab="voice">
 <section class="panel">
-  <h2>Variant performance (Workstream 1)</h2>
-  <div style="color:var(--text-mute);font-size:12px;">
-    A/B/C variant routing not yet shipped. Once Workstream 1 lands, this section surfaces conversions per variant + Clarity engagement metrics (unique visitors only).
+  <h2>Voice A/B — Brian vs Roger</h2>
+  <div style="color:var(--text-mute);font-size:12px;margin-bottom:14px;">
+    50/50 split active since 2026-05-27 via <code>/conversation-init</code>. Each new call randomly assigns Brian or Roger; post-call attribution tags the GHL contact with <code>voice-brian</code> or <code>voice-roger</code> for downstream conversion analysis.
+  </div>
+  <div style="display:flex;gap:14px;flex-wrap:wrap;">
+    <div class="voice-card">
+      <div class="name">Brian <span class="mono" style="color:var(--text-mute);font-size:10px;">nPczCjz...zQrb</span></div>
+      <div class="row"><span class="label">Calls Sent</span><span class="value">${voiceStats.brian.sent}</span></div>
+      <div class="row"><span class="label">Completed</span><span class="value">${voiceStats.brian.completed}</span></div>
+      <div class="row"><span class="label">Completion %</span><span class="value">${voiceStats.brian.completion_pct}%</span></div>
+      ${voiceStats.winner === "brian" ? `<div class="winner">▲ ahead</div>` : ""}
+    </div>
+    <div class="voice-card">
+      <div class="name">Roger <span class="mono" style="color:var(--text-mute);font-size:10px;">CwhRB...Fs17</span></div>
+      <div class="row"><span class="label">Calls Sent</span><span class="value">${voiceStats.roger.sent}</span></div>
+      <div class="row"><span class="label">Completed</span><span class="value">${voiceStats.roger.completed}</span></div>
+      <div class="row"><span class="label">Completion %</span><span class="value">${voiceStats.roger.completion_pct}%</span></div>
+      ${voiceStats.winner === "roger" ? `<div class="winner">▲ ahead</div>` : ""}
+    </div>
+  </div>
+  <div class="mono" style="color:var(--text-mute);font-size:11px;margin-top:14px;">
+    Raw counters: <code>blake:ab_stats:&lt;voice&gt;:sent</code> / <code>:completed</code>. Pick winner after ~50 sent each.
   </div>
 </section>
+</div><!-- /Voice -->
+
+<!-- TAB: Agents -->
+<div class="tab-panel" data-tab="agents">
+<section class="panel">
+  <h2>Agent activity — last 7 days</h2>
+  <div style="color:var(--text-mute);font-size:12px;margin-bottom:14px;">
+    Per-agent breakdown of calls, opp moves, tasks completed. AI-generated review per agent populates after the next daily cron tick.
+  </div>
+  <div class="agent-grid">
+    ${agentStub.map((a) => `
+      <div class="agent-card">
+        <div class="name">${escapeHtml(a.name)}</div>
+        <div class="role">${escapeHtml(a.role)}</div>
+        <div class="stat"><span class="label">Opps assigned</span><span class="value">${a.opps_assigned}</span></div>
+        <div class="stat"><span class="label">Opps moved</span><span class="value">${a.opps_moved}</span></div>
+        <div class="stat"><span class="label">Tasks completed</span><span class="value">${a.tasks_completed}</span></div>
+        <div class="stat"><span class="label">Outbound msgs</span><span class="value">${a.outbound_msgs}</span></div>
+        ${a.ai_review
+          ? `<div class="review">${escapeHtml(a.ai_review)}</div>`
+          : `<div class="review">AI review pending — see <code>POST /admin/agents/review</code>.</div>`}
+      </div>`).join("")}
+  </div>
+</section>
+</div><!-- /Agents -->
+
+<!-- TAB: Costs -->
+<div class="tab-panel" data-tab="costs">
+<section class="panel">
+  <h2>Tech stack — cost per active user</h2>
+  <table class="cost">
+    <thead><tr><th>Tool</th><th>Monthly</th><th>Seats</th><th>Per active user</th></tr></thead>
+    <tbody>
+      ${cost.tools.map((t) => `
+        <tr>
+          <td>${t.name}</td>
+          <td>${fmtUsd(t.monthly_usd)}</td>
+          <td>${t.seats}</td>
+          <td>${t.per_active === "shared" ? "shared" : t.per_active === "trial" ? "trial" : fmtUsd(Math.round(t.monthly_usd / Math.max(1, t.seats)))}</td>
+        </tr>`).join("")}
+    </tbody>
+    <tfoot>
+      <tr><td>Total / Active users (${cost.active_users})</td><td>${fmtUsd(totalMonthly)}</td><td>—</td><td>${fmtUsd(perUser)}/user</td></tr>
+    </tfoot>
+  </table>
+  <div class="mono" style="color:var(--text-mute);font-size:11px;margin-top:8px;">Config last updated ${cost.last_updated}. Edit DEFAULT_COST_CONFIG in dashboard-v2.ts.</div>
+</section>
+</div><!-- /Costs -->
+
+<!-- TAB: Variants -->
+<div class="tab-panel" data-tab="variants">
+<section class="panel">
+  <h2>Website variants — A/B/C (Workstream 1)</h2>
+  <div style="color:var(--text-mute);font-size:12px;">
+    Friendly / Professional / Traditional routing not yet shipped. Once Workstream 1 lands at the edge, this section surfaces conversions per variant + Clarity engagement metrics (unique visitors only).
+  </div>
+</section>
+</div><!-- /Variants -->
 
 </main>
 
@@ -531,10 +659,85 @@ export async function renderDashboardV2(env: {
     if (e.target === e.currentTarget) e.currentTarget.classList.remove('open');
   });
   filter();
+
+  // Tab switching — vanilla, no router. Hash drives the active tab so links
+  // are share-able (e.g. /dashboard#calls).
+  var tabs = document.querySelectorAll('#tabnav button');
+  var panels = document.querySelectorAll('.tab-panel');
+  function activate(name) {
+    tabs.forEach(function(t){ t.classList.toggle('active', t.dataset.tab === name); });
+    panels.forEach(function(p){ p.classList.toggle('active', p.dataset.tab === name); });
+  }
+  tabs.forEach(function(t){
+    t.addEventListener('click', function(){
+      activate(t.dataset.tab);
+      history.replaceState(null, '', '#' + t.dataset.tab);
+    });
+  });
+  var fromHash = (location.hash || '').replace('#','');
+  if (fromHash) activate(fromHash);
 })();
 </script>
 </body>
 </html>`;
+}
+
+// ---- Voice A/B reader -------------------------------------------------------
+
+interface VoiceAbStats {
+  brian: { sent: number; completed: number; completion_pct: number };
+  roger: { sent: number; completed: number; completion_pct: number };
+  winner: "brian" | "roger" | "tie" | "insufficient";
+}
+
+async function readVoiceAbStats(env: { DIAL_STATE: KVNamespace }): Promise<VoiceAbStats> {
+  const read = async (k: string): Promise<number> => Number((await env.DIAL_STATE.get(k)) || "0");
+  const [bs, bc, rs, rc] = await Promise.all([
+    read("blake:ab_stats:brian:sent"),
+    read("blake:ab_stats:brian:completed"),
+    read("blake:ab_stats:roger:sent"),
+    read("blake:ab_stats:roger:completed"),
+  ]);
+  const bp = bs ? Math.round((bc / bs) * 100) : 0;
+  const rp = rs ? Math.round((rc / rs) * 100) : 0;
+  let winner: VoiceAbStats["winner"] = "insufficient";
+  // Need ≥10 sent on EACH side before we call a winner, otherwise it's noise.
+  if (bs >= 10 && rs >= 10) {
+    winner = bp === rp ? "tie" : bp > rp ? "brian" : "roger";
+  }
+  return {
+    brian: { sent: bs, completed: bc, completion_pct: bp },
+    roger: { sent: rs, completed: rc, completion_pct: rp },
+    winner,
+  };
+}
+
+// ---- Agent activity stub ----------------------------------------------------
+//
+// PR C will populate these from GHL aggregations. For now we render the four
+// known agents with zero-stat placeholders so the Agents tab isn't empty.
+
+interface AgentActivity {
+  name: string;
+  role: string;
+  ghl_user_id?: string;
+  opps_assigned: number;
+  opps_moved: number;
+  tasks_completed: number;
+  outbound_msgs: number;
+  ai_review: string | null;
+}
+
+function readAgentActivityStub(_env: { DIAL_STATE: KVNamespace }): AgentActivity[] {
+  // PR C will hydrate from KV `agent:activity:<user_id>:weekly` after the
+  // daily aggregator runs. Until then, render the cast list so users can see
+  // the shape of what's coming.
+  return [
+    { name: "RJ Fonseca",      role: "Acquisitions Partner", opps_assigned: 0, opps_moved: 0, tasks_completed: 0, outbound_msgs: 0, ai_review: null },
+    { name: "Mike (Yasser)",   role: "PM / Marketing Systems", opps_assigned: 0, opps_moved: 0, tasks_completed: 0, outbound_msgs: 0, ai_review: null },
+    { name: "Justus",          role: "VA — Acquisitions",      opps_assigned: 0, opps_moved: 0, tasks_completed: 0, outbound_msgs: 0, ai_review: null },
+    { name: "Brady",           role: "Apprentice",             opps_assigned: 0, opps_moved: 0, tasks_completed: 0, outbound_msgs: 0, ai_review: null },
+  ];
 }
 
 function escapeHtml(s: string): string {
