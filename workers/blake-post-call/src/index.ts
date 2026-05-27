@@ -61,12 +61,15 @@ const GHL_BASE = "https://services.leadconnectorhq.com";
 const USER_MIKE = "Vj4WwH1ovxGN5Hv5Kq17";
 const USER_RJ = "EvxJmnll1hlJtzpW14BE";   // Rene Fonseca (RJ) — callback assignee
 
-// Workstream PR C — per-agent activity roster. user_id values for Justus +
-// Brady are TBD until they're confirmed in GHL → Settings → Team. When
-// known, drop them in here and the aggregator picks them up automatically.
+// Workstream PR C — per-agent activity roster. Adam Chodes added 2026-05-27
+// after the backfill discovery that ~224 opps were assigned to his GHL user
+// (vDKOqPSkA8nLkia5skd0) by default from the Podio CSV import. Justus + Brady
+// user_ids are still TBD until confirmed in GHL → Settings → Team.
+const USER_ADAM = "vDKOqPSkA8nLkia5skd0";   // Adam Chodes — APG sub-account owner
 const APG_AGENT_ROSTER: Array<{ user_id: string; name: string; role: string }> = [
   { user_id: USER_RJ,   name: "RJ Fonseca",    role: "Acquisitions Partner" },
   { user_id: USER_MIKE, name: "Mike (Yasser)", role: "PM / Marketing Systems" },
+  { user_id: USER_ADAM, name: "Adam Chodes",   role: "Owner — APG" },
   // { user_id: "<TBD>", name: "Justus",       role: "VA — Acquisitions" },
   // { user_id: "<TBD>", name: "Brady",        role: "Apprentice" },
 ];
@@ -3081,7 +3084,6 @@ async function computeDashboardData(env: Env): Promise<any> {
       const duration = md.call_duration_secs || c.call_duration_secs || 0;
       const analysis = detail.analysis || {};
       const summary = (analysis.transcript_summary || "").slice(0, 250);
-      const outcome = classifyOutcomeForDashboard(detail);
 
       let contact: any = null;
       if (callerPhone) {
@@ -3094,6 +3096,12 @@ async function computeDashboardData(env: Env): Promise<any> {
       const contactAddr = contact
         ? [contact.address1, contact.city, contact.state].filter(Boolean).join(", ")
         : "";
+
+      // Classify outcome AFTER fetching contact — gives priority to the
+      // lead_temp tag set by post-call extraction (more authoritative than
+      // a keyword scan of transcript_summary).
+      const contactTags: string[] = contact?.tags || [];
+      const outcome = classifyOutcomeForDashboard(detail, contactTags);
 
       const hydratedEntry = {
         conv_id: convId,
@@ -3219,7 +3227,25 @@ async function computeDashboardData(env: Env): Promise<any> {
   };
 }
 
-function classifyOutcomeForDashboard(detail: any): { tag: string; label: string } {
+// Categorize a call outcome. Mido feedback 2026-05-27: the heuristic from
+// transcript_summary alone is too brittle. Now also reads GHL contact tags
+// (hot-lead / warm-lead / nurture-lead / cold-lead / dnd-opt-out /
+// wrong-number) set by applyExtractionToGhl after every call. Tag wins
+// when present; falls back to summary keyword + duration.
+function classifyOutcomeForDashboard(
+  detail: any,
+  contactTags?: string[]
+): { tag: string; label: string } {
+  // 1. Authoritative path: contact tags set by Claude extraction.
+  const tags = (contactTags || []).map((t) => String(t || "").toLowerCase());
+  if (tags.includes("wrong-number"))   return { tag: "dnd",       label: "Wrong Number" };
+  if (tags.includes("dnd-opt-out"))    return { tag: "dnd",       label: "DNC" };
+  if (tags.includes("hot-lead"))       return { tag: "hot",       label: "Hot Lead" };
+  if (tags.includes("warm-lead"))      return { tag: "warm",      label: "Warm" };
+  if (tags.includes("nurture-lead"))   return { tag: "warm",      label: "Nurture" };
+  if (tags.includes("cold-lead"))      return { tag: "cold",      label: "Cold" };
+
+  // 2. Fallback: keyword scan on the transcript summary.
   const analysis = detail?.analysis || {};
   const summary = (analysis.transcript_summary || "").toLowerCase();
   if (summary.includes("hot lead") || summary.includes("ready to sell") || summary.includes("very interested")) {
@@ -3235,9 +3261,10 @@ function classifyOutcomeForDashboard(detail: any): { tag: string; label: string 
     return { tag: "voicemail", label: "Voicemail" };
   }
   const dur = detail?.metadata?.call_duration_secs || 0;
-  if (dur < 15) return { tag: "no-answer", label: "No Answer / Short" };
+  if (dur < 3)  return { tag: "no_answer", label: "No Answer" };
+  if (dur < 15) return { tag: "voicemail", label: "Voicemail" };
   if (analysis.call_successful === "success") return { tag: "warm", label: "Engaged" };
-  return { tag: "unknown", label: "Completed" };
+  return { tag: "completed", label: "Completed" };
 }
 
 // ---- /conversation-init handler ---------------------------------------------

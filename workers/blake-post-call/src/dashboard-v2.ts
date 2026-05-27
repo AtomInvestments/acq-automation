@@ -824,9 +824,13 @@ function readAgentActivityStub(_env: { DIAL_STATE: KVNamespace }): AgentActivity
 // PR C — async reader that pulls real activity + reviews from KV. Falls back
 // to the stub when nothing has been aggregated yet (KV empty).
 export async function readAgentActivity(env: { DIAL_STATE: KVNamespace }): Promise<AgentActivity[]> {
+  // Mirrors APG_AGENT_ROSTER in index.ts. Adam was added 2026-05-27 after
+  // we discovered ~224 opps are owned by his GHL user from the Podio
+  // import.
   const ROSTER = [
     { user_id: "EvxJmnll1hlJtzpW14BE", name: "RJ Fonseca",    role: "Acquisitions Partner" },
     { user_id: "Vj4WwH1ovxGN5Hv5Kq17", name: "Mike (Yasser)", role: "PM / Marketing Systems" },
+    { user_id: "vDKOqPSkA8nLkia5skd0", name: "Adam Chodes",   role: "Owner — APG" },
   ];
   const out: AgentActivity[] = [];
   for (const u of ROSTER) {
