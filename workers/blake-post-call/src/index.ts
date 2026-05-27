@@ -775,8 +775,11 @@ export default {
             tts: {
               // Row 2 default: Brian (primary A/B candidate)
               voice_id: VOICE_AB_BRIAN_ID,
-              // Row 3: Flash v2.5 (~75ms vs Multilingual v2's ~1000ms)
-              model_id: "eleven_flash_v2_5",
+              // Row 3: Flash v2 (English-only fast TTS). ElevenLabs Conv AI
+              // requires "eleven_flash_v2" or "eleven_turbo_v2" for English
+              // agents — the v2_5 IDs were rejected with
+              // "English Agents must use turbo or flash v2" on 2026-05-27.
+              model_id: "eleven_flash_v2",
             },
             asr: {
               // Row 4: en-US locked
