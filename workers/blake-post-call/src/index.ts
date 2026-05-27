@@ -3515,10 +3515,47 @@ async function handleWebhook(req: Request, env: Env, ctx: ExecutionContext): Pro
     );
   }
 
-  const contactId = await findContactByPhone(env.BLAKE_GHL_PIT, callerPhone);
+  // Mido directive (2026-05-27): every Blake call MUST land in GHL, even
+  // when the caller's phone isn't in our database. Previously we silently
+  // dropped the call payload here; now we create a fresh contact tagged
+  // `blake-cold-inbound` so post-call extraction + opp creation can proceed
+  // as usual.
+  let contactId = await findContactByPhone(env.BLAKE_GHL_PIT, callerPhone);
+  let createdNewContact = false;
+  if (!contactId) {
+    try {
+      const createRes = await fetch(`${GHL_BASE}/contacts/`, {
+        method: "POST",
+        headers: ghlHeaders(env.BLAKE_GHL_PIT),
+        body: JSON.stringify({
+          locationId: APG_LOCATION_ID,
+          firstName: "Unknown",
+          lastName:  "Caller",
+          phone:     callerPhone,
+          source:    "Blake call — cold inbound (no prior GHL record)",
+          tags:      ["blake-cold-inbound", "blake-called"],
+        }),
+      });
+      const createText = await createRes.text();
+      try {
+        contactId =
+          JSON.parse(createText)?.contact?.id ||
+          JSON.parse(createText)?.id ||
+          "";
+      } catch {}
+      if (contactId) {
+        createdNewContact = true;
+        console.log(`[blake-post-call] created cold-inbound contact ${contactId} for ${callerPhone}`);
+      } else {
+        console.error(`[blake-post-call] contact create failed ${createRes.status}: ${createText.slice(0, 200)}`);
+      }
+    } catch (e) {
+      console.error(`[blake-post-call] contact create threw: ${e}`);
+    }
+  }
   if (!contactId) {
     return new Response(
-      JSON.stringify({ ok: true, note: "no GHL contact for caller", caller: callerPhone }),
+      JSON.stringify({ ok: true, note: "no GHL contact for caller AND create failed", caller: callerPhone }),
       { status: 200, headers: { "content-type": "application/json" } }
     );
   }
@@ -3858,8 +3895,10 @@ function buildOpportunityName(
   addressFull: string | null | undefined,
   phone: string | null | undefined
 ): string {
+  // Mido directive (2026-05-27): hyphen-separated "NAME - ADDRESS - NUMBER"
+  // (was slash-separated "Name / Address / Phone").
   const parts = [fullName, addressFull, phone].map((p) => (p || "").trim()).filter(Boolean);
-  return parts.join(" / ") || "Blake-handled contact";
+  return parts.join(" - ") || "Blake-handled contact";
 }
 
 // ---- Post-call structured extraction ---------------------------------------
@@ -3998,7 +4037,17 @@ async function applyExtractionToGhl(
   if (extraction.asking_price) customFields.push({ id: CF_ASKING, value: extraction.asking_price });
   if (extraction.motivation)   customFields.push({ id: CF_MOTIVATION, value: extraction.motivation });
   if (extraction.timeline)     customFields.push({ id: CF_TIMELINE, value: extraction.timeline });
-  if (extraction.one_line_summary) customFields.push({ id: CF_VA_NOTES, value: extraction.one_line_summary });
+  // Mido directive (2026-05-27): include condition_notes alongside the
+  // one_line_summary in CF_VA_NOTES. Captures Blake's house-condition
+  // observations ("roof needs work, kitchen redone 2019") that previously
+  // were extracted but never written to GHL.
+  if (extraction.one_line_summary || extraction.condition_notes) {
+    const va_combined = [
+      extraction.one_line_summary,
+      extraction.condition_notes ? `Condition: ${extraction.condition_notes}` : null,
+    ].filter(Boolean).join("\n\n");
+    customFields.push({ id: CF_VA_NOTES, value: va_combined });
+  }
 
   const basicUpdates: any = {};
   if (extraction.address1)    basicUpdates.address1 = extraction.address1;
