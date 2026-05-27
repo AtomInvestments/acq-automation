@@ -770,7 +770,12 @@ export default {
             agent: {
               language: "en",
               // Row 1: LLM → Gemini 2.0 Flash for sub-300ms first-token latency.
-              llm: "gemini-2.0-flash",
+              // ElevenLabs Conv AI nests the LLM choice under agent.prompt.llm
+              // (NOT agent.llm — that field exists in the response shape but
+              // PATCHing it has no effect, learned 2026-05-27).
+              prompt: {
+                llm: "gemini-2.0-flash",
+              },
             },
             tts: {
               // Row 2 default: Brian (primary A/B candidate)
