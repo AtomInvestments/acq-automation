@@ -111,8 +111,8 @@
       "status": "active",
       "summary": "Adam's May 26 meeting brief + Mido's May 27 dashboard rebuild + the v4 brief items (RJ attribution, SmarterContact webhook, Figma-as-SOT, blog audit).",
       "broken": [
-        { "label": "Calltools API integration", "root_cause": "Every endpoint variant tried (api.calltools.io/v1, app.calltools.com/api/v1/numbers, /phone-numbers, /dids, /users/me) returns HTTP 530 / 1016. Either the API base URL is different, or API access is a separate Calltools toggle not yet enabled. Needs Mido to grab a working curl from Calltools' UI Network tab or share the docs URL." },
-        { "label": "224 Adam-owned ACQ opps never functionally worked", "root_cause": "Legacy Podio CSV import set assignedTo=vDKOqPSkA8nLkia5skd0 (Adam) on every ingested contact + opp. Adam isn't actively dialing/touching these; they're rotting in Unqualified. Decision pending: Drip-touch them, reassign to RJ, or freeze." }
+        { "label": "Calltools API base host RESOLVED (east-2.calltools.io/manager)", "root_cause": "RESOLVED 2026-05-27 — Mido confirmed host is east-2.calltools.io/manager. Old guesses (app.calltools.com, api.calltools.io) were all wrong. Endpoint discovery in progress for /numbers/ vs /phone-numbers/ vs /dids/." },
+        { "label": "1,781 opps owned by non-RJ users (was mis-labeled as 224 Adam-owned)", "root_cause": "Corrected attribution 2026-05-27 after roster cross-check with GHL Settings → My Staff: Jef De los Santos (vDKOqPSkA8nLkia5skd0) owns 858 opps including the legacy Podio CSV import. John Williams of 360 Synergy Tech (1X0bfFpMocO5hRewdjV0, external admin) owns 923 opps including the 9 stale Qualified ones. RJ owns 0. Mike owns 0. Real Adam (vCjuvuuQ7p7K5GUODujQ) NOT in any roster query previously. Decision (Mido 2026-05-27): Drip agent will work all Qualified + LAO + FU 1.5mo stages (option B)." }
       ],
       "tasks": [
         { "label": "WS1a Personas doc (5 personas → friendly/professional/traditional)", "status": "shipped-verified", "done": true },

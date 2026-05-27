@@ -59,20 +59,26 @@ export interface Env {
 
 const APG_LOCATION_ID = "RCkiUmWqXX4BYQ39JXmm";
 const GHL_BASE = "https://services.leadconnectorhq.com";
-const USER_MIKE = "Vj4WwH1ovxGN5Hv5Kq17";
-const USER_RJ = "EvxJmnll1hlJtzpW14BE";   // Rene Fonseca (RJ) — callback assignee
 
-// Workstream PR C — per-agent activity roster. Adam Chodes added 2026-05-27
-// after the backfill discovery that ~224 opps were assigned to his GHL user
-// (vDKOqPSkA8nLkia5skd0) by default from the Podio CSV import. Justus + Brady
-// user_ids are still TBD until confirmed in GHL → Settings → Team.
-const USER_ADAM = "vDKOqPSkA8nLkia5skd0";   // Adam Chodes — APG sub-account owner
+// Roster — corrected 2026-05-27 after Mido pasted GHL Settings → My Staff.
+// PREVIOUS bug: USER_ADAM was set to vDKOqPSkA8nLkia5skd0, which is actually
+// Jef De los Santos (NOT Adam). Real Adam is vCjuvuuQ7p7K5GUODujQ. Also fixed
+// RJ's user_id — visual collision between `l` and `I` in EvxJmnll1h_Jtzp...
+// Real ID has capital I (per GHL UI paste).
+const USER_RJ    = "EvxJmnll1hIJtzpW14BE";   // Rene Fonseca — Acquisitions Partner (capital I)
+const USER_MIKE  = "Vj4WwH1ovxGN5Hv5Kq17";   // Mike Yasser — PM / Marketing Systems
+const USER_ADAM  = "vCjuvuuQ7p7K5GUODujQ";   // Adam Chodes — Owner, APG sub-account
+const USER_JEF   = "vDKOqPSkA8nLkia5skd0";   // Jef De los Santos — ACCOUNT-USER; owns 858 opps (was mis-labeled "Adam")
+const USER_JOHN  = "1X0bfFpMocO5hRewdjV0";   // John Williams (360synergytech.com) — external admin; owns 923 opps including the 9 stale Qualified ones
+const USER_WENDY = "duREBRmN19R12ixPfrvS";   // Wendy Chodes
+const USER_BLAKE_AGENT = "oDamC2QqrLIaixMXyQW3";  // Blake AI's own GHL user (do NOT include in agent reviews)
+
 const APG_AGENT_ROSTER: Array<{ user_id: string; name: string; role: string }> = [
-  { user_id: USER_RJ,   name: "RJ Fonseca",    role: "Acquisitions Partner" },
-  { user_id: USER_MIKE, name: "Mike (Yasser)", role: "PM / Marketing Systems" },
-  { user_id: USER_ADAM, name: "Adam Chodes",   role: "Owner — APG" },
-  // { user_id: "<TBD>", name: "Justus",       role: "VA — Acquisitions" },
-  // { user_id: "<TBD>", name: "Brady",        role: "Apprentice" },
+  { user_id: USER_RJ,   name: "RJ Fonseca",        role: "Acquisitions Partner" },
+  { user_id: USER_MIKE, name: "Mike Yasser",       role: "PM / Marketing Systems" },
+  { user_id: USER_ADAM, name: "Adam Chodes",       role: "Owner — APG" },
+  { user_id: USER_JEF,  name: "Jef De los Santos", role: "ACQ Workhorse (owns 858 opps)" },
+  { user_id: USER_JOHN, name: "John Williams",     role: "External — 360 Synergy Tech (owns 923 opps incl. 9 stale Qualified)" },
 ];
 
 // Signature freshness window — reject events older than 5 minutes.
@@ -833,15 +839,16 @@ export default {
         // Calltools API base + endpoints (per their public docs).
         // We try a couple known endpoint shapes since their URL has shifted.
         const TOKEN = env.CALLTOOLS_API_KEY;
-        // Calltools (calltools.com) — try several known API base + auth
-        // header combos since the URL hasn't been confirmed yet.
+        // Calltools host confirmed by Mido 2026-05-27 — region-prefixed
+        // east-2.calltools.io. UI URL https://east-2.calltools.io/manager/tokens
+        // suggests API base is https://east-2.calltools.io/manager/.
+        const BASE = "https://east-2.calltools.io/manager";
         const ATTEMPTS: Array<{ url: string; auth: string }> = [
-          { url: "https://app.calltools.com/api/v1/numbers/?page_size=100",  auth: `Token ${TOKEN}` },
-          { url: "https://app.calltools.com/api/numbers/?page_size=100",     auth: `Token ${TOKEN}` },
-          { url: "https://api.calltools.com/v1/numbers?page_size=100",       auth: `Bearer ${TOKEN}` },
-          { url: "https://app.calltools.com/api/v1/phone-numbers/",          auth: `Token ${TOKEN}` },
-          { url: "https://app.calltools.com/api/v1/dids/",                   auth: `Token ${TOKEN}` },
-          { url: "https://app.calltools.com/api/v1/users/me/",               auth: `Token ${TOKEN}` },
+          { url: `${BASE}/numbers/?page_size=100`,         auth: `Token ${TOKEN}` },
+          { url: `${BASE}/phone-numbers/?page_size=100`,   auth: `Token ${TOKEN}` },
+          { url: `${BASE}/dids/?page_size=100`,            auth: `Token ${TOKEN}` },
+          { url: `${BASE}/myaccountmemberships/?page_size=max`, auth: `Token ${TOKEN}` },
+          { url: `${BASE}/apitokens/?page=1&page_size=25`, auth: `Token ${TOKEN}` },
         ];
         let numbers: any[] = [];
         let lastErr = "";
