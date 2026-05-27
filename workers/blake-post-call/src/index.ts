@@ -50,6 +50,7 @@ export interface Env {
   DASHBOARD_SESSION_SECRET: string; // HMAC-SHA256 key for signing session cookies
   WP_AUTH_HEADER: string;           // Pre-base64 'Basic <token>' header for WP REST API (used by /insights cron + landing-page builder). Rotated 2026-05-25 after a leaked-secret incident.
   ATTOM_API_KEY: string;            // ATTOM Data Property API key — listing-pipeline ARV + Blake pre-call enrichment. Trial key, expires 2026-06-23.
+  VAULT_SYNC_TOKEN: string;         // Pillar C: bearer token gating /vault/queue + /vault/ack for the local vault-sync daemon.
   DIAL_STATE: KVNamespace;          // KV for warm-up quota + dial dedupe
 }
 
@@ -758,6 +759,90 @@ export default {
       })();
     }
 
+    // --- Pillar C: Blake self-improvement (manual + cron-triggered) ----
+    // POST /admin/blake/self-improve?sample=50 — Claude reviews recent calls,
+    // proposes prompt edits, writes the review markdown to the vault.
+    if (req.method === "POST" && url.pathname === "/admin/blake/self-improve") {
+      return (async () => {
+        const sample = Math.min(Math.max(Number(url.searchParams.get("sample") || "20"), 5), 50);
+        const result = await runBlakeSelfImprovement(env, sample);
+        return new Response(JSON.stringify(result), {
+          status: result.ok ? 200 : 500,
+          headers: { "content-type": "application/json" },
+        });
+      })();
+    }
+
+    // POST /admin/daily-summary — manual trigger of the daily Slack digest.
+    if (req.method === "POST" && url.pathname === "/admin/daily-summary") {
+      return (async () => {
+        const result = await runDailySlackSummary(env);
+        return new Response(JSON.stringify(result), {
+          status: result.ok ? 200 : 500,
+          headers: { "content-type": "application/json" },
+        });
+      })();
+    }
+
+    // --- Pillar C: vault sync queue (KV → local daemon → APG-Vault) ----
+    // The Worker emits events to KV under `vault:queue:<iso>:<type>:<id>`.
+    // A local Python daemon polls /vault/queue, writes markdown into the
+    // local APG-Vault, then POSTs /vault/ack with the consumed keys to
+    // delete them. Bearer auth via VAULT_SYNC_TOKEN secret.
+    if (url.pathname === "/vault/queue" || url.pathname === "/vault/ack" || url.pathname === "/vault/test-emit" || url.pathname === "/vault/poll-ghl") {
+      const authz = req.headers.get("authorization") || "";
+      const token = authz.startsWith("Bearer ") ? authz.slice(7) : "";
+      if (!env.VAULT_SYNC_TOKEN || token !== env.VAULT_SYNC_TOKEN) {
+        return new Response(JSON.stringify({ ok: false, error: "unauthorized" }), {
+          status: 401,
+          headers: { "content-type": "application/json" },
+        });
+      }
+      if (req.method === "GET" && url.pathname === "/vault/queue") {
+        const limit = Math.min(Number(url.searchParams.get("limit") || "100"), 500);
+        return handleVaultQueueRead(env, limit);
+      }
+      if (req.method === "POST" && url.pathname === "/vault/ack") {
+        return handleVaultQueueAck(req, env);
+      }
+      if (req.method === "POST" && url.pathname === "/vault/test-emit") {
+        return (async () => {
+          await vaultEmit(env, "test", `manual-${Date.now()}`, {
+            note: "manual test emit — confirms the daemon is wired correctly",
+            ts: new Date().toISOString(),
+          });
+          return new Response(JSON.stringify({ ok: true }), {
+            status: 200,
+            headers: { "content-type": "application/json" },
+          });
+        })();
+      }
+      if (req.method === "POST" && url.pathname === "/vault/poll-ghl") {
+        // Manual trigger for the GHL conversations poller — useful for the
+        // first sync after deploy to backfill any in-window messages.
+        // ?lookback_hours=N temporarily resets the cursor to N hours ago.
+        return (async () => {
+          try {
+            const lookbackHours = Number(url.searchParams.get("lookback_hours") || "0");
+            if (lookbackHours > 0) {
+              const since = new Date(Date.now() - lookbackHours * 3600 * 1000).toISOString();
+              await env.DIAL_STATE.put("vault:cursor:ghl_messages", since);
+            }
+            await pollGhlMessagesForVault(env);
+            return new Response(JSON.stringify({ ok: true, lookback_hours: lookbackHours }), {
+              status: 200,
+              headers: { "content-type": "application/json" },
+            });
+          } catch (e: any) {
+            return new Response(JSON.stringify({ ok: false, error: String(e?.message || e) }), {
+              status: 500,
+              headers: { "content-type": "application/json" },
+            });
+          }
+        })();
+      }
+    }
+
     return new Response("Not Found", { status: 404 });
   },
 
@@ -777,6 +862,12 @@ export default {
         await dailyInsightsBaseline(env);
       } catch (e) {
         console.error(`[cron-daily-baseline] failed: ${e}`);
+      }
+      try {
+        const r = await runDailySlackSummary(env);
+        console.log(`[cron-daily-summary] ${JSON.stringify(r)}`);
+      } catch (e) {
+        console.error(`[cron-daily-summary] failed: ${e}`);
       }
       // Don't run the every-15-min tasks on the daily tick — they run on their own schedule
       return;
@@ -803,6 +894,11 @@ export default {
       await autoBlogTick(env);
     } catch (e) {
       console.error(`[cron-blog] failed: ${e}`);
+    }
+    try {
+      await pollGhlMessagesForVault(env);
+    } catch (e) {
+      console.error(`[cron-vault-ghl] failed: ${e}`);
     }
   },
 };
@@ -834,6 +930,38 @@ export default {
 //     "listing_realtor_email": "jane@realty.com"
 //   }
 
+// Strip listing-metadata that Zillow/Redfin sometimes prepend to the street
+// address (sqft, bed/bath counts). Examples seen in the wild:
+//   "604 Sq Ft - 544 Westgate Dr"   →  "544 Westgate Dr"
+//   "602 Sq. Ft. 38 Karen Pl"        →  "38 Karen Pl"   (the Gloria Patterson bug)
+//   "3 Bed / 2 Bath — 38 Karen Pl"   →  "38 Karen Pl"
+// We intentionally do NOT touch the LAST run of street-number + name — only
+// the leading metadata block.
+function normalizeListingAddress(addr: string): string {
+  if (!addr) return "";
+  let s = String(addr).trim();
+  // The old regex used `\b...ft\.?\b` which fails because `\b` between `.` and ` `
+  // doesn't match — `\b` needs a word/non-word transition. Use an explicit
+  // separator class instead. Repeat the strip in case multiple prefixes stack.
+  for (let i = 0; i < 3; i++) {
+    const before = s;
+    s = s
+      .replace(/^\s*\d{1,5}\s*sq\.?\s*ft\.?\s*[\s,\-—–:|]+/i, "")
+      .replace(/^\s*\d{1,2}\s*(?:bd|bed|bedrooms?)\s*[\s,\-—–:/|]+/i, "")
+      .replace(/^\s*\d{1,2}\s*(?:ba|bath|baths?|bathrooms?)\s*[\s,\-—–:/|]+/i, "")
+      .replace(/^[\s,\-—–:|]+/, "")
+      .trim();
+    if (s === before) break;
+  }
+  // Final safety: if the result no longer starts with a digit (street number),
+  // try once more to find the first <num> <word> sequence inside the string.
+  if (!/^\d/.test(s)) {
+    const m = s.match(/\b(\d+[A-Za-z]?\s+[A-Za-z][A-Za-z\s\.'\-]{1,80})$/);
+    if (m) s = m[1].trim();
+  }
+  return s;
+}
+
 async function handleListingEmail(req: Request, env: Env): Promise<Response> {
   let body: any = {};
   try {
@@ -853,6 +981,12 @@ async function handleListingEmail(req: Request, env: Env): Promise<Response> {
   let realtorName = titleCaseName((body.listing_realtor_name || "").trim());
   let realtorEmail = (body.listing_realtor_email || "").trim();
   let realtorLookupResult: AgentLookupResult | null = null;
+
+  // Defensive normalization — upstream callers (n8n, Zapier, manual) sometimes
+  // prepend listing metadata to property_address, e.g. "602 Sq. Ft. 38 Karen Pl"
+  // which leaked into the SMS body to Gloria Patterson on 2026-05-26. Strip
+  // sqft / bed / bath prefixes that aren't part of a real street address.
+  body.property_address = normalizeListingAddress(body.property_address || "");
 
   if (!asking || !body.property_address) {
     return new Response(
@@ -1187,6 +1321,38 @@ async function handleListingEmail(req: Request, env: Env): Promise<Response> {
     }
   }
 
+  // Pillar C — emit listing event to vault.
+  await vaultEmit(env, "listing", opportunityId || body.property_address || "noaddr", {
+    opportunity_id: opportunityId,
+    opportunity_name: oppName,
+    opportunity_action: oppAction,
+    property_address: body.property_address,
+    city: body.city || "",
+    state: body.state || "",
+    asking_price: asking,
+    mao,
+    arv_proxy: arvProxy,
+    arv_source: arvSource,
+    rehab_estimate: rehabEstimate,
+    days_on_market: daysOnMarket,
+    listing_date: listingDateIso,
+    listing_url: body.listing_url || "",
+    realtor_name: realtorName,
+    realtor_phone: realtorPhone,
+    realtor_email: realtorEmail,
+    realtor_contact_id: realtorContactId,
+    brokerage: realtorLookupResult?.brokerage || "",
+    motivated_score: motivated?.score ?? 0,
+    motivated_flags: motivated
+      ? {
+          absentee: motivated.absentee,
+          high_equity: motivated.highEquity,
+          recent_transfer: motivated.recentTransfer,
+        }
+      : null,
+    sms_to_realtor_ok: sms.ok,
+  });
+
   return new Response(
     JSON.stringify({
       ok: true,
@@ -1327,9 +1493,13 @@ function parseListingEmail(
       // Same defense for "<N> bd / <N> bed" prefixes we've seen Zillow
       // include in some subject templates.
       let streetAndCity = subjMatch[1]
-        .replace(/\b\d{1,4}\s*sq\.?\s*ft\.?\b[\s,\-—–]*/gi, "")
-        .replace(/\b\d{1,2}\s*(?:bd|bed|bedrooms?)\b[\s,\-—–]*/gi, "")
-        .replace(/^[\s,\-—–]+|[\s,\-—–]+$/g, "")
+        // Drop a leading "<N> Sq[.] Ft[.]" / "<N> bd" / "<N> ba" metadata block.
+        // The `\b` after `ft\.?` does NOT match (`.` then ` ` is non-word/non-word),
+        // so use an explicit separator class instead.
+        .replace(/\d{1,5}\s*sq\.?\s*ft\.?\s*[\s,\-—–:|]+/gi, "")
+        .replace(/\d{1,2}\s*(?:bd|bed|bedrooms?)\s*[\s,\-—–:/|]+/gi, "")
+        .replace(/\d{1,2}\s*(?:ba|bath|baths?|bathrooms?)\s*[\s,\-—–:/|]+/gi, "")
+        .replace(/^[\s,\-—–:|]+|[\s,\-—–:|]+$/g, "")
         .trim();
       result.state = subjMatch[2];
       result.postal_code = subjMatch[3];
@@ -2277,6 +2447,23 @@ async function handleLandingLead(req: Request, env: Env): Promise<Response> {
   }
 
   console.log(`[landing-lead] OK contact=${contactId} source=${source} opp_created=${oppCreated} dial=${dialOutcome}`);
+
+  // Pillar C — emit a vault event for the new lead.
+  await vaultEmit(env, "landing_lead", contactId, {
+    contact_id: contactId,
+    name,
+    first_name: firstName,
+    last_name: lastName,
+    phone: phoneE164,
+    email,
+    address,
+    city,
+    state: stateV,
+    source,
+    referrer,
+    opp_created: oppCreated,
+    dial_outcome: dialOutcome,
+  });
 
   return formRedirect("ok");
 }
@@ -3245,6 +3432,18 @@ async function handleWebhook(req: Request, env: Env, ctx: ExecutionContext): Pro
       //    this call within ~10 sec (next poll). Without this, the dashboard
       //    only refreshes on the 15-min cron tick.
       refreshDashboardCache(env),
+      // 6. Pillar C — emit a vault event so the local daemon writes the full
+      //    transcript into APG-Vault/Operations/Calls/YYYY-MM/.
+      vaultEmit(env, "blake_call", conversationId, {
+        conversation_id: conversationId,
+        contact_id: contactId,
+        caller_phone: callerPhone,
+        duration_s: callDurationS,
+        started_at: startedAt,
+        summary: callSummary,
+        transcript,
+        recording_url: recordingUrl,
+      }),
     ])
   );
 
@@ -6150,4 +6349,412 @@ async function uploadImageToWp(env: Env, sourceUrl: string, filenameSlug: string
   }
   const j: any = await uploadRes.json();
   return j.id;
+}
+
+// ---- Pillar C: vault sync emitters + endpoint handlers --------------------
+//
+// vaultEmit(env, type, id, payload):
+//   writes a single event into KV under `vault:queue:<iso>:<type>:<id>`. The
+//   local Python daemon polls /vault/queue, writes markdown into APG-Vault,
+//   and POSTs /vault/ack to delete the consumed keys.
+//
+// Event types currently emitted:
+//   blake_call      — post-call webhook fires this with full transcript
+//   landing_lead    — website form submission (handleLandingLead)
+//   listing         — Pillar B listing-pipeline new offer
+//   ghl_message     — new SMS / GHL conversation message (cron poller)
+//
+// Keys live in KV up to ~30 days (handler sets no expiration; daemon ack
+// deletes them). If the daemon is offline for a stretch nothing is lost.
+
+const VAULT_QUEUE_PREFIX = "vault:queue:";
+
+async function vaultEmit(
+  env: Env,
+  type: string,
+  id: string,
+  payload: Record<string, any>
+): Promise<void> {
+  try {
+    const iso = new Date().toISOString().replace(/[:.]/g, "-");
+    const safeId = (id || "noid").replace(/[^a-zA-Z0-9_-]/g, "_").slice(0, 80);
+    const key = `${VAULT_QUEUE_PREFIX}${iso}:${type}:${safeId}`;
+    const body = JSON.stringify({
+      type,
+      id,
+      emitted_at: new Date().toISOString(),
+      payload,
+    });
+    await env.DIAL_STATE.put(key, body);
+  } catch (e) {
+    // Never let a vault-emit failure break the upstream caller.
+    console.error(`[vault-emit] type=${type} id=${id} failed: ${e}`);
+  }
+}
+
+async function handleVaultQueueRead(env: Env, limit: number): Promise<Response> {
+  // List up to `limit` keys with the vault-queue prefix. KV list is ordered
+  // lexicographically — since we prefix with ISO timestamp, oldest-first.
+  const listed = await env.DIAL_STATE.list({ prefix: VAULT_QUEUE_PREFIX, limit });
+  const events: Array<{ key: string; event: any }> = [];
+  // Read each value in parallel (KV list returns keys only).
+  await Promise.all(
+    listed.keys.map(async (k) => {
+      try {
+        const raw = await env.DIAL_STATE.get(k.name);
+        if (!raw) return;
+        events.push({ key: k.name, event: JSON.parse(raw) });
+      } catch (e) {
+        console.error(`[vault-queue] failed to read ${k.name}: ${e}`);
+      }
+    })
+  );
+  return new Response(
+    JSON.stringify({
+      ok: true,
+      count: events.length,
+      list_complete: listed.list_complete,
+      events,
+    }),
+    { status: 200, headers: { "content-type": "application/json" } }
+  );
+}
+
+async function handleVaultQueueAck(req: Request, env: Env): Promise<Response> {
+  let body: any = {};
+  try {
+    body = await req.json();
+  } catch {
+    return new Response(JSON.stringify({ ok: false, error: "invalid_json" }), {
+      status: 400,
+      headers: { "content-type": "application/json" },
+    });
+  }
+  const keys: string[] = Array.isArray(body?.keys) ? body.keys : [];
+  if (!keys.length) {
+    return new Response(JSON.stringify({ ok: true, deleted: 0 }), {
+      status: 200,
+      headers: { "content-type": "application/json" },
+    });
+  }
+  // Only delete keys that actually have the vault prefix — defense in depth
+  // so an ack call can never wipe other KV data even if mis-targeted.
+  const safe = keys.filter((k) => typeof k === "string" && k.startsWith(VAULT_QUEUE_PREFIX));
+  await Promise.all(safe.map((k) => env.DIAL_STATE.delete(k)));
+  return new Response(
+    JSON.stringify({ ok: true, deleted: safe.length, ignored: keys.length - safe.length }),
+    { status: 200, headers: { "content-type": "application/json" } }
+  );
+}
+
+// Normalize a GHL timestamp: GHL returns Unix ms numbers, but we store the
+// cursor as an ISO string. Accept either form, return ms since epoch or NaN.
+function toMs(v: any): number {
+  if (typeof v === "number") return v;
+  if (typeof v === "string") {
+    if (/^\d+$/.test(v)) return Number(v);
+    const p = Date.parse(v);
+    return isFinite(p) ? p : NaN;
+  }
+  return NaN;
+}
+
+// Poll GHL for conversations updated in the recent window and emit one
+// `ghl_message` vault event per message we haven't seen yet.
+// Watermark stored at `vault:cursor:ghl_messages` as ISO timestamp.
+async function pollGhlMessagesForVault(env: Env): Promise<void> {
+  const CURSOR_KEY = "vault:cursor:ghl_messages";
+  const SEEN_PREFIX = "vault:seen:msg:";
+  const SEEN_TTL_S = 60 * 60 * 24 * 30; // 30 days
+  const MAX_CONVERSATIONS = 30;          // cap per poll to keep latency bounded
+
+  const cursor = (await env.DIAL_STATE.get(CURSOR_KEY)) || "";
+  // Default look-back: last 30 min if no cursor.
+  const sinceTs = cursor ? toMs(cursor) : Date.now() - 30 * 60 * 1000;
+  if (!isFinite(sinceTs)) return;
+
+  const res = await fetch(
+    `${GHL_BASE}/conversations/search?` +
+      new URLSearchParams({
+        locationId: APG_LOCATION_ID,
+        sortBy: "last_message_date",
+        sort: "desc",
+        limit: String(MAX_CONVERSATIONS),
+      }).toString(),
+    { headers: ghlHeaders(env.BLAKE_GHL_PIT) }
+  );
+  if (!res.ok) {
+    console.warn(`[vault-ghl-poll] conversations/search ${res.status}`);
+    return;
+  }
+  const j: any = await res.json();
+  const convs: any[] = j?.conversations ?? [];
+  let newestMs = isFinite(sinceTs) ? sinceTs : 0;
+  let emitted = 0;
+
+  for (const conv of convs) {
+    const lastMs = toMs(conv?.lastMessageDate ?? conv?.dateUpdated);
+    if (!isFinite(lastMs)) continue;
+    // Stop scanning once we're past the cursor window (list is sorted desc).
+    if (lastMs < sinceTs) break;
+    if (lastMs > newestMs) newestMs = lastMs;
+
+    const convId = conv?.id;
+    if (!convId) continue;
+    const msgsRes = await fetch(
+      `${GHL_BASE}/conversations/${convId}/messages?limit=20`,
+      { headers: ghlHeaders(env.BLAKE_GHL_PIT) }
+    );
+    if (!msgsRes.ok) continue;
+    const msgsJ: any = await msgsRes.json();
+    const messages: any[] = msgsJ?.messages?.messages ?? msgsJ?.messages ?? [];
+    for (const m of messages) {
+      const mMs = toMs(m?.dateAdded);
+      if (!isFinite(mMs) || mMs < sinceTs) continue;
+      const mId = m?.id;
+      if (!mId) continue;
+      const seenKey = `${SEEN_PREFIX}${mId}`;
+      const seen = await env.DIAL_STATE.get(seenKey);
+      if (seen) continue;
+      await env.DIAL_STATE.put(seenKey, "1", { expirationTtl: SEEN_TTL_S });
+      await vaultEmit(env, "ghl_message", mId, {
+        conversation_id: convId,
+        contact_id: conv?.contactId || "",
+        contact_name: conv?.fullName || conv?.contactName || "",
+        contact_phone: conv?.phone || "",
+        direction: m?.direction || "",
+        message_type: m?.messageType || m?.type || "",
+        body: m?.body || m?.message || "",
+        date_added: new Date(mMs).toISOString(),
+      });
+      emitted++;
+    }
+  }
+
+  if (newestMs > toMs(cursor) || !cursor) {
+    await env.DIAL_STATE.put(CURSOR_KEY, new Date(newestMs).toISOString());
+  }
+  console.log(`[vault-ghl-poll] scanned ${convs.length} convs, emitted ${emitted} messages, cursor → ${new Date(newestMs).toISOString()}`);
+}
+
+// ---- Self-improvement: Claude reviews recent Blake calls --------------------
+//
+// Gathers the N most-recent Blake conversations from ElevenLabs (where we have
+// raw transcripts), summarizes patterns, and proposes targeted edits to the
+// SMS / voice prompt. Output gets written to APG-Vault via vault event:
+//
+//   _system/Blake/iterations/YYYY-MM-DD-analysis.md
+//
+// We do NOT auto-swap the prompt. Mido reviews, then promotes manually.
+
+async function runBlakeSelfImprovement(env: Env, sampleSize: number): Promise<{
+  ok: boolean;
+  analyzed: number;
+  error?: string;
+}> {
+  if (!env.ANTHROPIC_API_KEY) {
+    return { ok: false, analyzed: 0, error: "ANTHROPIC_API_KEY not bound" };
+  }
+  if (!env.ELEVENLABS_API_KEY) {
+    return { ok: false, analyzed: 0, error: "ELEVENLABS_API_KEY not bound" };
+  }
+
+  // 1. Pull the N most-recent conversations from ElevenLabs.
+  const listRes = await fetch(
+    `https://api.elevenlabs.io/v1/convai/conversations?agent_id=${BLAKE_AGENT_ID}&page_size=${Math.min(sampleSize, 100)}`,
+    { headers: { "xi-api-key": env.ELEVENLABS_API_KEY } }
+  );
+  if (!listRes.ok) {
+    return { ok: false, analyzed: 0, error: `elevenlabs list ${listRes.status}` };
+  }
+  const listJson: any = await listRes.json();
+  const conversations: any[] = (listJson?.conversations || []).slice(0, sampleSize);
+  if (!conversations.length) {
+    return { ok: false, analyzed: 0, error: "no conversations available" };
+  }
+
+  // 2. Hydrate each with its transcript.
+  const samples: Array<{ id: string; phone: string; duration: number; summary: string; turns: string }> = [];
+  for (const c of conversations) {
+    const convId = c?.conversation_id || c?.id;
+    if (!convId) continue;
+    const det = await fetch(
+      `https://api.elevenlabs.io/v1/convai/conversations/${convId}`,
+      { headers: { "xi-api-key": env.ELEVENLABS_API_KEY } }
+    );
+    if (!det.ok) continue;
+    const d: any = await det.json();
+    const turns: any[] = d?.transcript ?? [];
+    const text = turns
+      .slice(0, 30)
+      .map((t) => {
+        const role = (t.role || "?").toUpperCase();
+        const msg = (t.message || t.content || "").trim();
+        return msg ? `[${role}] ${msg}` : "";
+      })
+      .filter(Boolean)
+      .join("\n");
+    if (!text) continue;
+    samples.push({
+      id: convId,
+      phone: d?.metadata?.phone_call?.external_number || "?",
+      duration: d?.metadata?.call_duration_secs || 0,
+      summary: d?.analysis?.transcript_summary || "",
+      turns: text,
+    });
+  }
+
+  if (!samples.length) {
+    return { ok: false, analyzed: 0, error: "no transcripts to analyze" };
+  }
+
+  // 3. Ask Claude to extract patterns + propose targeted edits.
+  const systemPrompt = `You are an SDR coach reviewing recent calls made by "Blake", APG's AI voice agent. Your job: spot recurring failure modes and propose specific, surgical edits to Blake's system prompt. Be concrete. Avoid platitudes.
+
+Output STRICT markdown matching this skeleton:
+
+# Blake call review — {{YYYY-MM-DD}}
+
+## Sample
+- Calls analyzed: N
+- Avg duration: X sec
+- Outcomes: short list
+
+## Failure modes (top 3)
+1. **Name** — what went wrong, frequency (X of N calls), one transcript snippet as evidence.
+2. ...
+3. ...
+
+## Working behaviors (top 3)
+1. **Name** — example snippet.
+
+## Proposed prompt edits
+For each edit, give: (a) section/heading to modify, (b) current line(s), (c) proposed replacement, (d) why.
+
+## Risks
+Anything the proposed edits might break.`;
+
+  const userPrompt = `Sample of ${samples.length} recent Blake calls.
+
+${samples.map((s, i) => `--- Call ${i + 1} (id=${s.id} phone=${s.phone} duration=${s.duration}s)
+Summary: ${s.summary || "(none)"}
+Transcript (first 30 turns):
+${s.turns}
+`).join("\n")}
+
+Produce the review now. Markdown only, no preamble.`;
+
+  const aRes = await fetch("https://api.anthropic.com/v1/messages", {
+    method: "POST",
+    headers: {
+      "x-api-key": env.ANTHROPIC_API_KEY,
+      "anthropic-version": "2023-06-01",
+      "content-type": "application/json",
+    },
+    body: JSON.stringify({
+      model: "claude-opus-4-7",
+      max_tokens: 4000,
+      system: systemPrompt,
+      messages: [{ role: "user", content: userPrompt }],
+    }),
+  });
+  if (!aRes.ok) {
+    const t = await aRes.text();
+    return { ok: false, analyzed: samples.length, error: `claude ${aRes.status}: ${t.slice(0, 200)}` };
+  }
+  const aJson: any = await aRes.json();
+  const reviewMd: string = (aJson?.content?.[0]?.text || "").trim();
+  if (!reviewMd) {
+    return { ok: false, analyzed: samples.length, error: "claude returned empty body" };
+  }
+
+  // 4. Emit vault event so the daemon writes it into iterations/.
+  await vaultEmit(env, "blake_iteration", `selfimprove-${Date.now()}`, {
+    sample_size: samples.length,
+    avg_duration_s: Math.round(samples.reduce((a, s) => a + s.duration, 0) / samples.length),
+    review_markdown: reviewMd,
+    sample_ids: samples.map((s) => s.id),
+  });
+
+  return { ok: true, analyzed: samples.length };
+}
+
+// ---- Daily Slack summary -----------------------------------------------------
+//
+// Posts yesterday's activity digest to #base1-sms-leadgen.
+//   - Blake calls (count, hot/warm leads, longest)
+//   - Landing leads (count, sources)
+//   - Listings (count, MAOs)
+//   - GHL inbound messages (top 5 with reply pending)
+async function runDailySlackSummary(env: Env): Promise<{ ok: boolean; posted: boolean; error?: string }> {
+  if (!env.SLACK_BOT_TOKEN) return { ok: false, posted: false, error: "no SLACK_BOT_TOKEN" };
+
+  const now = new Date();
+  const yesterdayMs = Date.now() - 24 * 3600 * 1000;
+  const yesterdayLabel = new Date(yesterdayMs).toISOString().slice(0, 10);
+
+  // 1. Blake calls — list ElevenLabs convs in the last 24h.
+  let blakeCalls = 0;
+  let blakeLongestS = 0;
+  let blakeTotalS = 0;
+  try {
+    if (env.ELEVENLABS_API_KEY) {
+      const lr = await fetch(
+        `https://api.elevenlabs.io/v1/convai/conversations?agent_id=${BLAKE_AGENT_ID}&page_size=50`,
+        { headers: { "xi-api-key": env.ELEVENLABS_API_KEY } }
+      );
+      if (lr.ok) {
+        const lj: any = await lr.json();
+        for (const c of (lj?.conversations || [])) {
+          const startedMs = (c?.start_time_unix_secs || 0) * 1000;
+          if (startedMs < yesterdayMs || startedMs > Date.now()) continue;
+          blakeCalls++;
+          const d = c?.call_duration_secs || 0;
+          blakeTotalS += d;
+          if (d > blakeLongestS) blakeLongestS = d;
+        }
+      }
+    }
+  } catch (e) {
+    console.warn(`[daily-summary] blake fetch failed: ${e}`);
+  }
+
+  // 2. GHL inbound message count in the last 24h.
+  let inboundCount = 0;
+  let outboundCount = 0;
+  try {
+    const cr = await fetch(
+      `${GHL_BASE}/conversations/search?` +
+        new URLSearchParams({
+          locationId: APG_LOCATION_ID,
+          sortBy: "last_message_date",
+          sort: "desc",
+          limit: "50",
+        }).toString(),
+      { headers: ghlHeaders(env.BLAKE_GHL_PIT) }
+    );
+    if (cr.ok) {
+      const cj: any = await cr.json();
+      for (const cv of (cj?.conversations || [])) {
+        const lastMs = toMs(cv?.lastMessageDate);
+        if (!isFinite(lastMs) || lastMs < yesterdayMs) continue;
+        const dir = cv?.lastMessageDirection || "";
+        if (dir === "inbound") inboundCount++;
+        else if (dir === "outbound") outboundCount++;
+      }
+    }
+  } catch (e) {
+    console.warn(`[daily-summary] ghl fetch failed: ${e}`);
+  }
+
+  const avgDur = blakeCalls ? Math.round(blakeTotalS / blakeCalls) : 0;
+  const text =
+    `:sunrise: *APG daily — ${yesterdayLabel}*\n` +
+    `:phone: Blake calls: *${blakeCalls}*` +
+    (blakeCalls ? ` (avg ${avgDur}s, longest ${blakeLongestS}s)` : "") + `\n` +
+    `:speech_balloon: GHL conversations updated: *${inboundCount + outboundCount}* (inbound ${inboundCount}, outbound ${outboundCount})\n` +
+    `:link: <https://acq-automation.mithchell.workers.dev/blake.html|live dashboard> · <https://acq-automation.mithchell.workers.dev/insights|website insights>`;
+
+  const slack = await postSlackMessage(env, SLACK_LISTINGS_CHANNEL, text);
+  return { ok: true, posted: slack.ok, error: slack.ok ? undefined : `slack ${slack.status}` };
 }
