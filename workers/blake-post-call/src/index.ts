@@ -60,6 +60,16 @@ const GHL_BASE = "https://services.leadconnectorhq.com";
 const USER_MIKE = "Vj4WwH1ovxGN5Hv5Kq17";
 const USER_RJ = "EvxJmnll1hlJtzpW14BE";   // Rene Fonseca (RJ) — callback assignee
 
+// Workstream PR C — per-agent activity roster. user_id values for Justus +
+// Brady are TBD until they're confirmed in GHL → Settings → Team. When
+// known, drop them in here and the aggregator picks them up automatically.
+const APG_AGENT_ROSTER: Array<{ user_id: string; name: string; role: string }> = [
+  { user_id: USER_RJ,   name: "RJ Fonseca",    role: "Acquisitions Partner" },
+  { user_id: USER_MIKE, name: "Mike (Yasser)", role: "PM / Marketing Systems" },
+  // { user_id: "<TBD>", name: "Justus",       role: "VA — Acquisitions" },
+  // { user_id: "<TBD>", name: "Brady",        role: "Apprentice" },
+];
+
 // Signature freshness window — reject events older than 5 minutes.
 const SIGNATURE_MAX_AGE_S = 300;
 
@@ -772,6 +782,55 @@ export default {
       return handleInsightsSnap(env, key);
     }
 
+    // Workstream PR C — per-agent activity + AI review.
+    // POST /admin/agents/review  → runs the weekly aggregator + Opus review
+    //                              for every agent in APG_AGENT_ROSTER.
+    // POST /admin/agents/review?user_id=X → runs just one agent.
+    if (req.method === "POST" && url.pathname === "/admin/agents/review") {
+      return (async () => {
+        const single = url.searchParams.get("user_id");
+        if (single) {
+          const user = APG_AGENT_ROSTER.find((u) => u.user_id === single);
+          if (!user) {
+            return new Response(JSON.stringify({ ok: false, error: `unknown user_id ${single}` }), {
+              status: 404, headers: { "content-type": "application/json" },
+            });
+          }
+          const activity = await aggregateAgentActivity(env, user);
+          const r = await runAgentAiReview(env, activity);
+          return new Response(JSON.stringify({ ok: r.ok, error: r.error, activity }, null, 2), {
+            status: r.ok ? 200 : 502, headers: { "content-type": "application/json" },
+          });
+        }
+        const r = await runAllAgentReviews(env);
+        return new Response(JSON.stringify(r, null, 2), {
+          status: r.ok ? 200 : 207, headers: { "content-type": "application/json" },
+        });
+      })();
+    }
+
+    // GET /admin/agents/activity — returns the latest activity + review for
+    // every roster member. Used by the dashboard's Agents tab.
+    if (req.method === "GET" && url.pathname === "/admin/agents/activity") {
+      return (async () => {
+        const out: any[] = [];
+        for (const u of APG_AGENT_ROSTER) {
+          const [aRaw, rRaw] = await Promise.all([
+            env.DIAL_STATE.get(`agent:activity:${u.user_id}:weekly`),
+            env.DIAL_STATE.get(`agent:review:${u.user_id}:latest`),
+          ]);
+          out.push({
+            ...u,
+            activity: aRaw ? JSON.parse(aRaw) : null,
+            review:   rRaw ? JSON.parse(rRaw) : null,
+          });
+        }
+        return new Response(JSON.stringify({ ok: true, agents: out }, null, 2), {
+          status: 200, headers: { "content-type": "application/json" },
+        });
+      })();
+    }
+
     // Workstream 4a — apply the audit-approved Blake agent config + voice A/B.
     // POST /admin/blake/agent-config-apply → PATCH /v1/convai/agents/{id}
     // with the recommended TTS/ASR/turn/LLM settings. Mido approved 2026-05-27
@@ -1022,6 +1081,13 @@ export default {
         console.log(`[cron-daily-summary] ${JSON.stringify(r)}`);
       } catch (e) {
         console.error(`[cron-daily-summary] failed: ${e}`);
+      }
+      // PR C — per-agent weekly aggregator + Opus review (RJ/Mike/...)
+      try {
+        const r = await runAllAgentReviews(env);
+        console.log(`[cron-agent-reviews] ${JSON.stringify(r)}`);
+      } catch (e) {
+        console.error(`[cron-agent-reviews] failed: ${e}`);
       }
       // Don't run the every-15-min tasks on the daily tick — they run on their own schedule
       return;
@@ -7006,4 +7072,267 @@ async function runDailySlackSummary(env: Env): Promise<{ ok: boolean; posted: bo
 
   const slack = await postSlackMessage(env, SLACK_LISTINGS_CHANNEL, text);
   return { ok: true, posted: slack.ok, error: slack.ok ? undefined : `slack ${slack.status}` };
+}
+
+// ---- Workstream PR C: per-agent activity + Claude review --------------------
+//
+// For each agent in APG_AGENT_ROSTER, pull last 7 days of:
+//   - opportunities currently assigned to them
+//   - opportunities where they moved a stage (best-effort via dateUpdated)
+//   - outbound conversation messages they sent
+// Aggregate → KV `agent:activity:<user_id>:weekly`.
+// Then ask Opus 4.7 for a short "what should have gone better" review per
+// agent → KV `agent:review:<user_id>:latest` + vault event `agent_review`.
+// Slack teaser posts to #listed-leads when reviews land.
+
+interface AgentWeeklyActivity {
+  user_id: string;
+  name: string;
+  role: string;
+  window_start: string;     // ISO
+  window_end: string;       // ISO
+  opps_assigned: number;
+  opps_moved: number;       // opps with dateUpdated in window AND assignedTo matches
+  outbound_msgs: number;
+  property_addresses: string[];   // unique addresses connected to via opps
+  stalled_opps: Array<{ id: string; name: string; days_since_update: number }>;
+  generated_at: string;
+}
+
+async function aggregateAgentActivity(
+  env: Env,
+  user: { user_id: string; name: string; role: string },
+  windowDays: number = 7
+): Promise<AgentWeeklyActivity> {
+  const now = Date.now();
+  const sinceMs = now - windowDays * 24 * 3600 * 1000;
+  const windowStart = new Date(sinceMs).toISOString();
+  const windowEnd   = new Date(now).toISOString();
+
+  const out: AgentWeeklyActivity = {
+    user_id: user.user_id,
+    name: user.name,
+    role: user.role,
+    window_start: windowStart,
+    window_end: windowEnd,
+    opps_assigned: 0,
+    opps_moved: 0,
+    outbound_msgs: 0,
+    property_addresses: [],
+    stalled_opps: [],
+    generated_at: new Date().toISOString(),
+  };
+
+  // 1. Opportunities assigned to this user (paginated search).
+  try {
+    let page = 1;
+    const addresses = new Set<string>();
+    while (page < 10) {  // cap at 10 pages = ~1000 opps
+      const res = await fetch(
+        `${GHL_BASE}/opportunities/search?` +
+          new URLSearchParams({
+            location_id: APG_LOCATION_ID,
+            assignedTo: user.user_id,
+            limit: "100",
+            page: String(page),
+          }).toString(),
+        { headers: ghlHeaders(env.BLAKE_GHL_PIT) }
+      );
+      if (!res.ok) break;
+      const j: any = await res.json();
+      const opps: any[] = j?.opportunities ?? [];
+      if (!opps.length) break;
+      for (const o of opps) {
+        out.opps_assigned += 1;
+        const updMs = toMs(o?.updatedAt || o?.dateUpdated || o?.updated_at);
+        if (isFinite(updMs) && updMs >= sinceMs) out.opps_moved += 1;
+        // Stalled = no update in 21+ days, still in pipeline open status
+        const daysSince = isFinite(updMs) ? (now - updMs) / (24 * 3600 * 1000) : 999;
+        if ((o?.status || "open") === "open" && daysSince >= 21) {
+          out.stalled_opps.push({
+            id: o?.id || "",
+            name: o?.name || "",
+            days_since_update: Math.round(daysSince),
+          });
+        }
+        // Capture the linked property address from the opp name (Mido's
+        // new "NAME - ADDRESS - NUMBER" format makes this clean).
+        const nm = (o?.name || "").trim();
+        const parts = nm.split(" - ").map((s: string) => s.trim());
+        if (parts.length >= 2 && parts[1]) addresses.add(parts[1]);
+      }
+      if (opps.length < 100) break;
+      page += 1;
+    }
+    out.property_addresses = Array.from(addresses).slice(0, 50);
+    // Cap stalled list at 10 for the review prompt; full list is in KV.
+    out.stalled_opps.sort((a, b) => b.days_since_update - a.days_since_update);
+    out.stalled_opps = out.stalled_opps.slice(0, 10);
+  } catch (e) {
+    console.warn(`[agent-aggregate] opp search failed for ${user.name}: ${e}`);
+  }
+
+  // 2. Outbound conversation messages this user sent in the window.
+  // GHL's search.messages-style endpoint isn't perfectly granular per-user;
+  // we approximate by scanning recent conversations and counting outbound
+  // messages where the userId attribution matches.
+  try {
+    const cr = await fetch(
+      `${GHL_BASE}/conversations/search?` +
+        new URLSearchParams({
+          locationId: APG_LOCATION_ID,
+          sortBy: "last_message_date",
+          sort: "desc",
+          limit: "50",
+        }).toString(),
+      { headers: ghlHeaders(env.BLAKE_GHL_PIT) }
+    );
+    if (cr.ok) {
+      const cj: any = await cr.json();
+      for (const cv of (cj?.conversations || [])) {
+        const lastMs = toMs(cv?.lastMessageDate);
+        if (!isFinite(lastMs) || lastMs < sinceMs) continue;
+        const convId = cv?.id;
+        if (!convId) continue;
+        const msgsRes = await fetch(
+          `${GHL_BASE}/conversations/${convId}/messages?limit=20`,
+          { headers: ghlHeaders(env.BLAKE_GHL_PIT) }
+        );
+        if (!msgsRes.ok) continue;
+        const msgsJ: any = await msgsRes.json();
+        const messages: any[] = msgsJ?.messages?.messages ?? msgsJ?.messages ?? [];
+        for (const m of messages) {
+          const mMs = toMs(m?.dateAdded);
+          if (!isFinite(mMs) || mMs < sinceMs) continue;
+          if (m?.direction !== "outbound") continue;
+          const senderUserId = m?.userId || m?.sentBy || m?.sentByUserId;
+          if (senderUserId === user.user_id) out.outbound_msgs += 1;
+        }
+      }
+    }
+  } catch (e) {
+    console.warn(`[agent-aggregate] msg scan failed for ${user.name}: ${e}`);
+  }
+
+  // 3. Persist the snapshot.
+  await env.DIAL_STATE.put(
+    `agent:activity:${user.user_id}:weekly`,
+    JSON.stringify(out),
+    { expirationTtl: 60 * 60 * 24 * 14 }   // keep 2 weeks of history per key rev
+  );
+  return out;
+}
+
+async function runAgentAiReview(env: Env, activity: AgentWeeklyActivity): Promise<{
+  ok: boolean;
+  review_md?: string;
+  error?: string;
+}> {
+  if (!env.ANTHROPIC_API_KEY) return { ok: false, error: "ANTHROPIC_API_KEY not bound" };
+
+  const systemPrompt = `You are an SDR coach reviewing one APG team member's last 7 days of CRM activity. Be concrete and actionable — no platitudes. Cite specific opp/address evidence from the data. Output STRICT markdown:
+
+# {{Name}} — week of {{YYYY-MM-DD}}
+
+## Snapshot
+- Opps assigned: N
+- Opps moved (touched): N
+- Outbound messages: N
+- Properties connected: N unique
+- Stalled opps (>21d no update): N
+
+## What went well (top 2)
+1. **Theme** — short evidence
+2. **Theme** — short evidence
+
+## What should have gone better (top 3)
+1. **Theme** — short evidence + specific recommendation
+2. ...
+3. ...
+
+## Stalled opps needing attention this week
+- {{opp name}} ({{days}}d stale) — suggested next step
+
+## Suggested focus for next week
+One sentence.`;
+
+  const userPrompt = `Activity for ${activity.name} (${activity.role}) from ${activity.window_start} to ${activity.window_end}:
+
+- Opps assigned: ${activity.opps_assigned}
+- Opps moved (updated in window): ${activity.opps_moved}
+- Outbound messages sent: ${activity.outbound_msgs}
+- Unique properties connected to: ${activity.property_addresses.length}
+
+Top stalled opps:
+${activity.stalled_opps.length === 0 ? "(none)" : activity.stalled_opps.map((o) => `- ${o.name} (${o.days_since_update}d stale)`).join("\n")}
+
+Recent properties connected:
+${activity.property_addresses.slice(0, 15).map((a) => `- ${a}`).join("\n") || "(none)"}
+
+Produce the review now. Markdown only, no preamble.`;
+
+  const r = await fetch("https://api.anthropic.com/v1/messages", {
+    method: "POST",
+    headers: {
+      "x-api-key": env.ANTHROPIC_API_KEY,
+      "anthropic-version": "2023-06-01",
+      "content-type": "application/json",
+    },
+    body: JSON.stringify({
+      model: "claude-opus-4-7",
+      max_tokens: 3000,
+      temperature: 0.4,
+      system: systemPrompt,
+      messages: [{ role: "user", content: userPrompt }],
+    }),
+  });
+  if (!r.ok) {
+    const t = await r.text();
+    return { ok: false, error: `claude ${r.status}: ${t.slice(0, 200)}` };
+  }
+  const data: any = await r.json();
+  const md = (data?.content?.[0]?.text || "").trim();
+  if (!md) return { ok: false, error: "empty review" };
+
+  // Persist + emit vault event.
+  const record = { generated_at: new Date().toISOString(), review_md: md, activity };
+  await env.DIAL_STATE.put(
+    `agent:review:${activity.user_id}:latest`,
+    JSON.stringify(record)
+  );
+  await vaultEmit(env, "agent_review", activity.user_id, {
+    user_id: activity.user_id,
+    name: activity.name,
+    role: activity.role,
+    review_markdown: md,
+    activity_snapshot: activity,
+  });
+
+  return { ok: true, review_md: md };
+}
+
+async function runAllAgentReviews(env: Env): Promise<{
+  ok: boolean;
+  reviewed: number;
+  errors: string[];
+}> {
+  const out = { ok: true, reviewed: 0, errors: [] as string[] };
+  for (const u of APG_AGENT_ROSTER) {
+    try {
+      const activity = await aggregateAgentActivity(env, u);
+      const r = await runAgentAiReview(env, activity);
+      if (r.ok) out.reviewed += 1;
+      else out.errors.push(`${u.name}: ${r.error}`);
+    } catch (e: any) {
+      out.errors.push(`${u.name} threw: ${String(e?.message || e).slice(0, 100)}`);
+    }
+  }
+  // Slack teaser
+  if (env.SLACK_BOT_TOKEN && out.reviewed > 0) {
+    const teaser =
+      `:notebook: *Agent reviews refreshed* — ${out.reviewed}/${APG_AGENT_ROSTER.length} agents reviewed\n` +
+      `Open the dashboard's Agents tab to read: https://acq-automation.mithchell.workers.dev/dashboard#agents`;
+    await postSlackMessage(env, SLACK_LISTINGS_CHANNEL, teaser).catch(() => {});
+  }
+  return out;
 }
