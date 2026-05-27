@@ -7123,11 +7123,13 @@ async function aggregateAgentActivity(
     generated_at: new Date().toISOString(),
   };
 
-  // 1. Opportunities assigned to this user (paginated search).
+  // 1. Opportunities assigned to this user. Capped at 3 pages = 300 opps
+  // to stay under CF Worker's 50-subrequest cap per invocation (2 agents
+  // × 3 opp pages + 1 conv scan = ~7 subrequests/agent, well under).
   try {
     let page = 1;
     const addresses = new Set<string>();
-    while (page < 10) {  // cap at 10 pages = ~1000 opps
+    while (page <= 3) {
       const res = await fetch(
         `${GHL_BASE}/opportunities/search?` +
           new URLSearchParams({
@@ -7146,7 +7148,6 @@ async function aggregateAgentActivity(
         out.opps_assigned += 1;
         const updMs = toMs(o?.updatedAt || o?.dateUpdated || o?.updated_at);
         if (isFinite(updMs) && updMs >= sinceMs) out.opps_moved += 1;
-        // Stalled = no update in 21+ days, still in pipeline open status
         const daysSince = isFinite(updMs) ? (now - updMs) / (24 * 3600 * 1000) : 999;
         if ((o?.status || "open") === "open" && daysSince >= 21) {
           out.stalled_opps.push({
@@ -7155,8 +7156,6 @@ async function aggregateAgentActivity(
             days_since_update: Math.round(daysSince),
           });
         }
-        // Capture the linked property address from the opp name (Mido's
-        // new "NAME - ADDRESS - NUMBER" format makes this clean).
         const nm = (o?.name || "").trim();
         const parts = nm.split(" - ").map((s: string) => s.trim());
         if (parts.length >= 2 && parts[1]) addresses.add(parts[1]);
@@ -7165,25 +7164,25 @@ async function aggregateAgentActivity(
       page += 1;
     }
     out.property_addresses = Array.from(addresses).slice(0, 50);
-    // Cap stalled list at 10 for the review prompt; full list is in KV.
     out.stalled_opps.sort((a, b) => b.days_since_update - a.days_since_update);
     out.stalled_opps = out.stalled_opps.slice(0, 10);
   } catch (e) {
     console.warn(`[agent-aggregate] opp search failed for ${user.name}: ${e}`);
   }
 
-  // 2. Outbound conversation messages this user sent in the window.
-  // GHL's search.messages-style endpoint isn't perfectly granular per-user;
-  // we approximate by scanning recent conversations and counting outbound
-  // messages where the userId attribution matches.
+  // 2. Outbound conversation count — single scan of recent conversations,
+  // NO per-conversation message fetch (that was the subrequest-budget
+  // killer). Uses `lastOutboundMessageAction === "manual"` + assignedTo
+  // as the best available proxy for "this agent sent something."
   try {
     const cr = await fetch(
       `${GHL_BASE}/conversations/search?` +
         new URLSearchParams({
           locationId: APG_LOCATION_ID,
+          assignedTo: user.user_id,
           sortBy: "last_message_date",
           sort: "desc",
-          limit: "50",
+          limit: "30",
         }).toString(),
       { headers: ghlHeaders(env.BLAKE_GHL_PIT) }
     );
@@ -7192,21 +7191,8 @@ async function aggregateAgentActivity(
       for (const cv of (cj?.conversations || [])) {
         const lastMs = toMs(cv?.lastMessageDate);
         if (!isFinite(lastMs) || lastMs < sinceMs) continue;
-        const convId = cv?.id;
-        if (!convId) continue;
-        const msgsRes = await fetch(
-          `${GHL_BASE}/conversations/${convId}/messages?limit=20`,
-          { headers: ghlHeaders(env.BLAKE_GHL_PIT) }
-        );
-        if (!msgsRes.ok) continue;
-        const msgsJ: any = await msgsRes.json();
-        const messages: any[] = msgsJ?.messages?.messages ?? msgsJ?.messages ?? [];
-        for (const m of messages) {
-          const mMs = toMs(m?.dateAdded);
-          if (!isFinite(mMs) || mMs < sinceMs) continue;
-          if (m?.direction !== "outbound") continue;
-          const senderUserId = m?.userId || m?.sentBy || m?.sentByUserId;
-          if (senderUserId === user.user_id) out.outbound_msgs += 1;
+        if (cv?.lastMessageDirection === "outbound" && cv?.lastOutboundMessageAction === "manual") {
+          out.outbound_msgs += 1;
         }
       }
     }
