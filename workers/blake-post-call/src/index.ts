@@ -835,6 +835,42 @@ export default {
       })();
     }
 
+    // Audit 1.6 — funnel events table. Public stats endpoint for the dashboard.
+    // GET /api/funnel/stats?days=14 → counts + conversion rates.
+    if (req.method === "GET" && url.pathname === "/api/funnel/stats") {
+      return (async () => {
+        const days = Math.max(1, Math.min(90, parseInt(url.searchParams.get("days") || "14", 10)));
+        const stats = await aggregateFunnel(env, days);
+        return new Response(JSON.stringify({ ok: true, ...stats }, null, 2), {
+          status: 200,
+          headers: {
+            "content-type": "application/json",
+            "cache-control": "public, max-age=60",
+          },
+        });
+      })();
+    }
+
+    // Admin: raw recent funnel events (most recent first).
+    // GET /admin/funnel/events?limit=100
+    if (req.method === "GET" && url.pathname === "/admin/funnel/events") {
+      return (async () => {
+        const limit = Math.max(1, Math.min(500, parseInt(url.searchParams.get("limit") || "100", 10)));
+        const list = await env.DIAL_STATE.list({ prefix: "funnel:event:", limit });
+        const out: any[] = [];
+        for (const k of list.keys) {
+          try {
+            const v = await env.DIAL_STATE.get(k.name);
+            if (v) out.push(JSON.parse(v));
+          } catch {}
+        }
+        out.sort((a, b) => (b.at || 0) - (a.at || 0));
+        return new Response(JSON.stringify({ ok: true, total: out.length, events: out }, null, 2), {
+          status: 200, headers: { "content-type": "application/json" },
+        });
+      })();
+    }
+
     // Audit 1.2 debug — recent web-search listing-agent lookup attempts.
     // GET /admin/listing-lookups/recent?limit=50 → last N persisted lookups
     // so we can see exactly why 61% return "Unknown Realtor".
@@ -1329,7 +1365,7 @@ export default {
             status: 502, headers: { "content-type": "application/json" },
           });
         }
-        const applyLog = await applyExtractionToGhl(env.BLAKE_GHL_PIT, contactId, extraction);
+        const applyLog = await applyExtractionToGhl(env.BLAKE_GHL_PIT, contactId, extraction, env);
         let referralLog: string[] = [];
         const mentioned = Array.isArray(extraction.mentioned_contacts) ? extraction.mentioned_contacts : [];
         if (mentioned.length) {
@@ -1666,6 +1702,126 @@ async function persistAgentLookup(
   }
 }
 
+// ============================================================================
+// Funnel events table — Audit 1.6 follow-up
+// ============================================================================
+//
+// The dashboard's qualified→booked metric was hardcoded to 0 because no
+// "booking" event was ever emitted. This helper writes a structured event
+// at every meaningful funnel transition so we can finally answer:
+//   - How many leads landed this week?
+//   - How many made it to Qualified?
+//   - How many appointments were set?
+//   - What's the conversion rate at each step?
+//
+// Storage: funnel:event:<unix-ms> with 90-day TTL. Each record:
+//   { at, type, opp_id?, contact_id?, stage_from?, stage_to?, source, metadata? }
+//
+// Read paths:
+//   - aggregateFunnel(env, days) — counts + rates over a window
+//   - GET /api/funnel/stats?days=14 — public stats endpoint for the dashboard
+
+type FunnelEventType =
+  | "lead_created"
+  | "qualified"
+  | "appointment_set"
+  | "offer_sent"
+  | "negotiating"
+  | "under_contract"
+  | "dead";
+
+interface FunnelEvent {
+  at: number;            // unix ms
+  type: FunnelEventType;
+  opp_id?: string;
+  contact_id?: string;
+  stage_from?: string;
+  stage_to?: string;
+  source: string;        // listing_email | landing_form | blake_call | qualified_poller | manual
+  metadata?: Record<string, any>;
+}
+
+// Map a GHL stage_id to the funnel event type it represents (if any).
+function stageToFunnelEvent(stageId: string | undefined): FunnelEventType | null {
+  if (!stageId) return null;
+  // ACQ pipeline
+  if (stageId === STAGE_QUALIFIED) return "qualified";
+  if (stageId === STAGE_LAO)       return "appointment_set";
+  if (stageId === STAGE_DEAD)      return "dead";
+  // Realtor Listings pipeline
+  if (stageId === RL_STAGE_REALTOR_REPLIED) return "qualified";
+  if (stageId === RL_STAGE_OFFER_SENT)      return "offer_sent";
+  if (stageId === RL_STAGE_NEGOTIATING)     return "negotiating";
+  if (stageId === RL_STAGE_UNDER_CONTRACT)  return "under_contract";
+  if (stageId === RL_STAGE_DEAD)            return "dead";
+  return null;
+}
+
+async function recordFunnelEvent(env: Env, ev: Omit<FunnelEvent, "at">): Promise<void> {
+  try {
+    const at = Date.now();
+    const key = `funnel:event:${at}`;
+    const record: FunnelEvent = { at, ...ev };
+    await env.DIAL_STATE.put(key, JSON.stringify(record), {
+      expirationTtl: 60 * 60 * 24 * 90,  // 90 days
+    });
+  } catch (e) {
+    console.warn(`[funnel-event] ${ev.type}: ${e}`);
+  }
+}
+
+async function aggregateFunnel(
+  env: Env,
+  days: number,
+): Promise<{
+  period_days: number;
+  total: number;
+  counts: Record<FunnelEventType, number>;
+  by_source: Record<string, number>;
+  rates: Record<string, string>;
+}> {
+  const cutoff = Date.now() - days * 24 * 60 * 60 * 1000;
+  const counts: Record<FunnelEventType, number> = {
+    lead_created: 0, qualified: 0, appointment_set: 0,
+    offer_sent: 0, negotiating: 0, under_contract: 0, dead: 0,
+  };
+  const by_source: Record<string, number> = {};
+  let total = 0;
+  let cursor: string | undefined;
+  do {
+    const list = await env.DIAL_STATE.list({ prefix: "funnel:event:", cursor, limit: 1000 });
+    cursor = list.list_complete ? undefined : list.cursor;
+    for (const k of list.keys) {
+      try {
+        const v = await env.DIAL_STATE.get(k.name);
+        if (!v) continue;
+        const ev = JSON.parse(v) as FunnelEvent;
+        if (ev.at < cutoff) continue;
+        if (ev.type in counts) {
+          counts[ev.type as FunnelEventType]++;
+          by_source[ev.source] = (by_source[ev.source] || 0) + 1;
+          total++;
+        }
+      } catch {}
+    }
+  } while (cursor);
+  const rate = (num: number, den: number) =>
+    den === 0 ? "n/a" : `${Math.round((num / den) * 1000) / 10}%`;
+  return {
+    period_days: days,
+    total,
+    counts,
+    by_source,
+    rates: {
+      qualified_from_lead: rate(counts.qualified, counts.lead_created),
+      appointment_from_qualified: rate(counts.appointment_set, counts.qualified),
+      offer_from_appointment: rate(counts.offer_sent, counts.appointment_set),
+      under_contract_from_offer: rate(counts.under_contract, counts.offer_sent),
+      lead_to_appointment: rate(counts.appointment_set, counts.lead_created),
+    },
+  };
+}
+
 async function handleListingEmail(req: Request, env: Env): Promise<Response> {
   let body: any = {};
   try {
@@ -1916,6 +2072,16 @@ async function handleListingEmail(req: Request, env: Env): Promise<Response> {
         { status: 500, headers: { "content-type": "application/json" } }
       );
     }
+    // Audit 1.6 — record the new listing as a funnel event so we can finally
+    // measure end-to-end conversion (lead → qualified → appointment → offer).
+    await recordFunnelEvent(env, {
+      type: "lead_created",
+      opp_id: opportunityId,
+      contact_id: realtorContactId,
+      stage_to: RL_STAGE_NEW_LISTING,
+      source: "listing_email",
+      metadata: { address: body.property_address, asking, mao },
+    });
   }
 
   // 3b. Write the comprehensive ATTOM property note onto the realtor contact
@@ -1993,6 +2159,17 @@ async function handleListingEmail(req: Request, env: Env): Promise<Response> {
   const sms = (realtorContactId && haveRealtorPhone)
     ? await sendGhlSms(env, realtorContactId, smsBody)
     : { ok: false, status: 0, body: haveRealtorPhone ? "no_realtor_contact_id" : "no_realtor_phone_skipped" };
+
+  // Funnel event: SMS-with-MAO IS the offer. Emit on actual SMS success.
+  if (sms.ok && opportunityId) {
+    await recordFunnelEvent(env, {
+      type: "offer_sent",
+      opp_id: opportunityId,
+      contact_id: realtorContactId,
+      source: "listing_email",
+      metadata: { mao, channel: "sms" },
+    });
+  }
 
   // 5. Write a structured listing brief as a NOTE on the realtor contact, so
   //    RJ/Adam can see the deal context when they open the contact card.
@@ -3177,6 +3354,14 @@ async function handleLandingLead(req: Request, env: Env): Promise<Response> {
             body: JSON.stringify({ monetaryValue: attomMao }),
           }).catch(() => {});
         }
+        await recordFunnelEvent(env, {
+          type: "lead_created",
+          opp_id: opp.oppId,
+          contact_id: contactId,
+          stage_to: STAGE_UNQUALIFIED,
+          source: "landing_form",
+          metadata: { variant, address },
+        });
       } else {
         console.warn(`[landing-lead] createOpportunity ${opp.status}: ${opp.body.slice(0, 200)}`);
       }
@@ -4352,7 +4537,7 @@ async function handleWebhook(req: Request, env: Env, ctx: ExecutionContext): Pro
               console.warn(`[extract] no extraction returned for ${contactId}`);
               return;
             }
-            const log = await applyExtractionToGhl(env.BLAKE_GHL_PIT, contactId, extraction);
+            const log = await applyExtractionToGhl(env.BLAKE_GHL_PIT, contactId, extraction, env);
             console.log(
               `[extract] contact=${contactId} temp=${extraction.lead_temp} ` +
               `callback=${extraction.callback_promised} mentioned=${(extraction.mentioned_contacts || []).length} ` +
@@ -4764,7 +4949,8 @@ mentioned_contacts MUST be an array (use [] when nothing was mentioned). Do NOT 
 async function applyExtractionToGhl(
   pit: string,
   contactId: string,
-  extraction: ExtractionResult
+  extraction: ExtractionResult,
+  env?: Env,
 ): Promise<string[]> {
   const log: string[] = [];
 
@@ -4874,11 +5060,51 @@ async function applyExtractionToGhl(
     if (existing.pipelineStageId !== targetStage) {
       const r = await moveOpportunityStage(pit, existing.id, targetStage);
       log.push(`stage_move ${existing.pipelineStageId.slice(0, 8)}→${targetStage.slice(0, 8)}: ${r.ok ? "ok" : `${r.status}`}`);
+      // Funnel event: emit if the stage_to maps to a tracked funnel transition.
+      if (r.ok && env) {
+        const evType = stageToFunnelEvent(targetStage);
+        if (evType) {
+          await recordFunnelEvent(env, {
+            type: evType,
+            opp_id: existing.id,
+            contact_id: contactId,
+            stage_from: existing.pipelineStageId,
+            stage_to: targetStage,
+            source: "blake_call",
+            metadata: { lead_temp: extraction.lead_temp },
+          });
+        }
+      }
     }
   } else {
     // Create new ACQ opportunity for this contact at the target stage
     const r = await createOpportunity(pit, contactId, { name: oppName, pipelineStageId: targetStage });
     log.push(`opp_create stage=${targetStage.slice(0, 8)}: ${r.ok ? `ok (id=${r.oppId})` : `${r.status} ${r.body.slice(0, 80)}`}`);
+    if (r.ok && env) {
+      // lead_created for the new opp itself
+      await recordFunnelEvent(env, {
+        type: "lead_created",
+        opp_id: r.oppId,
+        contact_id: contactId,
+        stage_to: targetStage,
+        source: "blake_call",
+        metadata: { lead_temp: extraction.lead_temp },
+      });
+      // If Blake's call routed directly to a non-Unqualified stage (hot/warm/
+      // nurture/dnc), emit the stage event too — a hot lead booking is both
+      // a lead_created AND an appointment_set.
+      const evType = stageToFunnelEvent(targetStage);
+      if (evType) {
+        await recordFunnelEvent(env, {
+          type: evType,
+          opp_id: r.oppId,
+          contact_id: contactId,
+          stage_to: targetStage,
+          source: "blake_call",
+          metadata: { lead_temp: extraction.lead_temp },
+        });
+      }
+    }
   }
 
   return log;
@@ -8482,6 +8708,16 @@ async function pollQualifiedStageAlerts(env: Env): Promise<void> {
           task_id: (t as any).taskId || "",
           task_ok: t.ok,
         }), { expirationTtl: 60 * 60 * 24 * 30 });
+
+        // Funnel event: this opp's transition to Qualified was detected here.
+        await recordFunnelEvent(env, {
+          type: "qualified",
+          opp_id: oppId,
+          contact_id: contactId,
+          stage_to: STAGE_QUALIFIED,
+          source: "qualified_poller",
+          metadata: { has_replied_tag: repliedTag },
+        });
       } catch (e) {
         console.warn(`[qualified-alerts] alert failed for opp ${oppId}: ${e}`);
       }
