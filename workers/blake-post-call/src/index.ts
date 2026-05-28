@@ -1608,43 +1608,61 @@ export default {
       return;
     }
 
-    // Every-15-min tick
+    // Every-15-min tick — SPLIT by tick-index to stay under CF Workers
+    // subrequest limit (50 free / 1000 paid). Running every handler in one
+    // invocation was bursting > 50 subrequests and killing auto-blog, dashboard
+    // refresh, hot-pipeline alerts, and Blake dialing silently.
+    //
+    // Schedule across the 4 ticks-per-hour:
+    //   tick 0 (xx:00) → dial + dashboard
+    //   tick 1 (xx:15) → dial + insights polling
+    //   tick 2 (xx:30) → dial + autoblog + ghl-vault
+    //   tick 3 (xx:45) → dial + hot-pipeline-alerts (when enabled)
+    //
+    // Dial runs every tick (Blake's main job; cheapest handler at ~11 subrequests).
+    const minute = new Date().getMinutes();
+    const tickIdx = Math.floor(minute / 15) % 4;
+
     try {
       const result = await runDialBatch(env, { source: "cron", batchSize: 5, dryRun: false });
-      console.log(`[cron-dial] ${JSON.stringify(result)}`);
+      console.log(`[cron-dial t${tickIdx}] ${JSON.stringify(result)}`);
     } catch (e) {
-      console.error(`[cron-dial] failed: ${e}`);
+      console.error(`[cron-dial t${tickIdx}] failed: ${e}`);
     }
-    try {
-      await refreshDashboardCache(env);
-    } catch (e) {
-      console.error(`[cron-dashboard] failed: ${e}`);
-    }
-    try {
-      await pollInsightsForChanges(env);
-    } catch (e) {
-      console.error(`[cron-insights] failed: ${e}`);
-    }
-    try {
-      await autoBlogTick(env);
-    } catch (e) {
-      console.error(`[cron-blog] failed: ${e}`);
-    }
-    try {
-      await pollGhlMessagesForVault(env);
-    } catch (e) {
-      console.error(`[cron-vault-ghl] failed: ${e}`);
-    }
-    // Slice I (P0) — Qualified-stage alerts + RJ auto-task + Mike escalation.
-    // KILL-SWITCH: Mido stopped this 2026-05-27 23:07 UTC ("stop it").
-    // Gated on KV key `qualified_alerts:enabled` === "true". Default OFF.
-    try {
-      const enabled = await env.DIAL_STATE.get("qualified_alerts:enabled");
-      if (enabled === "true") {
-        await pollQualifiedStageAlerts(env);
+
+    if (tickIdx === 0) {
+      try {
+        await refreshDashboardCache(env);
+      } catch (e) {
+        console.error(`[cron-dashboard] failed: ${e}`);
       }
-    } catch (e) {
-      console.error(`[cron-qualified-alerts] failed: ${e}`);
+    } else if (tickIdx === 1) {
+      try {
+        await pollInsightsForChanges(env);
+      } catch (e) {
+        console.error(`[cron-insights] failed: ${e}`);
+      }
+    } else if (tickIdx === 2) {
+      try {
+        await autoBlogTick(env);
+      } catch (e) {
+        console.error(`[cron-blog] failed: ${e}`);
+      }
+      try {
+        await pollGhlMessagesForVault(env);
+      } catch (e) {
+        console.error(`[cron-vault-ghl] failed: ${e}`);
+      }
+    } else {
+      // tick 3 — hot-pipeline-alerts (when killswitch enabled)
+      try {
+        const enabled = await env.DIAL_STATE.get("qualified_alerts:enabled");
+        if (enabled === "true") {
+          await pollQualifiedStageAlerts(env);
+        }
+      } catch (e) {
+        console.error(`[cron-hot-alerts] failed: ${e}`);
+      }
     }
   },
 };
@@ -6947,8 +6965,15 @@ async function fetchWpPageMeta(env: Env, pageId: number, forceRefresh = false): 
     title: p.title?.rendered || "",
     slug: p.slug || "",
   };
-  // 10-min TTL — cron refreshes every 15 min so this is mostly fresh.
-  await env.DIAL_STATE.put(cacheKey, JSON.stringify(meta), { expirationTtl: 600 });
+  // 6-hour TTL — WP modified rarely changes that often. Bumped from 10min
+  // 2026-05-28 to cut KV write volume by ~36x. Insights cron polls every
+  // hour anyway via tick rotation. Catch put errors so KV quota issues
+  // don't surface as "Unable to fetch WP metadata" cards in the dashboard.
+  try {
+    await env.DIAL_STATE.put(cacheKey, JSON.stringify(meta), { expirationTtl: 60 * 60 * 6 });
+  } catch (e) {
+    console.warn(`[insights] WP meta cache write failed (kv quota?): ${e}`);
+  }
   return meta;
 }
 
@@ -7186,7 +7211,7 @@ async function autoBlogTick(env: Env): Promise<void> {
     const ready = await isReadyToPost(env);
     tickStatus.ready = ready;
     if (!ready) {
-      return;  // not enough time has passed since last post
+      return;  // not enough time has passed since last post — skip KV write to spare daily quota
     }
     tickStatus.attempted = true;
     console.log(`[cron-blog] cadence check passed — generating new post`);
@@ -7205,20 +7230,23 @@ async function autoBlogTick(env: Env): Promise<void> {
     tickStatus.error = `threw: ${e?.message || String(e)}`;
     console.error(`[cron-blog] threw: ${e?.message || e}`);
   } finally {
-    try {
-      await env.DIAL_STATE.put("autoblog:last_tick", JSON.stringify(tickStatus), {
-        expirationTtl: 60 * 60 * 24 * 14,  // 14 days
-      });
-      // Keep a ring buffer of the last 10 tick statuses for trend debugging.
-      const ringKey = "autoblog:ticks:recent";
-      const prev = await env.DIAL_STATE.get(ringKey);
-      const arr = prev ? JSON.parse(prev) : [];
-      arr.unshift(tickStatus);
-      while (arr.length > 10) arr.pop();
-      await env.DIAL_STATE.put(ringKey, JSON.stringify(arr), {
-        expirationTtl: 60 * 60 * 24 * 30,
-      });
-    } catch {}
+    // Only write KV when we actually attempted — skip the "not ready" ticks
+    // so we don't burn the 1000/day KV write quota on cadence-not-met no-ops.
+    if (tickStatus.attempted) {
+      try {
+        await env.DIAL_STATE.put("autoblog:last_tick", JSON.stringify(tickStatus), {
+          expirationTtl: 60 * 60 * 24 * 14,
+        });
+        const ringKey = "autoblog:ticks:recent";
+        const prev = await env.DIAL_STATE.get(ringKey);
+        const arr = prev ? JSON.parse(prev) : [];
+        arr.unshift(tickStatus);
+        while (arr.length > 10) arr.pop();
+        await env.DIAL_STATE.put(ringKey, JSON.stringify(arr), {
+          expirationTtl: 60 * 60 * 24 * 30,
+        });
+      } catch {}
+    }
   }
 }
 
