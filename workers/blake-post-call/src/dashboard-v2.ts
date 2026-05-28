@@ -504,6 +504,65 @@ function outcomePillFor(tag: string, label: string): string {
   return `<span class="pill ${klass}">${display}</span>`;
 }
 
+// Read funnel events for the last `days` days and tally counts + rates.
+// Mirror of `aggregateFunnel` in index.ts so the dashboard can render
+// without an internal fetch hop.
+async function readFunnelStatsForDashboard(
+  env: { DIAL_STATE: KVNamespace },
+  days: number,
+): Promise<{
+  period_days: number;
+  total: number;
+  lead_created: number;
+  qualified: number;
+  appointment_set: number;
+  offer_sent: number;
+  under_contract: number;
+  dead: number;
+  rate_qual: string;
+  rate_appt: string;
+  rate_offer: string;
+}> {
+  const cutoff = Date.now() - days * 24 * 60 * 60 * 1000;
+  const counts: Record<string, number> = {
+    lead_created: 0, qualified: 0, appointment_set: 0,
+    offer_sent: 0, negotiating: 0, under_contract: 0, dead: 0,
+  };
+  let total = 0;
+  let cursor: string | undefined;
+  do {
+    const list = await env.DIAL_STATE.list({ prefix: "funnel:event:", cursor, limit: 1000 });
+    cursor = list.list_complete ? undefined : list.cursor;
+    for (const k of list.keys) {
+      try {
+        const v = await env.DIAL_STATE.get(k.name);
+        if (!v) continue;
+        const ev = JSON.parse(v);
+        if ((ev.at || 0) < cutoff) continue;
+        if (ev.type in counts) {
+          counts[ev.type]++;
+          total++;
+        }
+      } catch {}
+    }
+  } while (cursor);
+  const rate = (num: number, den: number) =>
+    den === 0 ? "—" : `${Math.round((num / den) * 1000) / 10}%`;
+  return {
+    period_days: days,
+    total,
+    lead_created: counts.lead_created,
+    qualified: counts.qualified,
+    appointment_set: counts.appointment_set,
+    offer_sent: counts.offer_sent,
+    under_contract: counts.under_contract,
+    dead: counts.dead,
+    rate_qual: rate(counts.qualified, counts.lead_created),
+    rate_appt: rate(counts.appointment_set, counts.qualified),
+    rate_offer: rate(counts.offer_sent, counts.appointment_set),
+  };
+}
+
 export async function renderDashboardV2(env: {
   DIAL_STATE: KVNamespace;
 }): Promise<string> {
@@ -563,6 +622,13 @@ export async function renderDashboardV2(env: {
     listings: [], error: String(e?.message || e), fetched_at: null,
   }));
   const websites = await readWebsitesData(env).catch(() => ({ pages: [] }));
+  // Audit 1.6 — pipeline funnel from real stage-move events (90-day TTL KV)
+  const pipelineFunnel = await readFunnelStatsForDashboard(env, 14).catch(() => ({
+    period_days: 14, total: 0,
+    lead_created: 0, qualified: 0, appointment_set: 0, offer_sent: 0,
+    under_contract: 0, dead: 0,
+    rate_qual: "—", rate_appt: "—", rate_offer: "—",
+  }));
 
   return `${dashboardHead()}
 <body>
@@ -613,6 +679,20 @@ ${warmup ? `<div class="kpi-row" style="margin-top:-8px;">
     <div class="step"><div class="name">Booked</div><div class="count">${booked}</div><div class="pct">${pct(booked, dials)}</div></div>
     <div class="step"><div class="name">Contracted</div><div class="count">${contracted}</div><div class="pct">${pct(contracted, dials)}</div></div>
   </div>
+</section>
+
+<section class="panel">
+  <h2>Pipeline funnel — last ${pipelineFunnel.period_days} days <span style="color:var(--text-mute);font-size:11px;font-weight:400;">(real stage events, GHL-backed)</span></h2>
+  <div class="funnel">
+    <div class="step"><div class="name">Leads</div><div class="count">${pipelineFunnel.lead_created}</div><div class="pct">100%</div></div>
+    <div class="step"><div class="name">Qualified</div><div class="count">${pipelineFunnel.qualified}</div><div class="pct">${pipelineFunnel.rate_qual}</div></div>
+    <div class="step"><div class="name">Appointments</div><div class="count">${pipelineFunnel.appointment_set}</div><div class="pct">${pipelineFunnel.rate_appt}</div></div>
+    <div class="step"><div class="name">Offers Sent</div><div class="count">${pipelineFunnel.offer_sent}</div><div class="pct">${pipelineFunnel.rate_offer}</div></div>
+    <div class="step"><div class="name">Under Contract</div><div class="count">${pipelineFunnel.under_contract}</div><div class="pct">${pct(pipelineFunnel.under_contract, pipelineFunnel.offer_sent)}</div></div>
+  </div>
+  ${pipelineFunnel.total === 0
+    ? `<div style="color:var(--text-mute);font-size:12px;margin-top:10px;">No events yet — funnel will populate as new listings land and Blake calls complete. Backfill via <code>POST /admin/funnel/backfill</code> (TODO).</div>`
+    : ""}
 </section>
 
 <section class="panel">
