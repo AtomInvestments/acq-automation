@@ -4156,10 +4156,15 @@ async function handleConversationInit(req: Request, env: Env): Promise<Response>
         const attomHit = attomEnrich && !attomEnrich.error && attomEnrich.attomId ? "yes" : "no";
         console.log(`[init] seller_file enriched: ${sellerFile.length} chars (${otherNotes.length} notes + ${recentSms.length} SMS + ${slackMentions.length} slack + attom:${attomHit})`);
 
+        // If the GHL contact match returned blank firstName (data quality
+        // issue — contact exists by phone but no name on file), treat as
+        // unknown owner for greeting + system-prompt purposes. Keep seller_file
+        // enrichment though — Blake still benefits from the property context.
+        const hasFirstName = !!firstName.trim();
         vars = {
           first_name: firstName,
           full_name: `${firstName} ${lastName}`.trim(),
-          is_known_owner: "true",
+          is_known_owner: hasFirstName ? "true" : "false",
           property_address: address,
           motivation: cfMap[CF_MOTIVATION] || "",
           timeline: cfMap[CF_TIMELINE] || "",
@@ -4167,7 +4172,9 @@ async function handleConversationInit(req: Request, env: Env): Promise<Response>
           last_call_summary: cfMap[CF_VA_NOTES] || "",
           seller_file: sellerFile,
         };
-        firstMessage = ownerKnownFirstMessage(firstName, address);
+        firstMessage = hasFirstName
+          ? ownerKnownFirstMessage(firstName, address)
+          : ownerUnknownFirstMessage();
         console.log(`[init] matched contact id=${contact.id} name="${firstName} ${lastName}" seller_file_chars=${sellerFile.length}`);
       } else {
         console.log(`[init] no GHL contact for ${callerPhone} → owner-unknown branch`);
@@ -4221,15 +4228,24 @@ async function handleConversationInit(req: Request, env: Env): Promise<Response>
 }
 
 function ownerKnownFirstMessage(firstName: string, address: string): string {
-  const name = firstName || "there";
-  if (address) {
-    return `Hi, is this ${name}? — This is Blake with Atom Property Group. I'm calling about ${address} — wondering if you'd be open to chatting about a proposal for it?`;
+  // BUG FIX 2026-05-28 (Eleanor call): if firstName is empty/whitespace but we
+  // matched a GHL contact by phone, the old greeting rendered as
+  // "Hi, is this there?" — meaningless and led to the seller saying "Jeff"
+  // (a team member who'd called her earlier), which Blake locked onto as her
+  // name. Fall through to the unknown-owner greeting instead.
+  const cleanName = (firstName || "").trim();
+  if (!cleanName) {
+    return ownerUnknownFirstMessage();
   }
-  return `Hi, is this ${name}? — This is Blake with Atom Property Group. Just wanted to chat for a minute about your property — got a sec?`;
+  if (address) {
+    return `Hi, is this ${cleanName}? — This is Blake with Atom Property Group. I'm calling about ${address} — wondering if you'd be open to chatting about a proposal for it?`;
+  }
+  return `Hi, is this ${cleanName}? — This is Blake with Atom Property Group. Just wanted to chat for a minute about your property — got a sec?`;
 }
 
 function ownerUnknownFirstMessage(): string {
-  return `Hi there — this is Blake with Atom Property Group. Sorry, I don't have your name on file yet. Could you share your name and the property you're calling about, so I can help you better?`;
+  // Don't pretend we know who they are. Ask explicitly.
+  return `Hi there — this is Blake with Atom Property Group. Could I get your name and the property you're calling about, so I can help?`;
 }
 
 // Returns the contact dict (NOT just the id) so we can read customFields,
