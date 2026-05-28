@@ -835,6 +835,52 @@ export default {
       })();
     }
 
+    // Audit 1.2 debug — recent web-search listing-agent lookup attempts.
+    // GET /admin/listing-lookups/recent?limit=50 → last N persisted lookups
+    // so we can see exactly why 61% return "Unknown Realtor".
+    if (req.method === "GET" && url.pathname === "/admin/listing-lookups/recent") {
+      return (async () => {
+        const limit = Math.max(1, Math.min(200, parseInt(url.searchParams.get("limit") || "50", 10)));
+        const list = await env.DIAL_STATE.list({ prefix: "agent-lookup:", limit });
+        const out: any[] = [];
+        for (const k of list.keys) {
+          try {
+            const v = await env.DIAL_STATE.get(k.name);
+            if (v) out.push(JSON.parse(v));
+          } catch {}
+        }
+        out.sort((a, b) => (b.at || 0) - (a.at || 0));
+        const found = out.filter((r) => r.found_phone || r.found_name);
+        const failed = out.filter((r) => !r.found_phone && !r.found_name);
+        return new Response(JSON.stringify({
+          ok: true,
+          total: out.length,
+          found_count: found.length,
+          failed_count: failed.length,
+          success_rate: out.length ? `${Math.round(100 * found.length / out.length)}%` : "n/a",
+          recent: out,
+        }, null, 2), { status: 200, headers: { "content-type": "application/json" } });
+      })();
+    }
+
+    // Audit 1.2 debug — listing-pipeline rejection counts per reason per day.
+    // GET /admin/listing-rejections/recent → all listing:rejected:* counters.
+    if (req.method === "GET" && url.pathname === "/admin/listing-rejections/recent") {
+      return (async () => {
+        const list = await env.DIAL_STATE.list({ prefix: "listing:rejected:", limit: 500 });
+        const out: Record<string, number> = {};
+        for (const k of list.keys) {
+          try {
+            const v = await env.DIAL_STATE.get(k.name);
+            out[k.name.slice("listing:rejected:".length)] = v ? parseInt(v, 10) || 0 : 0;
+          } catch {}
+        }
+        return new Response(JSON.stringify({ ok: true, counters: out }, null, 2), {
+          status: 200, headers: { "content-type": "application/json" },
+        });
+      })();
+    }
+
     // Workstream PR C — per-agent activity + AI review.
     // POST /admin/agents/review  → runs the weekly aggregator + Opus review
     //                              for every agent in APG_AGENT_ROSTER.
@@ -1543,6 +1589,83 @@ function normalizeListingAddress(addr: string): string {
   return s;
 }
 
+// Catch upstream-parser garbage like "31 31 Pacifict St St" — repeated
+// street number OR repeated suffix is always a parse bug worth flagging.
+// Audit 1.6 found 1/18 listings with this pattern; this check rejects them
+// before they pollute the pipeline.
+function detectMalformedAddress(addr: string): string | null {
+  if (!addr) return null;
+  const s = addr.trim();
+  // Duplicated street number: "31 31 ..."
+  if (/^(\d+[A-Za-z]?)\s+\1\b/.test(s)) {
+    return "duplicate_street_number";
+  }
+  // Duplicated street suffix at end: "... St St" / "... Ave Ave"
+  const suffixes = "St|Street|Ave|Avenue|Rd|Road|Dr|Drive|Ln|Lane|Ct|Court|Way|Blvd|Boulevard|Pl|Place|Ter|Terrace|Pkwy|Parkway|Cir|Circle|Hwy|Highway|Trl|Trail";
+  const dupSuffixRe = new RegExp(`\\b(${suffixes})\\.?\\s+\\1\\.?\\s*$`, "i");
+  if (dupSuffixRe.test(s)) {
+    return "duplicate_street_suffix";
+  }
+  // Common typo: street suffix with stray trailing character "Pacifict"
+  // (looks like a name+adjacent-suffix run-on). Heuristic: a word ending in
+  // -ct, -st, -rd, -dr that's also followed by the actual suffix is suspicious.
+  if (/\b[A-Z][a-z]+ct\s+(St|Ct)\b/i.test(s)) {
+    return "suffix_runon";
+  }
+  return null;
+}
+
+// KV counter for listing-pipeline rejections. Per-reason, per-UTC-day, with
+// 30-day TTL so we can answer "how many condos got blocked this week?"
+async function incrementListingRejection(
+  env: Env,
+  reason: string,
+): Promise<void> {
+  try {
+    const utc = new Date().toISOString().slice(0, 10);
+    const key = `listing:rejected:${reason}:${utc}`;
+    const cur = await env.DIAL_STATE.get(key);
+    const next = (cur ? parseInt(cur, 10) || 0 : 0) + 1;
+    await env.DIAL_STATE.put(key, String(next), { expirationTtl: 60 * 60 * 24 * 30 });
+  } catch (e) {
+    console.warn(`[listing-rejected-counter] ${reason}: ${e}`);
+  }
+}
+
+// Persist each web-search agent lookup attempt so we can debug why 61% of
+// them return "Unknown Realtor" (Audit 1.2). Stored under
+// `agent-lookup:<unix-ms>` with 30-day TTL. The /admin/listing-lookups/recent
+// endpoint reads these for debugging.
+async function persistAgentLookup(
+  env: Env,
+  input: { listing_url?: string; address: string; city?: string; state?: string },
+  result: AgentLookupResult,
+): Promise<void> {
+  try {
+    const at = Date.now();
+    const key = `agent-lookup:${at}`;
+    const record = {
+      at,
+      address: input.address,
+      city: input.city || "",
+      state: input.state || "",
+      listing_url: input.listing_url || "",
+      found_name: result.agent_name || "",
+      found_phone: result.agent_phone || "",
+      found_email: result.agent_email || "",
+      brokerage: result.brokerage || "",
+      source: result.source || "",
+      error: result.error || "",
+      raw_excerpt: (result.raw_response || "").slice(0, 200),
+    };
+    await env.DIAL_STATE.put(key, JSON.stringify(record), {
+      expirationTtl: 60 * 60 * 24 * 30,
+    });
+  } catch (e) {
+    console.warn(`[agent-lookup-persist] ${e}`);
+  }
+}
+
 async function handleListingEmail(req: Request, env: Env): Promise<Response> {
   let body: any = {};
   try {
@@ -1570,9 +1693,32 @@ async function handleListingEmail(req: Request, env: Env): Promise<Response> {
   body.property_address = normalizeListingAddress(body.property_address || "");
 
   if (!asking || !body.property_address) {
+    await incrementListingRejection(env, "missing_required_fields");
     return new Response(
       JSON.stringify({ ok: false, error: "missing_required_fields", details: "asking_price + property_address are required" }),
       { status: 400, headers: { "content-type": "application/json" } }
+    );
+  }
+
+  // Audit 1.2 — flag parse garbage like "31 31 Pacifict St St" before it
+  // pollutes the pipeline. Posts to #apg-alerts (silent until the channel
+  // exists) and bumps the rejection counter, then rejects the listing.
+  const malformedReason = detectMalformedAddress(body.property_address);
+  if (malformedReason) {
+    await incrementListingRejection(env, `malformed_address:${malformedReason}`);
+    await postSlackMessage(
+      env,
+      SLACK_ALERTS_CHANNEL,
+      `:warning: *Malformed address rejected* — \`${body.property_address}\` (reason: ${malformedReason}). Upstream parser bug; manual review.`,
+    ).catch(() => {});
+    return new Response(
+      JSON.stringify({
+        ok: false,
+        error: "malformed_address",
+        reason: malformedReason,
+        address: body.property_address,
+      }),
+      { status: 400, headers: { "content-type": "application/json" } },
     );
   }
 
@@ -1595,6 +1741,18 @@ async function handleListingEmail(req: Request, env: Env): Promise<Response> {
         if (realtorLookupResult.agent_phone)                 realtorPhone = realtorLookupResult.agent_phone;
         if (!realtorEmail && realtorLookupResult.agent_email) realtorEmail = realtorLookupResult.agent_email;
         console.log(`[listing] agent web-search: name=${realtorName || "?"} phone=${realtorPhone || "?"} email=${realtorEmail || "?"}`);
+        // Persist every attempt for debugging the 61% "Unknown Realtor" rate
+        // (Audit 1.2). 30-day TTL; readable via /admin/listing-lookups/recent.
+        await persistAgentLookup(
+          env,
+          {
+            listing_url: body.listing_url,
+            address: body.property_address,
+            city: body.city,
+            state: body.state,
+          },
+          realtorLookupResult,
+        );
       }
     } catch (e) {
       console.warn(`[listing] agent web-search threw: ${e}`);
@@ -1651,6 +1809,29 @@ async function handleListingEmail(req: Request, env: Env): Promise<Response> {
   if (realtorPhone) {
     const existing = await lookupContactDetailByPhone(env.BLAKE_GHL_PIT, realtorPhone);
     realtorContactId = existing?.id || "";
+    // Audit 1.2: existing realtor contacts created before titleCaseName landed
+    // are still ALL CAPS in GHL (VEERA BODAVULA, AKHILA ANEJA). If we have a
+    // title-cased name from this listing email AND the existing contact is
+    // shouting, rewrite it once.
+    if (realtorContactId && realtorName) {
+      const existingFirst = String(existing?.firstName || "");
+      const existingLast = String(existing?.lastName || "");
+      const isShouting = (s: string) => s.length >= 3 && s === s.toUpperCase() && /[A-Z]/.test(s);
+      if (isShouting(existingFirst) || isShouting(existingLast)) {
+        const newFirst = realtorName.split(" ")[0] || existingFirst;
+        const newLast = realtorName.split(" ").slice(1).join(" ") || existingLast;
+        try {
+          await fetch(`${GHL_BASE}/contacts/${realtorContactId}`, {
+            method: "PUT",
+            headers: ghlHeaders(env.BLAKE_GHL_PIT),
+            body: JSON.stringify({ firstName: newFirst, lastName: newLast }),
+          });
+          console.log(`[listing] title-cased existing realtor ${realtorContactId}: ${existingFirst} ${existingLast} → ${newFirst} ${newLast}`);
+        } catch (e) {
+          console.warn(`[listing] failed to title-case existing realtor: ${e}`);
+        }
+      }
+    }
   }
   if (!realtorContactId) {
     // Create
@@ -2391,16 +2572,21 @@ async function lookupListingAgentViaWebSearch(
 Property: ${locationLine}
 ${listingUrl ? `Listing URL: ${listingUrl}` : ""}
 
-STRATEGY: Public web search results do NOT index the specific listing agent for a given Zillow URL — that data only appears on the actual listing page itself. So:
+STRATEGY — try these sources in order, stop as soon as you have an agent name + a phone (10 digits) OR an email:
 
-1. FIRST, use the web_fetch tool to fetch the Zillow listing URL directly (you have access to it; Workers don't but you do). Look for the "Listed by:" / "Listing agent:" / agent contact block on the rendered listing page.
-2. If web_fetch returns the listing data, extract: agent name, phone (10-digit), email, brokerage.
-3. If web_fetch fails or doesn't have the agent block, FALLBACK to web_search to find the agent via Realtor.com, the brokerage website, or MLS directories using the property address.
+1. web_fetch the Zillow listing URL above (if provided). Look for the "Listed by:" / "Listing agent:" / agent contact block. Zillow sometimes serves a 403 / captcha page to bots — if the response looks like a block page (no agent block, "robot check", "Access Denied"), move on.
+2. web_search for: "${address}${city ? ", " + city : ""}${state ? ", " + state : ""} listing agent realtor.com" — then web_fetch the top Realtor.com result. Realtor.com is more bot-friendly than Zillow and almost always shows the listing agent's name + brokerage + a contact form. The phone often appears on the agent's own profile page (a second web_fetch).
+3. web_search for: "${address}${city ? ", " + city : ""}${state ? ", " + state : ""} for sale agent phone" — then inspect any result from the brokerage's own website, Compass, Redfin, or Coldwell Banker. These typically include direct phone.
+4. As a last resort, web_search for the agent's name + brokerage to find their public profile, then extract phone from there.
+
+If after all of the above you still cannot find the agent, return empty strings — DO NOT invent or guess.
 
 Return EXACTLY this JSON object and nothing else — no prose, no code fences, no commentary:
 {"agent_name":"...","agent_phone":"...","agent_email":"...","brokerage":"..."}
 
-For any field you cannot find from web_fetch or web_search, use an empty string. Do not invent or guess data.`;
+Notes:
+- agent_phone must be a 10-digit US number (we'll add the +1). If the page shows it as "(908) 555-1234" return "9085551234" or "(908) 555-1234" — both fine, we'll normalize.
+- Empty string for any field you cannot verify.`;
 
   let res: Response;
   try {
@@ -2417,9 +2603,11 @@ For any field you cannot find from web_fetch or web_search, use an empty string.
         tools: [
           // web_fetch lets Claude directly retrieve URL contents. Critical for
           // Zillow listing agents — Google doesn't index that data, only the
-          // live listing page has it.
-          { type: "web_fetch_20250910", name: "web_fetch", max_uses: 3 },
-          { type: "web_search_20250305", name: "web_search", max_uses: 3 },
+          // live listing page has it. Audit 1.2 found a 61% failure rate at
+          // max_uses: 3 — bumped to 6 so the Realtor.com fallback chain has
+          // room to run (search → fetch → search-agent → fetch-profile).
+          { type: "web_fetch_20250910", name: "web_fetch", max_uses: 6 },
+          { type: "web_search_20250305", name: "web_search", max_uses: 6 },
         ],
         messages: [{ role: "user", content: prompt }],
       }),
@@ -2501,6 +2689,7 @@ async function handleListingEmailFromHtml(req: Request, env: Env): Promise<Respo
   // the rest of the pipeline. If either is missing, return 422 with parse
   // result so the user (or n8n) can manually review.
   if (!parsed.property_address || !parsed.asking_price) {
+    await incrementListingRejection(env, "parse_incomplete");
     return new Response(
       JSON.stringify({
         ok: false,
@@ -2519,6 +2708,7 @@ async function handleListingEmailFromHtml(req: Request, env: Env): Promise<Respo
   // Twilio + GHL cost on out-of-buy-box alerts).
   const inBuyBox = !!parsed.state && NJ_PA_ALLOWED_STATES.has(parsed.state);
   if (!inBuyBox && parsed.state) {
+    await incrementListingRejection(env, "out_of_buy_box");
     // Notify Slack so we still see it, then return early.
     const note = `:no_entry: *Out-of-buy-box listing skipped* — ${parsed.property_address}, ${parsed.city || "?"}, ${parsed.state} (buy box = NJ + PA only)`;
     await postSlackMessage(env, SLACK_LISTINGS_CHANNEL, note).catch(() => {});
@@ -2546,6 +2736,7 @@ async function handleListingEmailFromHtml(req: Request, env: Env): Promise<Respo
   const haystack = `${rawHtml} ${subject || ""}`.toLowerCase();
   const matchedBlocked = blockedPropertyTypes.find((kw) => haystack.includes(kw));
   if (matchedBlocked) {
+    await incrementListingRejection(env, `blocked_property_type:${matchedBlocked}`);
     const note = `:no_entry: *Out-of-buy-box property type skipped* — ${parsed.property_address}, ${parsed.city || "?"}, ${parsed.state || "?"} (matched "${matchedBlocked}"; buy box = SFR + multi + townhouse only)`;
     await postSlackMessage(env, SLACK_LISTINGS_CHANNEL, note).catch(() => {});
     return new Response(
