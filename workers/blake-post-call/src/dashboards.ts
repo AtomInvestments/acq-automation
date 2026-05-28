@@ -238,7 +238,6 @@ h2 .sec-count { margin-left: auto; font-size: 11px; letter-spacing: 0.18em; text
     <a href="deals.html">Deals</a>
     <a href="weekly.html">Weekly</a>
     <a href="priorities.html">Priority</a>
-    <a href="markets.html">Markets</a>
     <a href="blake.html" class="active">Blake</a>
     <a href="progress.html">Progress</a>
     <a href="ai-agents-plan.html">AI Agents Plan</a>
@@ -638,7 +637,6 @@ h1 .accent { color: var(--gold); font-style: italic; }
     <a href="deals.html">Deals</a>
     <a href="weekly.html">Weekly</a>
     <a href="priorities.html">Priority</a>
-    <a href="markets.html">Markets</a>
     <a href="blake.html">Blake</a>
     <a href="progress.html" class="active">Progress</a>
     <a href="ai-agents-plan.html">AI Agents Plan</a>
@@ -1434,7 +1432,6 @@ a:hover { color: var(--ink); }
     <a href="deals.html">Deals</a>
     <a href="weekly.html" class="active">Weekly</a>
     <a href="priorities.html">Priority</a>
-    <a href="markets.html">Markets</a>
     <a href="blake.html">Blake</a>
     <a href="progress.html">Progress</a>
     <a href="ai-agents-plan.html">AI Agents Plan</a>
@@ -2385,7 +2382,6 @@ h2 .sec-count { margin-left: auto; font-size: 11px; letter-spacing: 0.18em; text
     <a href="deals.html">Deals</a>
     <a href="weekly.html">Weekly</a>
     <a href="priorities.html" class="active">Priority</a>
-    <a href="markets.html">Markets</a>
     <a href="blake.html">Blake</a>
     <a href="progress.html">Progress</a>
     <a href="ai-agents-plan.html">AI Agents Plan</a>
@@ -2961,7 +2957,6 @@ table.markets tbody tr.tenant { border-left: 4px solid var(--bad); opacity: 0.6;
     <a href="deals.html">Deals</a>
     <a href="weekly.html">Weekly</a>
     <a href="priorities.html">Priority</a>
-    <a href="markets.html" class="active">Markets</a>
     <a href="blake.html">Blake</a>
     <a href="progress.html">Progress</a>
     <a href="ai-agents-plan.html">AI Agents Plan</a>
@@ -3586,7 +3581,6 @@ section h2, h2 {
     <a href="deals.html" class="active">Deals</a>
     <a href="weekly.html">Weekly</a>
     <a href="priorities.html">Priority</a>
-    <a href="markets.html">Markets</a>
     <a href="blake.html">Blake</a>
     <a href="progress.html">Progress</a>
     <a href="ai-agents-plan.html">AI Agents Plan</a>
@@ -4137,7 +4131,6 @@ section h2, h2 {
     <a href="deals.html">Deals</a>
     <a href="weekly.html">Weekly</a>
     <a href="priorities.html">Priority</a>
-    <a href="markets.html">Markets</a>
     <a href="blake.html">Blake</a>
     <a href="progress.html">Progress</a>
     <a href="ai-agents-plan.html">AI Agents Plan</a>
@@ -4995,7 +4988,6 @@ section h2, h2 {
     <a href="deals.html">Deals</a>
     <a href="weekly.html">Weekly</a>
     <a href="priorities.html">Priority</a>
-    <a href="markets.html">Markets</a>
     <a href="blake.html">Blake</a>
     <a href="progress.html">Progress</a>
     <a href="ai-agents-plan.html">AI Agents Plan</a>
