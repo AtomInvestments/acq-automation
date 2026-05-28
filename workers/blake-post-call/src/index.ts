@@ -835,6 +835,22 @@ export default {
       })();
     }
 
+    // Audit 1.5 debug — auto-blog cron tick history.
+    // GET /admin/blog/tick-history → last 10 ticks + the most recent status.
+    if (req.method === "GET" && url.pathname === "/admin/blog/tick-history") {
+      return (async () => {
+        const last = await env.DIAL_STATE.get("autoblog:last_tick");
+        const ring = await env.DIAL_STATE.get("autoblog:ticks:recent");
+        const lastPosted = await env.DIAL_STATE.get("insights:blog:last_posted");
+        return new Response(JSON.stringify({
+          ok: true,
+          last_posted: lastPosted || null,
+          last_tick: last ? JSON.parse(last) : null,
+          recent_ticks: ring ? JSON.parse(ring) : [],
+        }, null, 2), { status: 200, headers: { "content-type": "application/json" } });
+      })();
+    }
+
     // Audit 1.6 — funnel events table. Public stats endpoint for the dashboard.
     // GET /api/funnel/stats?days=14 → counts + conversion rates.
     if (req.method === "GET" && url.pathname === "/api/funnel/stats") {
@@ -7083,20 +7099,55 @@ const INSIGHTS_DASHBOARD_HTML = INSIGHTS_DASHBOARD_HTML_RAW;
 // Runs every 15 min (piggy-backs on existing cron); the cadence check inside
 // means we only actually generate once per BLOG_CADENCE_DAYS days.
 async function autoBlogTick(env: Env): Promise<void> {
-  if (!(await isReadyToPost(env))) {
-    return;  // not enough time has passed since last post
-  }
-  console.log(`[cron-blog] cadence check passed — generating new post`);
+  // Audit 1.5 follow-up — KV instrumentation so we can see exactly why the
+  // auto-blog cron has never produced a post. Every tick writes a status
+  // record (under `autoblog:last_tick`) regardless of outcome.
+  const tickStatus: Record<string, any> = {
+    at: new Date().toISOString(),
+    ready: false,
+    attempted: false,
+    ok: false,
+    error: null,
+    post_id: null,
+    title: null,
+  };
   try {
+    const ready = await isReadyToPost(env);
+    tickStatus.ready = ready;
+    if (!ready) {
+      return;  // not enough time has passed since last post
+    }
+    tickStatus.attempted = true;
+    console.log(`[cron-blog] cadence check passed — generating new post`);
     const result = await generateAndPublishBlogPost(env);
     if (result.ok) {
       await recordLastPosted(env);
+      tickStatus.ok = true;
+      tickStatus.post_id = result.postId;
+      tickStatus.title = result.title;
       console.log(`[cron-blog] published draft "${result.title}" → post_id=${result.postId}`);
     } else {
+      tickStatus.error = result.error;
       console.warn(`[cron-blog] failed: ${result.error}`);
     }
   } catch (e: any) {
+    tickStatus.error = `threw: ${e?.message || String(e)}`;
     console.error(`[cron-blog] threw: ${e?.message || e}`);
+  } finally {
+    try {
+      await env.DIAL_STATE.put("autoblog:last_tick", JSON.stringify(tickStatus), {
+        expirationTtl: 60 * 60 * 24 * 14,  // 14 days
+      });
+      // Keep a ring buffer of the last 10 tick statuses for trend debugging.
+      const ringKey = "autoblog:ticks:recent";
+      const prev = await env.DIAL_STATE.get(ringKey);
+      const arr = prev ? JSON.parse(prev) : [];
+      arr.unshift(tickStatus);
+      while (arr.length > 10) arr.pop();
+      await env.DIAL_STATE.put(ringKey, JSON.stringify(arr), {
+        expirationTtl: 60 * 60 * 24 * 30,
+      });
+    } catch {}
   }
 }
 
@@ -8177,9 +8228,35 @@ async function runDailySlackSummary(env: Env): Promise<{ ok: boolean; posted: bo
     console.warn(`[daily-summary] ghl fetch failed: ${e}`);
   }
 
+  // Audit 1.1 warmup alert — compare yesterday's actual dial count vs that
+  // day's quota. The dialer accumulated 298 dials of debt before anyone
+  // noticed because no daily floor check existed. Threshold: <70% of quota
+  // = WARN, <40% = CRIT. Posts inline with the daily summary.
+  let warmupAlertLine = "";
+  try {
+    const yesterday = new Date(yesterdayMs);
+    const yDayIdx = await dayIndexFromAnchor(env, yesterday);
+    const yQuota = quotaForDay(yDayIdx);
+    const yDateKey = utcDateString(yesterday);
+    const yDialedRaw = await env.DIAL_STATE.get(`dialed:${yDateKey}`);
+    const yDialed = yDialedRaw ? parseInt(yDialedRaw, 10) || 0 : 0;
+    if (yQuota > 0) {
+      const pct = Math.round((yDialed / yQuota) * 100);
+      const debt = Math.max(0, yQuota - yDialed);
+      if (pct < 40) {
+        warmupAlertLine = `:rotating_light: *Warm-up CRITICAL* — only ${yDialed}/${yQuota} dials yesterday (${pct}%). Debt: *${debt}*. Picker is starving — investigate.\n`;
+      } else if (pct < 70) {
+        warmupAlertLine = `:warning: *Warm-up under floor* — ${yDialed}/${yQuota} dials yesterday (${pct}%). Debt: *${debt}*. Pool may be drying.\n`;
+      }
+    }
+  } catch (e) {
+    console.warn(`[warmup-alert] check failed: ${e}`);
+  }
+
   const avgDur = blakeCalls ? Math.round(blakeTotalS / blakeCalls) : 0;
   const text =
     `:sunrise: *APG daily — ${yesterdayLabel}*\n` +
+    warmupAlertLine +
     `:phone: Blake calls: *${blakeCalls}*` +
     (blakeCalls ? ` (avg ${avgDur}s, longest ${blakeLongestS}s)` : "") + `\n` +
     `:speech_balloon: GHL conversations updated: *${inboundCount + outboundCount}* (inbound ${inboundCount}, outbound ${outboundCount})\n` +
