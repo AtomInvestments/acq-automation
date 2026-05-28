@@ -98,11 +98,27 @@ const CF_LISTING_DATE   = "zFNZ4U7CmLB2ABUNrFNz";   // date — when the listing
 
 // GHL ACQ pipeline + stage IDs. Source of truth: tyler/project_ghl_acq.md.
 const ACQ_PIPELINE_ID = "O8wzIa6E3SgD8HLg6gh9";
-const STAGE_UNQUALIFIED   = "c1d23905-7096-439c-9a31-f8db5b2b53d0";
-const STAGE_QUALIFIED     = "a17517be-8d1a-49fd-bd53-b9128a66e242";
-const STAGE_LAO           = "d43fddd8-3a17-46b2-a193-cf18619f654f";
-const STAGE_DEAD          = "b9b560b0-30cb-47fc-a4ca-1e55ca2531e2";
-const STAGE_FU_1_5MO      = "4aa78ab3-85dc-46d1-a683-d97b0c7a23ee";
+const STAGE_UNQUALIFIED      = "c1d23905-7096-439c-9a31-f8db5b2b53d0";
+const STAGE_QUALIFIED        = "a17517be-8d1a-49fd-bd53-b9128a66e242";
+const STAGE_LAO              = "d43fddd8-3a17-46b2-a193-cf18619f654f";
+const STAGE_DUE_DILIGENCE    = "23a159ad-ba39-4c74-9d07-c1beb219d9f2";
+const STAGE_NEGOTIATE_MAO    = "43589167-14f0-4e09-ba2a-8b9bd3296a4a";
+const STAGE_CONTRACT_SENT    = "53eb29e2-92d9-439e-8865-a875a46a6fd8";
+const STAGE_PSA_EXECUTED     = "e377ba40-6d3b-4981-86cb-d31e7ef0c9c1";
+const STAGE_DEAD             = "b9b560b0-30cb-47fc-a4ca-1e55ca2531e2";
+const STAGE_FU_1_5MO         = "4aa78ab3-85dc-46d1-a683-d97b0c7a23ee";
+
+// Mido directive 2026-05-27: APG alerts only fire when an opp lands in one
+// of these 5 "hot" stages. Other stage moves are silent (still funnel-tracked).
+// Stage 1 (Qualified) gets the full RJ-task + Mike-escalation treatment;
+// stages 2-5 get an informational ping only.
+const HOT_PIPELINE_STAGES: Array<{ id: string; label: string; sla: "rj_1h" | "info" }> = [
+  { id: STAGE_QUALIFIED,     label: "1. Qualified Leads (Warm/Hot)", sla: "rj_1h" },
+  { id: STAGE_LAO,           label: "2. Prequalified Offer (LAO)",   sla: "info" },
+  { id: STAGE_DUE_DILIGENCE, label: "3. Due Diligence (RR)",         sla: "info" },
+  { id: STAGE_NEGOTIATE_MAO, label: "4. Negotiate (MAO)",            sla: "info" },
+  { id: STAGE_CONTRACT_SENT, label: "5. Contract Sent",              sla: "info" },
+];
 
 // Realtor Listings pipeline (Pillar B). Created 2026-05-21.
 const REALTOR_LISTINGS_PIPELINE_ID = "Br9cCXPJRNvtm3egHmwh";
@@ -1761,9 +1777,13 @@ interface FunnelEvent {
 function stageToFunnelEvent(stageId: string | undefined): FunnelEventType | null {
   if (!stageId) return null;
   // ACQ pipeline
-  if (stageId === STAGE_QUALIFIED) return "qualified";
-  if (stageId === STAGE_LAO)       return "appointment_set";
-  if (stageId === STAGE_DEAD)      return "dead";
+  if (stageId === STAGE_QUALIFIED)        return "qualified";
+  if (stageId === STAGE_LAO)              return "appointment_set";
+  if (stageId === STAGE_DUE_DILIGENCE)    return "negotiating";   // pre-contract due diligence rolls up under negotiating
+  if (stageId === STAGE_NEGOTIATE_MAO)    return "negotiating";
+  if (stageId === STAGE_CONTRACT_SENT)    return "offer_sent";     // contract is the executable offer
+  if (stageId === STAGE_PSA_EXECUTED)     return "under_contract";
+  if (stageId === STAGE_DEAD)             return "dead";
   // Realtor Listings pipeline
   if (stageId === RL_STAGE_REALTOR_REPLIED) return "qualified";
   if (stageId === RL_STAGE_OFFER_SENT)      return "offer_sent";
@@ -8691,165 +8711,189 @@ function readCookie(req: Request, name: string): string {
 // Qualified to Slack alert. Good enough for P0; can shorten to */5 later.
 // ===========================================================================
 
+// 2026-05-27 directive: alert when an opp lands in ANY of the 5 "hot" stages
+// (Qualified → LAO → Due Diligence → Negotiate → Contract Sent). Per-stage
+// SLA: Qualified gets the full RJ-task + Mike-escalation; stages 2-5 get an
+// informational ping only (RJ already owns those opps; no SLA timer needed).
 async function pollQualifiedStageAlerts(env: Env): Promise<void> {
-  const KV_PREFIX = "alert:qualified:";
-  const ESC_PREFIX = "alert:qualified-esc:";
-
-  // 1. Pull Qualified opps (capped at 50 — pipeline has been ~19 so plenty of headroom).
-  const r = await fetch(
-    `${GHL_BASE}/opportunities/search?` +
-      new URLSearchParams({
-        location_id: APG_LOCATION_ID,
-        pipeline_id: ACQ_PIPELINE_ID,
-        pipeline_stage_id: STAGE_QUALIFIED,
-        limit: "50",
-      }).toString(),
-    { headers: ghlHeaders(env.BLAKE_GHL_PIT) }
-  );
-  if (!r.ok) {
-    console.warn(`[qualified-alerts] search failed ${r.status}`);
-    return;
-  }
-  const j: any = await r.json();
-  const opps: any[] = j?.opportunities ?? [];
+  const nowMs = Date.now();
   let alertsSent = 0;
   let tasksCreated = 0;
   let escalationsSent = 0;
-  const nowMs = Date.now();
 
-  for (const opp of opps) {
-    const oppId = opp?.id;
-    if (!oppId) continue;
-    const contact = opp?.contact || {};
-    const contactId = contact?.id;
-    if (!contactId) continue;
+  for (const stage of HOT_PIPELINE_STAGES) {
+    // Per-stage KV prefix so the same opp moving through Qualified → LAO →
+    // Negotiate each generates its own alert (one per stage entry).
+    const stageShort = stage.id.slice(0, 8);
+    const KV_PREFIX  = `alert:stage:${stageShort}:`;
+    const ESC_PREFIX = `alert:stage-esc:${stageShort}:`;
 
-    // 2. Have we already alerted on this opp?
-    const alertKey = `${KV_PREFIX}${oppId}`;
-    const existing = await env.DIAL_STATE.get(alertKey);
+    // 1. Pull opps in this stage (capped at 50).
+    const r = await fetch(
+      `${GHL_BASE}/opportunities/search?` +
+        new URLSearchParams({
+          location_id: APG_LOCATION_ID,
+          pipeline_id: ACQ_PIPELINE_ID,
+          pipeline_stage_id: stage.id,
+          limit: "50",
+        }).toString(),
+      { headers: ghlHeaders(env.BLAKE_GHL_PIT) }
+    );
+    if (!r.ok) {
+      console.warn(`[hot-alerts] search failed for ${stage.label}: ${r.status}`);
+      continue;
+    }
+    const j: any = await r.json();
+    const opps: any[] = j?.opportunities ?? [];
 
-    if (!existing) {
-      // ---- FIRST-TIME ALERT ----
-      try {
-        const name  = contact.name || contact.contactName || "(unknown)";
-        const phone = contact.phone || "";
-        // Opp name format: "Name - Address - Phone" (PR #24) or "Name / Address / Phone" (legacy).
-        // Pull the address out of the opp name.
-        const oppName = (opp?.name || "").trim();
-        const sep    = oppName.includes(" - ") ? " - " : " / ";
-        const parts  = oppName.split(sep).map((s: string) => s.trim());
-        const address = parts[1] || "(unknown address)";
+    for (const opp of opps) {
+      const oppId = opp?.id;
+      if (!oppId) continue;
+      const contact = opp?.contact || {};
+      const contactId = contact?.id;
+      if (!contactId) continue;
 
-        const tags: string[] = contact.tags || [];
-        const repliedTag = tags.includes("customer replied");
-        const lastReply  = ""; // We don't have lastMessageBody on the opp; would need a conversations lookup. Skip for now.
-        const updatedAt  = opp?.updatedAt || opp?.dateUpdated || "";
-        const updatedDisp = updatedAt ? new Date(updatedAt).toLocaleString() : "?";
+      const alertKey = `${KV_PREFIX}${oppId}`;
+      const existing = await env.DIAL_STATE.get(alertKey);
 
-        // 2a. Post Slack alert.
-        const ghlOppUrl = `https://app.gohighlevel.com/v2/location/${APG_LOCATION_ID}/opportunities/list?status=open&opportunityId=${oppId}`;
-        const slackText =
-          `:rotating_light: *New Qualified seller* — ${name}\n` +
-          `> *Address:* ${address}\n` +
-          `> *Phone:* ${phone || "—"}\n` +
-          `> *Last update:* ${updatedDisp}\n` +
-          `> *Tags:* ${tags.slice(0, 8).join(", ") || "—"}\n` +
-          (repliedTag ? `> :speech_balloon: Seller has actively REPLIED — high intent.\n` : "") +
-          `> *Action:* RJ has 1 hour to call. Mike escalation auto-fires at 4h if no completion.\n` +
-          `> <${ghlOppUrl}|Open in GHL>`;
-        const slack = await postSlackMessage(env, SLACK_ALERTS_CHANNEL, slackText);
-        if (slack.ok) alertsSent++;
-
-        // 2b. Create RJ task.
-        const dueDate = new Date(nowMs + 60 * 60 * 1000).toISOString();
-        const t = await createTaskOnContact(env.BLAKE_GHL_PIT, contactId, {
-          title: `🔥 Call ${name} — Qualified seller (1h SLA)`,
-          body: [
-            `Seller moved to Qualified stage.`,
-            `Address: ${address}`,
-            `Phone: ${phone || "(missing — pull from contact)"}`,
-            `Tags: ${tags.join(", ")}`,
-            `Opp ID: ${oppId}`,
-            ``,
-            `1-hour SLA. Mike gets the escalation task if this isn't completed by ${dueDate}.`,
-          ].join("\n"),
-          dueDate,
-          assignedTo: USER_RJ,
-        });
-        if (t.ok) tasksCreated++;
-
-        // 2c. Mark as alerted.
-        await env.DIAL_STATE.put(alertKey, JSON.stringify({
-          alerted_at: new Date().toISOString(),
-          slack_ok: slack.ok,
-          task_id: (t as any).taskId || "",
-          task_ok: t.ok,
-        }), { expirationTtl: 60 * 60 * 24 * 30 });
-
-        // Funnel event: this opp's transition to Qualified was detected here.
-        await recordFunnelEvent(env, {
-          type: "qualified",
-          opp_id: oppId,
-          contact_id: contactId,
-          stage_to: STAGE_QUALIFIED,
-          source: "qualified_poller",
-          metadata: { has_replied_tag: repliedTag },
-        });
-      } catch (e) {
-        console.warn(`[qualified-alerts] alert failed for opp ${oppId}: ${e}`);
-      }
-    } else {
-      // ---- ESCALATION CHECK ----
-      try {
-        const meta = JSON.parse(existing);
-        const alertedMs = Date.parse(meta?.alerted_at || "") || 0;
-        const hoursSince = (nowMs - alertedMs) / (1000 * 60 * 60);
-        const escKey = `${ESC_PREFIX}${oppId}`;
-        const escSent = await env.DIAL_STATE.get(escKey);
-        if (hoursSince >= 4 && !escSent) {
-          // The opp is still in Qualified 4h after the initial alert; RJ
-          // hasn't completed his task. Escalate to Mike.
+      if (!existing) {
+        // ---- FIRST-TIME ALERT FOR THIS (stage, opp) PAIR ----
+        try {
           const name = contact.name || contact.contactName || "(unknown)";
+          const phone = contact.phone || "";
           const oppName = (opp?.name || "").trim();
           const sep = oppName.includes(" - ") ? " - " : " / ";
-          const address = (oppName.split(sep)[1] || "").trim();
-          const phone = contact.phone || "";
+          const parts = oppName.split(sep).map((s: string) => s.trim());
+          const address = parts[1] || "(unknown address)";
+          const tags: string[] = contact.tags || [];
+          const repliedTag = tags.includes("customer replied");
+          const updatedAt = opp?.updatedAt || opp?.dateUpdated || "";
+          const updatedDisp = updatedAt ? new Date(updatedAt).toLocaleString() : "?";
 
           const ghlOppUrl = `https://app.gohighlevel.com/v2/location/${APG_LOCATION_ID}/opportunities/list?status=open&opportunityId=${oppId}`;
-          const slackText =
-            `:warning: *4-HOUR ESCALATION* — ${name} still in Qualified, no RJ action\n` +
-            `> *Address:* ${address}\n` +
-            `> *Phone:* ${phone || "—"}\n` +
-            `> *Alerted to RJ:* ${meta.alerted_at}\n` +
-            `> *Action:* Mike — please call or reassign.\n` +
-            `> <${ghlOppUrl}|Open in GHL>`;
-          await postSlackMessage(env, SLACK_ALERTS_CHANNEL, slackText).catch(() => {});
 
-          const escDue = new Date(nowMs + 60 * 60 * 1000).toISOString();
-          await createTaskOnContact(env.BLAKE_GHL_PIT, contactId, {
-            title: `⚠ ESCALATION — RJ didn't act on ${name} in 4h`,
-            body: [
-              `RJ was assigned a Qualified-stage task at ${meta.alerted_at}.`,
-              `4 hours later the opp is still Qualified with no RJ task completion.`,
-              `Mike: call this seller OR reassign to a teammate who can.`,
-              `Original RJ task ID: ${meta.task_id || "(missing)"}`,
-              `Opp ID: ${oppId}`,
-            ].join("\n"),
-            dueDate: escDue,
-            assignedTo: USER_MIKE,
-          }).catch(() => {});
+          let slackText: string;
+          if (stage.sla === "rj_1h") {
+            slackText =
+              `:rotating_light: *${stage.label}* — ${name}\n` +
+              `> *Address:* ${address}\n` +
+              `> *Phone:* ${phone || "—"}\n` +
+              `> *Last update:* ${updatedDisp}\n` +
+              `> *Tags:* ${tags.slice(0, 8).join(", ") || "—"}\n` +
+              (repliedTag ? `> :speech_balloon: Seller has actively REPLIED — high intent.\n` : "") +
+              `> *Action:* RJ has 1 hour to call. Mike escalation auto-fires at 4h if no completion.\n` +
+              `> <${ghlOppUrl}|Open in GHL>`;
+          } else {
+            // Informational ping for stages 2-5 (LAO / Due Diligence / Negotiate / Contract Sent)
+            slackText =
+              `:incoming_envelope: *${stage.label}* — ${name}\n` +
+              `> *Address:* ${address}\n` +
+              `> *Phone:* ${phone || "—"}\n` +
+              `> *Last update:* ${updatedDisp}\n` +
+              `> <${ghlOppUrl}|Open in GHL>`;
+          }
+          const slack = await postSlackMessage(env, SLACK_ALERTS_CHANNEL, slackText);
+          if (slack.ok) alertsSent++;
 
-          await env.DIAL_STATE.put(escKey, new Date().toISOString(), { expirationTtl: 60 * 60 * 24 * 30 });
-          escalationsSent++;
+          let taskId = "";
+          let taskOk = false;
+          if (stage.sla === "rj_1h") {
+            // Stage 1 only: create RJ task with 1h due date.
+            const dueDate = new Date(nowMs + 60 * 60 * 1000).toISOString();
+            const t = await createTaskOnContact(env.BLAKE_GHL_PIT, contactId, {
+              title: `🔥 Call ${name} — ${stage.label} (1h SLA)`,
+              body: [
+                `Seller moved to ${stage.label}.`,
+                `Address: ${address}`,
+                `Phone: ${phone || "(missing — pull from contact)"}`,
+                `Tags: ${tags.join(", ")}`,
+                `Opp ID: ${oppId}`,
+                ``,
+                `1-hour SLA. Mike escalation at ${dueDate}.`,
+              ].join("\n"),
+              dueDate,
+              assignedTo: USER_RJ,
+            });
+            taskOk = t.ok;
+            taskId = (t as any).taskId || "";
+            if (taskOk) tasksCreated++;
+          }
+
+          await env.DIAL_STATE.put(alertKey, JSON.stringify({
+            alerted_at: new Date().toISOString(),
+            stage_id: stage.id,
+            stage_label: stage.label,
+            slack_ok: slack.ok,
+            task_id: taskId,
+            task_ok: taskOk,
+          }), { expirationTtl: 60 * 60 * 24 * 30 });
+
+          // Funnel event: stage entry detected by this poller.
+          const evType = stageToFunnelEvent(stage.id);
+          if (evType) {
+            await recordFunnelEvent(env, {
+              type: evType,
+              opp_id: oppId,
+              contact_id: contactId,
+              stage_to: stage.id,
+              source: "hot_pipeline_poller",
+              metadata: { stage_label: stage.label, has_replied_tag: repliedTag },
+            });
+          }
+        } catch (e) {
+          console.warn(`[hot-alerts] alert failed for opp ${oppId} stage ${stage.label}: ${e}`);
         }
-      } catch (e) {
-        console.warn(`[qualified-alerts] escalation check failed for ${oppId}: ${e}`);
+      } else if (stage.sla === "rj_1h") {
+        // ---- ESCALATION CHECK (Qualified only) ----
+        try {
+          const meta = JSON.parse(existing);
+          const alertedMs = Date.parse(meta?.alerted_at || "") || 0;
+          const hoursSince = (nowMs - alertedMs) / (1000 * 60 * 60);
+          const escKey = `${ESC_PREFIX}${oppId}`;
+          const escSent = await env.DIAL_STATE.get(escKey);
+          if (hoursSince >= 4 && !escSent) {
+            const name = contact.name || contact.contactName || "(unknown)";
+            const oppName = (opp?.name || "").trim();
+            const sep = oppName.includes(" - ") ? " - " : " / ";
+            const address = (oppName.split(sep)[1] || "").trim();
+            const phone = contact.phone || "";
+
+            const ghlOppUrl = `https://app.gohighlevel.com/v2/location/${APG_LOCATION_ID}/opportunities/list?status=open&opportunityId=${oppId}`;
+            const slackText =
+              `:warning: *4-HOUR ESCALATION* — ${name} still in ${stage.label}, no RJ action\n` +
+              `> *Address:* ${address}\n` +
+              `> *Phone:* ${phone || "—"}\n` +
+              `> *Alerted to RJ:* ${meta.alerted_at}\n` +
+              `> *Action:* Mike — please call or reassign.\n` +
+              `> <${ghlOppUrl}|Open in GHL>`;
+            await postSlackMessage(env, SLACK_ALERTS_CHANNEL, slackText).catch(() => {});
+
+            const escDue = new Date(nowMs + 60 * 60 * 1000).toISOString();
+            await createTaskOnContact(env.BLAKE_GHL_PIT, contactId, {
+              title: `⚠ ESCALATION — RJ didn't act on ${name} in 4h`,
+              body: [
+                `RJ was assigned a ${stage.label} task at ${meta.alerted_at}.`,
+                `4 hours later the opp is still in ${stage.label} with no RJ task completion.`,
+                `Mike: call this seller OR reassign.`,
+                `Original RJ task ID: ${meta.task_id || "(missing)"}`,
+                `Opp ID: ${oppId}`,
+              ].join("\n"),
+              dueDate: escDue,
+              assignedTo: USER_MIKE,
+            }).catch(() => {});
+
+            await env.DIAL_STATE.put(escKey, new Date().toISOString(), { expirationTtl: 60 * 60 * 24 * 30 });
+            escalationsSent++;
+          }
+        } catch (e) {
+          console.warn(`[hot-alerts] escalation check failed for ${oppId}: ${e}`);
+        }
       }
     }
   }
 
   if (alertsSent || escalationsSent || tasksCreated) {
-    console.log(`[qualified-alerts] alerts=${alertsSent} tasks=${tasksCreated} escalations=${escalationsSent}`);
+    console.log(`[hot-alerts] alerts=${alertsSent} tasks=${tasksCreated} escalations=${escalationsSent}`);
   }
 }
 
