@@ -1234,6 +1234,31 @@ export default {
             status: 503, headers: { "content-type": "application/json" },
           });
         }
+        // Optional body: { prompt: "...full system prompt text..." }
+        // If provided, also updates the system prompt text. The prior prompt
+        // is backed up to KV before the PATCH so we can roll back.
+        let reqBody: any = {};
+        try { reqBody = await req.json(); } catch {}
+        const newPromptText: string | undefined = reqBody?.prompt;
+        let backupKey: string | null = null;
+        if (newPromptText) {
+          try {
+            const cur = await fetch(
+              `https://api.elevenlabs.io/v1/convai/agents/${BLAKE_AGENT_ID}`,
+              { headers: { "xi-api-key": env.ELEVENLABS_API_KEY } }
+            );
+            if (cur.ok) {
+              const j: any = await cur.json();
+              const old = j?.conversation_config?.agent?.prompt?.prompt;
+              if (old) {
+                backupKey = `blake:prompt:backup:${new Date().toISOString()}`;
+                await env.DIAL_STATE.put(backupKey, String(old), { expirationTtl: 60 * 60 * 24 * 90 });
+              }
+            }
+          } catch (e) {
+            console.warn(`[prompt-apply] backup failed: ${e}`);
+          }
+        }
         const body = {
           conversation_config: {
             agent: {
@@ -1249,6 +1274,7 @@ export default {
               prompt: {
                 llm: "gemini-2.5-flash",
                 max_tokens: -1,
+                ...(newPromptText ? { prompt: newPromptText } : {}),
               },
             },
             tts: {
@@ -1325,6 +1351,8 @@ export default {
           ok: r.ok,
           status: r.status,
           applied_keys: Object.keys(body.conversation_config),
+          prompt_updated: !!newPromptText,
+          prompt_backup_kv_key: backupKey,
           response: respText.slice(0, 4000),
           publish: publishStatus,
         }, null, 2), {
