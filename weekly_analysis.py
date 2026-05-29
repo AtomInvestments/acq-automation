@@ -250,14 +250,40 @@ def parse_slack_note(body):
     return out
 
 
+def _slack_dedup_key(parsed, body):
+    """Best-effort unique key for a Slack-mention note. Prefers the explicit
+    'Slack-Key:' marker (new format from slack_scraper post-dedup fix), then
+    the Slack permalink (which embeds the ts), then (channel, ts_text, first
+    120 chars of original) for legacy notes that have none of the above."""
+    m = re.search(r'Slack-Key:\s*(\S+)', body)
+    if m:
+        return ('key', m.group(1))
+    if parsed.get('permalink'):
+        # Permalink ends in pNNNNNNNNNNNNNNN — that's the ts with no dot
+        pm = re.search(r'/p(\d{10,})', parsed['permalink'])
+        if pm:
+            return ('perma', pm.group(1))
+        return ('perma', parsed['permalink'])
+    return ('legacy',
+            parsed.get('channel', ''),
+            parsed.get('ts_text', ''),
+            (parsed.get('original') or '')[:120])
+
+
 def fetch_slack_mentions(cid):
     """Return list of Slack mention notes added to this contact, sorted newest first.
-    Each entry: {note_id, added_at, channel, user, permalink, original, summary}."""
-    out = []
+    Each entry: {note_id, added_at, channel, user, permalink, original, summary}.
+
+    Defensive dedup: if the same Slack message produced multiple notes (legacy
+    pollution from before the slack_scraper dedup fix), collapse to the OLDEST
+    note per Slack key. Oldest is the original capture — its summary was
+    written when the message was fresh, and keeping it stable means the
+    dashboard doesn't keep showing slightly-different paraphrases."""
+    raw = []
     try:
         r = http('GET', f'https://services.leadconnectorhq.com/contacts/{cid}/notes', headers=GHL_H)
         if r.status_code != 200:
-            return out
+            return raw
         for n in r.json().get('notes', []):
             body = n.get('body') or ''
             if not body.startswith('Slack mention'):
@@ -265,9 +291,20 @@ def fetch_slack_mentions(cid):
             parsed = parse_slack_note(body)
             parsed['note_id']  = n.get('id', '')
             parsed['added_at'] = n.get('dateAdded') or n.get('createdAt') or ''
-            out.append(parsed)
+            parsed['_dedup_key'] = _slack_dedup_key(parsed, body)
+            raw.append(parsed)
     except Exception:
         pass
+    # Collapse to oldest per Slack message identity
+    by_key = {}
+    for p in raw:
+        k = p['_dedup_key']
+        prev = by_key.get(k)
+        if prev is None or (p.get('added_at') or '') < (prev.get('added_at') or ''):
+            by_key[k] = p
+    out = list(by_key.values())
+    for p in out:
+        p.pop('_dedup_key', None)
     out.sort(key=lambda x: x.get('added_at',''), reverse=True)
     return out
 

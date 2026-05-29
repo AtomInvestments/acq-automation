@@ -1,0 +1,67 @@
+name: Dedup Slack-mention notes
+
+# Manual-only trigger. Runs dedup_slack_notes.py against the GHL location to
+# collapse duplicate 'Slack mention' notes that were appended every cron run
+# before slack_scraper.py learned to dedup on Slack ts. Keeps the OLDEST note
+# per Slack message (preserves original capture / audit trail) and deletes
+# the rest. Dry-run by default — pass mode=execute to actually delete.
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'dry-run (default, just logs) OR execute (actually delete)'
+        required: false
+        default: 'dry-run'
+        type: choice
+        options: ['dry-run', 'execute']
+
+permissions:
+  contents: read
+  issues:   write    # for the shared failure-alert step
+
+jobs:
+  dedup:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run dedup script
+        env:
+          GHL_TOKEN: ${{ secrets.GHL_TOKEN }}
+          DRY_RUN:   ${{ inputs.mode == 'execute' && '0' || '1' }}
+        run: python dedup_slack_notes.py
+
+      - name: Create issue on failure
+        if: failure()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RUN_URL:  ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          WORKFLOW: ${{ github.workflow }}
+          REPO:     ${{ github.repository }}
+        run: |
+          set -e
+          TS=$(date -u +'%Y-%m-%dT%H:%MZ')
+          TITLE="[auto-alert] ${WORKFLOW} failed at ${TS}"
+          BODY=$(cat <<EOF
+          Workflow **${WORKFLOW}** failed.
+
+          - Run: ${RUN_URL}
+          - Repo: ${REPO}
+          - Time: ${TS}
+
+          This issue was opened automatically by the workflow's failure
+          alert step. Close it once the failure is acknowledged or fixed.
+          EOF
+          )
+          gh issue create --repo "${REPO}" \
+            --title "${TITLE}" \
+            --body  "${BODY}" \
+            --label "auto-alert" || true

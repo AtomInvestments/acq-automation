@@ -67,6 +67,61 @@ ALLOWED_FIELDS = {
     'reason_for_selling': CF_REASON_SELL,
 }
 
+# Cache of Claude summary results keyed by Slack message identity
+# ('{channel_id}:{ts}'). Avoids re-spending tokens on the same message every
+# hourly cron run (which used to happen whenever slack_state.json cache was
+# lost between GitHub Actions runs).
+SUMMARY_CACHE_FILE = 'slack_summary_cache.json'
+
+
+def load_summary_cache():
+    if not os.path.exists(SUMMARY_CACHE_FILE):
+        return {}
+    try:
+        return json.load(open(SUMMARY_CACHE_FILE)) or {}
+    except Exception:
+        return {}
+
+
+def save_summary_cache(cache):
+    try:
+        with open(SUMMARY_CACHE_FILE, 'w') as f:
+            json.dump(cache, f, indent=2, sort_keys=True)
+    except Exception:
+        pass
+
+
+def note_already_exists(cid, slack_key):
+    """Check whether this contact already has a Slack-mention note for this
+    Slack message (keyed by '{channel_id}:{ts}'). Looks for the explicit
+    'Slack-Key:' marker we now write, OR — for legacy notes from before this
+    fix — falls back to matching on the Slack permalink, which embeds the ts.
+
+    Returns True if a duplicate exists (caller should skip add_note)."""
+    try:
+        r = requests.get(f'https://services.leadconnectorhq.com/contacts/{cid}/notes',
+                         headers=GHL_H, timeout=15)
+        if r.status_code != 200:
+            return False
+        # ts portion (everything after the ':') for permalink fallback. Slack
+        # permalinks contain pNNNNNNNNNN where NNNNNNNNNN is ts with the dot
+        # removed.
+        ts_part = slack_key.split(':', 1)[1] if ':' in slack_key else ''
+        permalink_token = 'p' + ts_part.replace('.', '') if ts_part else ''
+        for n in r.json().get('notes', []) or []:
+            body = n.get('body') or ''
+            if not body.startswith('Slack mention'):
+                continue
+            if f'Slack-Key: {slack_key}' in body:
+                return True
+            if permalink_token and permalink_token in body:
+                return True
+        return False
+    except Exception:
+        # Fail-open: if we can't check, allow the write. Better to risk a dupe
+        # than to silently swallow a real Slack mention.
+        return False
+
 
 def load_state():
     if os.path.exists(STATE_FILE):
@@ -458,7 +513,8 @@ def _main_inner():
 
     state = load_state()
     users_cache = load_users_cache()
-    print(f'Loaded user-name cache ({len(users_cache)} entries)')
+    summary_cache = load_summary_cache()
+    print(f'Loaded user-name cache ({len(users_cache)} entries) | summary cache ({len(summary_cache)} entries)')
     print('Pre-fetching all workspace users (users.list) ...')
     added, refreshed = bulk_fetch_users(users_cache)
     print(f'  +{added} new · {refreshed} refreshed · {len(users_cache)} total')
@@ -497,7 +553,17 @@ def _main_inner():
                 continue
             # Enrich candidates with full contact details (only here — not for all 2400)
             enriched = [enrich_contact(dict(c)) for c in cands]
-            result = analyze_with_claude(m['text'], m.get('user',''), ch_name, enriched)
+            # Identity for this Slack message — used to cache Claude's result
+            # and to dedup the GHL note write. Slack ts is unique per channel.
+            slack_key = f'{ch_id}:{m["ts"]}'
+            cached = summary_cache.get(slack_key)
+            if cached is not None:
+                result = cached or None
+            else:
+                result = analyze_with_claude(m['text'], m.get('user',''), ch_name, enriched)
+                # Cache the result (even None/no-match) so we don't pay for
+                # re-analysis if state is lost and we replay this message.
+                summary_cache[slack_key] = result or {}
             # Capture EVERYTHING with a match_cid (high/medium/low confidence).
             # NO AUTO-APPLY — every match becomes a suggestion the team reviews
             # and applies via the dashboard's 'Apply to GHL' button. This keeps
@@ -535,21 +601,30 @@ def _main_inner():
                     f'Slack mention\n'
                     f'#{ch_name} by {attribution} — {fmt_slack_ts(m["ts"])}'
                     f'{permalink_line}{uid_line}\n'
+                    f'Slack-Key: {slack_key}\n'
                     f'Confidence: {conf}{suggested_line}\n\n'
                     f'Original: "{m["text"][:600]}"\n\n'
                     f'Summary: {summary}'
                 )
-                add_note(cid, note_body)
-                matches += 1
-                print(f'  ✓ Matched cid={cid[-6:]} | {conf} | by {slack_user_name or slack_user_id} | suggested={list(suggested_clean.keys())}')
+                # Dedup gate: if this contact already has a Slack-mention note
+                # for this exact Slack message (matched on Slack-Key marker or
+                # legacy permalink), skip the write. Prevents the every-hour
+                # re-summarization that put 18 copies on Joel Hametz.
+                if note_already_exists(cid, slack_key):
+                    print(f'  ⤳ Skipped (dup) cid={cid[-6:]} | {slack_key}')
+                else:
+                    add_note(cid, note_body)
+                    matches += 1
+                    print(f'  ✓ Matched cid={cid[-6:]} | {conf} | by {slack_user_name or slack_user_id} | suggested={list(suggested_clean.keys())}')
             if float(m['ts']) > float(latest_ts): latest_ts = m['ts']
             time.sleep(0.2)
         state[ch_name] = latest_ts
 
     save_state(state)
     save_users_cache(users_cache)
+    save_summary_cache(summary_cache)
     msg = f'scanned {scanned} | matched {matches} | suggestions surfaced (no auto-apply)'
-    print(f'\nDONE — {msg} | user cache: {len(users_cache)} entries')
+    print(f'\nDONE — {msg} | user cache: {len(users_cache)} entries | summary cache: {len(summary_cache)} entries')
     return msg
 
 
