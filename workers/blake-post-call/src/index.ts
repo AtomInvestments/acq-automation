@@ -218,8 +218,28 @@ const WARMUP_CURVE = [
 ];
 
 // TCPA call window: only dial between these hours in the contact's local time.
+// Kept for SMS-drip + legacy non-Blake paths (which still use inCallWindow).
 const TCPA_DIAL_START_HOUR = 8;   // 8:00 am local
 const TCPA_DIAL_END_HOUR = 21;    // 9:00 pm local (calls placed before 21:00)
+
+// ---- Blake outbound dial pacing (2026-05-29) -------------------------------
+// Tighter-than-TCPA window for Blake's outbound batch dialer + landing-page
+// immediate-dial. Mido's directive: 9-5 seller-local, weekdays only, with a
+// minimum 60s gap between dials so we don't burst-pattern (carrier suspicion).
+// Tune these without touching dial logic.
+const DIAL_HOUR_START_LOCAL = 9;   // 9:00 am seller-local
+const DIAL_HOUR_END_LOCAL   = 17;  // 5:00 pm seller-local (calls placed before 17:00)
+const DIAL_WEEKDAYS_ONLY    = true;
+const DIAL_GAP_SECONDS      = 60;  // minimum spacing between Blake outbound dials
+// Fallback timezone when a contact has no resolvable state (most APG markets
+// are East Coast: NJ/PA/AL → ET).
+const DIAL_TZ_FALLBACK      = "America/New_York";
+
+// KV key for the last successful Blake dial timestamp (ISO-8601). Read at the
+// top of each dial attempt; rejected with skip-reason "gap_pacing" if the gap
+// hasn't elapsed. Naturally distributes dials across multiple cron ticks
+// without needing a sleep() that would blow the Worker's wall-clock budget.
+const DIAL_LAST_AT_KEY      = "dial:last_at";
 
 // US state → IANA timezone (predominant). Some states (FL, IN, KY, MI, TN) are
 // split; we use the dominant zone. Conservative: edge cases will be filtered
@@ -3558,30 +3578,44 @@ async function handleLandingLead(req: Request, env: Env): Promise<Response> {
     await addNote(pit, contactId, attomNoteLines).catch(() => {});
   }
 
-  // 6. Immediate Blake dial — best-effort. Respect TCPA window.
+  // 6. Immediate Blake dial — best-effort. Respect 9-5 seller-local + gap pacing.
   let dialOutcome = "skipped";
   try {
-    // TCPA: rely on contact's submitted state, or fall back to NJ defaults
-    // (these landing pages are NJ/PA-targeted; non-NJ/PA still get same rule).
+    // Window: rely on contact's submitted state; falls back to ET inside the
+    // helper if state is missing/unresolved (NJ/PA landing pages are ET).
     const callState = (stateV || "NJ").toUpperCase();
-    if (!inCallWindow(callState, new Date())) {
-      dialOutcome = `outside_tcpa_${callState}`;
+    const nowDial = new Date();
+    const winCheck = inDialWindowStrict(callState, nowDial);
+    if (!winCheck.ok) {
+      dialOutcome = winCheck.reason;
     } else {
-      // Dedupe: if we just dialed this number in the last 5 min, don't re-dial.
+      // Dedupe: if we just dialed this contact, don't re-dial.
       const recentKey = `last_attempt:${contactId}`;
       const recent    = await env.DIAL_STATE.get(recentKey);
       if (recent) {
         dialOutcome = "recent_dial_dedupe";
       } else {
-        const dial = await triggerOutboundCall(env.ELEVENLABS_API_KEY, phoneE164);
-        if (dial.ok) {
-          await env.DIAL_STATE.put(recentKey, new Date().toISOString(), {
-            expirationTtl: 60 * 60 * 24 * 30,
-          });
-          await incrementDialedToday(env);
-          dialOutcome = "dialed";
+        // Gap pacing — same KV key as the batch dialer so landing-page dials
+        // and cron-batch dials share one rate limit (don't double-burst).
+        const lastDialAt = await env.DIAL_STATE.get(DIAL_LAST_AT_KEY);
+        if (lastDialAt && nowDial.getTime() - Date.parse(lastDialAt) < DIAL_GAP_SECONDS * 1000) {
+          dialOutcome = "gap_pacing";
         } else {
-          dialOutcome = `dial_failed_${dial.error}`;
+          const dial = await triggerOutboundCall(env.ELEVENLABS_API_KEY, phoneE164);
+          if (dial.ok) {
+            await Promise.all([
+              env.DIAL_STATE.put(recentKey, new Date().toISOString(), {
+                expirationTtl: 60 * 60 * 24 * 30,
+              }),
+              env.DIAL_STATE.put(DIAL_LAST_AT_KEY, new Date().toISOString(), {
+                expirationTtl: 60 * 60,
+              }),
+              incrementDialedToday(env),
+            ]);
+            dialOutcome = "dialed";
+          } else {
+            dialOutcome = `dial_failed_${dial.error}`;
+          }
         }
       }
     }
@@ -5586,11 +5620,28 @@ async function handleDialBatch(
 }
 
 async function handleDialStatus(env: Env): Promise<Response> {
-  const utcDate = utcDateString(new Date());
+  const now = new Date();
+  const utcDate = utcDateString(now);
   const dayIndex = await dayIndexFromAnchor(env);
   const dailyQuota = quotaForDay(dayIndex);
   const dialedToday = await getDialedTodayCount(env);
   const anchor = await env.DIAL_STATE.get("quota_anchor_date");
+  const lastDialAt = await env.DIAL_STATE.get(DIAL_LAST_AT_KEY);
+
+  // Window status relative to ET (the fallback / dominant APG market TZ).
+  // Per-state window check happens in inDialWindowStrict at dial time; this is
+  // just an at-a-glance signal for /dial-status so Mido can see if "now" is
+  // dialable in ET without inspecting a contact.
+  const winCheckET = inDialWindowStrict("NJ", now); // NJ → America/New_York
+  const inWindowNow = winCheckET.ok;
+  const nextOpen = inWindowNow ? null : computeNextDialOpenET(now);
+
+  // Gap pacing snapshot.
+  const gapElapsedMs = lastDialAt ? now.getTime() - Date.parse(lastDialAt) : null;
+  const gapBlockedRemainingSec =
+    gapElapsedMs != null && gapElapsedMs < DIAL_GAP_SECONDS * 1000
+      ? Math.ceil((DIAL_GAP_SECONDS * 1000 - gapElapsedMs) / 1000)
+      : 0;
 
   return new Response(
     JSON.stringify({
@@ -5602,9 +5653,34 @@ async function handleDialStatus(env: Env): Promise<Response> {
       remaining_today: Math.max(0, dailyQuota - dialedToday),
       warmup_curve_max_days: WARMUP_CURVE.length,
       steady_state_daily_quota: WARMUP_CURVE[WARMUP_CURVE.length - 1],
+      // --- Dial window + pacing (2026-05-29) ----
+      window_start_local: DIAL_HOUR_START_LOCAL,
+      window_end_local: DIAL_HOUR_END_LOCAL,
+      weekdays_only: DIAL_WEEKDAYS_ONLY,
+      in_window_now_et: inWindowNow,
+      next_dial_open_et: nextOpen,
+      gap_seconds: DIAL_GAP_SECONDS,
+      last_dial_at: lastDialAt || null,
+      gap_blocked_remaining_sec: gapBlockedRemainingSec,
     }, null, 2),
     { status: 200, headers: { "content-type": "application/json" } }
   );
+}
+
+// Compute the next ISO timestamp at which the ET dial window opens, given
+// "now". Used by /dial-status to give Mido a "next open" signal when out of
+// window. Walks forward at most 7 days (handles weekends + after-hours).
+function computeNextDialOpenET(now: Date): string {
+  for (let addDays = 0; addDays < 8; addDays++) {
+    for (let probeHour = 0; probeHour < 24; probeHour++) {
+      const probe = new Date(now.getTime() + addDays * 86_400_000);
+      probe.setUTCHours(probe.getUTCHours() + (addDays === 0 ? probeHour : probeHour - now.getUTCHours()));
+      if (probe.getTime() <= now.getTime()) continue;
+      const c = inDialWindowStrict("NJ", probe);
+      if (c.ok) return probe.toISOString();
+    }
+  }
+  return "(none within 7 days — check config)";
 }
 
 async function runDialBatch(
@@ -5658,12 +5734,36 @@ async function runDialBatch(
       continue;
     }
 
-    // TCPA call window check (contact's local time).
+    // 9-5 seller-local + weekdays-only window (Blake-specific, tighter than TCPA).
     const state = (c.state || "").toUpperCase();
-    if (!inCallWindow(state, now)) {
-      result.skipped_reasons[`outside_window_${state || "UNKNOWN_STATE"}`] =
-        (result.skipped_reasons[`outside_window_${state || "UNKNOWN_STATE"}`] || 0) + 1;
+    const winCheck = inDialWindowStrict(state, now);
+    if (!winCheck.ok) {
+      result.skipped_reasons[winCheck.reason] =
+        (result.skipped_reasons[winCheck.reason] || 0) + 1;
       continue;
+    }
+
+    // Gap pacing — Option C: KV-tracked last-dial timestamp. If less than
+    // DIAL_GAP_SECONDS has elapsed since the last successful Blake dial,
+    // skip and let the next cron tick pick it up. Avoids burst-dialing
+    // pattern that carriers flag as robocaller behavior.
+    //
+    // Why Option C over Option B (in-batch sleep): the every-15-min cron
+    // already shares ~30s of CPU with dashboard/insights/blog handlers,
+    // and the free-plan wall-clock budget would be blown by `await
+    // sleep(60_000)` between 5 dials. Option C also distributes naturally
+    // across the 4 ticks/hour without needing to special-case CPU limits.
+    const lastDialAt = await env.DIAL_STATE.get(DIAL_LAST_AT_KEY);
+    if (lastDialAt) {
+      const elapsedMs = now.getTime() - Date.parse(lastDialAt);
+      if (elapsedMs >= 0 && elapsedMs < DIAL_GAP_SECONDS * 1000) {
+        result.skipped_reasons["gap_pacing"] =
+          (result.skipped_reasons["gap_pacing"] || 0) + 1;
+        // Hard break — no candidate later in this batch will pass the gap
+        // check either (lastDialAt is the same for all of them), so don't
+        // burn subrequests on hydrated detail lookups we can't act on.
+        break;
+      }
     }
 
     result.attempted += 1;
@@ -5679,13 +5779,19 @@ async function runDialBatch(
         result.succeeded += 1;
         result.details.push({ contact_id: contactId, phone, outcome: "dialed" });
 
-        // Record in KV: bump today's counter + mark contact as dialed
+        // Record in KV: bump today's counter + mark contact as dialed +
+        // update global last-dial timestamp for gap pacing.
         await Promise.all([
           incrementDialedToday(env),
           env.DIAL_STATE.put(`last_attempt:${contactId}`, now.toISOString(), {
             // 30-day TTL — long enough to prevent re-dialing during warm-up, short
             // enough to allow re-attempts on contacts that didn't pick up.
             expirationTtl: 60 * 60 * 24 * 30,
+          }),
+          // 1-hour TTL on the gap key — far longer than any realistic gap;
+          // auto-cleans if dialing stops.
+          env.DIAL_STATE.put(DIAL_LAST_AT_KEY, new Date().toISOString(), {
+            expirationTtl: 60 * 60,
           }),
         ]);
       } else {
@@ -5879,6 +5985,47 @@ function inCallWindow(stateCode: string, now: Date): boolean {
   );
 
   return localHour >= TCPA_DIAL_START_HOUR && localHour < TCPA_DIAL_END_HOUR;
+}
+
+// Blake-specific outbound dial window: tighter than TCPA, weekday-aware, with
+// a fallback timezone (ET) for contacts whose state we couldn't resolve.
+// Returns { ok: true } if it's OK to dial, otherwise { ok: false, reason }.
+//
+// Inline test cases (run mentally — no test runner):
+//   now=2026-05-29T14:00:00Z (Fri 10:00 ET), state=NJ
+//     → tz=America/New_York, dow=5, hour=10 → ok=true
+//   now=2026-05-29T22:00:00Z (Fri 18:00 ET = 6pm), state=NJ
+//     → hour=18 → ok=false reason="outside_window_9to5_NJ"
+//   now=2026-05-30T17:00:00Z (Sat 13:00 ET), state=NJ
+//     → dow=6 → ok=false reason="outside_window_9to5_weekend_NJ"
+//   now=2026-05-29T14:00:00Z, state="" (unresolved)
+//     → falls back to ET, hour=10 → ok=true tz="America/New_York(fallback)"
+function inDialWindowStrict(
+  stateCode: string,
+  now: Date
+): { ok: true; tz: string } | { ok: false; reason: string } {
+  const resolvedTz = STATE_TZ[stateCode];
+  const tz = resolvedTz || DIAL_TZ_FALLBACK;
+  const tzLabel = resolvedTz ? stateCode : `${stateCode || "UNK"}_fallback_ET`;
+
+  // Hour-of-day + weekday in the seller's local time.
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone: tz,
+    hour: "numeric",
+    hour12: false,
+    weekday: "short",
+  }).formatToParts(now);
+  const hourPart = parts.find((p) => p.type === "hour")?.value ?? "0";
+  const wkdyPart = parts.find((p) => p.type === "weekday")?.value ?? "";
+  const localHour = parseInt(hourPart, 10);
+
+  if (DIAL_WEEKDAYS_ONLY && (wkdyPart === "Sat" || wkdyPart === "Sun")) {
+    return { ok: false, reason: `outside_window_9to5_weekend_${tzLabel}` };
+  }
+  if (localHour < DIAL_HOUR_START_LOCAL || localHour >= DIAL_HOUR_END_LOCAL) {
+    return { ok: false, reason: `outside_window_9to5_${tzLabel}` };
+  }
+  return { ok: true, tz };
 }
 
 // ---- Signature verification ----------------------------------------------
