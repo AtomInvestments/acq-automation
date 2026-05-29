@@ -2644,14 +2644,19 @@ function parseListingEmail(
   if (sqftStr) result.sqft = Number(sqftStr.replace(/,/g, ""));
 
   // --- Beds ---
+  // BUG FIX 2026-05-29: previous regex didn't match plural forms ("3 Beds",
+  // "3 beds") because `\b` between `d` and `s` is not a word boundary — both
+  // are word chars. Redfin and many Zillow emails use plural form. Now
+  // explicitly include the trailing `s?` and add "br"/"BR" abbreviation.
   const bedsStr = firstMatch(text, [
-    /(\d+)\s*(?:bd|bed|bedroom|bedrooms)\b/i,
+    /(\d+)\s*(?:bds?|beds?|bedrooms?|br)\b/i,
   ]);
   if (bedsStr) result.beds = Number(bedsStr);
 
   // --- Baths ---
+  // Same plural-form bug fix as beds. Add "ba"/"BA" abbreviation handling.
   const bathsStr = firstMatch(text, [
-    /(\d+(?:\.\d+)?)\s*(?:ba|bath|bathroom|bathrooms)\b/i,
+    /(\d+(?:\.\d+)?)\s*(?:bas?|baths?|bathrooms?|ba)\b/i,
   ]);
   if (bathsStr) result.baths = Number(bathsStr);
 
@@ -2688,9 +2693,13 @@ function parseListingEmail(
   const allUrls = [
     ...rawHtml.matchAll(/https?:\/\/(?:click\.mail\.|www\.)?(?:zillow|redfin)\.com\/[^"'\s<>)]+/gi),
   ].map((m) => m[0]);
+  // Redfin's email-tracking redirect URL is /rift?ev=email&... — Claude
+  // CAN follow the redirect, but a real /home/<id>/... URL is way better
+  // because it lands directly on the listing-detail page without needing
+  // to follow Redfin's redirect chain (which sometimes lands on search).
   const listingUrl =
-    allUrls.find((u) => /homedetails|homes\/for_sale|property\/|rent\/|sold\//i.test(u)) ||
-    allUrls.find((u) => !/emailtrackingservice|\/app\/?\?tok=|unsubscribe|click\.mail/i.test(u)) ||
+    allUrls.find((u) => /homedetails|homes\/for_sale|property\/|rent\/|sold\/|\/home\//i.test(u)) ||
+    allUrls.find((u) => !/emailtrackingservice|\/app\/?\?tok=|unsubscribe|click\.mail|\/rift\?/i.test(u)) ||
     allUrls[0];
   if (listingUrl) result.listing_url = listingUrl;
 
@@ -2877,25 +2886,39 @@ async function lookupListingAgentViaWebSearch(
   if (!env.ANTHROPIC_API_KEY) return { error: "no_anthropic_key" };
 
   const locationLine = [address, city, state].filter(Boolean).join(", ");
-  const prompt = `You are an APG real-estate operations assistant. Find the listing agent's contact details for this specific property.
+  // Redfin email-tracking URLs use /rift?ev=email&... and redirect to the real
+  // listing page. Claude's web_fetch follows redirects, but the prompt should
+  // tell Claude the URL is an email redirect so it knows what to expect.
+  const urlIsTracking = listingUrl
+    ? /\/rift\?|emailtracking|click\.mail/i.test(listingUrl)
+    : false;
+
+  const prompt = `You are an APG real-estate operations assistant. Find the listing agent's DIRECT contact details for this specific property.
 
 Property: ${locationLine}
-${listingUrl ? `Listing URL: ${listingUrl}` : ""}
+${listingUrl ? `Listing URL: ${listingUrl}${urlIsTracking ? "  (note: this is an email-tracking redirect URL — web_fetch will follow it to the actual listing page; if the redirect lands on a search page or 404, fall through to the search strategies below)" : ""}` : ""}
 
-STRATEGY — try these sources in order, stop as soon as you have an agent name + a phone (10 digits) OR an email:
+CRITICAL — we need the AGENT'S DIRECT LINE, NOT the brokerage main number.
+- Toll-free numbers (800/888/877/866/855/844/833) are almost always brokerage main lines — DO NOT return them as agent_phone.
+- A 10-digit local number listed under "Phone:" on the agent's own profile page IS the agent's direct line.
+- If a listing page shows only the brokerage office number with no agent direct phone, search for the agent's name + their brokerage to find their own profile page (which usually has their cell/direct).
+- If you absolutely can only find the brokerage main number, return it but ALSO populate brokerage; we'd rather have nothing than a 1-800 number masquerading as the agent.
 
-1. web_fetch the Zillow listing URL above (if provided). Look for the "Listed by:" / "Listing agent:" / agent contact block. Zillow sometimes serves a 403 / captcha page to bots — if the response looks like a block page (no agent block, "robot check", "Access Denied"), move on.
-2. web_search for: "${address}${city ? ", " + city : ""}${state ? ", " + state : ""} listing agent realtor.com" — then web_fetch the top Realtor.com result. Realtor.com is more bot-friendly than Zillow and almost always shows the listing agent's name + brokerage + a contact form. The phone often appears on the agent's own profile page (a second web_fetch).
-3. web_search for: "${address}${city ? ", " + city : ""}${state ? ", " + state : ""} for sale agent phone" — then inspect any result from the brokerage's own website, Compass, Redfin, or Coldwell Banker. These typically include direct phone.
-4. As a last resort, web_search for the agent's name + brokerage to find their public profile, then extract phone from there.
+STRATEGY — try these sources in order, stop as soon as you have an agent name + a DIRECT (non-toll-free) phone OR an email:
 
-If after all of the above you still cannot find the agent, return empty strings — DO NOT invent or guess.
+1. web_fetch the listing URL above (if provided). On Zillow/Redfin/etc, look for the "Listed by:" / "Listing agent:" / agent contact block. If the response is a 403 / captcha / "robot check" / "Access Denied" / search-results-page, treat it as a miss and move on.
+2. web_search for: "${address}${city ? ", " + city : ""}${state ? ", " + state : ""} listing agent realtor.com" — then web_fetch the top Realtor.com listing-detail result. Realtor.com is bot-friendly and shows agent name + brokerage. The DIRECT phone often appears on the agent's own profile page (a second web_fetch).
+3. web_search for: "${address}${city ? ", " + city : ""}${state ? ", " + state : ""} for sale agent phone" — inspect results from the brokerage's own website (Compass, Coldwell Banker, eXp, Keller Williams, RE/MAX, BHHS, etc.). These usually include the agent's direct cell.
+4. If you have an agent name + brokerage but no direct phone, web_search for "{agent_name} {brokerage}" and web_fetch their public profile page.
+
+If after all of the above you still cannot find a direct phone, return what you DO have (name + brokerage + email) and leave agent_phone empty. DO NOT invent or guess.
 
 Return EXACTLY this JSON object and nothing else — no prose, no code fences, no commentary:
 {"agent_name":"...","agent_phone":"...","agent_email":"...","brokerage":"..."}
 
 Notes:
-- agent_phone must be a 10-digit US number (we'll add the +1). If the page shows it as "(908) 555-1234" return "9085551234" or "(908) 555-1234" — both fine, we'll normalize.
+- agent_phone must be a 10-digit US local number. Format flexible ("(908) 555-1234" or "9085551234" both fine — we normalize).
+- agent_phone MUST NOT be a toll-free brokerage number. If only toll-free is available, leave agent_phone empty and put brokerage in the brokerage field.
 - Empty string for any field you cannot verify.`;
 
   let res: Response;
@@ -2959,6 +2982,16 @@ Notes:
     else if (digits.length === 11 && digits.startsWith("1")) phone = `+${digits}`;
     else if (digits.length < 10) phone = "";   // junk — discard
     else phone = `+${digits}`;
+  }
+  // Guard: reject toll-free brokerage main numbers as agent_phone. Claude's
+  // prompt asks not to return these, but we double-check server-side. Toll-
+  // free area codes: 800 / 888 / 877 / 866 / 855 / 844 / 833 / 822.
+  if (phone) {
+    const ac = phone.replace(/^\+1/, "").slice(0, 3);
+    if (["800", "888", "877", "866", "855", "844", "833", "822"].includes(ac)) {
+      console.log(`[agent-lookup] dropping toll-free brokerage number ${phone} (likely not agent direct)`);
+      phone = "";
+    }
   }
 
   return {
