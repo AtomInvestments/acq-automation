@@ -148,19 +148,41 @@ const MAO_BUFFER         = 10000;  // negotiation buffer
 const BLAKE_AGENT_ID = "agent_5001ks3cp069f9rtfz6e81ypgnrd";
 const BLAKE_PHONE_NUMBER_ID = "phnum_8001ks3fhbbpe4vadtrdmparejgw";
 
-// Workstream 4a — A/B voice test. Mido approved Brian + Roger on 2026-05-27.
-// 50/50 split; per-conversation override goes out from /conversation-init,
-// and post-call webhook tags the GHL contact with `voice-brian` or
-// `voice-roger` for conversion-rate attribution.
-const VOICE_AB_BRIAN_ID = "nPczCjzI2devNBz1zQrb";   // primary
-const VOICE_AB_ROGER_ID = "CwhRBWXzGAHq8TQ4Fs17";   // A/B counterpart
-const VOICE_AB_VARIANTS = ["brian", "roger"] as const;
+// Workstream 4a — A/B voice test (v2). Mido picked Eric / Chris / Bill on
+// 2026-05-29, replacing the original Brian/Roger 2-way split.
+// 3-way rotation via hash-of-key % 3 for sticky assignment across re-dials.
+// Per-conversation override goes out from /conversation-init; the post-call
+// webhook tags the GHL contact with `voice-eric|chris|bill` for attribution.
+// KV namespace bumped to `v2:` so old 2-way state doesn't pollute the math;
+// legacy `blake:ab_voice:*` and `blake:ab_stats:brian|roger:*` keys remain
+// readable for historical counts and TTL out naturally.
+const VOICE_AB_ERIC_ID  = "cjVigY5qzO86Huf0OWal";   // Eric — warm, trustworthy banker (recommended primary)
+const VOICE_AB_CHRIS_ID = "iP95p4xoKVk53GoZ742B";   // Chris — charming, down-to-earth
+const VOICE_AB_BILL_ID  = "pqHfZKP75CvOlQylNhV4";   // Bill — wise, mature, older male
+const VOICE_AB_VARIANTS = ["eric", "chris", "bill"] as const;
 type VoiceVariant = (typeof VOICE_AB_VARIANTS)[number];
 function voiceIdFor(v: VoiceVariant): string {
-  return v === "brian" ? VOICE_AB_BRIAN_ID : VOICE_AB_ROGER_ID;
+  if (v === "eric")  return VOICE_AB_ERIC_ID;
+  if (v === "chris") return VOICE_AB_CHRIS_ID;
+  return VOICE_AB_BILL_ID;
 }
-function pickAbVoice(): VoiceVariant {
-  return Math.random() < 0.5 ? "brian" : "roger";
+// FNV-1a 32-bit hash — small, stable, no deps. Used for sticky voice
+// assignment: same call_sid (or fallback to phone) → same voice across
+// re-dials, so a seller never hears two different Blakes in a series.
+function hashKey(s: string): number {
+  let h = 0x811c9dc5;
+  for (let i = 0; i < s.length; i++) {
+    h ^= s.charCodeAt(i);
+    h = Math.imul(h, 0x01000193);
+  }
+  return h >>> 0;
+}
+function pickAbVoice(stickyKey?: string): VoiceVariant {
+  // No sticky key → uniform random across the 3 arms.
+  if (!stickyKey) {
+    return VOICE_AB_VARIANTS[Math.floor(Math.random() * VOICE_AB_VARIANTS.length)];
+  }
+  return VOICE_AB_VARIANTS[hashKey(stickyKey) % VOICE_AB_VARIANTS.length];
 }
 
 // Blake's outbound voice number (APG-owned, Twilio-registered, voice-only).
@@ -1367,14 +1389,17 @@ export default {
               },
             },
             tts: {
-              // Row 2 default: Brian (primary A/B candidate)
-              voice_id: VOICE_AB_BRIAN_ID,
+              // Row 2 default: Eric (primary candidate in the Eric/Chris/Bill A/B
+              // rotation Mido picked 2026-05-29). Per-call /conversation-init
+              // override still picks the actual voice for each call via
+              // conversation_config_override.tts.voice_id — this default is
+              // just what the agent falls back to if no override is sent.
+              voice_id: VOICE_AB_ERIC_ID,
               // Row 3: Turbo v2 — natural sound at ~250ms latency.
               // Initial pick was eleven_flash_v2 (~75ms) but Mido reported
               // it sounded "so robotic" on the live call 2026-05-27. Turbo
               // v2 keeps latency in the acceptable range while restoring
-              // the natural expressiveness Brian's voice was designed for.
-              // (Flash v2 strips most prosody for speed.)
+              // expressiveness. (Flash v2 strips most prosody for speed.)
               model_id: "eleven_turbo_v2",
             },
             asr: {
@@ -1451,17 +1476,26 @@ export default {
       })();
     }
 
-    // Workstream 4a — A/B voice stats. Quick GET that returns per-voice
-    // counters so the dashboard can show conversion math during the test.
+    // Workstream 4a — A/B voice stats. Returns per-voice counters for the
+    // dashboard. Reads the v2 namespace (Eric/Chris/Bill rotation, live
+    // since 2026-05-29) for active stats, and ALSO surfaces the legacy
+    // Brian/Roger counters under `legacy_stats` so historical performance
+    // stays readable without us having to dig in KV.
     if (req.method === "GET" && url.pathname === "/admin/blake/ab-stats") {
       return (async () => {
         const stats: Record<string, any> = {};
         for (const v of VOICE_AB_VARIANTS) {
-          const sent      = Number((await env.DIAL_STATE.get(`blake:ab_stats:${v}:sent`))      || "0");
-          const completed = Number((await env.DIAL_STATE.get(`blake:ab_stats:${v}:completed`)) || "0");
+          const sent      = Number((await env.DIAL_STATE.get(`blake:ab_stats:v2:${v}:sent`))      || "0");
+          const completed = Number((await env.DIAL_STATE.get(`blake:ab_stats:v2:${v}:completed`)) || "0");
           stats[v] = { sent, completed, completion_pct: sent ? Math.round((completed / sent) * 100) : 0 };
         }
-        return new Response(JSON.stringify({ ok: true, stats }, null, 2), {
+        const legacy_stats: Record<string, any> = {};
+        for (const v of ["brian", "roger"]) {
+          const sent      = Number((await env.DIAL_STATE.get(`blake:ab_stats:${v}:sent`))      || "0");
+          const completed = Number((await env.DIAL_STATE.get(`blake:ab_stats:${v}:completed`)) || "0");
+          legacy_stats[v] = { sent, completed, completion_pct: sent ? Math.round((completed / sent) * 100) : 0 };
+        }
+        return new Response(JSON.stringify({ ok: true, stats, legacy_stats }, null, 2), {
           status: 200, headers: { "content-type": "application/json" },
         });
       })();
@@ -4344,22 +4378,25 @@ async function handleConversationInit(req: Request, env: Env): Promise<Response>
     }
   }
 
-  // Workstream 4a — A/B voice test. 50/50 split between Brian and Roger.
+  // Workstream 4a v2 — 3-way A/B (Eric / Chris / Bill), live 2026-05-29.
   // Picked here at call-init so the conversation uses one voice consistently.
-  // We persist the choice keyed by call_sid + (best-effort) caller phone so
-  // post-call attribution can tag the GHL contact.
-  const abVoice = pickAbVoice();
+  // Sticky assignment: hash(call_sid || phone) % 3 so re-dials to the same
+  // seller hear the same voice every time. KV keys are versioned `v2:` so the
+  // old 2-way Brian/Roger state can't pollute the new math — legacy keys
+  // remain readable for historical attribution and TTL out on their own.
+  const stickyKey = callSid || callerPhone || "";
+  const abVoice = pickAbVoice(stickyKey);
   const abVoiceId = voiceIdFor(abVoice);
   try {
     const ttl = 60 * 60 * 24 * 30;  // 30 days — plenty for post-call attribution
     if (callSid) {
-      await env.DIAL_STATE.put(`blake:ab_voice:sid:${callSid}`, abVoice, { expirationTtl: ttl });
+      await env.DIAL_STATE.put(`blake:ab_voice:v2:sid:${callSid}`, abVoice, { expirationTtl: ttl });
     }
     if (callerPhone) {
-      await env.DIAL_STATE.put(`blake:ab_voice:phone:${callerPhone}`, abVoice, { expirationTtl: ttl });
+      await env.DIAL_STATE.put(`blake:ab_voice:v2:phone:${callerPhone}`, abVoice, { expirationTtl: ttl });
     }
-    // Increment a simple sent counter for the dashboard funnel
-    const counterKey = `blake:ab_stats:${abVoice}:sent`;
+    // Increment a simple sent counter for the dashboard funnel (v2 namespace).
+    const counterKey = `blake:ab_stats:v2:${abVoice}:sent`;
     const prev = Number((await env.DIAL_STATE.get(counterKey)) || "0");
     await env.DIAL_STATE.put(counterKey, String(prev + 1));
   } catch (e) {
@@ -4771,18 +4808,31 @@ async function handleWebhook(req: Request, env: Env, ctx: ExecutionContext): Pro
       // Workstream 4a A/B — tag the contact with whichever voice this call
       // ran on so we can compare conversion rates downstream. Look up by
       // phone first (works for inbound + outbound), fall back to no-op.
+      // v2 (Eric/Chris/Bill) keys are read first; if missing, fall back to
+      // legacy (Brian/Roger) keys for calls that started under the old code
+      // before the deploy. Counters are incremented in the matching namespace.
       (async () => {
         try {
           if (!callerPhone) return;
-          const v = await env.DIAL_STATE.get(`blake:ab_voice:phone:${callerPhone}`);
-          if (v === "brian" || v === "roger") {
-            await addTag(env.BLAKE_GHL_PIT, contactId, `voice-${v}`);
-            // Bump the per-voice "completed" counter so dashboard math is honest
-            // (sent vs completed catches early-hang-up bias).
-            const ck = `blake:ab_stats:${v}:completed`;
+          // Try v2 first.
+          const v2 = await env.DIAL_STATE.get(`blake:ab_voice:v2:phone:${callerPhone}`);
+          if (v2 === "eric" || v2 === "chris" || v2 === "bill") {
+            await addTag(env.BLAKE_GHL_PIT, contactId, `voice-${v2}`);
+            const ck = `blake:ab_stats:v2:${v2}:completed`;
             const prev = Number((await env.DIAL_STATE.get(ck)) || "0");
             await env.DIAL_STATE.put(ck, String(prev + 1));
-            console.log(`[blake-post-call] A/B voice attribution: ${v}`);
+            console.log(`[blake-post-call] A/B voice attribution (v2): ${v2}`);
+            return;
+          }
+          // Legacy fallback — in-flight calls started under the old 2-way
+          // code path before the v2 deploy.
+          const v1 = await env.DIAL_STATE.get(`blake:ab_voice:phone:${callerPhone}`);
+          if (v1 === "brian" || v1 === "roger") {
+            await addTag(env.BLAKE_GHL_PIT, contactId, `voice-${v1}`);
+            const ck = `blake:ab_stats:${v1}:completed`;
+            const prev = Number((await env.DIAL_STATE.get(ck)) || "0");
+            await env.DIAL_STATE.put(ck, String(prev + 1));
+            console.log(`[blake-post-call] A/B voice attribution (legacy): ${v1}`);
           }
         } catch (e) {
           console.warn(`[blake-post-call] A/B voice tag threw: ${e}`);
