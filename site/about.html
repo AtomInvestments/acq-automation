@@ -485,10 +485,10 @@ section h2, h2 {
   <header class="masthead">
     <div class="brandrow">
       <span class="brand">Atom Property Group · ACQ Operations</span>
-      <span>Walkthrough · v1</span>
+      <span>Walkthrough · v2</span>
     </div>
-    <h1>The Three <span class="accent">Robots.</span></h1>
-    <p class="dek">A read on how APG's acquisitions automation actually works. What runs, what it costs, what it saves the team — and what we'd build next.</p>
+    <h1>How the <span class="accent">Robots</span> Work.</h1>
+    <p class="dek">A read on how APG's acquisitions automation actually works. Two stacks side-by-side — the GitHub Actions stack we own, and the GHL-native workflows already wired inside the CRM. What runs, what it costs, what it saves the team, and what we'd build next.</p>
   </header>
 
   <nav class="topnav">
@@ -503,6 +503,23 @@ section h2, h2 {
     <a href="about.html" class="active">About</a>
   </nav>
 
+  <!-- ── TABLE OF CONTENTS ────────────────────────────────── -->
+  <section class="sec" id="toc" style="margin-top: 12px;">
+    <div class="callout" style="background: var(--cream-deep); border-left-color: var(--ink);">
+      <div class="rule-label">CONTENTS</div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 6px 18px; font-size: 13px; margin-top: 6px;">
+        <a href="#frame">00 · The Frame</a>
+        <a href="#gh-cron">01 · GitHub Actions — Scheduled Crons</a>
+        <a href="#gh-dispatch">02 · GitHub Actions — Manual + Webhook Dispatch</a>
+        <a href="#ghl-workflows">03 · GHL-Native Workflows (the CRM side)</a>
+        <a href="#stack">04 · The Stack</a>
+        <a href="#costs">05 · Monthly Cost Breakdown</a>
+        <a href="#roadmap">06 · Roadmap</a>
+        <a href="#code">07 · Where the Code Lives</a>
+      </div>
+    </div>
+  </section>
+
   <!-- ── 00 · THE FRAME ────────────────────────────────────── -->
   <section class="sec" id="frame">
     <div class="tag-row">
@@ -512,8 +529,8 @@ section h2, h2 {
     <hr>
 
     <div class="callout">
-      <p><strong>Three crons run on Microsoft's servers</strong> (free, public repo). They handle every step that used to need a human: transcribing calls, scoring leads, building rehab reports, sending follow-up SMS, classifying replies, advancing stages, and pricing properties. Two live dashboards — Follow-Ups and Deals — show what's happening and what needs attention.</p>
-      <p><strong style="color:var(--gold-deep)">Net result.</strong> Jeff calls people who actually want to talk. Mike reviews instead of doing data entry. Cold leads stop clogging the qualified queue. ARV gets calculated automatically. The team only sees what needs a human decision.</p>
+      <p><strong>Two stacks. One pipeline.</strong> The GitHub Actions stack we own (11 workflows in a public repo) handles call transcription, ARV math, SMS cadence, Slack scraping, weekly snapshots, dashboard generation, and Blake voice-agent config. The GHL-native workflows stack (38 workflows wired inside the CRM) handles intake forms, missed-call text-back, dead-lead follow-up sequences, SmarterContact ingestion, and the per-event notifications.</p>
+      <p><strong style="color:var(--gold-deep)">Net result.</strong> RJ calls people who actually want to talk. Adam reviews instead of doing data entry. Cold leads stop clogging the qualified queue. ARV gets calculated automatically. The team only sees what needs a human decision.</p>
     </div>
 
     <div class="callout">
@@ -521,31 +538,31 @@ section h2, h2 {
       <p><strong>Trust the AI for routing, never for closing.</strong> Calls get analyzed, leads get classified, stages get auto-routed when the system is confident — but a deal never moves from LAO → DD → MAO → Contract without a human signing off. The automation handles the noise so humans handle the signal.</p>
     </div>
 
-    <p style="font-size: 14px; color: var(--ink-soft); margin-top: 18px">Three workers running 24/7. Tap any card to jump.</p>
+    <p style="font-size: 14px; color: var(--ink-soft); margin-top: 18px">Eleven GitHub Actions workflows + 38 GHL-native workflows. Tap any card to jump.</p>
 
     <div class="card-grid">
-      <a href="#worker-01" style="text-decoration:none;color:inherit">
+      <a href="#gh-cron" style="text-decoration:none;color:inherit">
         <div class="mini-card">
           <div class="num">01</div>
-          <div class="title">Call Recording Pipeline</div>
-          <div class="freq-badge">EVERY 15 MIN</div>
-          <div class="specs"><span><strong>Audio</strong> · Deepgram</span><span><strong>Analysis</strong> · Claude</span></div>
+          <div class="title">GitHub Actions — Scheduled</div>
+          <div class="freq-badge">5 CRONS</div>
+          <div class="specs"><span><strong>Cadence</strong> · 15 min → weekly</span><span><strong>Owns</strong> · transcribe, SMS, scrape, snapshot</span></div>
         </div>
       </a>
-      <a href="#worker-02" style="text-decoration:none;color:inherit">
+      <a href="#gh-dispatch" style="text-decoration:none;color:inherit">
         <div class="mini-card">
           <div class="num">02</div>
-          <div class="title">SMS + Dashboards</div>
-          <div class="freq-badge">EVERY 30 MIN</div>
-          <div class="specs"><span><strong>Sends</strong> · State-routed</span><span><strong>Replies</strong> · Classified</span></div>
+          <div class="title">GitHub Actions — On-Demand</div>
+          <div class="freq-badge">6 DISPATCH</div>
+          <div class="specs"><span><strong>Trigger</strong> · dashboard button or manual</span><span><strong>Owns</strong> · writes back to GHL</span></div>
         </div>
       </a>
-      <a href="#worker-03" style="text-decoration:none;color:inherit">
+      <a href="#ghl-workflows" style="text-decoration:none;color:inherit">
         <div class="mini-card">
           <div class="num">03</div>
-          <div class="title">Slack Scraper</div>
-          <div class="freq-badge">EVERY 60 MIN</div>
-          <div class="specs"><span><strong>4 channels</strong></span><span><strong>Audit trail</strong> · GHL notes</span></div>
+          <div class="title">GHL-Native Workflows</div>
+          <div class="freq-badge">38 WIRED</div>
+          <div class="specs"><span><strong>Where</strong> · inside the CRM</span><span><strong>Owns</strong> · intake, notifs, sequences</span></div>
         </div>
       </a>
     </div>
@@ -553,13 +570,13 @@ section h2, h2 {
     <div class="callout" style="margin-top: 22px">
       <div class="rule-label">BUILT FOR APG SPECIFICALLY</div>
       <div class="team-row">
-        <div class="person"><div class="initial">J</div> Jeff <span class="role">Acquisitions calls</span></div>
-        <div class="person"><div class="initial">M</div> Mike <span class="role">Review · QA</span></div>
+        <div class="person"><div class="initial">R</div> RJ <span class="role">Acquisitions partner</span></div>
         <div class="person"><div class="initial">A</div> Adam <span class="role">Pipeline owner</span></div>
+        <div class="person"><div class="initial">B</div> Blake <span class="role">Voice agent (ElevenLabs)</span></div>
       </div>
-      <p style="margin-top:14px"><strong>Markets we cover.</strong> Each state has its own primary SMS number with an automatic secondary swap on touches 4-6 so we don't look like one spammer:</p>
+      <p style="margin-top:14px"><strong>Markets we cover.</strong> Each state has its own primary SMS number with an automatic secondary swap on touches 4-6 so we don't look like one spammer. (Outbound SMS is currently <strong>halted</strong> per Q2 strategy — cadence infra is still warm and ready to resume.)</p>
       <div class="state-grid">
-        <div class="st"><div class="code">NJ</div><div class="num">Jeff (lead)</div></div>
+        <div class="st"><div class="code">NJ</div><div class="num">RJ (lead)</div></div>
         <div class="st"><div class="code">PA</div><div class="num">+1-267…</div></div>
         <div class="st"><div class="code">OH</div><div class="num">+1-440…</div></div>
         <div class="st"><div class="code">IN</div><div class="num">+1-260…</div></div>
@@ -572,31 +589,38 @@ section h2, h2 {
     </div>
   </section>
 
-  <!-- ── 01 · CALL RECORDING PIPELINE ──────────────────────── -->
-  <section class="sec" id="worker-01">
+  <!-- ── 01 · GITHUB ACTIONS — SCHEDULED CRONS ──────────────── -->
+  <section class="sec" id="gh-cron">
+    <div class="tag-row">
+      <span class="num">01</span>
+      <h2>GitHub Actions — Scheduled Crons</h2>
+    </div>
+    <hr>
+    <p style="color:var(--ink-soft);font-size:14px;margin-bottom:6px">Five workflows run on the GitHub-hosted schedule. Free for public repos. Every run is logged and replayable from the Actions tab.</p>
+
+    <!-- 1a · ACQ Call Recording Automation -->
     <div class="detail">
       <div class="head">
-        <div class="num-big">01</div>
-        <h3>Call Recording Pipeline</h3>
+        <div class="num-big">1a</div>
+        <h3>ACQ Call Recording Automation</h3>
         <span class="pill green">EVERY 15 MIN</span>
-        <span class="pill subtle">acq_automation.py</span>
+        <span class="pill subtle">acq.yml → acq_automation.py</span>
+        <span class="pill" style="background:rgba(185,28,28,0.12);color:var(--s-uc);">WRITE</span>
       </div>
       <div class="body">
         <p class="lead-line">"Find new recordings. Transcribe them. Extract everything that matters. Route the lead. Move on."</p>
-
-        <h4>Quick model</h4>
-        <p>Recording-driven enrichment. Every 15 min, the cron checks GHL for new call recordings on stages 1-4. Each one runs through Deepgram → Claude → Apify → GHL writeback in under a minute. Side effect: the lead gets its stage auto-routed based on the call's outcome, and a clean "APG Lead Summary" note replaces the old freeform clutter.</p>
+        <p>Every 15 min, the cron checks GHL for new call recordings on ACQ stages 1-4. Each one runs through Deepgram → Claude → Apify (Zillow + sold comps) → GHL writeback in under a minute. The lead gets its stage auto-routed based on call outcome, 16 custom fields populate, an "APG Lead Summary" note replaces the freeform clutter, and a Rehab Report Google Doc is generated.</p>
 
         <div class="stat-row">
           <div class="stat">
             <div class="lab">Per-recording cost</div>
             <div class="v">~$0.04</div>
-            <div class="sub">Deepgram transcription + Claude analysis + Apify enrichment, all-in.</div>
+            <div class="sub">Deepgram + Claude + Apify, all-in.</div>
           </div>
           <div class="stat">
             <div class="lab">Time recovered</div>
             <div class="v">~30 min/call</div>
-            <div class="sub">Mike's old job: listen, type, look up Zillow, write summary, set fields.</div>
+            <div class="sub">The old job: listen, type, look up Zillow, write summary, set fields.</div>
           </div>
           <div class="stat">
             <div class="lab">Coverage</div>
@@ -605,153 +629,398 @@ section h2, h2 {
           </div>
         </div>
 
-        <div class="where-grid">
-          <div class="col">
-            <div class="heading">What flows IN</div>
-            <ul>
-              <li>Call recording URL from GHL</li>
-              <li>Contact's existing custom fields</li>
-              <li>Apify Zillow detail (beds/baths/sqft/year)</li>
-              <li>Apify sold comps in the same ZIP</li>
-            </ul>
-          </div>
-          <div class="col">
-            <div class="heading">What flows OUT</div>
-            <ul>
-              <li>Transcript stored on contact</li>
-              <li>16 GHL custom fields populated</li>
-              <li>"APG Lead Summary" note (upserted)</li>
-              <li>Rehab Report Google Doc</li>
-              <li>Auto-routed stage + Lead Type</li>
-              <li>Tasks for Jeff/Adam/Mike (if Hot)</li>
-            </ul>
-          </div>
-        </div>
-
         <h4>Auto-routing logic</h4>
         <ul>
-          <li><strong>Hot</strong> → moves Stage 1 → Stage 2 (LAO), creates Jeff/Adam/Mike tasks (4h due), sets Lead Type = "Hot Lead".</li>
-          <li><strong>Warm</strong> → stays in Stage 1, sets Lead Type = "Warm Lead". Still in qualified queue.</li>
-          <li><strong>Nurture</strong> → moves to Stage 0 (Unqualified), sets Lead Type = "Nurture Lead". Silent demotion.</li>
-          <li><strong>Cold</strong> → moves to Stage 0 (Unqualified), sets Lead Type = "Cold Lead". Silent demotion.</li>
+          <li><strong>Hot</strong> → Stage 1 → Stage 2 (LAO), creates RJ/Adam tasks (4h due), sets Lead Type = "Hot Lead".</li>
+          <li><strong>Warm</strong> → stays in Stage 1, Lead Type = "Warm Lead". Still in qualified queue.</li>
+          <li><strong>Nurture</strong> → Stage 0 (Unqualified), Lead Type = "Nurture Lead". Silent demotion.</li>
+          <li><strong>Cold</strong> → Stage 0 (Unqualified), Lead Type = "Cold Lead". Silent demotion.</li>
         </ul>
-        <p style="font-size:13px;color:var(--ink-soft);margin-top:8px">Stages 2-4 are never auto-reversed. Once a lead is a real deal, only humans move it.</p>
+        <p style="font-size:13px;color:var(--ink-soft);margin-top:8px">Stages 2-4 are never auto-reversed. Once a lead is a real deal, only humans move it. Also exposes a manual-trigger ARV backfill mode (<code>backfill_recompute=true</code>) for reprocessing entire stages on demand.</p>
       </div>
     </div>
-  </section>
 
-  <!-- ── 02 · SMS + DASHBOARDS ─────────────────────────────── -->
-  <section class="sec" id="worker-02">
+    <!-- 1b · ACQ SMS Follow-Up + Dashboard -->
     <div class="detail">
       <div class="head">
-        <div class="num-big">02</div>
-        <h3>SMS Follow-Up + Dashboards</h3>
+        <div class="num-big">1b</div>
+        <h3>ACQ SMS Follow-Up + Dashboard Refresh</h3>
         <span class="pill green">EVERY 30 MIN</span>
-        <span class="pill subtle">sms_followup.py + 3 dashboards</span>
+        <span class="pill subtle">sms.yml → sms_followup.py + 5 dashboard scripts</span>
+        <span class="pill" style="background:rgba(185,28,28,0.12);color:var(--s-uc);">WRITE</span>
       </div>
       <div class="body">
-        <p class="lead-line">"The right SMS, at the right time, on the right number. Filter the noise. Push the signal to Jeff."</p>
-
-        <h4>Quick model</h4>
-        <p>Cadence-driven outbound. The cron walks every active lead in stages 1-4 + the three reactivation stages, checks where they are in the SMS sequence, and sends the next message if it's due. Inbound replies get classified by Claude before Jeff sees anything — STOP/hostile/wrong-number all auto-DND silently. Only positive/neutral replies reach Jeff's task list.</p>
+        <p class="lead-line">"The right SMS, at the right time, on the right number — then rebuild every dashboard from fresh GHL state."</p>
+        <p>The biggest workflow in the repo. Six sequential steps per tick: (1) <code>sms_followup.py</code> walks every active lead, checks the SMS cadence, sends the next message if due, and classifies inbound replies via Claude Haiku. (2) <code>dashboard.py</code> refreshes the Google Sheet. (3) <code>dashboard_html.py</code> regenerates the Follow-Ups page. (4) <code>deals_dashboard.py</code> regenerates the Deals page. (5) The weekly.html shell rebuilds so layout changes ship without waiting for Friday. (6) <code>priority_activity.py</code> aggregates notes + Blake calls + Slack mentions per priority CID. Final step deploys the whole <code>site/</code> tree to the <code>gh-pages</code> branch.</p>
 
         <div class="stat-row">
           <div class="stat green">
-            <div class="lab">Hours/week saved</div>
-            <div class="v">25-40h</div>
-            <div class="sub">Jeff + Mike's combined manual SMS + reply triage time.</div>
-          </div>
-          <div class="stat">
-            <div class="lab">From-numbers</div>
-            <div class="v">9</div>
-            <div class="sub">8 state-routed primaries + Jeff NJ. Secondary swap on touches 4-6.</div>
-          </div>
-          <div class="stat">
             <div class="lab">Reply latency</div>
             <div class="v">≤ 30 min</div>
             <div class="sub">Bounded by cron tick. Webhooks would push this to seconds.</div>
           </div>
-        </div>
-
-        <div class="where-grid">
-          <div class="col before">
-            <div class="heading">Before — manual</div>
-            <ul>
-              <li>SMS sent by hand, missed days, typos</li>
-              <li>Replies trickle in, Jeff scrambles</li>
-              <li>STOP requests sometimes ignored (legal risk)</li>
-              <li>No record of which from-number was used</li>
-            </ul>
+          <div class="stat">
+            <div class="lab">From-numbers</div>
+            <div class="v">9</div>
+            <div class="sub">8 state-routed primaries + NJ. Secondary swap on touches 4-6.</div>
           </div>
-          <div class="col">
-            <div class="heading">After — automated</div>
-            <ul>
-              <li>Right SMS, right time, right state-routed number</li>
-              <li>Replies classified before Jeff sees them</li>
-              <li>STOP/UNSUBSCRIBE/etc. honored automatically via inbound classifier (DND set immediately)</li>
-              <li>Negative replies auto-DND, never escalated</li>
-            </ul>
+          <div class="stat">
+            <div class="lab">Pages refreshed</div>
+            <div class="v">6</div>
+            <div class="sub">Follow-Ups, Deals, Weekly shell, Priorities, plus Sheet + priority-activity JSON.</div>
           </div>
         </div>
 
         <h4>Reply classifier (Claude Haiku)</h4>
         <ul>
-          <li><strong>STOP / hostile</strong> → set GHL DND, tag <code>dnd-opt-out</code>, no Jeff task.</li>
-          <li><strong>Wrong number</strong> → set GHL DND, tag <code>wrong-number</code>, no task.</li>
-          <li><strong>Not interested</strong> (polite no) → tag <code>not-interested</code>, no Jeff task. Re-touch eligible later.</li>
-          <li><strong>Positive / neutral</strong> → Jeff callback task + Mike review task, both with reply text inline.</li>
+          <li><strong>STOP / hostile</strong> → GHL DND on, tag <code>dnd-opt-out</code>, no task.</li>
+          <li><strong>Wrong number</strong> → GHL DND on, tag <code>wrong-number</code>, no task.</li>
+          <li><strong>Not interested</strong> (polite no) → tag <code>not-interested</code>, no task. Re-touch eligible later.</li>
+          <li><strong>Positive / neutral</strong> → RJ callback task with reply text inline.</li>
         </ul>
 
-        <h4>Dashboards (also produced here)</h4>
-        <ul>
-          <li><strong>Google Sheet</strong> — raw rows, kill-switch toggle, live-editable templates.</li>
-          <li><strong>Follow-Ups HTML</strong> — action queue: Replied / Dormant / Active.</li>
-          <li><strong>Deals HTML</strong> — property cards: ARV, 70% MAO, assignment fee, call rating.</li>
-        </ul>
+        <p style="font-size:13px;color:var(--ink-soft);margin-top:8px"><strong>Status:</strong> SMS sends are currently paused per Q2 strategy (Northern NJ MF 5+ pivot). The dashboard-refresh half of this workflow still runs every tick.</p>
       </div>
     </div>
-  </section>
 
-  <!-- ── 03 · SLACK SCRAPER ───────────────────────────────── -->
-  <section class="sec" id="worker-03">
+    <!-- 1c · APG Slack Scraper -->
     <div class="detail">
       <div class="head">
-        <div class="num-big">03</div>
-        <h3>Slack Scraper</h3>
+        <div class="num-big">1c</div>
+        <h3>APG Slack Scraper</h3>
         <span class="pill green">EVERY 60 MIN</span>
-        <span class="pill subtle">slack_scraper.py</span>
+        <span class="pill subtle">slack.yml → slack_scraper.py</span>
+        <span class="pill" style="background:rgba(185,28,28,0.12);color:var(--s-uc);">WRITE</span>
       </div>
       <div class="body">
         <p class="lead-line">"Watch the team chatter. When someone mentions a lead, capture it before it's lost in the channel."</p>
-
-        <h4>Quick model</h4>
-        <p>Channel-driven enrichment. Every hour, the cron pulls new messages from 4 APG Slack channels, locally scores them against the contact index (no LLM call until there's a candidate hit — keeps cost down), then sends matched candidates to Claude for confidence-rated info extraction. High-confidence updates auto-apply to GHL fields; medium-confidence becomes an audit-trail note.</p>
+        <p>Every hour, the cron pulls new messages from APG Slack channels, locally scores them against the contact index (no LLM call until there's a candidate match — keeps cost down), then sends candidates to Claude for confidence-rated info extraction. High-confidence updates auto-apply to GHL fields; medium-confidence becomes an audit-trail note. Caches resolved user names to <code>slack_users.json</code> and commits the cache back to main with retry-on-race so the weekly job can resolve attributions.</p>
 
         <div class="stat-row">
           <div class="stat">
-            <div class="lab">Channels watched</div>
-            <div class="v">4</div>
-            <div class="sub"><code>#base0-hot-warm-nurture-fu</code>, <code>#base1-sms-leadgen</code>, <code>#base4-dispo</code>, <code>#construction-services</code></div>
-          </div>
-          <div class="stat">
             <div class="lab">Local pre-filter</div>
             <div class="v">~98%</div>
-            <div class="sub">Of messages skip Claude entirely (no candidate match). Keeps cost per match low.</div>
+            <div class="sub">Of messages skip Claude entirely. Keeps cost per match low.</div>
           </div>
           <div class="stat">
             <div class="lab">Auto-update threshold</div>
             <div class="v">High only</div>
             <div class="sub">Medium gets a note. Low/none gets nothing. No silent overwrites.</div>
           </div>
+          <div class="stat">
+            <div class="lab">Rate-limit posture</div>
+            <div class="v">Safe</div>
+            <div class="sub">Respects Slack's May 2025 limits — 15/page, 2s sleep between pages.</div>
+          </div>
         </div>
+      </div>
+    </div>
 
-        <p style="font-size:13px;color:var(--ink-soft);margin-top:14px">Respects Slack's May 2025 rate limits (limit=15 per page, 2s sleep between pages).</p>
+    <!-- 1d · Weekly Analysis -->
+    <div class="detail">
+      <div class="head">
+        <div class="num-big">1d</div>
+        <h3>Weekly Analysis Snapshot</h3>
+        <span class="pill green">FRI 10AM ET</span>
+        <span class="pill subtle">weekly.yml → weekly_analysis.py</span>
+        <span class="pill" style="background:rgba(185,28,28,0.12);color:var(--s-uc);">WRITE</span>
+      </div>
+      <div class="body">
+        <p class="lead-line">"Every Friday, freeze the week. Who moved, who stalled, who needs Adam's eyes."</p>
+        <p>Cron fires at 14:00 UTC every Friday (≈10 AM ET in EDT). Pulls the full ACQ pipeline state, classifies each lead into buckets — <code>ready_contract</code>, <code>ready_mao</code>, <code>advanced</code>, <code>demoted</code>, <code>new</code>, <code>active_no_move</code>, <code>drop_suggest</code>, <code>quiet</code> — and writes a snapshot to <code>weekly/YYYY-Www.json</code>. Commits to main with a 5-attempt rebase-and-push retry loop in case the SMS cron pushed during the run. The <code>weekly.html</code> shell reads whichever snapshot is newest.</p>
+
+        <p style="font-size:13px;color:var(--ink-soft);margin-top:8px">Bucket logic is deterministic — same input → same output — so Adam can audit any week's classification by reading the JSON directly.</p>
+      </div>
+    </div>
+
+    <!-- 1e · Market Analysis -->
+    <div class="detail">
+      <div class="head">
+        <div class="num-big">1e</div>
+        <h3>Market Analysis Refresh</h3>
+        <span class="pill green">SUN 4AM ET</span>
+        <span class="pill subtle">markets.yml → market_analysis.py</span>
+        <span class="pill" style="background:rgba(185,28,28,0.12);color:var(--s-uc);">WRITE</span>
+      </div>
+      <div class="body">
+        <p class="lead-line">"Every Sunday morning, rerank every state by where APG should be spending marketing dollars."</p>
+        <p>Pulls free CSV data from Realtor.com Research and Zillow ZHVI (both refresh monthly, so weekly is plenty). Combines with a hardcoded landlord/tenant-tier table to produce a ranked state table for the Markets page. Writes <code>site/markets.json</code> and commits to main with the same 5-attempt retry-on-race as the weekly job. The Markets page reads the JSON on every load.</p>
+
+        <p style="font-size:13px;color:var(--ink-soft);margin-top:8px">v1 ships state-level only. v2 (city/MSA drilldown) and v3 (ZIP) are on the roadmap.</p>
       </div>
     </div>
   </section>
 
+  <!-- ── 02 · GITHUB ACTIONS — MANUAL + WEBHOOK DISPATCH ──── -->
+  <section class="sec" id="gh-dispatch">
+    <div class="tag-row">
+      <span class="num">02</span>
+      <h2>GitHub Actions — Manual + Webhook Dispatch</h2>
+    </div>
+    <hr>
+    <p style="color:var(--ink-soft);font-size:14px;margin-bottom:6px">Six workflows fired by a dashboard button or a one-off run from the Actions tab. No schedule — they only run when a human (or a dashboard click) asks. Browser holds a personal GitHub PAT in <code>localStorage</code>; never a GHL token.</p>
+
+    <div class="detail">
+      <div class="head">
+        <div class="num-big">2a</div>
+        <h3>Add Note to GHL Contact</h3>
+        <span class="pill">DISPATCH</span>
+        <span class="pill subtle">add_note.yml → add_note.py</span>
+        <span class="pill" style="background:rgba(185,28,28,0.12);color:var(--s-uc);">WRITE</span>
+      </div>
+      <div class="body">
+        <p class="lead-line">"Adam types feedback under a Priority card — it lands in the GHL contact note within seconds."</p>
+        <p>Inputs: <code>cid</code> (GHL contact ID), <code>who</code> (Adam / Mido / RJ), <code>body</code>. POSTs to <code>/contacts/{cid}/notes</code>. Fired by the Priorities page's feedback textarea on every deal card.</p>
+      </div>
+    </div>
+
+    <div class="detail">
+      <div class="head">
+        <div class="num-big">2b</div>
+        <h3>Apply Slack Suggestion</h3>
+        <span class="pill">DISPATCH</span>
+        <span class="pill subtle">apply_suggestion.yml → apply_suggestion.py</span>
+        <span class="pill" style="background:rgba(185,28,28,0.12);color:var(--s-uc);">WRITE</span>
+      </div>
+      <div class="body">
+        <p class="lead-line">"When the Slack scraper finds a medium-confidence field update, this is the button that commits it."</p>
+        <p>Inputs: <code>cid</code>, <code>field_updates</code> JSON (asking_price, timeline, motivation, reason_for_selling). PUTs to GHL contact custom fields via the direct REST API (the MCP path is bugged for custom fields). Surfaced as an inline button on the Deals page wherever a medium-confidence Slack suggestion exists.</p>
+      </div>
+    </div>
+
+    <div class="detail">
+      <div class="head">
+        <div class="num-big">2c</div>
+        <h3>Update Lead Manually</h3>
+        <span class="pill">DISPATCH</span>
+        <span class="pill subtle">update_lead.yml → update_lead.py</span>
+        <span class="pill" style="background:rgba(185,28,28,0.12);color:var(--s-uc);">WRITE</span>
+      </div>
+      <div class="body">
+        <p class="lead-line">"Universal escape hatch — find any lead by name or address fragment and patch their fields or move their stage."</p>
+        <p>Inputs: free-text search (<code>"4704 9th Ave"</code> or <code>"Marlin Smith"</code>), <code>field_updates</code> JSON, and an optional stage dropdown (unqualified / qualified / LAO / DD / MAO / contract / PSA / dispo / follow_15 / follow_3 / dead). Searches GHL by name + address, picks the best match, applies field updates and stage move atomically.</p>
+      </div>
+    </div>
+
+    <div class="detail">
+      <div class="head">
+        <div class="num-big">2d</div>
+        <h3>Configure Blake Agent</h3>
+        <span class="pill">DISPATCH</span>
+        <span class="pill subtle">configure_blake.yml → configure_blake_agent.py</span>
+        <span class="pill" style="background:rgba(185,28,28,0.12);color:var(--s-uc);">WRITE</span>
+      </div>
+      <div class="body">
+        <p class="lead-line">"Rebuild Blake's 8 GHL-backed tools and PATCH them into the ElevenLabs agent."</p>
+        <p>Inputs: optional <code>agent_id</code> (otherwise searches ElevenLabs by name "Blake"), and <code>apply=yes</code> to actually PATCH (default is dry-run). Used whenever Blake's tool surface changes — new GHL field, new action, new search shape. Reads the GHL custom-field IDs from APG's location and produces an ElevenLabs tool spec for each.</p>
+      </div>
+    </div>
+
+    <div class="detail">
+      <div class="head">
+        <div class="num-big">2e</div>
+        <h3>Configure Blake Post-Call Webhook</h3>
+        <span class="pill">DISPATCH</span>
+        <span class="pill subtle">configure_blake_webhook.yml → configure_blake_webhook.py</span>
+        <span class="pill" style="background:rgba(185,28,28,0.12);color:var(--s-uc);">WRITE</span>
+      </div>
+      <div class="body">
+        <p class="lead-line">"Discover or set the ElevenLabs post-call webhook URL."</p>
+        <p>Inputs: <code>mode</code> = <code>discover</code> (read-only API probe) or <code>apply</code> (set it). Default URL is the Cloudflare Worker endpoint <code>https://acq-automation.mithchell.workers.dev/webhook</code>, which is what receives Blake's post-call transcripts and routes them into KV → vault sync → dashboard. The post-call webhook is a workspace-level setting that isn't exposed in the ElevenLabs UI on every plan tier — this workflow hits the API directly.</p>
+      </div>
+    </div>
+
+    <div class="detail">
+      <div class="head">
+        <div class="num-big">2f</div>
+        <h3>One-Off Cleanup (REVIEW-Mike Spam)</h3>
+        <span class="pill">DISPATCH</span>
+        <span class="pill subtle">cleanup.yml → cleanup_review_tasks.py</span>
+        <span class="pill" style="background:rgba(185,28,28,0.12);color:var(--s-uc);">WRITE</span>
+      </div>
+      <div class="body">
+        <p class="lead-line">"Remediation script for the REVIEW-Mike task spam from a pre-fix cadence bug."</p>
+        <p>Inputs: <code>mode</code> = <code>dry-run</code> (default — just logs) or <code>execute</code> (actually delete). Auto-files a GitHub issue if the run fails. Kept as a workflow rather than a one-shot script so the audit trail (who ran it, when, what got deleted) is permanent.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 03 · GHL-NATIVE WORKFLOWS ─────────────────────────── -->
+  <section class="sec" id="ghl-workflows">
+    <div class="tag-row">
+      <span class="num">03</span>
+      <h2>GHL-Native Workflows (the CRM side)</h2>
+    </div>
+    <hr>
+
+    <div class="callout">
+      <p>Separately from the GitHub Actions stack above, <strong>38 workflows are wired inside GHL itself</strong> — in the APG sub-account (<code>RCkiUmWqXX4BYQ39JXmm</code>). These were built by APG / earlier operators directly in GHL's drag-and-drop builder. They handle intake forms, missed-call text-back, dead-lead follow-up sequences, the SmarterContact ingestion bridge, AI appointment booking, and the per-event email/SMS notifications that fire on real-time CRM triggers (form submit, call inbound, opportunity stage change, etc.).</p>
+      <p style="margin-bottom:0"><strong style="color:var(--gold-deep);">Status legend.</strong> <span style="color:var(--s-live);font-weight:700;">PUBLISHED</span> = currently active and firing. <span style="color:var(--muted);font-weight:700;">DRAFT</span> = built but turned off (either being iterated on, or paused intentionally). Of the 38 total: <strong>16 are published</strong>, 22 are draft.</p>
+    </div>
+
+    <!-- 3a · Lead Intake & Routing -->
+    <div class="detail">
+      <div class="head">
+        <div class="num-big">3a</div>
+        <h3>Lead Intake &amp; Routing</h3>
+        <span class="pill green">PUBLISHED (mostly)</span>
+        <span class="pill subtle">5 workflows</span>
+      </div>
+      <div class="body">
+        <p class="lead-line">"Get the lead into the system in the right shape, on the right pipeline, with the right tags."</p>
+        <ul>
+          <li><strong>7. Form Submit Lead</strong> <span style="color:var(--s-live);font-weight:700;font-size:11px;">PUBLISHED</span> — Catches any GHL form submission, normalizes the contact, drops them onto the right pipeline stage.</li>
+          <li><strong>Contact to Opportunities</strong> <span style="color:var(--s-live);font-weight:700;font-size:11px;">PUBLISHED</span> — When a new contact is created without an opp, auto-creates the opportunity in the ACQ pipeline so they're not invisible to the dashboards.</li>
+          <li><strong>Construction Services: New Lead</strong> <span style="color:var(--muted);font-weight:700;font-size:11px;">DRAFT</span> — Same intake flow but routed to the Construction Services pipeline. Drafted; turned on when the roofing+siding niche reactivates.</li>
+          <li><strong>NJ New Lead Call Scheduling</strong> <span style="color:var(--s-live);font-weight:700;font-size:11px;">PUBLISHED</span> — New NJ leads get the call-scheduling sequence (NJ is the focus market).</li>
+          <li><strong>NJ Appointment Assignment</strong> <span style="color:var(--s-live);font-weight:700;font-size:11px;">PUBLISHED</span> — Round-robins booked NJ appointments to the right team member.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 3b · Notifications -->
+    <div class="detail">
+      <div class="head">
+        <div class="num-big">3b</div>
+        <h3>Notifications (real-time alerts)</h3>
+        <span class="pill green">PUBLISHED</span>
+        <span class="pill subtle">3 workflows</span>
+      </div>
+      <div class="body">
+        <p class="lead-line">"Wake the team up the moment something happens on a lead."</p>
+        <ul>
+          <li>
+            <strong>Call Incoming Notification</strong>
+            <span style="color:var(--s-live);font-weight:700;font-size:11px;">PUBLISHED</span>
+            — Fires an email to RJ and Mike every time an inbound call hits the APG number.
+            <div class="callout" style="background:rgba(234,88,12,0.10);border-left-color:var(--s-warm);margin-top:8px;padding:10px 14px;font-size:13px;">
+              <strong style="color:var(--s-warm);">FLAGGED FOR REWORK.</strong>
+              This is the workflow flooding RJ's inbox — dozens of these notification emails per day, drowning real correspondence.
+              Phase 1 of the RJ inbox consolidation is to redirect this workflow's output away from email and into Slack (or a single batched morning digest).
+              Do <em>not</em> turn it off — RJ still needs the signal — just change the channel.
+            </div>
+          </li>
+          <li><strong>Reminder</strong> <span style="color:var(--s-live);font-weight:700;font-size:11px;">PUBLISHED</span> — Generic reminder fires for booked appointments and pending tasks.</li>
+          <li><strong>Construction Services: Text Mario When Appointment Is Booked</strong> <span style="color:var(--muted);font-weight:700;font-size:11px;">DRAFT</span> — Used to text the Construction Services lead (Mario) on every new booking. Currently off.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 3c · Follow-Up Sequences -->
+    <div class="detail">
+      <div class="head">
+        <div class="num-big">3c</div>
+        <h3>Follow-Up Sequences</h3>
+        <span class="pill green">MIXED</span>
+        <span class="pill subtle">7 workflows</span>
+      </div>
+      <div class="body">
+        <p class="lead-line">"Stay in front of leads who didn't say yes yet, with cadences scaled to how cold they've gone."</p>
+        <ul>
+          <li><strong>1. No response Follow-Up (For Next 2 days)</strong> <span style="color:var(--muted);font-weight:700;font-size:11px;">DRAFT</span> — Short-window nudge for leads who went quiet right after first contact.</li>
+          <li><strong>45 Days No Response</strong> <span style="color:var(--s-live);font-weight:700;font-size:11px;">PUBLISHED</span> — Medium-cold reactivation at the 45-day mark.</li>
+          <li><strong>90 Days No Response</strong> <span style="color:var(--s-live);font-weight:700;font-size:11px;">PUBLISHED</span> — Cold reactivation at 90 days, lighter touch and a different opener.</li>
+          <li><strong>Dead Lead's Follow Up System</strong> <span style="color:var(--s-live);font-weight:700;font-size:11px;">PUBLISHED</span> — Reactivation sequence for leads who were marked Dead. (ACQ Dead is fair game for this; the REI Marketing Leads "Reactivation" stage is off-limits — different team's bot.)</li>
+          <li><strong>Acquisition Pipeline Follow Up Task Automation</strong> <span style="color:var(--s-live);font-weight:700;font-size:11px;">PUBLISHED</span> — Auto-creates follow-up tasks at the right intervals based on stage.</li>
+          <li><strong>Reactivaiton of all leads</strong> <span style="color:var(--muted);font-weight:700;font-size:11px;">DRAFT</span> — Bulk reactivation (note GHL-side typo in the workflow name).</li>
+          <li><strong>Auto Missed Call Text-Back</strong> <span style="color:var(--muted);font-weight:700;font-size:11px;">DRAFT</span> — Sends an SMS the instant we miss an inbound call. Drafted but currently off (SMS halted).</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 3d · AI & Conversation -->
+    <div class="detail">
+      <div class="head">
+        <div class="num-big">3d</div>
+        <h3>AI &amp; Conversation Handling</h3>
+        <span class="pill" style="background:rgba(234,179,8,0.18);color:var(--s-hold);">MOSTLY DRAFT</span>
+        <span class="pill subtle">5 workflows</span>
+      </div>
+      <div class="body">
+        <p class="lead-line">"GHL's built-in AI bot and reply-handling sequences. Largely turned off — Blake is taking over this surface."</p>
+        <ul>
+          <li><strong>2. Ai Appointment Booking</strong> <span style="color:var(--muted);font-weight:700;font-size:11px;">DRAFT</span> — GHL's native AI appointment booker. Drafted; Blake (ElevenLabs) is the production path.</li>
+          <li><strong>2. Ai Appointment Booking {VER 2}</strong> <span style="color:var(--muted);font-weight:700;font-size:11px;">DRAFT</span> — A second iteration on the same flow.</li>
+          <li><strong>3. Customer Replied - Auto Handling</strong> <span style="color:var(--muted);font-weight:700;font-size:11px;">DRAFT</span> — Native auto-reply on inbound SMS. Superseded by the GitHub Actions Claude classifier in <code>sms_followup.py</code>.</li>
+          <li><strong>10. Turn Ai Bot Off</strong> <span style="color:var(--s-live);font-weight:700;font-size:11px;">PUBLISHED</span> — Killswitch — fires whenever a contact gets a tag indicating a human is now in the loop, so the AI bot stops replying mid-thread.</li>
+          <li><strong>Voice AI - IDX Basic Search Results V2</strong> <span style="color:var(--muted);font-weight:700;font-size:11px;">DRAFT</span> — Voice-AI search-result handler from an earlier experiment.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 3e · SMS / SmarterContact Bridge -->
+    <div class="detail">
+      <div class="head">
+        <div class="num-big">3e</div>
+        <h3>SMS / SmarterContact Bridge</h3>
+        <span class="pill" style="background:rgba(234,179,8,0.18);color:var(--s-hold);">PARTIALLY LIVE</span>
+        <span class="pill subtle">6 workflows</span>
+      </div>
+      <div class="body">
+        <p class="lead-line">"Connect SmarterContact (the historical SMS campaign tool) to GHL so the CRM is the system of record."</p>
+        <ul>
+          <li><strong>Smarter contact to GHL</strong> <span style="color:var(--s-live);font-weight:700;font-size:11px;">PUBLISHED</span> — The ingestion bridge. Every SmarterContact event creates / updates the matching GHL contact.</li>
+          <li><strong>CTA First msg</strong> <span style="color:var(--muted);font-weight:700;font-size:11px;">DRAFT</span> — First outbound SMS for ACQ (paused with the SMS halt).</li>
+          <li><strong>CTA First msg- Construction Services</strong> <span style="color:var(--s-live);font-weight:700;font-size:11px;">PUBLISHED</span> — First outbound SMS for Construction Services leads.</li>
+          <li><strong>ACQ Stage 1 — SMS Sequence</strong> <span style="color:var(--muted);font-weight:700;font-size:11px;">DRAFT</span> — The Stage-1 SMS cadence built natively in GHL (parallel to the <code>sms_followup.py</code> cron). Off.</li>
+          <li><strong>SmarterContact – Assign Caller</strong> <span style="color:var(--muted);font-weight:700;font-size:11px;">DRAFT</span> — Routes inbound to the right caller seat.</li>
+          <li><strong>SmarterContact – Call Answered / No Answer Follow-Up</strong> <span style="color:var(--muted);font-weight:700;font-size:11px;">DRAFT</span> — Branching follow-up depending on whether the call was answered.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 3f · Field Math & Tagging -->
+    <div class="detail">
+      <div class="head">
+        <div class="num-big">3f</div>
+        <h3>Field Math &amp; Tagging Utilities</h3>
+        <span class="pill green">PUBLISHED</span>
+        <span class="pill subtle">5 workflows</span>
+      </div>
+      <div class="body">
+        <p class="lead-line">"Plumbing — the small invisible automations that keep the data sane."</p>
+        <ul>
+          <li><strong>LAO Calculator</strong> <span style="color:var(--s-live);font-weight:700;font-size:11px;">PUBLISHED</span> — Computes LAO (Lowest Acceptable Offer) from inputs and writes it back to the opp.</li>
+          <li><strong>MAO Calculator</strong> <span style="color:var(--s-live);font-weight:700;font-size:11px;">PUBLISHED</span> — Computes MAO (Maximum Allowable Offer) the same way.</li>
+          <li><strong>8. Update Zillow link</strong> <span style="color:var(--s-live);font-weight:700;font-size:11px;">PUBLISHED</span> — Whenever the address changes, regenerates the Zillow URL custom field.</li>
+          <li><strong>4. Auto Tag Errors</strong> <span style="color:var(--s-live);font-weight:700;font-size:11px;">PUBLISHED</span> — Auto-tags contacts with quality-flag tags (missing data, bad phone, etc.).</li>
+          <li><strong>RESET TAGS</strong> <span style="color:var(--s-live);font-weight:700;font-size:11px;">PUBLISHED</span> — Manually-triggered tag-wipe for a contact when something gets stuck.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 3g · Misc / Experimental -->
+    <div class="detail">
+      <div class="head">
+        <div class="num-big">3g</div>
+        <h3>Miscellaneous / Experimental</h3>
+        <span class="pill" style="background:transparent;color:var(--muted);border:1px solid var(--rule-strong);">DRAFT</span>
+        <span class="pill subtle">7 workflows</span>
+      </div>
+      <div class="body">
+        <p class="lead-line">"Unfinished or one-off — keep an eye on these for cleanup."</p>
+        <ul>
+          <li><strong>5. Testing Workflow</strong> <span style="color:var(--muted);font-weight:700;font-size:11px;">DRAFT</span> — Whatever-the-current-experiment-is sandbox. 56 versions deep.</li>
+          <li><strong>9. Appointment booked and Reminder</strong> <span style="color:var(--muted);font-weight:700;font-size:11px;">DRAFT</span> — A reminder iteration that wasn't shipped.</li>
+          <li><strong>10. Single line Power Dialer</strong> <span style="color:var(--muted);font-weight:700;font-size:11px;">DRAFT</span> — Single-line dialer integration concept. Calltools is now the dialer of record.</li>
+          <li><strong>Appointment Setting</strong> <span style="color:var(--muted);font-weight:700;font-size:11px;">DRAFT</span> — Generic appointment-setting flow, not in use.</li>
+          <li><strong>New Workflow : 1777068701780</strong> <span style="color:var(--muted);font-weight:700;font-size:11px;">DRAFT</span> — Untitled scratch from 2026-04-24. Candidate for delete.</li>
+          <li><strong>New Workflow : 1777429426658</strong> <span style="color:var(--muted);font-weight:700;font-size:11px;">DRAFT</span> — Untitled scratch from 2026-04-29. Candidate for delete.</li>
+          <li><strong>(plus one minor housekeeping draft)</strong> <span style="color:var(--muted);font-weight:700;font-size:11px;">DRAFT</span> — Counts toward the 38-workflow total; nothing operational.</li>
+        </ul>
+        <p style="font-size:13px;color:var(--ink-soft);margin-top:8px"><strong>Cleanup recommendation.</strong> The two "<code>New Workflow : ...</code>" entries are clearly abandoned scratch. A quarterly GHL workflow audit (delete the abandoned, document the active ones) would tighten the surface area for whoever next has to debug a misfiring sequence.</p>
+      </div>
+    </div>
+
+    <div class="callout" style="margin-top: 18px;">
+      <div class="rule-label">HOW THE TWO STACKS DIVIDE WORK</div>
+      <p style="margin-bottom:8px"><strong>GitHub Actions owns:</strong> anything that needs LLM inference (call analysis, reply classification, Slack extraction), anything that needs external data (Apify Zillow, Deepgram transcription, Realtor.com CSVs), anything that writes a public dashboard, and anything that talks to ElevenLabs.</p>
+        <p style="margin-bottom:0"><strong>GHL-native owns:</strong> anything that needs to fire instantly on a CRM event (form submit, inbound call, stage change), anything that's pure GHL-to-GHL plumbing (LAO/MAO math, tag housekeeping), and the human-readable notification emails. Neither stack should reach into the other's lane.</p>
+    </div>
+  </section>
+
   <!-- ── 04 · THE STACK ────────────────────────────────────── -->
-  <section class="sec">
+  <section class="sec" id="stack">
     <div class="tag-row">
       <span class="num">04</span>
       <h2>The Stack</h2>
@@ -759,14 +1028,14 @@ section h2, h2 {
     <hr>
     <p style="color:var(--ink-soft);font-size:14px">Eight services, all integrated. Nothing custom-hosted — everything runs on managed infrastructure with predictable per-event pricing.</p>
     <div class="stack">
-      <div class="pill"><div class="name">GitHub Actions</div><div class="role">Cron runner</div></div>
-      <div class="pill"><div class="name">GoHighLevel</div><div class="role">CRM + ACQ pipeline</div></div>
+      <div class="pill"><div class="name">GitHub Actions</div><div class="role">Cron + dispatch runner</div></div>
+      <div class="pill"><div class="name">GoHighLevel</div><div class="role">CRM + 38 native workflows</div></div>
       <div class="pill"><div class="name">Anthropic Claude</div><div class="role">Analysis · classification</div></div>
       <div class="pill"><div class="name">Deepgram</div><div class="role">Audio → transcript</div></div>
       <div class="pill"><div class="name">Apify (Zillow)</div><div class="role">Property + comps</div></div>
       <div class="pill"><div class="name">Google Sheets / Drive</div><div class="role">Sheet + Rehab Reports</div></div>
       <div class="pill"><div class="name">Slack API</div><div class="role">Channel scraping</div></div>
-      <div class="pill"><div class="name">GitHub Pages</div><div class="role">Dashboards hosting</div></div>
+      <div class="pill"><div class="name">ElevenLabs</div><div class="role">Blake voice agent</div></div>
     </div>
   </section>
 
@@ -896,7 +1165,7 @@ section h2, h2 {
   </section>
 
   <!-- ── 07 · WHERE THE CODE LIVES ─────────────────────────── -->
-  <section class="sec">
+  <section class="sec" id="code">
     <div class="tag-row">
       <span class="num">07</span>
       <h2>Where the Code Lives</h2>
@@ -904,15 +1173,24 @@ section h2, h2 {
     <hr>
 
     <div class="callout">
-      <p>All scripts and workflows are in the public repo at <a href="https://github.com/AtomInvestments/acq-automation" target="_blank">github.com/AtomInvestments/acq-automation</a>. Every cron run is logged at <a href="https://github.com/AtomInvestments/acq-automation/actions" target="_blank">github.com/AtomInvestments/acq-automation/actions</a>.</p>
-      <p style="margin-bottom:0">Secrets (API tokens) are encrypted by GitHub and never appear in code. The repo is public so the code is auditable; only the API tokens are hidden.</p>
+      <p><strong>GitHub Actions stack:</strong> public repo at <a href="https://github.com/AtomInvestments/acq-automation" target="_blank">github.com/AtomInvestments/acq-automation</a>. Every run is logged at <a href="https://github.com/AtomInvestments/acq-automation/actions" target="_blank">/actions</a>. Secrets (API tokens) are encrypted by GitHub and never appear in code — the repo is public so the code is auditable; only the API tokens are hidden.</p>
+      <p style="margin-bottom:0"><strong>GHL-native workflows:</strong> all 38 live inside the APG sub-account (<code>RCkiUmWqXX4BYQ39JXmm</code>) at <a href="https://app.gohighlevel.com" target="_blank">app.gohighlevel.com</a> → Automation → Workflows. Edits there don't go through Git, so any change should also get a one-line note in this About page so the inventory stays honest.</p>
     </div>
 
-    <p style="margin-top:18px;font-size:14px"><strong>Live dashboards:</strong> <a href="index.html">Follow-Ups</a> · <a href="deals.html">Deals</a></p>
+    <p style="margin-top:18px;font-size:14px"><strong>Live dashboards:</strong>
+      <a href="index.html">Follow-Ups</a> ·
+      <a href="deals.html">Deals</a> ·
+      <a href="weekly.html">Weekly</a> ·
+      <a href="priorities.html">Priorities</a> ·
+      <a href="markets.html">Markets</a> ·
+      <a href="blake.html">Blake (live)</a> ·
+      <a href="progress.html">Progress</a> ·
+      <a href="ai-agents-plan.html">AI Agents Plan</a>
+    </p>
   </section>
 
   <footer>
-    APG Acquisition Automation · Built on GitHub Actions + GHL + Claude + Apify + Deepgram
+    APG Acquisition Automation · 11 GitHub workflows + 38 GHL workflows · GHL · Claude · Apify · Deepgram · ElevenLabs
   </footer>
 
 </div>
