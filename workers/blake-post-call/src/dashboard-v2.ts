@@ -3,7 +3,7 @@
 // Tabbed layout (Mido directive, 2026-05-27):
 //   Overview — KPIs + funnel + cost snapshot + improve cards
 //   Calls    — Blake calls table with filters (outcome / disp / source / date / unique)
-//   Voice    — Brian vs Roger A/B stats + per-voice tag
+//   Voice    — Eric/Chris/Bill 3-way A/B stats + per-voice tag (legacy Brian/Roger preserved)
 //   Agents   — per-agent (RJ/Mike/Justus/Brady) call+msg+opp activity (PR C populates AI review)
 //   Costs    — tech-stack cost per active user (detailed breakdown)
 //   Variants — website A/B/C performance (placeholder until WS1 ships)
@@ -859,19 +859,27 @@ ${warmup ? `<div class="kpi-row" style="margin-top:-8px;">
 </section>
 </div><!-- /GHL -->
 
-<!-- TAB: Websites (was /insights) -->
+<!-- TAB: Websites (rebuilt 2026-05-29 — full page lives at /websites) -->
 <div class="tab-panel" data-tab="websites">
 <section class="panel">
   <h2>Websites — <em>page snapshots + Clarity</em></h2>
-  <div style="color:var(--text-dim);font-size:13px;margin-bottom:14px;">Tracked WordPress pages on atompropertygroup.com. Snapshots refresh nightly + on every WP modification. Click Heatmap / Sessions to jump to Microsoft Clarity.</div>
+  <div style="color:var(--text-dim);font-size:13px;margin-bottom:14px;">
+    Per-page snapshot (desktop + mobile) plus Microsoft Clarity stats (sessions, pageviews, dead clicks, rage clicks, scroll depth, lead-form submits) for every tracked atompropertygroup.com page. Snapshots refresh daily at 04:00 UTC; Clarity data is cached 15 min.
+  </div>
+  <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;">
+    <a class="btn primary" href="/websites" style="padding:10px 16px;text-decoration:none;border-radius:4px;background:linear-gradient(135deg,#1A2840,#2A3D5C);color:#F5C518;font-weight:600;">Open Websites dashboard ↗</a>
+    <a class="btn" href="/websites?range=today" style="padding:10px 16px;text-decoration:none;border-radius:4px;border:1px solid var(--rule);color:var(--ink);">Today</a>
+    <a class="btn" href="/websites?range=7d" style="padding:10px 16px;text-decoration:none;border-radius:4px;border:1px solid var(--rule);color:var(--ink);">7 days</a>
+    <a class="btn" href="/websites?range=30d" style="padding:10px 16px;text-decoration:none;border-radius:4px;border:1px solid var(--rule);color:var(--ink);">30 days</a>
+  </div>
   <div class="wp-grid">
     ${websites.pages.length === 0
-      ? `<div class="notice info">No tracked pages yet. Configure <code>INSIGHTS_TRACKED_PAGES</code> in index.ts.</div>`
-      : websites.pages.map((p) => `
+      ? `<div class="notice info">No tracked pages yet. Configure <code>WEBSITES_TRACKED_PAGES</code> in src/websites-tab.ts.</div>`
+      : websites.pages.slice(0, 4).map((p) => `
         <div class="wp-card">
           <div class="thumb">${p.thumb_key
             ? `<img src="/insights/snap/${encodeURIComponent(p.thumb_key)}" alt="" />`
-            : `<div class="empty">No snapshot yet</div>`}
+            : `<div class="empty">Open <a href="/websites" style="color:var(--gold-deep);">full Websites dashboard</a> for snapshots</div>`}
           </div>
           <div class="body">
             <div class="label-row">${escapeHtml(p.label)}</div>
@@ -887,6 +895,9 @@ ${warmup ? `<div class="kpi-row" style="margin-top:-8px;">
             </div>
           </div>
         </div>`).join("")}
+  </div>
+  <div class="mono" style="color:var(--text-mute);font-size:11px;margin-top:14px;">
+    Preview of the first 4 tracked pages. Full grid (16+ pages) with Clarity stats lives at <code>/websites</code>.
   </div>
 </section>
 </div><!-- /Websites -->
@@ -927,29 +938,47 @@ ${warmup ? `<div class="kpi-row" style="margin-top:-8px;">
 <!-- TAB: Voice A/B -->
 <div class="tab-panel" data-tab="voice">
 <section class="panel">
-  <h2>Voice A/B — Brian vs Roger</h2>
+  <h2>Voice A/B — ${voiceStats.arms.map((a) => a.label).join(" vs ")}</h2>
   <div style="color:var(--text-mute);font-size:12px;margin-bottom:14px;">
-    50/50 split active since 2026-05-27 via <code>/conversation-init</code>. Each new call randomly assigns Brian or Roger; post-call attribution tags the GHL contact with <code>voice-brian</code> or <code>voice-roger</code> for downstream conversion analysis.
+    3-way rotation active since 2026-05-29 via <code>/conversation-init</code>. Sticky hash-based assignment (call_sid or phone, FNV-1a % 3) so re-dials to the same seller hear the same voice. Post-call attribution tags the GHL contact with <code>voice-&lt;name&gt;</code> for downstream conversion analysis.
   </div>
   <div style="display:flex;gap:14px;flex-wrap:wrap;">
-    <div class="voice-card">
-      <div class="name">Brian <span class="mono" style="color:var(--text-mute);font-size:10px;">nPczCjz...zQrb</span></div>
-      <div class="row"><span class="label">Calls Sent</span><span class="value">${voiceStats.brian.sent}</span></div>
-      <div class="row"><span class="label">Completed</span><span class="value">${voiceStats.brian.completed}</span></div>
-      <div class="row"><span class="label">Completion %</span><span class="value">${voiceStats.brian.completion_pct}%</span></div>
-      ${voiceStats.winner === "brian" ? `<div class="winner">▲ ahead</div>` : ""}
-    </div>
-    <div class="voice-card">
-      <div class="name">Roger <span class="mono" style="color:var(--text-mute);font-size:10px;">CwhRB...Fs17</span></div>
-      <div class="row"><span class="label">Calls Sent</span><span class="value">${voiceStats.roger.sent}</span></div>
-      <div class="row"><span class="label">Completed</span><span class="value">${voiceStats.roger.completed}</span></div>
-      <div class="row"><span class="label">Completion %</span><span class="value">${voiceStats.roger.completion_pct}%</span></div>
-      ${voiceStats.winner === "roger" ? `<div class="winner">▲ ahead</div>` : ""}
-    </div>
+    ${voiceStats.arms.map((arm) => `
+      <div class="voice-card">
+        <div class="name">${arm.label} <span class="mono" style="color:var(--text-mute);font-size:10px;">${arm.voice_id_preview}</span></div>
+        <div class="row"><span class="label">Calls Sent</span><span class="value">${arm.sent}</span></div>
+        <div class="row"><span class="label">Completed</span><span class="value">${arm.completed}</span></div>
+        <div class="row"><span class="label">Completion %</span><span class="value">${arm.completion_pct}%</span></div>
+        ${voiceStats.winner === arm.key ? `<div class="winner">▲ ahead</div>` : ""}
+      </div>
+    `).join("")}
   </div>
+  ${voiceStats.winner === "insufficient" ? `
+    <div style="color:var(--text-mute);font-size:12px;margin-top:14px;">
+      <strong>Significance:</strong> need ~50 calls per arm for a meaningful 3-way comparison. ${voiceStats.arms.map((a) => `${a.label}: ${Math.max(0, 50 - a.sent)} more`).join(" · ")}.
+    </div>
+  ` : ""}
   <div class="mono" style="color:var(--text-mute);font-size:11px;margin-top:14px;">
-    Raw counters: <code>blake:ab_stats:&lt;voice&gt;:sent</code> / <code>:completed</code>. Pick winner after ~50 sent each.
+    Raw counters: <code>blake:ab_stats:v2:&lt;voice&gt;:sent</code> / <code>:completed</code>. Reader is dynamic — adding a 4th arm in <code>VOICE_AB_VARIANTS</code> auto-renders a 4th column.
   </div>
+  ${voiceStats.legacy.length ? `
+    <div style="margin-top:24px;border-top:1px solid var(--border);padding-top:16px;">
+      <h3 style="font-size:14px;color:var(--text-mute);margin-bottom:10px;">Legacy (Brian / Roger, pre-2026-05-29)</h3>
+      <div style="display:flex;gap:14px;flex-wrap:wrap;">
+        ${voiceStats.legacy.map((arm) => `
+          <div class="voice-card" style="opacity:0.75;border-top-color:var(--text-mute);">
+            <div class="name">${arm.label}</div>
+            <div class="row"><span class="label">Calls Sent</span><span class="value">${arm.sent}</span></div>
+            <div class="row"><span class="label">Completed</span><span class="value">${arm.completed}</span></div>
+            <div class="row"><span class="label">Completion %</span><span class="value">${arm.completion_pct}%</span></div>
+          </div>
+        `).join("")}
+      </div>
+      <div class="mono" style="color:var(--text-mute);font-size:10px;margin-top:10px;">
+        Historical only — no new dials under these voices. KV: <code>blake:ab_stats:&lt;voice&gt;:*</code>.
+      </div>
+    </div>
+  ` : ""}
 </section>
 </div><!-- /Voice -->
 
@@ -1456,33 +1485,112 @@ async function readWebsitesData(env: any): Promise<{ pages: WebsitePageRow[] }> 
 }
 
 // ---- Voice A/B reader -------------------------------------------------------
+//
+// Dynamic: scans KV for any `blake:ab_stats:v2:<voice>:sent` key and renders
+// one card per voice found. Adding a 4th arm in the Worker's
+// `VOICE_AB_VARIANTS` requires no change here. Legacy Brian/Roger counters
+// are read from the un-versioned `blake:ab_stats:<voice>:*` keys and rendered
+// in a separate "Legacy" section.
+
+interface VoiceArm {
+  key: string;             // e.g., "eric"
+  label: string;           // e.g., "Eric"
+  sent: number;
+  completed: number;
+  completion_pct: number;
+  voice_id_preview: string; // short display of the ElevenLabs voice_id
+}
 
 interface VoiceAbStats {
-  brian: { sent: number; completed: number; completion_pct: number };
-  roger: { sent: number; completed: number; completion_pct: number };
-  winner: "brian" | "roger" | "tie" | "insufficient";
+  arms: VoiceArm[];
+  legacy: VoiceArm[];
+  winner: string;          // arm key, or "tie" / "insufficient"
+}
+
+// Pretty-printable voice IDs so the dashboard shows the same fingerprint
+// format as the original Brian/Roger cards did. New arms automatically fall
+// through to "—" if not listed here.
+const VOICE_ID_PREVIEWS: Record<string, string> = {
+  eric:  "cjVigY...OWal",
+  chris: "iP95p4...742B",
+  bill:  "pqHfZK...NhV4",
+};
+
+function titleCase(s: string): string {
+  return s.length ? s[0].toUpperCase() + s.slice(1) : s;
 }
 
 async function readVoiceAbStats(env: { DIAL_STATE: KVNamespace }): Promise<VoiceAbStats> {
   const read = async (k: string): Promise<number> => Number((await env.DIAL_STATE.get(k)) || "0");
-  const [bs, bc, rs, rc] = await Promise.all([
-    read("blake:ab_stats:brian:sent"),
-    read("blake:ab_stats:brian:completed"),
-    read("blake:ab_stats:roger:sent"),
-    read("blake:ab_stats:roger:completed"),
-  ]);
-  const bp = bs ? Math.round((bc / bs) * 100) : 0;
-  const rp = rs ? Math.round((rc / rs) * 100) : 0;
-  let winner: VoiceAbStats["winner"] = "insufficient";
-  // Need ≥10 sent on EACH side before we call a winner, otherwise it's noise.
-  if (bs >= 10 && rs >= 10) {
-    winner = bp === rp ? "tie" : bp > rp ? "brian" : "roger";
+
+  // ---- v2 arms: discover from KV by scanning the `:sent` key prefix --------
+  const sentKeys = new Set<string>();
+  let cursor: string | undefined;
+  do {
+    const list = await env.DIAL_STATE.list({ prefix: "blake:ab_stats:v2:", cursor, limit: 1000 });
+    cursor = list.list_complete ? undefined : list.cursor;
+    for (const k of list.keys) {
+      if (k.name.endsWith(":sent")) sentKeys.add(k.name);
+    }
+  } while (cursor);
+
+  // Map each discovered key back to a voice name. If the discovery comes up
+  // empty (fresh KV before the first call) we still want all 3 cards visible,
+  // so seed from a fallback list that matches the Worker's VOICE_AB_VARIANTS.
+  const FALLBACK_ARMS = ["eric", "chris", "bill"];
+  const discovered = new Set<string>();
+  for (const key of sentKeys) {
+    const m = key.match(/^blake:ab_stats:v2:([^:]+):sent$/);
+    if (m) discovered.add(m[1]);
   }
-  return {
-    brian: { sent: bs, completed: bc, completion_pct: bp },
-    roger: { sent: rs, completed: rc, completion_pct: rp },
-    winner,
-  };
+  const armKeys = Array.from(discovered.size ? discovered : new Set(FALLBACK_ARMS)).sort();
+
+  const arms: VoiceArm[] = await Promise.all(
+    armKeys.map(async (key) => {
+      const [sent, completed] = await Promise.all([
+        read(`blake:ab_stats:v2:${key}:sent`),
+        read(`blake:ab_stats:v2:${key}:completed`),
+      ]);
+      const completion_pct = sent ? Math.round((completed / sent) * 100) : 0;
+      return {
+        key,
+        label: titleCase(key),
+        sent,
+        completed,
+        completion_pct,
+        voice_id_preview: VOICE_ID_PREVIEWS[key] || "",
+      };
+    })
+  );
+
+  // Need >=10 sent on EVERY arm before we call a winner — same noise floor as
+  // the 2-way logic, applied per arm.
+  let winner = "insufficient";
+  if (arms.length > 0 && arms.every((a) => a.sent >= 10)) {
+    const max = Math.max(...arms.map((a) => a.completion_pct));
+    const tied = arms.filter((a) => a.completion_pct === max);
+    winner = tied.length === 1 ? tied[0].key : "tie";
+  }
+
+  // ---- Legacy Brian/Roger — only render if they have any history ----------
+  const legacy: VoiceArm[] = [];
+  for (const key of ["brian", "roger"]) {
+    const [sent, completed] = await Promise.all([
+      read(`blake:ab_stats:${key}:sent`),
+      read(`blake:ab_stats:${key}:completed`),
+    ]);
+    if (sent === 0 && completed === 0) continue;
+    legacy.push({
+      key,
+      label: titleCase(key),
+      sent,
+      completed,
+      completion_pct: sent ? Math.round((completed / sent) * 100) : 0,
+      voice_id_preview: "",
+    });
+  }
+
+  return { arms, legacy, winner };
 }
 
 // ---- Agent activity stub ----------------------------------------------------

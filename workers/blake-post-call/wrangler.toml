@@ -16,6 +16,29 @@ crons = ["*/15 * * * *", "0 4 * * *"]
 binding = "DIAL_STATE"
 id = "c3e5500651af4248889c8ed69e5ec47b"
 
+# R2 bucket for /websites snapshot PNGs (added 2026-05-29).
+#
+# Setup (one-time, by Mido):
+#   1. Create the bucket:
+#        CLOUDFLARE_API_TOKEN=cfut_... ./node_modules/.bin/wrangler r2 bucket create apg-website-snapshots
+#   2. Uncomment the binding below.
+#   3. Redeploy: CLOUDFLARE_API_TOKEN=cfut_... ./node_modules/.bin/wrangler deploy
+#
+# Until this is bound, /websites falls back to KV for snapshot storage
+# (30-day TTL, ~25 MB hard per-value limit — fine in practice).
+#
+# [[r2_buckets]]
+# binding = "WEBSITES_BUCKET"
+# bucket_name = "apg-website-snapshots"
+
+# Secrets needed for the /websites tab (set via `wrangler secret put NAME`):
+#   CLARITY_API_TOKEN          Microsoft Clarity Data Export bearer token (set 2026-05-29)
+#   CLOUDFLARE_API_TOKEN       Cloudflare API token w/ Workers AI > Browser Rendering > Edit
+#                              scope. Optional — falls back to thum.io if absent or if
+#                              Browser Rendering isn't opt-in on the account.
+#   CLOUDFLARE_ACCOUNT_ID      Account that owns this Worker:
+#                              b8fb424de9e19010920dd0cea9545fce
+
 # Worker URL:
 #   https://acq-automation.mithchell.workers.dev
 #
