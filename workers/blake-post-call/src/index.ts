@@ -38,6 +38,12 @@ import {
   formatEnrichmentForSlack, formatEnrichmentForGhlNote,
 } from "./attom";
 import { renderDashboardV2 } from "./dashboard-v2";
+import {
+  renderWebsitesPage as renderWebsitesTab,
+  buildWebsitesData,
+  serveSnapshot as serveWebsitesSnapshot,
+  runDailyWebsiteSnapshots,
+} from "./websites-tab";
 
 export interface Env {
   BLAKE_GHL_PIT: string;
@@ -54,7 +60,11 @@ export interface Env {
   VAULT_SYNC_TOKEN: string;         // Pillar C: bearer token gating /vault/queue + /vault/ack for the local vault-sync daemon.
   GOOGLE_PLACES_API_KEY?: string;   // Workstream 2: server-side proxy for Google Places autocomplete + details. Browser hits the Worker, never Google directly.
   CALLTOOLS_API_KEY?: string;       // Calltools API for per-number cost + usage on Costs tab. Provided 2026-05-27.
+  CLARITY_API_TOKEN?: string;       // Microsoft Clarity Data Export API token — powers /websites Clarity overlay. Set as Worker secret 2026-05-29.
+  CLOUDFLARE_API_TOKEN?: string;    // Cloudflare API token for Browser Rendering screenshots (used by /websites snapshot pipeline). Optional — falls back to thum.io.
+  CLOUDFLARE_ACCOUNT_ID?: string;   // Account that owns this Worker (b8fb424de9e19010920dd0cea9545fce). Needed alongside CLOUDFLARE_API_TOKEN.
   DIAL_STATE: KVNamespace;          // KV for warm-up quota + dial dedupe
+  WEBSITES_BUCKET?: R2Bucket;       // R2 bucket for /websites snapshot PNGs. Optional — KV fallback if unbound.
 }
 
 const APG_LOCATION_ID = "RCkiUmWqXX4BYQ39JXmm";
@@ -811,6 +821,85 @@ export default {
       }
       const key = url.pathname.slice("/insights/snap/".length);
       return handleInsightsSnap(env, key);
+    }
+
+    // /websites — rebuilt 2026-05-29. Per-page screenshot + Microsoft Clarity
+    // overlay (sessions, dead clicks, rage clicks, lead-form submits). Replaces
+    // the broken "No snapshot yet" tile inside /dashboard's Websites tab.
+    //
+    // Companion routes:
+    //   GET /websites-data       → JSON payload (used by /dashboard's tab too)
+    //   GET /websites/snap/:key  → serves a stored snapshot PNG (R2 → KV)
+    //
+    // Daily snapshot capture is hooked into the existing 04:00 UTC cron.
+    if (req.method === "GET" && url.pathname === "/websites") {
+      const auth = await requireAuth(req, env);
+      if (!auth.ok) {
+        return new Response(null, {
+          status: 302,
+          headers: { Location: `/login?next=${encodeURIComponent("/websites")}` },
+        });
+      }
+      try {
+        const html = await renderWebsitesTab(env, url);
+        return new Response(html, {
+          status: 200,
+          headers: { "content-type": "text/html; charset=utf-8", "cache-control": "no-store" },
+        });
+      } catch (e: any) {
+        const safe = String(e?.message || e).replace(/[<>&]/g, (c) => ({ "<": "&lt;", ">": "&gt;", "&": "&amp;" }[c]!));
+        return new Response(`Websites tab failed: ${safe}`, {
+          status: 500, headers: { "content-type": "text/html; charset=utf-8" },
+        });
+      }
+    }
+
+    if (req.method === "GET" && url.pathname === "/websites-data") {
+      const auth = await requireAuth(req, env);
+      if (!auth.ok) return new Response(JSON.stringify({ error: "unauthorized" }), {
+        status: 401, headers: { "content-type": "application/json" },
+      });
+      try {
+        const data = await buildWebsitesData(env, url);
+        return new Response(JSON.stringify(data, null, 2), {
+          status: 200, headers: { "content-type": "application/json", "cache-control": "no-store" },
+        });
+      } catch (e: any) {
+        return new Response(JSON.stringify({ error: String(e?.message || e) }), {
+          status: 500, headers: { "content-type": "application/json" },
+        });
+      }
+    }
+
+    if (req.method === "GET" && url.pathname.startsWith("/websites/snap/")) {
+      const auth = await requireAuth(req, env);
+      if (!auth.ok) {
+        return new Response(null, {
+          status: 302,
+          headers: { Location: "/login" },
+        });
+      }
+      const key = url.pathname.slice("/websites/snap/".length);
+      return serveWebsitesSnapshot(env, key);
+    }
+
+    // Manual trigger for the daily snapshot routine — useful for first-merge
+    // verification and for ad-hoc re-runs when WP pages get edited mid-day.
+    if (req.method === "POST" && url.pathname === "/admin/websites/snapshot-now") {
+      const auth = await requireAuth(req, env);
+      if (!auth.ok) return new Response(JSON.stringify({ error: "unauthorized" }), {
+        status: 401, headers: { "content-type": "application/json" },
+      });
+      try {
+        const r = await runDailyWebsiteSnapshots(env);
+        return new Response(JSON.stringify({ ok: true, ...r }, null, 2), {
+          status: 200, headers: { "content-type": "application/json" },
+        });
+      } catch (e: any) {
+        return new Response(JSON.stringify({ ok: false, error: String(e?.message || e) }), {
+          status: 500, headers: { "content-type": "application/json" },
+        });
+      }
     }
 
     // Slice I (P0) — manual trigger for the qualified-stage alerter.
@@ -1618,6 +1707,15 @@ export default {
         await dailyInsightsBaseline(env);
       } catch (e) {
         console.error(`[cron-daily-baseline] failed: ${e}`);
+      }
+      // /websites tab — capture fresh desktop + mobile snapshots of every
+      // tracked page (added 2026-05-29). Independent of the older
+      // dailyInsightsBaseline so a failure on one doesn't block the other.
+      try {
+        const r = await runDailyWebsiteSnapshots(env);
+        console.log(`[cron-websites-snap] ${JSON.stringify(r)}`);
+      } catch (e) {
+        console.error(`[cron-websites-snap] failed: ${e}`);
       }
       try {
         const r = await runDailySlackSummary(env);

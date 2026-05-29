@@ -859,19 +859,27 @@ ${warmup ? `<div class="kpi-row" style="margin-top:-8px;">
 </section>
 </div><!-- /GHL -->
 
-<!-- TAB: Websites (was /insights) -->
+<!-- TAB: Websites (rebuilt 2026-05-29 — full page lives at /websites) -->
 <div class="tab-panel" data-tab="websites">
 <section class="panel">
   <h2>Websites — <em>page snapshots + Clarity</em></h2>
-  <div style="color:var(--text-dim);font-size:13px;margin-bottom:14px;">Tracked WordPress pages on atompropertygroup.com. Snapshots refresh nightly + on every WP modification. Click Heatmap / Sessions to jump to Microsoft Clarity.</div>
+  <div style="color:var(--text-dim);font-size:13px;margin-bottom:14px;">
+    Per-page snapshot (desktop + mobile) plus Microsoft Clarity stats (sessions, pageviews, dead clicks, rage clicks, scroll depth, lead-form submits) for every tracked atompropertygroup.com page. Snapshots refresh daily at 04:00 UTC; Clarity data is cached 15 min.
+  </div>
+  <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;">
+    <a class="btn primary" href="/websites" style="padding:10px 16px;text-decoration:none;border-radius:4px;background:linear-gradient(135deg,#1A2840,#2A3D5C);color:#F5C518;font-weight:600;">Open Websites dashboard ↗</a>
+    <a class="btn" href="/websites?range=today" style="padding:10px 16px;text-decoration:none;border-radius:4px;border:1px solid var(--rule);color:var(--ink);">Today</a>
+    <a class="btn" href="/websites?range=7d" style="padding:10px 16px;text-decoration:none;border-radius:4px;border:1px solid var(--rule);color:var(--ink);">7 days</a>
+    <a class="btn" href="/websites?range=30d" style="padding:10px 16px;text-decoration:none;border-radius:4px;border:1px solid var(--rule);color:var(--ink);">30 days</a>
+  </div>
   <div class="wp-grid">
     ${websites.pages.length === 0
-      ? `<div class="notice info">No tracked pages yet. Configure <code>INSIGHTS_TRACKED_PAGES</code> in index.ts.</div>`
-      : websites.pages.map((p) => `
+      ? `<div class="notice info">No tracked pages yet. Configure <code>WEBSITES_TRACKED_PAGES</code> in src/websites-tab.ts.</div>`
+      : websites.pages.slice(0, 4).map((p) => `
         <div class="wp-card">
           <div class="thumb">${p.thumb_key
             ? `<img src="/insights/snap/${encodeURIComponent(p.thumb_key)}" alt="" />`
-            : `<div class="empty">No snapshot yet</div>`}
+            : `<div class="empty">Open <a href="/websites" style="color:var(--gold-deep);">full Websites dashboard</a> for snapshots</div>`}
           </div>
           <div class="body">
             <div class="label-row">${escapeHtml(p.label)}</div>
@@ -887,6 +895,9 @@ ${warmup ? `<div class="kpi-row" style="margin-top:-8px;">
             </div>
           </div>
         </div>`).join("")}
+  </div>
+  <div class="mono" style="color:var(--text-mute);font-size:11px;margin-top:14px;">
+    Preview of the first 4 tracked pages. Full grid (16+ pages) with Clarity stats lives at <code>/websites</code>.
   </div>
 </section>
 </div><!-- /Websites -->
