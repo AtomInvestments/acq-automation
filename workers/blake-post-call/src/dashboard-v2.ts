@@ -629,6 +629,10 @@ export async function renderDashboardV2(env: {
     under_contract: 0, dead: 0,
     rate_qual: "—", rate_appt: "—", rate_offer: "—",
   }));
+  // RJ KPI panel — pull RJ's specific row from agentStub for top-level visibility.
+  // Mido directive 2026-05-28: "no KPI page for RJ from GHL on here — I want it
+  // so we can see how many dials what leads he called how many mins on phone".
+  const rjActivity = agentStub.find((a) => a.name === "RJ Fonseca");
 
   return `${dashboardHead()}
 <body>
@@ -679,6 +683,23 @@ ${warmup ? `<div class="kpi-row" style="margin-top:-8px;">
     <div class="step"><div class="name">Booked</div><div class="count">${booked}</div><div class="pct">${pct(booked, dials)}</div></div>
     <div class="step"><div class="name">Contracted</div><div class="count">${contracted}</div><div class="pct">${pct(contracted, dials)}</div></div>
   </div>
+</section>
+
+<section class="panel">
+  <h2>RJ Fonseca — <em>last 7 days</em> <span style="color:var(--text-mute);font-size:11px;font-weight:400;">GHL-backed; dial count + minutes via Calltools (auth pending)</span></h2>
+  ${rjActivity ? `
+    <div class="kpi-row" style="grid-template-columns:repeat(4,1fr);margin:0 0 14px 0;">
+      <div class="kpi"><div class="label">Opps Assigned</div><div class="value">${rjActivity.opps_assigned}</div></div>
+      <div class="kpi"><div class="label">Opps Moved (7d)</div><div class="value">${rjActivity.opps_moved}</div></div>
+      <div class="kpi"><div class="label">Outbound Msgs (7d)</div><div class="value">${rjActivity.outbound_msgs}</div></div>
+      <div class="kpi"><div class="label">Tasks Completed</div><div class="value">${rjActivity.tasks_completed}</div></div>
+    </div>
+    <div class="kpi-row" style="grid-template-columns:repeat(2,1fr);margin:0;">
+      <div class="kpi" style="opacity:0.6;"><div class="label">Dials (7d)</div><div class="value">—</div><div class="mono" style="color:var(--text-mute);font-size:10px;">Calltools auth WIP</div></div>
+      <div class="kpi" style="opacity:0.6;"><div class="label">Mins on Phone</div><div class="value">—</div><div class="mono" style="color:var(--text-mute);font-size:10px;">Calltools auth WIP</div></div>
+    </div>
+    ${rjActivity.ai_review ? `<div style="margin-top:12px;padding:12px;background:rgba(245,197,24,0.08);border-left:3px solid var(--gold);border-radius:4px;color:var(--ink);font-size:13px;"><strong style="font-size:11px;text-transform:uppercase;letter-spacing:0.1em;color:var(--gold-deep);">Latest AI review</strong><br>${escapeHtml(rjActivity.ai_review)}</div>` : `<div style="margin-top:12px;color:var(--text-mute);font-size:12px;font-style:italic;">No AI review yet. Run <code>POST /admin/agents/review?user_id=EvxJmnll1hIJtzpW14BE</code>.</div>`}
+  ` : `<div style="color:var(--text-mute);font-style:italic;font-size:13px;">RJ's activity not yet aggregated. Next daily cron tick (04:00 UTC) populates this. To force: <code>POST /admin/agents/review?user_id=EvxJmnll1hIJtzpW14BE</code>.</div>`}
 </section>
 
 <section class="panel">
@@ -760,6 +781,9 @@ ${warmup ? `<div class="kpi-row" style="margin-top:-8px;">
         <option value="15">≥ 15s</option>
         <option value="60">≥ 1 min</option>
       </select>
+    </div>
+    <div class="group"><label>Search</label>
+      <input id="f-search" type="text" placeholder="Name, phone, address…" style="background:rgba(10,31,68,0.04);border:1px solid var(--rule);border-radius:4px;padding:5px 8px;font-family:inherit;font-size:12px;color:var(--ink);min-width:160px;" />
     </div>
     <label class="toggle"><input type="checkbox" id="f-unique" /> Unique contacts only</label>
     <span id="f-count" class="mono" style="color:var(--text-mute);margin-left:auto;font-size:11px;"></span>
@@ -1036,6 +1060,7 @@ ${warmup ? `<div class="kpi-row" style="margin-top:-8px;">
   var fConnected = document.getElementById('f-connected');
   var fMinDur = document.getElementById('f-mindur');
   var fUnique = document.getElementById('f-unique');
+  var fSearch = document.getElementById('f-search');
   var fCount = document.getElementById('f-count');
 
   function rangeCutoff(val) {
@@ -1056,6 +1081,7 @@ ${warmup ? `<div class="kpi-row" style="margin-top:-8px;">
     var rows = body.querySelectorAll('tr');
     var range = rangeCutoff(fRange.value);
     var minDur = Number(fMinDur.value || 0);
+    var searchTerm = (fSearch && fSearch.value || '').trim().toLowerCase();
     var n = 0;
     rows.forEach(function(r){
       var ok = true;
@@ -1068,6 +1094,10 @@ ${warmup ? `<div class="kpi-row" style="margin-top:-8px;">
         if (seen[r.dataset.phone]) ok = false;
         else seen[r.dataset.phone] = 1;
       }
+      if (searchTerm) {
+        var hay = (r.textContent || '').toLowerCase();
+        if (hay.indexOf(searchTerm) < 0) ok = false;
+      }
       r.style.display = ok ? '' : 'none';
       if (ok) n++;
     });
@@ -1076,6 +1106,7 @@ ${warmup ? `<div class="kpi-row" style="margin-top:-8px;">
   [fRange, fOut, fConnected, fMinDur, fUnique].forEach(function(el){
     if (el) el.addEventListener('change', filter);
   });
+  if (fSearch) fSearch.addEventListener('input', filter);
 
   // Auto-refresh the whole dashboard every 60s so the data is never more
   // than a minute stale. Only reloads when the user isn't actively
