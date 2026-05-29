@@ -58,6 +58,7 @@ export interface Env {
   WP_AUTH_HEADER: string;           // Pre-base64 'Basic <token>' header for WP REST API (used by /insights cron + landing-page builder). Rotated 2026-05-25 after a leaked-secret incident.
   ATTOM_API_KEY: string;            // ATTOM Data Property API key — listing-pipeline ARV + Blake pre-call enrichment. Trial key, expires 2026-06-23.
   VAULT_SYNC_TOKEN: string;         // Pillar C: bearer token gating /vault/queue + /vault/ack for the local vault-sync daemon.
+  GHL_WEBHOOK_SECRET?: string;      // Real-time GHL → Worker webhook auth (2026-05-29). Shared secret in URL ?token= or `Authorization: Bearer` header. Generated locally + stored in APG-Vault/_internal/credentials.md.
   GOOGLE_PLACES_API_KEY?: string;   // Workstream 2: server-side proxy for Google Places autocomplete + details. Browser hits the Worker, never Google directly.
   CALLTOOLS_API_KEY?: string;       // Calltools API for per-number cost + usage on Costs tab. Provided 2026-05-27.
   CLARITY_API_TOKEN?: string;       // Microsoft Clarity Data Export API token — powers /websites Clarity overlay. Set as Worker secret 2026-05-29.
@@ -1740,6 +1741,16 @@ export default {
     }
     if (req.method === "GET" && url.pathname === "/places/details") {
       return handlePlacesDetails(req, env);
+    }
+
+    // Real-time GHL webhook (2026-05-29). Kills the up-to-15-min cache lag
+    // for manual GHL edits (UI tag adds, stage moves, inbound SMS replies).
+    // Mido configures the webhook in GHL → Settings → Webhooks; events
+    // POST here with shared-secret auth (?token=... or Authorization: Bearer).
+    // Debounced to max 1 dashboard refresh per 10s via KV to handle bulk
+    // import bursts without blowing CF subrequest budget.
+    if (req.method === "POST" && url.pathname === "/ghl-webhook") {
+      return handleGhlWebhook(req, env, ctx);
     }
 
     return new Response("Not Found", { status: 404 });
@@ -3809,6 +3820,179 @@ async function handleLandingLead(req: Request, env: Env): Promise<Response> {
   return formRedirect("ok");
 }
 
+// ---- /ghl-webhook: real-time GHL event ingress -----------------------------
+//
+// Why this exists: the dashboard cache refreshes every 15 min on cron, so a
+// manual GHL UI action (tag added, stage moved, inbound SMS reply) doesn't
+// surface for up to 15 min. Wiring GHL's native webhooks here makes those
+// events propagate in seconds.
+//
+// Auth: GHL's Workflow Builder doesn't natively HMAC-sign webhooks, so we
+// use a shared-secret model. The secret is generated locally, set as a CF
+// Worker secret (GHL_WEBHOOK_SECRET), and Mido pastes it into the GHL
+// webhook config as either a Header (`Authorization: Bearer <secret>`) or
+// a query-string param (`?token=<secret>`). Both are accepted here and
+// compared in constant time.
+//
+// Debounce: the bursty case (bulk import drops 500 ContactCreate events in
+// 10 seconds) would otherwise trigger 500 dashboard cache rebuilds and burn
+// our CF subrequest budget. KV-backed last-refresh-at gates the cache
+// rebuild to at most once per 10 seconds; tag reconciliation still runs
+// every event (it touches a single contact and is cheap).
+//
+// Events handled (case-insensitive, GHL sends a `type` field):
+//   ContactCreate, ContactUpdate, ContactTagUpdate, TagAdded,
+//   OpportunityCreate, OpportunityStatusUpdate, OpportunityStageChange,
+//   InboundMessage, ConversationMessageInbound (alias)
+// Anything else is logged + 200ed so GHL doesn't retry.
+
+const GHL_REFRESH_DEBOUNCE_MS = 10_000;
+const GHL_REFRESH_DEBOUNCE_KV  = "dashboard:last_refresh_at";
+
+async function handleGhlWebhook(req: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
+  // 1. Auth. Accept both `?token=` (easy for GHL Workflow Builder to set)
+  //    and `Authorization: Bearer` header (cleaner). Constant-time compare.
+  const url = new URL(req.url);
+  const expected = env.GHL_WEBHOOK_SECRET || "";
+  if (!expected) {
+    console.error("[ghl-webhook] GHL_WEBHOOK_SECRET not configured; rejecting");
+    return new Response(JSON.stringify({ ok: false, error: "secret_not_configured" }), {
+      status: 503,
+      headers: { "content-type": "application/json" },
+    });
+  }
+  const authz = req.headers.get("authorization") || "";
+  const bearer = authz.startsWith("Bearer ") ? authz.slice(7) : "";
+  const queryTok = url.searchParams.get("token") || "";
+  const provided = bearer || queryTok;
+  if (!provided || !constantTimeEqual(provided, expected)) {
+    console.warn("[ghl-webhook] auth failed");
+    return new Response(JSON.stringify({ ok: false, error: "unauthorized" }), {
+      status: 401,
+      headers: { "content-type": "application/json" },
+    });
+  }
+
+  // 2. Parse body. GHL sends JSON; be defensive on shape — different event
+  //    types ship slightly different envelopes.
+  let body: any = {};
+  try {
+    body = await req.json();
+  } catch (e) {
+    console.warn(`[ghl-webhook] invalid_json: ${e}`);
+    return new Response(JSON.stringify({ ok: false, error: "invalid_json" }), {
+      status: 400,
+      headers: { "content-type": "application/json" },
+    });
+  }
+
+  // GHL puts the event type in `type` (most events) or `event` (some
+  // legacy ones). Normalize to lower-snake for matching.
+  const rawType = String(body.type || body.event || body.eventType || "").toLowerCase();
+  // Contact ID may sit at several spots depending on event shape:
+  const contactId: string =
+    body.contact_id ||
+    body.contactId ||
+    body?.contact?.id ||
+    body?.data?.contact_id ||
+    body?.data?.contactId ||
+    "";
+
+  console.log(`[ghl-webhook] type=${rawType} contact=${contactId}`);
+
+  // 3. Dispatch all the per-event work into waitUntil so we can return 200
+  //    immediately. GHL retries on non-2xx and Mido doesn't want a tag
+  //    reconciliation latency to delay the GHL UI.
+  ctx.waitUntil(processGhlWebhookEvent(env, rawType, contactId, body));
+
+  return new Response(JSON.stringify({ ok: true, type: rawType }), {
+    status: 200,
+    headers: { "content-type": "application/json" },
+  });
+}
+
+async function processGhlWebhookEvent(
+  env: Env,
+  rawType: string,
+  contactId: string,
+  body: any,
+): Promise<void> {
+  // Tag-add / contact-update / opp-stage-change → reconcile the contact's
+  // ACQ opp stage against its current tags. Idempotent + cheap.
+  const isTagOrContactEvent =
+    rawType.includes("tag") ||
+    rawType.includes("contactupdate") ||
+    rawType === "contactcreate" ||
+    rawType === "contact_update" ||
+    rawType === "contact_create";
+  const isOppStageEvent =
+    rawType.includes("opportunitystage") ||
+    rawType.includes("opportunity_stage") ||
+    rawType.includes("opportunitystatus") ||
+    rawType.includes("opportunity_status") ||
+    rawType.includes("opportunityupdate") ||
+    rawType.includes("opportunity_update");
+  const isInboundMessage =
+    rawType.includes("inboundmessage") ||
+    rawType.includes("inbound_message") ||
+    rawType.includes("conversationmessageinbound");
+
+  if (isTagOrContactEvent && contactId) {
+    try {
+      const r = await reconcileContactStage(env.BLAKE_GHL_PIT, contactId, env, "ghl_webhook");
+      console.log(`[ghl-webhook] reconcile contact=${contactId} ${JSON.stringify(r)}`);
+    } catch (e) {
+      console.error(`[ghl-webhook] reconcile threw: ${e}`);
+    }
+  }
+
+  if (isOppStageEvent) {
+    // Stage moves in GHL UI shouldn't need reconciliation (the user just
+    // set the stage they want), but they MUST refresh the dashboard so
+    // the funnel counts update in seconds, not minutes.
+    console.log(`[ghl-webhook] opp stage event type=${rawType}`);
+  }
+
+  if (isInboundMessage) {
+    // SMS reply / call-back — same refresh-only signal. Future: emit a
+    // vault event so the daemon writes the message into APG-Vault in
+    // real-time instead of waiting for the 15-min GHL poller.
+    console.log(`[ghl-webhook] inbound message event type=${rawType}`);
+  }
+
+  // Debounced dashboard refresh. Every event triggers a refresh attempt;
+  // KV gate prevents > 1 refresh per GHL_REFRESH_DEBOUNCE_MS.
+  await maybeDebouncedDashboardRefresh(env);
+}
+
+async function maybeDebouncedDashboardRefresh(env: Env): Promise<void> {
+  const now = Date.now();
+  const lastStr = await env.DIAL_STATE.get(GHL_REFRESH_DEBOUNCE_KV);
+  const last = lastStr ? Number(lastStr) : 0;
+  if (Number.isFinite(last) && now - last < GHL_REFRESH_DEBOUNCE_MS) {
+    console.log(`[ghl-webhook] debounce skip (${now - last}ms since last refresh)`);
+    return;
+  }
+  // Set the gate BEFORE refreshing — protects against a slow rebuild
+  // letting a second concurrent event through.
+  await env.DIAL_STATE.put(GHL_REFRESH_DEBOUNCE_KV, String(now), {
+    expirationTtl: 3600, // 1h — KV doesn't care, we just don't need this forever
+  });
+  try {
+    await refreshDashboardCache(env);
+    console.log("[ghl-webhook] dashboard refreshed");
+  } catch (e) {
+    console.error(`[ghl-webhook] dashboard refresh failed: ${e}`);
+  }
+}
+
+function constantTimeEqual(a: string, b: string): boolean {
+  if (a.length !== b.length) return false;
+  let diff = 0;
+  for (let i = 0; i < a.length; i++) diff |= a.charCodeAt(i) ^ b.charCodeAt(i);
+  return diff === 0;
+}
+
 // ---- /dashboard-data: live aggregated JSON for blake.html -----------------
 
 async function handleDashboardData(env: Env): Promise<Response> {
@@ -4790,45 +4974,46 @@ async function handleWebhook(req: Request, env: Env, ctx: ExecutionContext): Pro
     );
   }
 
-  // 6. Write a backup note. Mark explicitly as a post-call write so the
-  //    dashboard parsers know which note is canonical when there are two.
-  const noteBody = buildBackupNote({
-    conversationId,
-    callerPhone,
-    callDurationS,
-    startedAt,
-    callSummary,
-    transcript,
-  });
-
-  // Compose recording URL — proxy through this Worker so GHL team can play
+  // 6. Compose recording URL — proxy through this Worker so GHL team can play
   // the audio without ElevenLabs auth.
   const recordingUrl = conversationId && conversationId !== "unknown"
     ? `https://acq-automation.mithchell.workers.dev/audio/${conversationId}`
     : "";
-  // Embed the recording URL in the note body too — visible in the GHL note
-  // timeline without having to look at the custom field.
-  const noteWithRecording = recordingUrl
-    ? `${noteBody}\n\n🎧 Recording: ${recordingUrl}`
-    : noteBody;
+
+  // Note write deferred — happens inside the extraction promise below so the
+  // structured sections (property_overview, renovation_details, ...) can be
+  // rendered in the note. If extraction fails or ANTHROPIC_API_KEY is
+  // missing, the note is still written with the bare header + recording
+  // pointer (graceful fallback inside buildBackupNote).
+  const writeNote = async (extraction: ExtractionResult | null) => {
+    const noteBody = buildBackupNote({
+      conversationId,
+      callerPhone,
+      callDurationS,
+      startedAt,
+      callSummary,
+      transcript,
+      extraction,
+      recordingUrl,
+    });
+    const res = await addNote(env.BLAKE_GHL_PIT, contactId!, noteBody);
+    if (!res.ok) {
+      console.error(`[blake-post-call] note write failed: ${res.status} ${res.body}`);
+    } else {
+      console.log(`[blake-post-call] rich note written for contact ${contactId}`);
+    }
+  };
 
   // Don't block the webhook on the writes — fire-and-forget but log failures.
-  // Three side effects:
-  //   1. Backup note (with embedded recording URL)
-  //   2. 'blake-called' tag (so team can build smart lists by tag)
+  // Side effects:
+  //   1. 'blake-called' tag (so team can build smart lists by tag)
+  //   2. A/B voice tag
   //   3. 'Blake Call Recording' custom field set to the proxy URL
+  //   4. Structured extraction + rich GHL note + opp/stage moves + referrals
+  //   5. Dashboard cache refresh
+  //   6. Vault emit (Pillar C)
   ctx.waitUntil(
     Promise.all([
-      addNote(env.BLAKE_GHL_PIT, contactId, noteWithRecording).then(
-        (res) => {
-          if (!res.ok) {
-            console.error(`[blake-post-call] note write failed: ${res.status} ${res.body}`);
-          } else {
-            console.log(`[blake-post-call] backup note written for contact ${contactId}`);
-          }
-        },
-        (err) => console.error(`[blake-post-call] note write threw: ${err}`)
-      ),
       addTag(env.BLAKE_GHL_PIT, contactId, "blake-called").then(
         (res) => {
           if (!res.ok) {
@@ -4884,48 +5069,68 @@ async function handleWebhook(req: Request, env: Env, ctx: ExecutionContext): Pro
             (err) => console.error(`[blake-post-call] recording field write threw: ${err}`)
           )
         : Promise.resolve(),
-      // 4. STRUCTURED EXTRACTION — Claude reads the transcript and we
-      //    deterministically write address / lead-temp / RJ-callback-task /
-      //    stage-move / DND back to GHL. This is the safety net for when
-      //    Blake's LLM doesn't fire his in-call tools (which is most of the
-      //    time, per the 2026-05-21 calls).
-      env.ANTHROPIC_API_KEY
-        ? (async () => {
-            const extraction = await extractStructuredFromTranscript(
+      // 4. STRUCTURED EXTRACTION + rich note write — Claude reads the
+      //    transcript and we deterministically write address / lead-temp /
+      //    RJ-callback-task / stage-move / DND back to GHL. The rich GHL
+      //    note (with property_overview / renovation_details / next_steps
+      //    sections) is composed from the same extraction object, so the
+      //    note write is now nested inside this promise instead of running
+      //    standalone above.
+      (async () => {
+        let extraction: ExtractionResult | null = null;
+        if (env.ANTHROPIC_API_KEY) {
+          try {
+            extraction = await extractStructuredFromTranscript(
               env.ANTHROPIC_API_KEY,
               transcript,
               "", // contact state — unknown to webhook payload; could enrich via GHL re-lookup
               startedAt
             );
-            if (!extraction) {
-              console.warn(`[extract] no extraction returned for ${contactId}`);
-              return;
-            }
-            const log = await applyExtractionToGhl(env.BLAKE_GHL_PIT, contactId, extraction, env);
-            console.log(
-              `[extract] contact=${contactId} temp=${extraction.lead_temp} ` +
-              `callback=${extraction.callback_promised} mentioned=${(extraction.mentioned_contacts || []).length} ` +
-              `writes=[${log.join(", ")}]`
-            );
+          } catch (e) {
+            console.error(`[extract] failed: ${e}`);
+          }
+          if (!extraction) {
+            console.warn(`[extract] no extraction returned for ${contactId}`);
+          }
+        } else {
+          console.log("[extract] ANTHROPIC_API_KEY not bound; skipping structured extraction");
+        }
 
-            // Workstream 3 — process mentioned contacts. Needs the original
-            // contact's display name to thread the referral notes/tasks.
-            const mentioned = Array.isArray(extraction.mentioned_contacts) ? extraction.mentioned_contacts : [];
-            if (mentioned.length > 0) {
-              try {
-                const origDetail = await getContactDetail(env.BLAKE_GHL_PIT, contactId);
-                const oc = (origDetail?.contact ?? origDetail) || {};
-                const origFullName = `${(oc.firstName || "").trim()} ${(oc.lastName || "").trim()}`.trim() || callerPhone || contactId;
-                const referralLog = await applyMentionedContactsToGhl(
-                  env.BLAKE_GHL_PIT, contactId, origFullName, extraction
-                );
-                console.log(`[referrals] contact=${contactId} n=${mentioned.length} writes=[${referralLog.join(", ")}]`);
-              } catch (e) {
-                console.error(`[referrals] failed: ${e}`);
-              }
-            }
-          })().catch((e) => console.error(`[extract] failed: ${e}`))
-        : Promise.resolve(console.log("[extract] ANTHROPIC_API_KEY not bound; skipping structured extraction")),
+        // Always write the note (even when extraction is null) — header +
+        // recording + transcript pointer still give the team something to
+        // grab. buildBackupNote handles the null case gracefully.
+        try {
+          await writeNote(extraction);
+        } catch (e) {
+          console.error(`[blake-post-call] note write threw: ${e}`);
+        }
+
+        if (!extraction) return;
+
+        const log = await applyExtractionToGhl(env.BLAKE_GHL_PIT, contactId!, extraction, env);
+        console.log(
+          `[extract] contact=${contactId} temp=${extraction.lead_temp} ` +
+          `callback=${extraction.callback_promised} mentioned=${(extraction.mentioned_contacts || []).length} ` +
+          `writes=[${log.join(", ")}]`
+        );
+
+        // Workstream 3 — process mentioned contacts. Needs the original
+        // contact's display name to thread the referral notes/tasks.
+        const mentioned = Array.isArray(extraction.mentioned_contacts) ? extraction.mentioned_contacts : [];
+        if (mentioned.length > 0) {
+          try {
+            const origDetail = await getContactDetail(env.BLAKE_GHL_PIT, contactId!);
+            const oc = (origDetail?.contact ?? origDetail) || {};
+            const origFullName = `${(oc.firstName || "").trim()} ${(oc.lastName || "").trim()}`.trim() || callerPhone || contactId!;
+            const referralLog = await applyMentionedContactsToGhl(
+              env.BLAKE_GHL_PIT, contactId!, origFullName, extraction
+            );
+            console.log(`[referrals] contact=${contactId} n=${mentioned.length} writes=[${referralLog.join(", ")}]`);
+          } catch (e) {
+            console.error(`[referrals] failed: ${e}`);
+          }
+        }
+      })().catch((e) => console.error(`[extract] outer failed: ${e}`)),
       // 5. Refresh the live dashboard cache so the SPA at /blake.html sees
       //    this call within ~10 sec (next poll). Without this, the dashboard
       //    only refreshes on the 15-min cron tick.
@@ -5181,6 +5386,35 @@ interface MentionedContact {
   context: string;             // one-line "why they came up", quote-style if possible
 }
 
+// Rich structured note add-ons. All optional — Claude returns null for any
+// section the seller didn't actually speak to, and the GHL note builder
+// skips empty sections. Schema additions are backward-compatible: older
+// in-flight extractions without these keys still work.
+interface PropertyOverviewExtract {
+  location: string | null;          // city / area shorthand if not in full address (e.g. "Hudson")
+  size_sqft: string | null;         // approx, free-form ("~864 sq ft")
+  condition_bullets: string[];      // condition signals: "Fully renovated", "Currently vacant", ...
+}
+interface RenovationDetailsExtract {
+  summary: string | null;           // overall renovation status ("Already updated with new finishes")
+  basement_bullets: string[];       // basement-specific notes: "Large space", "Bathroom being added"
+  other_bullets: string[];          // any other room/area renovation notes
+}
+interface RentalInsightExtract {
+  previous_rent: string | null;     // "$2,000/month" — operational/market figure, allowed
+  current_status: string | null;    // "vacant", "rented", "between tenants"
+  layout_notes: string | null;      // "Multiple rooms + (soon) 2 bathrooms"
+}
+interface SellerExpectationsExtract {
+  target_price: string | null;      // operational/market figure, allowed
+  negotiable: boolean | null;
+  conditions: string[];             // "Not open to lowball offers", "Wants to finish basement first"
+}
+interface OpportunityIdentified {
+  service: string;                  // "property management", "construction", ...
+  detail: string;                   // 1-line context
+}
+
 interface ExtractionResult {
   address1: string | null;
   city: string | null;
@@ -5202,6 +5436,18 @@ interface ExtractionResult {
   rating_1_to_10: number | null;
   one_line_summary: string;
   mentioned_contacts: MentionedContact[];   // Workstream 3 — referrals surfaced by Blake mid-call
+
+  // ---- Rich structured note fields (2026-05-29) -- all optional, all
+  // skipped in the GHL note when null/empty so a thin call doesn't render
+  // a dozen empty headers.
+  property_overview?: PropertyOverviewExtract | null;
+  renovation_details?: RenovationDetailsExtract | null;
+  rental_insight?: RentalInsightExtract | null;
+  seller_expectations?: SellerExpectationsExtract | null;
+  seller_motivation_bullets?: string[];   // expanded motivation: ["Bad experience with tenants", ...]
+  contact_info_notes?: string[];          // "Old email on file is not valid", "Will send updated email"
+  opportunities_identified?: OpportunityIdentified[];
+  next_steps?: string[];                  // ["Wait for updated email", "Send offer", ...]
 }
 
 async function extractStructuredFromTranscript(
@@ -5234,7 +5480,18 @@ Rules:
     relationship — short label ("brother", "tenant", "agent", "executor", "co-owner", "POA")
     context      — one-sentence quote-style "why they came up", e.g. "Owner said his brother Mike handles the property and has the keys"
   Only include people who could be a NEW lead or callable contact. Do NOT include third-party services ("the title company"), dead/deceased relatives, or people who are clearly off-limits ("don't call my wife").
-- DO NOT invent data. Conservative wins.`;
+
+Rich structured fields (all OPTIONAL — return null or [] if the seller never mentioned anything for that section; do not invent):
+- property_overview: condition signals (renovation status, vacant/rented, sq ft, area shorthand the seller used)
+- renovation_details: any active renovation work, basement-specific notes, room additions
+- rental_insight: previous rent amount, current tenant status, layout details ("3 bedrooms + 2 baths once basement is done")
+- seller_expectations: target price, whether negotiable, hard conditions ("Not open to lowball offers"), sequencing ("Wants to finish renovations first")
+- seller_motivation_bullets: expanded motivation reasons beyond the one-liner ("Bad tenant experience", "Owns other rentals but wants this one off the books")
+- contact_info_notes: anything about how to reach the seller ("Old email invalid — will send new one", "Use mobile, not landline")
+- opportunities_identified: cross-sell signals — if the seller showed interest in property management, construction help, or wants a contractor connected, capture each as {service, detail}
+- next_steps: action items Blake or the seller agreed to before hanging up ("Send offer", "Wait for updated email", "Free walkthrough scheduled")
+
+- DO NOT invent data. Conservative wins. When in doubt, return null or [].`;
 
   const userPrompt = `Conversation transcript:
 
@@ -5265,10 +5522,37 @@ Schema:
   "one_line_summary": string,
   "mentioned_contacts": [
     { "name": string, "phone": string|null, "relationship": string, "context": string }
-  ]
+  ],
+  "property_overview": {
+    "location": string|null,
+    "size_sqft": string|null,
+    "condition_bullets": [string]
+  }|null,
+  "renovation_details": {
+    "summary": string|null,
+    "basement_bullets": [string],
+    "other_bullets": [string]
+  }|null,
+  "rental_insight": {
+    "previous_rent": string|null,
+    "current_status": string|null,
+    "layout_notes": string|null
+  }|null,
+  "seller_expectations": {
+    "target_price": string|null,
+    "negotiable": boolean|null,
+    "conditions": [string]
+  }|null,
+  "seller_motivation_bullets": [string],
+  "contact_info_notes": [string],
+  "opportunities_identified": [
+    { "service": string, "detail": string }
+  ],
+  "next_steps": [string]
 }
 
-mentioned_contacts MUST be an array (use [] when nothing was mentioned). Do NOT include the seller themselves or Blake.`;
+mentioned_contacts MUST be an array (use [] when nothing was mentioned). Do NOT include the seller themselves or Blake.
+All rich structured object fields (property_overview, renovation_details, rental_insight, seller_expectations) may be null when the seller didn't speak to them. Their string-array sub-fields should be [] when nothing applies. Same for the top-level array fields (seller_motivation_bullets, contact_info_notes, opportunities_identified, next_steps).`;
 
   const res = await fetch("https://api.anthropic.com/v1/messages", {
     method: "POST",
@@ -5279,10 +5563,12 @@ mentioned_contacts MUST be an array (use [] when nothing was mentioned). Do NOT 
     },
     body: JSON.stringify({
       model: "claude-sonnet-4-6",
-      // Bumped from 1500 → 2200 to leave headroom for the mentioned_contacts
-      // array (Workstream 3). Typical extractions clear in ~600 tokens; the
-      // extra cap covers cases where Blake collected 3-4 referrals.
-      max_tokens: 2200,
+      // 1500 → 2200 (Workstream 3 — mentioned_contacts) → 3500 (2026-05-29 —
+      // rich structured note fields: property_overview, renovation_details,
+      // rental_insight, seller_expectations, motivation/next_steps bullets,
+      // opportunities_identified). Typical extractions still clear in ~600
+      // tokens; the cap protects long rich-detail calls.
+      max_tokens: 3500,
       system: systemPrompt,
       messages: [{ role: "user", content: userPrompt }],
     }),
@@ -5306,6 +5592,99 @@ mentioned_contacts MUST be an array (use [] when nothing was mentioned). Do NOT 
     console.error(`[extract] could not parse Claude output: ${e}; raw: ${text.slice(0, 500)}`);
     return null;
   }
+}
+
+// Shared mapping: lead_temp string OR contact tag string → ACQ pipeline
+// stage ID. Used both by Blake's post-call extraction path (lead_temp from
+// Claude) and by the real-time GHL webhook (TagAdded reconciliation).
+// Returns null when the tag/temp isn't one we route on (so the caller can
+// noop without touching the opp).
+function stageForLeadSignal(signal: string | null | undefined): string | null {
+  if (!signal) return null;
+  const s = String(signal).toLowerCase().trim();
+  // Accept both Claude's lead_temp values and the equivalent contact tags.
+  if (s === "hot"     || s === "hot-lead")        return STAGE_LAO;
+  if (s === "warm"    || s === "warm-lead")       return STAGE_QUALIFIED;
+  if (s === "nurture" || s === "nurture-lead")    return STAGE_FU_1_5MO;
+  if (s === "cold"    || s === "cold-lead")       return STAGE_UNQUALIFIED;
+  if (s === "dnc"     || s === "dnd-opt-out")     return STAGE_DEAD;
+  if (s === "wrong_number" || s === "wrong-number") return STAGE_DEAD;
+  return null;
+}
+
+// Walk a contact's tags and pick the highest-signal stage they imply. Tag
+// precedence mirrors classifyOutcomeForDashboard: hot > warm > nurture >
+// cold; DND/wrong-number override everything else (they go to DEAD).
+function stageFromContactTags(tags: string[]): string | null {
+  const set = new Set(tags.map((t) => String(t || "").toLowerCase()));
+  if (set.has("wrong-number")) return STAGE_DEAD;
+  if (set.has("dnd-opt-out"))  return STAGE_DEAD;
+  if (set.has("hot-lead"))     return STAGE_LAO;
+  if (set.has("warm-lead"))    return STAGE_QUALIFIED;
+  if (set.has("nurture-lead")) return STAGE_FU_1_5MO;
+  if (set.has("cold-lead"))    return STAGE_UNQUALIFIED;
+  return null;
+}
+
+// Reconcile a contact's ACQ opp stage against the tags currently on the
+// contact. Called from:
+//   - applyExtractionToGhl (after Claude extraction sets a lead_temp tag)
+//   - the GHL webhook handler (TagAdded / ContactUpdate events fired in
+//     real-time when someone manually tags in the UI)
+//
+// Idempotent: if no opp exists, no tag implies a stage, or the opp is
+// already at the right stage, returns a noop result with reason="noop".
+async function reconcileContactStage(
+  pit: string,
+  contactId: string,
+  env: Env | undefined,
+  source: "blake_call" | "ghl_webhook" | "manual",
+): Promise<{ moved: boolean; reason: string; from?: string; to?: string; oppId?: string }> {
+  // 1. Look up the contact to get tags
+  const contactDetail = await getContactDetail(pit, contactId);
+  const c = (contactDetail?.contact ?? contactDetail) || {};
+  const tags: string[] = Array.isArray(c.tags) ? c.tags : [];
+  const targetStage = stageFromContactTags(tags);
+  if (!targetStage) return { moved: false, reason: "no_routing_tag" };
+
+  // 2. Find the ACQ opp (one per contact in this pipeline). No opp =
+  //    nothing to reconcile — Blake extraction creates the opp; the webhook
+  //    path doesn't (avoids surprise opps when someone manually tags an
+  //    out-of-pipeline contact).
+  const existing = await findAcqOpportunityForContact(pit, contactId);
+  if (!existing) return { moved: false, reason: "no_acq_opp" };
+  if (existing.pipelineStageId === targetStage) {
+    return { moved: false, reason: "already_at_stage", oppId: existing.id, to: targetStage };
+  }
+
+  // 3. Move the stage
+  const r = await moveOpportunityStage(pit, existing.id, targetStage);
+  if (!r.ok) {
+    console.warn(`[reconcile] stage move failed contact=${contactId} ${r.status} ${r.body.slice(0, 100)}`);
+    return { moved: false, reason: `move_failed_${r.status}`, oppId: existing.id, from: existing.pipelineStageId, to: targetStage };
+  }
+
+  // 4. Funnel event so the dashboard counts the transition
+  if (env) {
+    const evType = stageToFunnelEvent(targetStage);
+    if (evType) {
+      try {
+        await recordFunnelEvent(env, {
+          type: evType,
+          opp_id: existing.id,
+          contact_id: contactId,
+          stage_from: existing.pipelineStageId,
+          stage_to: targetStage,
+          source,
+          metadata: { reconciled: true, tags },
+        });
+      } catch (e) {
+        console.warn(`[reconcile] funnel emit threw: ${e}`);
+      }
+    }
+  }
+
+  return { moved: true, reason: "moved", oppId: existing.id, from: existing.pipelineStageId, to: targetStage };
 }
 
 // Apply extracted data → GHL writes. Returns an array of brief success/failure
@@ -5697,6 +6076,19 @@ async function handleAudioProxy(convId: string, env: Env): Promise<Response> {
   });
 }
 
+// Compact rich GHL note (2026-05-29 redesign). Goal: replace the
+// transcript-dump with a structured, Adam-readable summary that mirrors
+// the format Mido screenshotted from another CRM. Each section is
+// dynamic — only rendered when the extraction has data for it, so a
+// thin call doesn't produce a wall of empty headers.
+//
+// The raw transcript is NOT included here — it already lives in
+// `APG-Vault/80 Raw/Calls/<conv>.md` via the daemon. We only include a
+// pointer at the bottom.
+//
+// GHL renders standard markdown headings and bullets in note bodies as
+// of 2026-05; if that ever regresses, the 2-space-indented bullets
+// degrade gracefully to readable plain text.
 function buildBackupNote(args: {
   conversationId: string;
   callerPhone: string;
@@ -5704,29 +6096,199 @@ function buildBackupNote(args: {
   startedAt: string;
   callSummary: string;
   transcript: any[];
+  extraction?: ExtractionResult | null;
+  recordingUrl?: string;
 }): string {
-  const transcriptText = args.transcript
-    .slice(0, 50) // GHL notes have a length cap; truncate generously
-    .map((t: any) => {
-      const role = t?.role || t?.speaker || "?";
-      const content = t?.content || t?.text || t?.message || "";
-      return `${role}: ${content}`;
-    })
-    .join("\n");
+  const lines: string[] = [];
 
-  return [
-    `APG Lead Summary (Blake post-call · ${args.startedAt})`,
-    ``,
-    `Source: ElevenLabs webhook (backup record; primary record may also exist if in-call tools fired)`,
-    `Conversation ID: ${args.conversationId}`,
-    `Caller: ${args.callerPhone}`,
-    `Duration: ${args.callDurationS}s`,
-    ``,
-    `Summary: ${args.callSummary || "(no auto-summary provided)"}`,
-    ``,
-    `--- Transcript (first 50 turns) ---`,
-    transcriptText || "(transcript was empty in the payload)",
-  ].join("\n");
+  // ---- Header line: "Blake call — 2026-05-28 11:51 ET · 3m 17s · WARM"
+  const startDate = new Date(args.startedAt);
+  const isoDate = isFinite(startDate.getTime()) ? formatEasternStamp(startDate) : args.startedAt;
+  const dur = formatDuration(args.callDurationS);
+  const tempLabel = (args.extraction?.lead_temp || "").toUpperCase();
+  const headerBits = [`Blake call — ${isoDate}`, dur];
+  if (tempLabel) headerBits.push(tempLabel);
+  lines.push(headerBits.join(" · "));
+  lines.push("");
+
+  const ex = args.extraction;
+
+  // Always render the one-liner if present — gives Adam a 1-line scan
+  // even when the structured sections are sparse.
+  if (ex?.one_line_summary) {
+    lines.push(`**Summary:** ${ex.one_line_summary}`);
+    lines.push("");
+  } else if (args.callSummary) {
+    lines.push(`**Summary:** ${args.callSummary}`);
+    lines.push("");
+  }
+
+  // ---- Property Overview ---------------------------------------------
+  const po = ex?.property_overview;
+  const poLocation = po?.location || ex?.city || ex?.address1 || null;
+  const poSize = po?.size_sqft || ex?.sqft || null;
+  const poCondBullets = (po?.condition_bullets || []).filter(Boolean);
+  if (poLocation || poSize || poCondBullets.length) {
+    lines.push("## Property Overview");
+    if (poLocation) lines.push(`- **Location:** ${poLocation}`);
+    if (poSize) lines.push(`- **Size:** ${poSize}`);
+    if (poCondBullets.length) {
+      lines.push(`- **Condition:**`);
+      for (const b of poCondBullets) lines.push(`  - ${b}`);
+    } else if (ex?.condition_notes) {
+      lines.push(`- **Condition:** ${ex.condition_notes}`);
+    }
+    lines.push("");
+  } else if (ex?.condition_notes) {
+    // Property overview empty but we still have a free-form condition note.
+    lines.push("## Property Overview");
+    lines.push(`- **Condition:** ${ex.condition_notes}`);
+    lines.push("");
+  }
+
+  // ---- Renovation Details --------------------------------------------
+  const rd = ex?.renovation_details;
+  const rdBase = (rd?.basement_bullets || []).filter(Boolean);
+  const rdOther = (rd?.other_bullets || []).filter(Boolean);
+  if (rd?.summary || rdBase.length || rdOther.length) {
+    lines.push("## Renovation Details");
+    if (rd?.summary) lines.push(`- ${rd.summary}`);
+    if (rdBase.length) {
+      lines.push(`- **Basement:**`);
+      for (const b of rdBase) lines.push(`  - ${b}`);
+    }
+    for (const b of rdOther) lines.push(`- ${b}`);
+    lines.push("");
+  }
+
+  // ---- Rental Insight -------------------------------------------------
+  const ri = ex?.rental_insight;
+  if (ri?.previous_rent || ri?.current_status || ri?.layout_notes) {
+    lines.push("## Rental Insight");
+    if (ri.previous_rent) lines.push(`- Previously rented for ${ri.previous_rent}`);
+    if (ri.current_status) lines.push(`- Currently: ${ri.current_status}`);
+    if (ri.layout_notes) lines.push(`- ${ri.layout_notes}`);
+    lines.push("");
+  }
+
+  // ---- Seller Expectations -------------------------------------------
+  const se = ex?.seller_expectations;
+  const seConds = (se?.conditions || []).filter(Boolean);
+  const targetPrice = se?.target_price || ex?.asking_price || null;
+  if (targetPrice || seConds.length || se?.negotiable != null) {
+    lines.push("## Seller Expectations");
+    if (targetPrice) lines.push(`- Target price: ${targetPrice}`);
+    if (se?.negotiable === true) lines.push(`- Negotiable`);
+    if (se?.negotiable === false) lines.push(`- Not negotiable`);
+    if (seConds.length) {
+      lines.push(`- Conditions:`);
+      for (const c of seConds) lines.push(`  - ${c}`);
+    }
+    lines.push("");
+  }
+
+  // ---- Seller Motivation ---------------------------------------------
+  const motBullets = (ex?.seller_motivation_bullets || []).filter(Boolean);
+  if (motBullets.length) {
+    lines.push("## Seller Motivation");
+    for (const m of motBullets) lines.push(`- ${m}`);
+    lines.push("");
+  } else if (ex?.motivation) {
+    lines.push("## Seller Motivation");
+    lines.push(`- ${ex.motivation}`);
+    lines.push("");
+  }
+
+  // ---- Timeline (if not already in seller expectations) ---------------
+  if (ex?.timeline && !(seConds.some((c) => c.toLowerCase().includes(ex.timeline!.toLowerCase().slice(0, 8))))) {
+    lines.push("## Timeline");
+    lines.push(`- ${ex.timeline}`);
+    if (ex?.callback_relative) lines.push(`- Next callback: ${ex.callback_relative}`);
+    lines.push("");
+  } else if (ex?.callback_relative && !ex?.timeline) {
+    lines.push("## Timeline");
+    lines.push(`- Next callback: ${ex.callback_relative}`);
+    lines.push("");
+  }
+
+  // ---- Contact Info ---------------------------------------------------
+  const ci = (ex?.contact_info_notes || []).filter(Boolean);
+  if (ci.length) {
+    lines.push("## Contact Info");
+    for (const c of ci) lines.push(`- ${c}`);
+    lines.push("");
+  }
+
+  // ---- Opportunities Identified --------------------------------------
+  const oi = (ex?.opportunities_identified || []).filter((o) => o && o.service);
+  if (oi.length) {
+    lines.push("## Opportunities Identified");
+    lines.push(`- Seller showed interest in:`);
+    for (const o of oi) {
+      lines.push(`  - ${o.service}${o.detail ? ` — ${o.detail}` : ""}`);
+    }
+    lines.push("");
+  }
+
+  // ---- Mentioned Contacts (referrals surfaced mid-call) ---------------
+  const mc = (ex?.mentioned_contacts || []).filter((m) => m && m.name);
+  if (mc.length) {
+    lines.push("## Mentioned Contacts");
+    for (const m of mc) {
+      const parts = [m.name];
+      if (m.relationship) parts.push(`(${m.relationship})`);
+      if (m.phone) parts.push(`— ${m.phone}`);
+      lines.push(`- ${parts.join(" ")}`);
+      if (m.context) lines.push(`  - ${m.context}`);
+    }
+    lines.push("");
+  }
+
+  // ---- Next Steps -----------------------------------------------------
+  const ns = (ex?.next_steps || []).filter(Boolean);
+  if (ns.length) {
+    lines.push("## Next Steps");
+    for (const s of ns) lines.push(`- ${s}`);
+    lines.push("");
+  }
+
+  // ---- Pointer footer -------------------------------------------------
+  // Always include — even with zero extraction, this gives the team the
+  // recording URL + a path to the full transcript in the vault.
+  lines.push("---");
+  if (args.recordingUrl) lines.push(`Recording: ${args.recordingUrl}`);
+  lines.push(`Full transcript: APG-Vault/80 Raw/Calls/${args.conversationId}.md`);
+  lines.push(`Conversation ID: ${args.conversationId}`);
+
+  return lines.join("\n");
+}
+
+// "2026-05-28 11:51 ET" — local Eastern wall clock for header readability.
+// Hand-rolled instead of Intl to keep Worker bundle small.
+function formatEasternStamp(d: Date): string {
+  const fmt = new Intl.DateTimeFormat("en-US", {
+    timeZone: "America/New_York",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  });
+  const parts = fmt.formatToParts(d);
+  const get = (t: string) => parts.find((p) => p.type === t)?.value || "";
+  return `${get("year")}-${get("month")}-${get("day")} ${get("hour")}:${get("minute")} ET`;
+}
+
+// "3m 17s" / "47s" / "1h 4m"
+function formatDuration(seconds: number): string {
+  if (!Number.isFinite(seconds) || seconds <= 0) return "0s";
+  const h = Math.floor(seconds / 3600);
+  const m = Math.floor((seconds % 3600) / 60);
+  const s = Math.floor(seconds % 60);
+  if (h > 0) return `${h}h ${m}m`;
+  if (m > 0) return `${m}m ${s}s`;
+  return `${s}s`;
 }
 
 // ---- Dialer: warm-up + TCPA + outbound trigger --------------------------------
