@@ -117,7 +117,7 @@
     },
     {
       "date": "2026-05-30",
-      "had_business_hour_run": false,
+      "had_business_hour_run": true,
       "sends": 0
     }
   ],
