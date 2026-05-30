@@ -627,7 +627,7 @@ h1 .accent { color: var(--gold); font-style: italic; }
   <header class="masthead">
     <div class="brandrow">
       <img src="logo.svg" alt="Atom Property Group" style="height:32px;width:auto">
-      <span>Updated May 30, 2026 · 04:44 AM ET</span>
+      <span>Updated May 30, 2026 · 08:51 AM ET</span>
     </div>
     <h1>Project <span class="accent">Tracker.</span></h1>
     <p class="dek">Every active plan APG is shipping right now, with live checkbox state. Source of truth is <code>progress_state.json</code> in the repo — edit, commit, push, and this page re-renders on the next cron tick.</p>
@@ -3575,7 +3575,7 @@ section h2, h2 {
   <header class="masthead">
     <div class="brandrow">
       <span class="brand">Atom Property Group · ACQ Operations</span>
-      <span>Last updated May 30, 2026 04:44 AM ET</span>
+      <span>Last updated May 30, 2026 08:51 AM ET</span>
     </div>
     <h1>Active <span class="accent">Deals.</span></h1>
     <p class="dek">Every property currently in stages 1-7 of the ACQ pipeline. Sorted by call rating within each stage so the strongest deals surface first.</p>
@@ -4126,7 +4126,7 @@ section h2, h2 {
   <header class="masthead">
     <div class="brandrow">
       <span class="brand">Atom Property Group · ACQ Operations</span>
-      <span>Last updated May 30, 2026 04:43 AM ET</span>
+      <span>Last updated May 30, 2026 08:50 AM ET</span>
     </div>
     <h1>SMS <span class="accent">Follow-Ups.</span></h1>
     <p class="dek">Action queue for Jeff and Mike — replies to call back, leads gone dormant, and everything still cycling through the SMS sequence.</p>
@@ -4144,17 +4144,17 @@ section h2, h2 {
     <a href="about.html">About</a>
   </nav>
 
-  <details class="run-grid-collapsed"><summary>All 7 cron jobs OK on last run — click for timestamps</summary><div class="run-grid"><div class="run-row"><span class="tag green">OK</span><span class="run-name">ACQ Call Recording Automation</span><span class="run-ts">May 29, 07:59 PM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">ACQ SMS Follow-Up + Dashboard</span><span class="run-ts">May 29, 07:59 PM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">APG Slack Scraper</span><span class="run-ts">May 29, 08:02 PM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">Dedup Slack-mention notes</span><span class="run-ts">May 29, 07:10 PM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">Weekly Analysis</span><span class="run-ts">May 29, 05:28 PM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">dashboard (script)</span><span class="run-ts">May 30, 04:43 AM</span><span class="run-detail">dashboard updated</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">sms (script)</span><span class="run-ts">May 30, 04:42 AM</span><span class="run-detail">outside business hours (hour=4 ET)</span></div></div></details><div class="status-banner on"><div class="status-text"><span class="pulse"></span>SMS Automation: <span style="color:var(--green);font-weight:800">ACTIVE</span></div><a class="btn btn-kill" href="https://docs.google.com/spreadsheets/d/1wc3Pt46ze-ejLaryL8WIRQf4OjEkirolc4-O8lsRQZY/edit#gid=0" target="_blank">EMERGENCY KILL SWITCH</a></div>
+  <details class="run-grid-collapsed"><summary>All 7 cron jobs OK on last run — click for timestamps</summary><div class="run-grid"><div class="run-row"><span class="tag green">OK</span><span class="run-name">ACQ Call Recording Automation</span><span class="run-ts">May 30, 08:18 AM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">ACQ SMS Follow-Up + Dashboard</span><span class="run-ts">May 30, 04:44 AM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">APG Slack Scraper</span><span class="run-ts">May 30, 04:43 AM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">Dedup Slack-mention notes</span><span class="run-ts">May 29, 07:10 PM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">Weekly Analysis</span><span class="run-ts">May 29, 05:28 PM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">dashboard (script)</span><span class="run-ts">May 30, 08:49 AM</span><span class="run-detail">dashboard updated</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">sms (script)</span><span class="run-ts">May 30, 08:49 AM</span><span class="run-detail">outside business hours (hour=8 ET)</span></div></div></details><div class="status-banner on"><div class="status-text"><span class="pulse"></span>SMS Automation: <span style="color:var(--green);font-weight:800">ACTIVE</span></div><a class="btn btn-kill" href="https://docs.google.com/spreadsheets/d/1wc3Pt46ze-ejLaryL8WIRQf4OjEkirolc4-O8lsRQZY/edit#gid=0" target="_blank">EMERGENCY KILL SWITCH</a></div>
 
   <section class="sec">
     <div class="tag-row"><span class="num">01</span><h2>At a Glance</h2></div>
     <hr>
     <div class="stat-row">
-      <div class="stat"><div class="lab">Total Leads</div><div class="v">55</div><div class="sub">across all stages</div></div>
-      <div class="stat"><div class="lab">In Sequence</div><div class="v">18</div><div class="sub">SMS scheduled</div></div>
-      <div class="stat hot"><div class="lab">Replied — Call Now</div><div class="v">34</div><div class="sub">Jeff has tasks</div></div>
+      <div class="stat"><div class="lab">Total Leads</div><div class="v">79</div><div class="sub">across all stages</div></div>
+      <div class="stat"><div class="lab">In Sequence</div><div class="v">19</div><div class="sub">SMS scheduled</div></div>
+      <div class="stat hot"><div class="lab">Replied — Call Now</div><div class="v">55</div><div class="sub">Jeff has tasks</div></div>
       <div class="stat warm"><div class="lab">Dormant — Manual Call</div><div class="v">0</div><div class="sub">no reply after sequence</div></div>
-      <div class="stat green"><div class="lab">Reply Rate</div><div class="v">65.4%</div><div class="sub">replied / total touched</div></div>
+      <div class="stat green"><div class="lab">Reply Rate</div><div class="v">74.3%</div><div class="sub">replied / total touched</div></div>
     </div>
   </section>
 
@@ -4174,7 +4174,28 @@ section h2, h2 {
   <section class="sec">
     <div class="tag-row"><span class="num">03</span><h2><span class="dot hot"></span>Replied — Action Needed</h2></div>
     <hr>
-    <div class="lead-table"><table><thead><tr><th>Contact</th><th>Address</th><th>Stage</th><th>Replied</th><th>Last Number</th></tr></thead><tbody><tr><td><strong>Anthony Lamendola</strong></td><td>56 Valley Rd</td><td><span class="tag">3. Due Diligence</span></td><td><span class="tag hot"></span></td><td>Jeff (NJ)</td></tr>
+    <div class="lead-table"><table><thead><tr><th>Contact</th><th>Address</th><th>Stage</th><th>Replied</th><th>Last Number</th></tr></thead><tbody><tr><td><strong>Joseph Schili</strong></td><td>1370 Oriental Ave</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot"></span></td><td>Jeff (NJ)</td></tr>
+<tr><td><strong>Avin</strong></td><td>305, 315 &amp; 319 Roosevelt ave</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot"></span></td><td>AL Market</td></tr>
+<tr><td><strong>Kris</strong></td><td>58 Morris Ln,, NJ 08854</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot"></span></td><td>Jeff (NJ)</td></tr>
+<tr><td><strong>Sheila</strong></td><td>2901 N 23rd St, Philadelphia, PA 19132</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot">May 14, 08:06 PM</span></td><td>PA Market</td></tr>
+<tr><td><strong>Elisha Ruiz</strong></td><td>4103 UNRUH AVE</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot"></span></td><td></td></tr>
+<tr><td><strong>Jimmie Lee</strong></td><td>2823 29TH PLACE ENSLEY</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot"></span></td><td>AL Market</td></tr>
+<tr><td><strong>Jimmie Brown</strong></td><td>4114 8th Ave</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot">May 09, 01:57 PM</span></td><td></td></tr>
+<tr><td><strong>Keith E Amiano</strong></td><td>1097 State Route 173</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot"></span></td><td>Jeff (NJ)</td></tr>
+<tr><td><strong>Shen Zhou</strong></td><td>365 Bromley Pl</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot">May 07, 07:44 PM</span></td><td></td></tr>
+<tr><td><strong>Sergei Karpovitch</strong></td><td>920 N Olden Ave</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot"></span></td><td>Jeff (NJ)</td></tr>
+<tr><td><strong>William Lindsey</strong></td><td>41 Westminster Dr</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot"></span></td><td></td></tr>
+<tr><td><strong>Brian Cavallucci</strong></td><td>29 Fox Hollow Dr</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot"></span></td><td>Jeff (NJ)</td></tr>
+<tr><td><strong>Bryan Carestia</strong></td><td>26 Tamar Ct</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot">May 14, 07:49 PM</span></td><td>Jeff (NJ)</td></tr>
+<tr><td><strong>Linda A</strong></td><td>4611 Schooner Rd # 1</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot"></span></td><td>Jeff (NJ)</td></tr>
+<tr><td><strong>Steven Dadura</strong></td><td>1629 S Delaware St</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot">May 14, 07:51 PM</span></td><td>Jeff (NJ)</td></tr>
+<tr><td><strong>Weiran Dobrek</strong></td><td>5 Paddock Way</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot"></span></td><td>Jeff (NJ)</td></tr>
+<tr><td><strong>Nandor Standi</strong></td><td>56 La France Ave</td><td><span class="tag">2. LAO</span></td><td><span class="tag hot"></span></td><td>Jeff (NJ)</td></tr>
+<tr><td><strong>Justin / Danielle Offutt</strong></td><td>5910 WILBER AVE</td><td><span class="tag">2. LAO</span></td><td><span class="tag hot"></span></td><td>OH Market</td></tr>
+<tr><td><strong>Angela Martin</strong></td><td>608 Alabama Ave Sw</td><td><span class="tag">2. LAO</span></td><td><span class="tag hot">May 22, 01:55 PM</span></td><td>AL Market</td></tr>
+<tr><td><strong>Marcus Patterson</strong></td><td>5900 Court M</td><td><span class="tag">2. LAO</span></td><td><span class="tag hot"></span></td><td>AL Market</td></tr>
+<tr><td><strong>Carla Ider Clyde Limited Partnership</strong></td><td>118 66TH PL N</td><td><span class="tag">2. LAO</span></td><td><span class="tag hot">May 13, 08:17 PM</span></td><td></td></tr>
+<tr><td><strong>Anthony Lamendola</strong></td><td>56 Valley Rd</td><td><span class="tag">3. Due Diligence</span></td><td><span class="tag hot"></span></td><td>Jeff (NJ)</td></tr>
 <tr><td><strong>Lisa Rivera</strong></td><td>107 Deepwater Cir</td><td><span class="tag">3. Due Diligence</span></td><td><span class="tag hot">May 14, 07:55 PM</span></td><td>Jeff (NJ)</td></tr>
 <tr><td><strong>Mac Hall</strong></td><td>2903 Taylor St</td><td><span class="tag">3. Due Diligence</span></td><td><span class="tag hot"></span></td><td>Jeff (NJ)</td></tr>
 <tr><td><strong>Mary &amp; Marisa Kaneda</strong></td><td>405 Pearl St</td><td><span class="tag">3. Due Diligence</span></td><td><span class="tag hot">May 13, 03:57 PM</span></td><td></td></tr>
@@ -4188,8 +4209,8 @@ section h2, h2 {
 <tr><td><strong>Dennis Gilmore</strong></td><td>39 Forge Hill Rd</td><td><span class="tag">Follow Up 1.5mo</span></td><td><span class="tag hot"></span></td><td></td></tr>
 <tr><td><strong>Virginia Williams</strong></td><td>1172 Atlantic Ave</td><td><span class="tag">Follow Up 1.5mo</span></td><td><span class="tag hot">May 07, 07:08 PM</span></td><td></td></tr>
 <tr><td><strong>Tony</strong></td><td>223 Tyler St</td><td><span class="tag">Follow Up 1.5mo</span></td><td><span class="tag hot">May 07, 07:08 PM</span></td><td></td></tr>
-<tr><td><strong>(no name)</strong></td><td></td><td><span class="tag">Follow Up 1.5mo</span></td><td><span class="tag hot"></span></td><td></td></tr>
-<tr><td><strong>(no name)</strong></td><td></td><td><span class="tag">Follow Up 1.5mo</span></td><td><span class="tag hot"></span></td><td></td></tr>
+<tr><td><strong>Rafael Paragulla</strong></td><td>143 Harding Ave</td><td><span class="tag">Follow Up 1.5mo</span></td><td><span class="tag hot"></span></td><td></td></tr>
+<tr><td><strong>Erica &amp; Stuart Smith</strong></td><td>4725 7th Ave</td><td><span class="tag">Follow Up 1.5mo</span></td><td><span class="tag hot"></span></td><td></td></tr>
 <tr><td><strong>Richard Zinna</strong></td><td>33 Patton Dr</td><td><span class="tag">Follow Up 1.5mo</span></td><td><span class="tag hot"></span></td><td></td></tr>
 <tr><td><strong>Christopher Ascencio</strong></td><td>129 Lakeview Ave</td><td><span class="tag">Follow Up 3mo</span></td><td><span class="tag hot"></span></td><td></td></tr>
 <tr><td><strong>Grace Chrustek</strong></td><td>2 Cider Mill Cir</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot"></span></td><td></td></tr>
@@ -4221,7 +4242,9 @@ section h2, h2 {
     <div class="tag-row"><span class="num">05</span><h2><span class="dot gray"></span>DND — Do Not Contact <span class="sec-count" style="margin-left:auto;font-size:11px;color:var(--muted)">excluded from outreach</span></h2></div>
     <hr>
     <p style="color:var(--muted);font-size:13px;margin:0 0 12px">GHL DND was set on these contacts before our sequence started — or they replied STOP / hostile / wrong-number. <strong style="color:var(--ink)">Do NOT call.</strong> Listed for visibility only.</p>
-    <div class="lead-table"><table><thead><tr><th>Contact</th><th>Address</th><th>Stage</th><th>Reason</th><th>SMS Sent</th><th>Last Sent</th></tr></thead><tbody><tr><td><strong>Charles Lynch</strong></td><td>261 Evans Ave</td><td><span class="tag">Dead Deals</span></td><td><span class="tag gray">DND — do not contact</span></td><td><span class="tag warm">0/6</span></td><td></td></tr>
+    <div class="lead-table"><table><thead><tr><th>Contact</th><th>Address</th><th>Stage</th><th>Reason</th><th>SMS Sent</th><th>Last Sent</th></tr></thead><tbody><tr><td><strong>Clarissa Williams</strong></td><td>5648 CAMDEN AVE</td><td><span class="tag">1. Qualified</span></td><td><span class="tag gray">DND — do not contact</span></td><td><span class="tag warm">0/6</span></td><td></td></tr>
+<tr><td><strong>Demetrius Singleton</strong></td><td>309 17TH AVE SW</td><td><span class="tag">1. Qualified</span></td><td><span class="tag gray">DND — do not contact</span></td><td><span class="tag warm">0/6</span></td><td></td></tr>
+<tr><td><strong>Charles Lynch</strong></td><td>261 Evans Ave</td><td><span class="tag">Dead Deals</span></td><td><span class="tag gray">DND — do not contact</span></td><td><span class="tag warm">0/6</span></td><td></td></tr>
 <tr><td><strong>John Monaco</strong></td><td>59 ARNOT ST,</td><td><span class="tag">Dead Deals</span></td><td><span class="tag gray">DND — do not contact</span></td><td><span class="tag warm">0/6</span></td><td></td></tr>
 <tr><td><strong>Nicole Berkovich</strong></td><td>3101 Ocean Ave</td><td><span class="tag">Dead Deals</span></td><td><span class="tag gray">DND — do not contact</span></td><td><span class="tag warm">0/6</span></td><td></td></tr></tbody></table></div>
   </section>
@@ -4230,11 +4253,12 @@ section h2, h2 {
     <div class="tag-row"><span class="num">06</span><h2><span class="dot green"></span>Active in Sequence</h2></div>
     <hr>
     <input type="text" class="search" id="searchActive" placeholder="Search by name, address, state...">
-    <div class="lead-table"><table id="activeTable"><thead><tr><th>Contact</th><th>Address</th><th>State</th><th>Stage</th><th>SMS Sent</th><th>Last Sent</th><th>From Number</th></tr></thead><tbody><tr><td><strong>Beata Szyffer-Hopkins</strong></td><td>412 Neadow Woods lane</td><td>NJ</td><td><span class="tag">3. Due Diligence</span></td><td><span class="tag green">3</span></td><td>May 29, 03:54 PM</td><td>Jeff (NJ)</td></tr>
+    <div class="lead-table"><table id="activeTable"><thead><tr><th>Contact</th><th>Address</th><th>State</th><th>Stage</th><th>SMS Sent</th><th>Last Sent</th><th>From Number</th></tr></thead><tbody><tr><td><strong>Eleanor</strong></td><td>500 Jackson Road</td><td>AL</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
+<tr><td><strong>Beata Szyffer-Hopkins</strong></td><td>412 Neadow Woods lane</td><td>NJ</td><td><span class="tag">3. Due Diligence</span></td><td><span class="tag green">3</span></td><td>May 29, 03:54 PM</td><td>Jeff (NJ)</td></tr>
 <tr><td><strong>Raymond Bowman Sr</strong></td><td>118 SHIP AVE</td><td>NJ</td><td><span class="tag">Follow Up 1.5mo</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>(no name)</strong></td><td></td><td></td><td><span class="tag">Follow Up 1.5mo</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>(no name)</strong></td><td></td><td></td><td><span class="tag">Follow Up 1.5mo</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>(no name)</strong></td><td></td><td></td><td><span class="tag">Follow Up 1.5mo</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
+<tr><td><strong>Donnie Johnson</strong></td><td>1484 Stuyvesant Ave</td><td>NJ</td><td><span class="tag">Follow Up 1.5mo</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
+<tr><td><strong>David Williams</strong></td><td>435 KERRIGAN BLVD</td><td>NJ</td><td><span class="tag">Follow Up 1.5mo</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
+<tr><td><strong>Chris Brindley</strong></td><td>41 JULIA AVE</td><td>NJ</td><td><span class="tag">Follow Up 1.5mo</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
 <tr><td><strong>Ben Clay</strong></td><td>206 16TH AVE S</td><td>AL</td><td><span class="tag">Follow Up 3mo</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
 <tr><td><strong>Vamsi Gude</strong></td><td>1402 Aspen Dr</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
 <tr><td><strong>Tim</strong></td><td>618 E Reynolds St</td><td>PA</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
@@ -4253,7 +4277,71 @@ section h2, h2 {
   <section class="sec">
     <div class="tag-row"><span class="num">07</span><h2><span class="dot hot"></span>Open Tasks</h2></div>
     <hr>
-    <div class="lead-table"><table><thead><tr><th>Contact</th><th>Address</th><th>Task</th><th>Assignee</th><th>Due</th></tr></thead><tbody><tr><td><strong>Mac Hall</strong></td><td>2903 Taylor St</td><td>Schedule Walkthru</td><td><span class="tag">Jeff</span></td><td>May 05, 08:00 PM</td></tr>
+    <div class="lead-table"><table><thead><tr><th>Contact</th><th>Address</th><th>Task</th><th>Assignee</th><th>Due</th></tr></thead><tbody><tr><td><strong>Eleanor</strong></td><td>500 Jackson Road</td><td>Blake booked callback — RJ to follow up</td><td><span class="tag">Unassigned</span></td><td>May 28, 05:00 PM</td></tr>
+<tr><td><strong>Joseph Schili</strong></td><td>1370 Oriental Ave</td><td>🔥 Call Joseph Schili — Qualified seller (1h SLA)</td><td><span class="tag">Unassigned</span></td><td>May 27, 08:05 PM</td></tr>
+<tr><td><strong>Joseph Schili</strong></td><td>1370 Oriental Ave</td><td>REVIEW: Did Jeff call Joseph Schili? (Gloucester City)</td><td><span class="tag">Mike</span></td><td>May 11, 10:36 AM</td></tr>
+<tr><td><strong>Joseph Schili</strong></td><td>1370 Oriental Ave</td><td>CALL: Joseph Schili (Gloucester City)</td><td><span class="tag">Jeff</span></td><td>May 10, 10:36 AM</td></tr>
+<tr><td><strong>Joseph Schili</strong></td><td>1370 Oriental Ave</td><td>REVIEW: Did Jeff call Joseph Schili? (Gloucester City)</td><td><span class="tag">Mike</span></td><td>May 09, 09:06 AM</td></tr>
+<tr><td><strong>Joseph Schili</strong></td><td>1370 Oriental Ave</td><td>CALL: Joseph Schili (Gloucester City)</td><td><span class="tag">Jeff</span></td><td>May 08, 09:06 AM</td></tr>
+<tr><td><strong>Avin</strong></td><td>305, 315 &amp; 319 Roosevelt ave</td><td>🔥 Call Avin — Qualified seller (1h SLA)</td><td><span class="tag">Unassigned</span></td><td>May 27, 08:05 PM</td></tr>
+<tr><td><strong>Kris</strong></td><td>58 Morris Ln,, NJ 08854</td><td>🔥 Call Kris — Qualified seller (1h SLA)</td><td><span class="tag">Unassigned</span></td><td>May 27, 08:05 PM</td></tr>
+<tr><td><strong>Sheila</strong></td><td>2901 N 23rd St, Philadelphia, PA 19132</td><td>🔥 Call Sheila — Qualified seller (1h SLA)</td><td><span class="tag">Unassigned</span></td><td>May 27, 08:05 PM</td></tr>
+<tr><td><strong>Sheila</strong></td><td>2901 N 23rd St, Philadelphia, PA 19132</td><td>REVIEW: Did Jeff call Sheila back?</td><td><span class="tag">Mike</span></td><td>May 16, 10:43 AM</td></tr>
+<tr><td><strong>Sheila</strong></td><td>2901 N 23rd St, Philadelphia, PA 19132</td><td>Call back: Sheila (2901 N 23rd St, Philadelphia, PA 19132)</td><td><span class="tag">Jeff</span></td><td>May 15, 10:43 AM</td></tr>
+<tr><td><strong>Sheila</strong></td><td>2901 N 23rd St, Philadelphia, PA 19132</td><td>Call Sheila - 2901 N 23rd St, Philadelphia, PA 19132, philadelphia PA 19132 - (267) 592-5047</td><td><span class="tag">Jeff</span></td><td>Mar 27, 12:00 AM</td></tr>
+<tr><td><strong>Elisha Ruiz</strong></td><td>4103 UNRUH AVE</td><td>🔥 Call Elisha Ruiz — Qualified seller (1h SLA)</td><td><span class="tag">Unassigned</span></td><td>May 27, 08:05 PM</td></tr>
+<tr><td><strong>Jimmie Lee</strong></td><td>2823 29TH PLACE ENSLEY</td><td>🔥 Call Jimmie Lee — Qualified seller (1h SLA)</td><td><span class="tag">Unassigned</span></td><td>May 27, 08:05 PM</td></tr>
+<tr><td><strong>Jimmie Lee</strong></td><td>2823 29TH PLACE ENSLEY</td><td>PM-See if he got it then FUP on Pics</td><td><span class="tag">Jeff</span></td><td>Mar 31, 08:00 PM</td></tr>
+<tr><td><strong>Jimmie Brown</strong></td><td>4114 8th Ave</td><td>🔥 Call Jimmie Brown — Qualified seller (1h SLA)</td><td><span class="tag">Unassigned</span></td><td>May 27, 08:05 PM</td></tr>
+<tr><td><strong>Jimmie Brown</strong></td><td>4114 8th Ave</td><td>FUP - Need to acquire deed</td><td><span class="tag">Jeff</span></td><td>Apr 29, 08:00 PM</td></tr>
+<tr><td><strong>Keith E Amiano</strong></td><td>1097 State Route 173</td><td>🔥 Call Keith E Amiano — Qualified seller (1h SLA)</td><td><span class="tag">Unassigned</span></td><td>May 27, 08:05 PM</td></tr>
+<tr><td><strong>Keith E Amiano</strong></td><td>1097 State Route 173</td><td>Get w/ Adam - Possible Novation</td><td><span class="tag">Jeff</span></td><td>Feb 27, 08:00 PM</td></tr>
+<tr><td><strong>Clarissa Williams</strong></td><td>5648 CAMDEN AVE</td><td>🔥 Call Clarissa Williams — Qualified seller (1h SLA)</td><td><span class="tag">Unassigned</span></td><td>May 27, 08:05 PM</td></tr>
+<tr><td><strong>Demetrius Singleton</strong></td><td>309 17TH AVE SW</td><td>🔥 Call Demetrius Singleton — Qualified seller (1h SLA)</td><td><span class="tag">Unassigned</span></td><td>May 27, 08:05 PM</td></tr>
+<tr><td><strong>Demetrius Singleton</strong></td><td>309 17TH AVE SW</td><td>PM: Asking 10K - Dorothy</td><td><span class="tag">Jeff</span></td><td>Mar 24, 08:00 PM</td></tr>
+<tr><td><strong>Shen Zhou</strong></td><td>365 Bromley Pl</td><td>🔥 Call Shen Zhou — Qualified seller (1h SLA)</td><td><span class="tag">Unassigned</span></td><td>May 27, 08:05 PM</td></tr>
+<tr><td><strong>Sergei Karpovitch</strong></td><td>920 N Olden Ave</td><td>🔥 Call Sergei Karpovitch — Qualified seller (1h SLA)</td><td><span class="tag">Unassigned</span></td><td>May 27, 08:05 PM</td></tr>
+<tr><td><strong>Sergei Karpovitch</strong></td><td>920 N Olden Ave</td><td>REVIEW: Did Jeff call Sergei Karpovitch? (Trenton)</td><td><span class="tag">Mike</span></td><td>May 11, 10:36 AM</td></tr>
+<tr><td><strong>Sergei Karpovitch</strong></td><td>920 N Olden Ave</td><td>CALL: Sergei Karpovitch (Trenton)</td><td><span class="tag">Jeff</span></td><td>May 10, 10:36 AM</td></tr>
+<tr><td><strong>Sergei Karpovitch</strong></td><td>920 N Olden Ave</td><td>REVIEW: Did Jeff call Sergei Karpovitch? (Trenton)</td><td><span class="tag">Mike</span></td><td>May 09, 09:06 AM</td></tr>
+<tr><td><strong>Sergei Karpovitch</strong></td><td>920 N Olden Ave</td><td>CALL: Sergei Karpovitch (Trenton)</td><td><span class="tag">Jeff</span></td><td>May 08, 09:06 AM</td></tr>
+<tr><td><strong>William Lindsey</strong></td><td>41 Westminster Dr</td><td>🔥 Call William Lindsey — Qualified seller (1h SLA)</td><td><span class="tag">Unassigned</span></td><td>May 27, 08:05 PM</td></tr>
+<tr><td><strong>William Lindsey</strong></td><td>41 Westminster Dr</td><td>REVIEW: Did Jeff call William Lindsey? (Voorhees)</td><td><span class="tag">Mike</span></td><td>May 11, 10:36 AM</td></tr>
+<tr><td><strong>William Lindsey</strong></td><td>41 Westminster Dr</td><td>CALL: William Lindsey (Voorhees)</td><td><span class="tag">Jeff</span></td><td>May 10, 10:36 AM</td></tr>
+<tr><td><strong>William Lindsey</strong></td><td>41 Westminster Dr</td><td>REVIEW: Did Jeff call William Lindsey? (Voorhees)</td><td><span class="tag">Mike</span></td><td>May 09, 09:06 AM</td></tr>
+<tr><td><strong>William Lindsey</strong></td><td>41 Westminster Dr</td><td>CALL: William Lindsey (Voorhees)</td><td><span class="tag">Jeff</span></td><td>May 08, 09:06 AM</td></tr>
+<tr><td><strong>Brian Cavallucci</strong></td><td>29 Fox Hollow Dr</td><td>🔥 Call Brian Cavallucci — Qualified seller (1h SLA)</td><td><span class="tag">Unassigned</span></td><td>May 27, 08:05 PM</td></tr>
+<tr><td><strong>Brian Cavallucci</strong></td><td>29 Fox Hollow Dr</td><td>REVIEW: Did Jeff call Brian Cavallucci? (Cherry Hill)</td><td><span class="tag">Mike</span></td><td>May 11, 10:36 AM</td></tr>
+<tr><td><strong>Brian Cavallucci</strong></td><td>29 Fox Hollow Dr</td><td>CALL: Brian Cavallucci (Cherry Hill)</td><td><span class="tag">Jeff</span></td><td>May 10, 10:36 AM</td></tr>
+<tr><td><strong>Brian Cavallucci</strong></td><td>29 Fox Hollow Dr</td><td>REVIEW: Did Jeff call Brian Cavallucci? (Cherry Hill)</td><td><span class="tag">Mike</span></td><td>May 09, 09:06 AM</td></tr>
+<tr><td><strong>Brian Cavallucci</strong></td><td>29 Fox Hollow Dr</td><td>CALL: Brian Cavallucci (Cherry Hill)</td><td><span class="tag">Jeff</span></td><td>May 08, 09:06 AM</td></tr>
+<tr><td><strong>Bryan Carestia</strong></td><td>26 Tamar Ct</td><td>🔥 Call Bryan Carestia — Qualified seller (1h SLA)</td><td><span class="tag">Unassigned</span></td><td>May 27, 08:05 PM</td></tr>
+<tr><td><strong>Bryan Carestia</strong></td><td>26 Tamar Ct</td><td>REVIEW: Did Jeff call Bryan Carestia? (Lawrence Township)</td><td><span class="tag">Mike</span></td><td>May 11, 10:35 AM</td></tr>
+<tr><td><strong>Bryan Carestia</strong></td><td>26 Tamar Ct</td><td>CALL: Bryan Carestia (Lawrence Township)</td><td><span class="tag">Jeff</span></td><td>May 10, 10:35 AM</td></tr>
+<tr><td><strong>Bryan Carestia</strong></td><td>26 Tamar Ct</td><td>REVIEW: Did Jeff call Bryan Carestia? (Lawrence Township)</td><td><span class="tag">Mike</span></td><td>May 09, 09:06 AM</td></tr>
+<tr><td><strong>Bryan Carestia</strong></td><td>26 Tamar Ct</td><td>CALL: Bryan Carestia (Lawrence Township)</td><td><span class="tag">Jeff</span></td><td>May 08, 09:06 AM</td></tr>
+<tr><td><strong>Linda A</strong></td><td>4611 Schooner Rd # 1</td><td>🔥 Call Linda A — Qualified seller (1h SLA)</td><td><span class="tag">Unassigned</span></td><td>May 27, 08:05 PM</td></tr>
+<tr><td><strong>Linda A</strong></td><td>4611 Schooner Rd # 1</td><td>REVIEW: Did Jeff call Linda A? (Brigantine)</td><td><span class="tag">Mike</span></td><td>May 11, 10:36 AM</td></tr>
+<tr><td><strong>Linda A</strong></td><td>4611 Schooner Rd # 1</td><td>CALL: Linda A (Brigantine)</td><td><span class="tag">Jeff</span></td><td>May 10, 10:35 AM</td></tr>
+<tr><td><strong>Linda A</strong></td><td>4611 Schooner Rd # 1</td><td>REVIEW: Did Jeff call Linda A? (Brigantine)</td><td><span class="tag">Mike</span></td><td>May 09, 09:06 AM</td></tr>
+<tr><td><strong>Linda A</strong></td><td>4611 Schooner Rd # 1</td><td>CALL: Linda A (Brigantine)</td><td><span class="tag">Jeff</span></td><td>May 08, 09:06 AM</td></tr>
+<tr><td><strong>Steven Dadura</strong></td><td>1629 S Delaware St</td><td>🔥 Call Steven Dadura — Qualified seller (1h SLA)</td><td><span class="tag">Unassigned</span></td><td>May 27, 08:05 PM</td></tr>
+<tr><td><strong>Steven Dadura</strong></td><td>1629 S Delaware St</td><td>REVIEW: Did Jeff call Steven Dadura? (Paulsboro)</td><td><span class="tag">Mike</span></td><td>May 11, 10:36 AM</td></tr>
+<tr><td><strong>Steven Dadura</strong></td><td>1629 S Delaware St</td><td>CALL: Steven Dadura (Paulsboro)</td><td><span class="tag">Jeff</span></td><td>May 10, 10:36 AM</td></tr>
+<tr><td><strong>Steven Dadura</strong></td><td>1629 S Delaware St</td><td>REVIEW: Did Jeff call Steven Dadura? (Paulsboro)</td><td><span class="tag">Mike</span></td><td>May 09, 09:06 AM</td></tr>
+<tr><td><strong>Steven Dadura</strong></td><td>1629 S Delaware St</td><td>CALL: Steven Dadura (Paulsboro)</td><td><span class="tag">Jeff</span></td><td>May 08, 09:06 AM</td></tr>
+<tr><td><strong>Weiran Dobrek</strong></td><td>5 Paddock Way</td><td>🔥 Call Weiran Dobrek — Qualified seller (1h SLA)</td><td><span class="tag">Unassigned</span></td><td>May 27, 08:05 PM</td></tr>
+<tr><td><strong>Weiran Dobrek</strong></td><td>5 Paddock Way</td><td>REVIEW: Did Jeff call Weiran Dobrek? (Mount Holly)</td><td><span class="tag">Mike</span></td><td>May 11, 10:36 AM</td></tr>
+<tr><td><strong>Weiran Dobrek</strong></td><td>5 Paddock Way</td><td>CALL: Weiran Dobrek (Mount Holly)</td><td><span class="tag">Jeff</span></td><td>May 10, 10:36 AM</td></tr>
+<tr><td><strong>Weiran Dobrek</strong></td><td>5 Paddock Way</td><td>REVIEW: Did Jeff call Weiran Dobrek? (Mount Holly)</td><td><span class="tag">Mike</span></td><td>May 09, 09:06 AM</td></tr>
+<tr><td><strong>Weiran Dobrek</strong></td><td>5 Paddock Way</td><td>CALL: Weiran Dobrek (Mount Holly)</td><td><span class="tag">Jeff</span></td><td>May 08, 09:06 AM</td></tr>
+<tr><td><strong>Justin / Danielle Offutt</strong></td><td>5910 WILBER AVE</td><td>TO-LUV: 2nd Offer Nos</td><td><span class="tag">Jeff</span></td><td>May 05, 08:00 PM</td></tr>
+<tr><td><strong>Angela Martin</strong></td><td>608 Alabama Ave Sw</td><td>REVIEW: Did Jeff call Angela Martin back?</td><td><span class="tag">Mike</span></td><td>May 23, 05:49 PM</td></tr>
+<tr><td><strong>Angela Martin</strong></td><td>608 Alabama Ave Sw</td><td>Call back: Angela Martin (608 Alabama Ave Sw)</td><td><span class="tag">Jeff</span></td><td>May 22, 05:49 PM</td></tr>
+<tr><td><strong>Angela Martin</strong></td><td>608 Alabama Ave Sw</td><td>RR-Son will CB: Omar</td><td><span class="tag">Jeff</span></td><td>Mar 17, 08:00 PM</td></tr>
+<tr><td><strong>Marcus Patterson</strong></td><td>5900 Court M</td><td>CI on other prop</td><td><span class="tag">Jeff</span></td><td>May 15, 08:00 PM</td></tr>
+<tr><td><strong>Carla Ider Clyde Limited Partnership</strong></td><td>118 66TH PL N</td><td>CR: Offer made at 10K</td><td><span class="tag">Jeff</span></td><td>May 01, 08:00 PM</td></tr>
+<tr><td><strong>Mac Hall</strong></td><td>2903 Taylor St</td><td>Schedule Walkthru</td><td><span class="tag">Jeff</span></td><td>May 05, 08:00 PM</td></tr>
 <tr><td><strong>Beata Szyffer-Hopkins</strong></td><td>412 Neadow Woods lane</td><td>Need 2nd offer nos</td><td><span class="tag">Jeff</span></td><td>Apr 21, 08:00 PM</td></tr>
 <tr><td><strong>Evelyn Carter-Amuzu</strong></td><td>158 Lawnside Ave</td><td>Get w/ Adam re: In person</td><td><span class="tag">Jeff</span></td><td>Apr 17, 08:00 PM</td></tr>
 <tr><td><strong>Mike</strong></td><td>445 Cleveland Rd,</td><td>CR-Will send video -42K Price in the mid | MAO 30K</td><td><span class="tag">Jeff</span></td><td>May 05, 08:00 PM</td></tr>
@@ -4267,6 +4355,11 @@ section h2, h2 {
 <tr><td><strong>Dennis Gilmore</strong></td><td>39 Forge Hill Rd</td><td>CALL: Dennis Gilmore (Glen Gardner)</td><td><span class="tag">Jeff</span></td><td>May 08, 09:05 AM</td></tr>
 <tr><td><strong>Dennis Gilmore</strong></td><td>39 Forge Hill Rd</td><td>CI - Selling in 2 mos</td><td><span class="tag">Jeff</span></td><td>May 27, 08:00 PM</td></tr>
 <tr><td><strong>Tony</strong></td><td>223 Tyler St</td><td>FUP - Tyler St. Lease ends June</td><td><span class="tag">Jeff</span></td><td>May 05, 08:00 PM</td></tr>
+<tr><td><strong>Donnie Johnson</strong></td><td>1484 Stuyvesant Ave</td><td>Follow up with Donnie Johnson </td><td><span class="tag">Jeff</span></td><td>May 02, 05:16 PM</td></tr>
+<tr><td><strong>David Williams</strong></td><td>435 KERRIGAN BLVD</td><td>Follow up with David Williams </td><td><span class="tag">Jeff</span></td><td>May 14, 06:26 PM</td></tr>
+<tr><td><strong>Chris Brindley</strong></td><td>41 JULIA AVE</td><td>Follow up with Chris Brindley </td><td><span class="tag">Jeff</span></td><td>May 14, 06:22 PM</td></tr>
+<tr><td><strong>Chris Brindley</strong></td><td>41 JULIA AVE</td><td>FUP Call: Getting discharge | selling it to move into senior home.</td><td><span class="tag">Jeff</span></td><td>Mar 19, 08:00 PM</td></tr>
+<tr><td><strong>Erica &amp; Stuart Smith</strong></td><td>4725 7th Ave</td><td>CR: Get UC - 10K Contract sent</td><td><span class="tag">Jeff</span></td><td>May 01, 08:00 PM</td></tr>
 <tr><td><strong>Richard Zinna</strong></td><td>33 Patton Dr</td><td>FUP-Possible Listing deal - Tenants moving out in June</td><td><span class="tag">Jeff</span></td><td>May 19, 08:00 PM</td></tr>
 <tr><td><strong>Teresa Frederick</strong></td><td>150 Iler Dr</td><td>REVIEW: Did Jeff call Teresa Frederick? (Middletown)</td><td><span class="tag">Mike</span></td><td>May 11, 10:35 AM</td></tr>
 <tr><td><strong>Teresa Frederick</strong></td><td>150 Iler Dr</td><td>CALL: Teresa Frederick (Middletown)</td><td><span class="tag">Jeff</span></td><td>May 10, 10:35 AM</td></tr>
@@ -4314,25 +4407,25 @@ const palette = ['#C9A52A','#1A2840','#2F7D5B','#B57A1A','#C5443A','#6B7591','#8
 
 new Chart(document.getElementById('stageChart'), {
   type: 'doughnut',
-  data: { labels: ["3. Due Diligence", "4. MAO", "Follow Up 1.5mo", "Follow Up 3mo", "Dead Deals"], datasets: [{ data: [7, 5, 10, 2, 31], backgroundColor: palette, borderWidth: 2, borderColor: '#FFFCF4' }] },
+  data: { labels: ["1. Qualified", "2. LAO", "3. Due Diligence", "4. MAO", "Follow Up 1.5mo", "Follow Up 3mo", "Dead Deals"], datasets: [{ data: [19, 5, 7, 5, 10, 2, 31], backgroundColor: palette, borderWidth: 2, borderColor: '#FFFCF4' }] },
   options: { plugins: { legend: { position: 'bottom', labels: { padding: 12, usePointStyle: true, color: '#455066' } } }, cutout: '65%' }
 });
 
 new Chart(document.getElementById('stateChart'), {
   type: 'bar',
-  data: { labels: ["NJ", "PA", "UNKNOWN", "OH", "AL", "MI", "SC"], datasets: [{ data: [28, 12, 5, 4, 4, 1, 1], backgroundColor: '#C9A52A', borderRadius: 4 }] },
+  data: { labels: ["NJ", "AL", "PA", "OH", "MI", "SC"], datasets: [{ data: [44, 14, 14, 5, 1, 1], backgroundColor: '#C9A52A', borderRadius: 4 }] },
   options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { precision: 0, color: '#6B7591' }, grid: { color: 'rgba(26,40,64,0.06)' } }, x: { ticks: { color: '#455066' }, grid: { display: false } } } }
 });
 
 new Chart(document.getElementById('progressChart'), {
   type: 'bar',
-  data: { labels: ['0','1','2','3','4','5','6'], datasets: [{ label: 'Contacts', data: [46, 8, 0, 1, 0, 0, 0], backgroundColor: '#1A2840', borderRadius: 4 }] },
+  data: { labels: ['0','1','2','3','4','5','6'], datasets: [{ label: 'Contacts', data: [54, 23, 1, 1, 0, 0, 0], backgroundColor: '#1A2840', borderRadius: 4 }] },
   options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { precision: 0, color: '#6B7591' }, grid: { color: 'rgba(26,40,64,0.06)' } }, x: { ticks: { color: '#455066' }, grid: { display: false } } } }
 });
 
 new Chart(document.getElementById('numberChart'), {
   type: 'bar',
-  data: { labels: ["Jeff (NJ)", "OH Market", "PA Market", "AL Market"], datasets: [{ data: [6, 1, 1, 1], backgroundColor: palette, borderRadius: 4 }] },
+  data: { labels: ["Jeff (NJ)", "AL Market", "PA Market", "OH Market"], datasets: [{ data: [16, 5, 2, 2], backgroundColor: palette, borderRadius: 4 }] },
   options: { indexAxis: 'y', plugins: { legend: { display: false } }, scales: { x: { beginAtZero: true, ticks: { precision: 0, color: '#6B7591' }, grid: { color: 'rgba(26,40,64,0.06)' } }, y: { ticks: { color: '#455066' }, grid: { display: false } } } }
 });
 
