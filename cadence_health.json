@@ -122,7 +122,7 @@
     },
     {
       "date": "2026-05-31",
-      "had_business_hour_run": false,
+      "had_business_hour_run": true,
       "sends": 0
     }
   ],
