@@ -627,7 +627,7 @@ h1 .accent { color: var(--gold); font-style: italic; }
   <header class="masthead">
     <div class="brandrow">
       <img src="logo.svg" alt="Atom Property Group" style="height:32px;width:auto">
-      <span>Updated May 31, 2026 · 04:26 AM ET</span>
+      <span>Updated May 31, 2026 · 09:04 AM ET</span>
     </div>
     <h1>Project <span class="accent">Tracker.</span></h1>
     <p class="dek">Every active plan APG is shipping right now, with live checkbox state. Source of truth is <code>progress_state.json</code> in the repo — edit, commit, push, and this page re-renders on the next cron tick.</p>
@@ -3575,7 +3575,7 @@ section h2, h2 {
   <header class="masthead">
     <div class="brandrow">
       <span class="brand">Atom Property Group · ACQ Operations</span>
-      <span>Last updated May 31, 2026 04:26 AM ET</span>
+      <span>Last updated May 31, 2026 09:04 AM ET</span>
     </div>
     <h1>Active <span class="accent">Deals.</span></h1>
     <p class="dek">Every property currently in stages 1-7 of the ACQ pipeline. Sorted by call rating within each stage so the strongest deals surface first.</p>
@@ -4126,7 +4126,7 @@ section h2, h2 {
   <header class="masthead">
     <div class="brandrow">
       <span class="brand">Atom Property Group · ACQ Operations</span>
-      <span>Last updated May 31, 2026 04:26 AM ET</span>
+      <span>Last updated May 31, 2026 09:04 AM ET</span>
     </div>
     <h1>SMS <span class="accent">Follow-Ups.</span></h1>
     <p class="dek">Action queue for Jeff and Mike — replies to call back, leads gone dormant, and everything still cycling through the SMS sequence.</p>
@@ -4144,7 +4144,7 @@ section h2, h2 {
     <a href="about.html">About</a>
   </nav>
 
-  <details class="run-grid-collapsed"><summary>All 7 cron jobs OK on last run — click for timestamps</summary><div class="run-grid"><div class="run-row"><span class="tag green">OK</span><span class="run-name">ACQ Call Recording Automation</span><span class="run-ts">May 30, 07:46 PM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">ACQ SMS Follow-Up + Dashboard</span><span class="run-ts">May 30, 04:36 PM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">APG Slack Scraper</span><span class="run-ts">May 30, 04:35 PM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">Dedup Slack-mention notes</span><span class="run-ts">May 29, 07:10 PM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">Weekly Analysis</span><span class="run-ts">May 29, 05:28 PM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">dashboard (script)</span><span class="run-ts">May 31, 04:25 AM</span><span class="run-detail">dashboard updated</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">sms (script)</span><span class="run-ts">May 31, 04:25 AM</span><span class="run-detail">outside business hours (hour=4 ET)</span></div></div></details><div class="status-banner on"><div class="status-text"><span class="pulse"></span>SMS Automation: <span style="color:var(--green);font-weight:800">ACTIVE</span></div><a class="btn btn-kill" href="https://docs.google.com/spreadsheets/d/1wc3Pt46ze-ejLaryL8WIRQf4OjEkirolc4-O8lsRQZY/edit#gid=0" target="_blank">EMERGENCY KILL SWITCH</a></div>
+  <details class="run-grid-collapsed"><summary>All 7 cron jobs OK on last run — click for timestamps</summary><div class="run-grid"><div class="run-row"><span class="tag green">OK</span><span class="run-name">ACQ Call Recording Automation</span><span class="run-ts">May 31, 05:58 AM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">ACQ SMS Follow-Up + Dashboard</span><span class="run-ts">May 31, 04:26 AM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">APG Slack Scraper</span><span class="run-ts">May 31, 04:26 AM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">Dedup Slack-mention notes</span><span class="run-ts">May 29, 07:10 PM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">Weekly Analysis</span><span class="run-ts">May 29, 05:28 PM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">dashboard (script)</span><span class="run-ts">May 31, 09:03 AM</span><span class="run-detail">dashboard updated</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">sms (script)</span><span class="run-ts">May 31, 09:03 AM</span><span class="run-detail">{&quot;wait&quot;: 18, &quot;skipped-tag-prebail&quot;: 55, &quot;skipped&quot;: 5, &quot;no-phone&quot;: 1}</span></div></div></details><div class="status-banner on"><div class="status-text"><span class="pulse"></span>SMS Automation: <span style="color:var(--green);font-weight:800">ACTIVE</span></div><a class="btn btn-kill" href="https://docs.google.com/spreadsheets/d/1wc3Pt46ze-ejLaryL8WIRQf4OjEkirolc4-O8lsRQZY/edit#gid=0" target="_blank">EMERGENCY KILL SWITCH</a></div>
 
   <section class="sec">
     <div class="tag-row"><span class="num">01</span><h2>At a Glance</h2></div>
