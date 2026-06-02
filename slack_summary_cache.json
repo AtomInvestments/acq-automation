@@ -43,6 +43,17 @@
     "match_confidence": "high",
     "summary": "Team member requests to send Lee Whitman a text asking him to respond with properties he wants to sell."
   },
+  "C05M7E1TJP7:1780418066.231019": {
+    "field_updates": {
+      "asking_price": 849000,
+      "motivation": "Moving to PalmDale",
+      "reason_for_selling": "Moving to PalmDale",
+      "timeline": "ASAP"
+    },
+    "match_cid": "ax5OIEkHv0LaPrHazcwa",
+    "match_confidence": "high",
+    "summary": "Anthony Lamendola wants to sell 56 Valley Rd in Lambertville for $849K ASAP, moving to PalmDale, property in good condition."
+  },
   "C05MP6K9RNV:1779136440.549199": {
     "field_updates": {
       "asking_price": null,
@@ -592,5 +603,82 @@
     "match_cid": "l6ajhopx9aIh2BqZ05RD",
     "match_confidence": "high",
     "summary": "Jerry Harris confirmed asking price of $350,000, property is in perfect condition, wants to sell right away because he's moving states."
+  },
+  "C06MM4DQZ28:1780341162.656299": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": "Out of state owners",
+      "reason_for_selling": "Owner is not in the same state as the property",
+      "timeline": "60 days"
+    },
+    "match_cid": "oYCZJdO0dN5imNMky6mu",
+    "match_confidence": "high",
+    "summary": "Arvind confirmed the house is in brand-new condition, looking to sell within 2 months because they're out of state."
+  },
+  "C06MM4DQZ28:1780341253.816559": {
+    "field_updates": {
+      "asking_price": 425000,
+      "motivation": "Brother went to nursing home",
+      "reason_for_selling": "Property was lived in by brother who went into nursing home",
+      "timeline": "90 days"
+    },
+    "match_cid": "1f8y9jRwwmzdeiLLoYqj",
+    "match_confidence": "high",
+    "summary": "Frank confirmed property needs full remodel, asking $425K, timeline is 2-3 months, selling because brother went to nursing home."
+  },
+  "C06MM4DQZ28:1780425802.577689": {
+    "field_updates": {
+      "asking_price": 350000,
+      "motivation": "Need gone",
+      "reason_for_selling": "Needs to sell the property urgently",
+      "timeline": "ASAP"
+    },
+    "match_cid": "mDpsD2UCc5AzHBdPjIrx",
+    "match_confidence": "high",
+    "summary": "Linda confirmed interest in selling 3 Mill Rd for $350k, property is fully renovated, needs to sell right now."
+  },
+  "C06MM4DQZ28:1780425884.455919": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": "Ready to dump this property",
+      "reason_for_selling": "Highly motivated to sell quickly, expressed urgency to meet same day",
+      "timeline": "ASAP"
+    },
+    "match_cid": "4CeD82EG3hcDDxmqVdlb",
+    "match_confidence": "high",
+    "summary": "Denise is highly motivated and ready to sell immediately, describing the property as in perfect condition and wanting to meet today at 5 PM."
+  },
+  "C06MM4DQZ28:1780425986.492499": {
+    "field_updates": {
+      "asking_price": 100000,
+      "motivation": "Senior looking to live stress-free, moving in with friend",
+      "reason_for_selling": "Senior homeowner wants to eliminate property management stress and is moving in with a friend",
+      "timeline": "ASAP"
+    },
+    "match_cid": "74jMHvA6HmpsRjI3asmr",
+    "match_confidence": "high",
+    "summary": "Frank Rodriguez wants to sell 1207 S Octagon Rd ASAP for $100k, property needs plumbing and kitchen work, selling to reduce stress as a senior."
+  },
+  "C06MM4DQZ28:1780429597.857299": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": "Asked to make an offer, responded 'Why' when asked for reason to sell",
+      "reason_for_selling": null,
+      "timeline": "ASAP"
+    },
+    "match_cid": "YHSFxYEcURlrRvvtrs8F",
+    "match_confidence": "high",
+    "summary": "Clara responded to outreach about K18 Shirley Ln, stating the property is in like-new condition, wants to sell ASAP, and asked for an offer to be made."
+  },
+  "C06MM4DQZ28:1780429652.666369": {
+    "field_updates": {
+      "asking_price": 475000,
+      "motivation": "No specific motivation - only for the right offer",
+      "reason_for_selling": "No specific reason, would only sell for the right offer",
+      "timeline": "90 days"
+    },
+    "match_cid": "bgd8UoYwqjz1xbkEH8Pn",
+    "match_confidence": "high",
+    "summary": "Keon Charles confirmed property is fully renovated, asking $475K, willing to sell for right offer with 3-month timeline to buy another place."
   }
 }
