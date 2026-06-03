@@ -949,6 +949,56 @@ export default {
       }
     }
 
+    // /admin/blake/burn-dedupe — wipe all `last_attempt:*` keys to unblock the
+    // dial pool. Worker-internal KV ops use a separate quota from wrangler CLI,
+    // so this works even when `wrangler kv:key list` returns "quota exhausted".
+    // GET supported for browser convenience (Mido pastes URL into browser bar).
+    if (
+      (req.method === "POST" || req.method === "GET") &&
+      url.pathname === "/admin/blake/burn-dedupe"
+    ) {
+      const auth = await requireAuth(req, env);
+      if (!auth.ok) return new Response(JSON.stringify({ error: "unauthorized" }), {
+        status: 401, headers: { "content-type": "application/json" },
+      });
+      try {
+        const allKeys: string[] = [];
+        let cursor: string | undefined = undefined;
+        let pages = 0;
+        while (true) {
+          pages++;
+          const result: any = await env.DIAL_STATE.list({
+            prefix: "last_attempt:",
+            cursor,
+            limit: 1000,
+          });
+          for (const k of result.keys) allKeys.push(k.name);
+          if (result.list_complete || !result.cursor) break;
+          cursor = result.cursor;
+          if (pages > 50) break; // safety: hard cap
+        }
+        let deleted = 0;
+        for (const name of allKeys) {
+          await env.DIAL_STATE.delete(name);
+          deleted++;
+        }
+        return new Response(JSON.stringify({
+          ok: true,
+          pages_listed: pages,
+          keys_found: allKeys.length,
+          keys_deleted: deleted,
+          sample: allKeys.slice(0, 5),
+          note: "Dial pool unblocked. Next cron tick (within 15 min) will pick up dial candidates again. TTL is now 3 days (was 30) — pool will self-recover faster going forward.",
+        }, null, 2), {
+          status: 200, headers: { "content-type": "application/json" },
+        });
+      } catch (e: any) {
+        return new Response(JSON.stringify({ ok: false, error: String(e?.message || e) }), {
+          status: 500, headers: { "content-type": "application/json" },
+        });
+      }
+    }
+
     // /roadmap — visual companion to the APG Plan-of-Record markdown.
     // Year → quarter → month → day drill-down rendered server-side from the
     // bundled APG-Vault/Strategy/*.md (see por-sources.ts + sync_por_sources.py).
