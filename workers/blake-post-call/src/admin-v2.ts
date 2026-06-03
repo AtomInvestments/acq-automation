@@ -269,6 +269,14 @@ const TEMPLATE_PREFIX = "template:";
 const AUDIT_PREFIX = "audit:";
 const RATELIMIT_PREFIX = "ratelimit:login:";
 
+// Index keys — avoid expensive KV.list() on every page load by maintaining a
+// hand-curated index of emails / template slugs / recent audit entries.
+// The DIAL_STATE namespace is shared with high-volume dial dedupe writes that
+// blow through the daily KV list-quota; admin pages MUST NOT call .list().
+const USERS_INDEX_KEY = "users:index";        // JSON string[] of emails
+const AUDIT_INDEX_KEY = "audit:index";        // JSON: { entries: [{...}], cap: 200 }
+const AUDIT_INDEX_CAP = 200;
+
 export function normalizeEmail(email: string): string {
   return String(email || "").trim().toLowerCase();
 }
@@ -280,31 +288,48 @@ export async function getUser(env: Env, email: string): Promise<User | null> {
   try { return JSON.parse(raw) as User; } catch { return null; }
 }
 
+async function readUsersIndex(env: Env): Promise<string[]> {
+  const raw = await env.DIAL_STATE.get(USERS_INDEX_KEY);
+  if (!raw) return [];
+  try {
+    const arr = JSON.parse(raw);
+    return Array.isArray(arr) ? arr.filter((s) => typeof s === "string") : [];
+  } catch { return []; }
+}
+
+async function writeUsersIndex(env: Env, emails: string[]): Promise<void> {
+  const uniq = Array.from(new Set(emails.map(normalizeEmail))).sort();
+  await env.DIAL_STATE.put(USERS_INDEX_KEY, JSON.stringify(uniq));
+}
+
 export async function putUser(env: Env, u: User): Promise<void> {
   u.email = normalizeEmail(u.email);
   u.permissions = clampPermsForRole(u.role, u.permissions);
   await env.DIAL_STATE.put(USER_PREFIX + u.email, JSON.stringify(u));
+  // Maintain the index so listUsers() doesn't have to call KV.list().
+  const idx = await readUsersIndex(env);
+  if (!idx.includes(u.email)) {
+    idx.push(u.email);
+    await writeUsersIndex(env, idx);
+  }
 }
 
 export async function deleteUser(env: Env, email: string): Promise<void> {
-  await env.DIAL_STATE.delete(USER_PREFIX + normalizeEmail(email));
+  const e = normalizeEmail(email);
+  await env.DIAL_STATE.delete(USER_PREFIX + e);
+  const idx = await readUsersIndex(env);
+  const next = idx.filter((x) => x !== e);
+  if (next.length !== idx.length) await writeUsersIndex(env, next);
 }
 
 export async function listUsers(env: Env): Promise<User[]> {
+  // Read the curated index — no KV.list() (the namespace is shared with
+  // high-volume dial dedupe writes and KV.list daily quota fills fast).
+  const emails = await readUsersIndex(env);
   const out: User[] = [];
-  let cursor: string | undefined;
-  let pages = 0;
-  while (true) {
-    pages++;
-    const r: any = await env.DIAL_STATE.list({ prefix: USER_PREFIX, cursor, limit: 200 });
-    for (const k of r.keys) {
-      const raw = await env.DIAL_STATE.get(k.name);
-      if (!raw) continue;
-      try { out.push(JSON.parse(raw) as User); } catch {}
-    }
-    if (r.list_complete || !r.cursor) break;
-    cursor = r.cursor;
-    if (pages > 20) break;
+  for (const e of emails) {
+    const u = await getUser(env, e);
+    if (u) out.push(u);
   }
   return out;
 }
@@ -361,24 +386,11 @@ export async function getTemplate(env: Env, slug: string): Promise<AdminTemplate
 }
 
 export async function listTemplates(env: Env): Promise<AdminTemplate[]> {
-  // Start with builtins, layer KV overrides + extras on top
-  const map = new Map<string, AdminTemplate>();
-  for (const t of BUILTIN_TEMPLATES) map.set(t.slug, t);
-  let cursor: string | undefined;
-  let pages = 0;
-  while (true) {
-    pages++;
-    const r: any = await env.DIAL_STATE.list({ prefix: TEMPLATE_PREFIX, cursor, limit: 200 });
-    for (const k of r.keys) {
-      const raw = await env.DIAL_STATE.get(k.name);
-      if (!raw) continue;
-      try { map.set(k.name.slice(TEMPLATE_PREFIX.length), JSON.parse(raw)); } catch {}
-    }
-    if (r.list_complete || !r.cursor) break;
-    cursor = r.cursor;
-    if (pages > 10) break;
-  }
-  return Array.from(map.values());
+  // Builtins only, for now. The custom-template editor is deferred to next
+  // session; once it ships, this should also read a curated index key (e.g.
+  // "templates:index") rather than KV.list(), because the DIAL_STATE
+  // namespace's list quota is shared with high-volume dial dedupe.
+  return [...BUILTIN_TEMPLATES];
 }
 
 export async function putTemplate(env: Env, t: AdminTemplate): Promise<void> {
@@ -389,31 +401,32 @@ export async function putTemplate(env: Env, t: AdminTemplate): Promise<void> {
 // Audit log
 // =============================================================================
 
+// Audit log uses a single rolling-buffer key — read-modify-write — to avoid
+// per-event KV.list() and per-event TTL overhead. Cap at AUDIT_INDEX_CAP
+// most-recent entries; older entries fall off as new ones arrive. Good enough
+// for an in-dashboard recent-activity widget; not a forensics tool.
+async function readAuditBuffer(env: Env): Promise<AuditEntry[]> {
+  const raw = await env.DIAL_STATE.get(AUDIT_INDEX_KEY);
+  if (!raw) return [];
+  try {
+    const obj = JSON.parse(raw);
+    if (Array.isArray(obj?.entries)) return obj.entries.filter((e: any) => e && typeof e.ts === "string");
+  } catch {}
+  return [];
+}
+
 export async function audit(env: Env, entry: Omit<AuditEntry, "ts">): Promise<void> {
   const ts = new Date().toISOString();
   const full: AuditEntry = { ts, ...entry };
-  // 90 day TTL — entry key includes timestamp so multiple events per second
-  // don't collide (also append random suffix for safety).
-  const suffix = randomHex(4);
-  await env.DIAL_STATE.put(
-    `${AUDIT_PREFIX}${ts}:${suffix}`,
-    JSON.stringify(full),
-    { expirationTtl: 90 * 24 * 3600 }
-  );
+  const buf = await readAuditBuffer(env);
+  buf.unshift(full);
+  const trimmed = buf.slice(0, AUDIT_INDEX_CAP);
+  await env.DIAL_STATE.put(AUDIT_INDEX_KEY, JSON.stringify({ entries: trimmed, cap: AUDIT_INDEX_CAP }));
 }
 
 export async function listRecentAudit(env: Env, limit = 25): Promise<AuditEntry[]> {
-  // KV list returns keys in lexicographic order; ISO timestamps sort correctly
-  // when reversed (newest first).
-  const r: any = await env.DIAL_STATE.list({ prefix: AUDIT_PREFIX, limit: 500 });
-  const sortedKeys = r.keys.map((k: any) => k.name).sort().reverse();
-  const out: AuditEntry[] = [];
-  for (const name of sortedKeys.slice(0, limit)) {
-    const raw = await env.DIAL_STATE.get(name);
-    if (!raw) continue;
-    try { out.push(JSON.parse(raw) as AuditEntry); } catch {}
-  }
-  return out;
+  const buf = await readAuditBuffer(env);
+  return buf.slice(0, limit);
 }
 
 // =============================================================================
@@ -475,35 +488,52 @@ const BOOTSTRAP_SEEDS: BootstrapSeed[] = [
 
 const BOOTSTRAP_SENTINEL_KEY = "bootstrap:v1:done";
 
-export async function bootstrapIfNeeded(env: Env): Promise<{ ran: boolean; seeded: string[] }> {
+export async function bootstrapIfNeeded(env: Env): Promise<{ ran: boolean; seeded: string[]; reindexed: number }> {
   const sentinel = await env.DIAL_STATE.get(BOOTSTRAP_SENTINEL_KEY);
-  if (sentinel === "1") return { ran: false, seeded: [] };
 
   const seeded: string[] = [];
-  for (const s of BOOTSTRAP_SEEDS) {
-    const existing = await getUser(env, s.email);
-    if (existing) continue;
-    const salt = randomHex(16);
-    const hash = await hashPassword(s.password, salt, env.DASHBOARD_SESSION_SECRET || "fallback-pepper");
-    const u: User = {
-      email: s.email,
-      name: s.name,
-      role: s.role,
-      permissions: defaultPermsForRole(s.role),
-      password_hash: hash,
-      password_salt: salt,
-      created_at: new Date().toISOString(),
-      created_by: "bootstrap",
-    };
-    // Adam (CEO) gets credential viewing; managers (Kebrina, Mido) don't.
-    if (s.role === "ceo") u.permissions.can_view_credentials = true;
-    await putUser(env, u);
-    seeded.push(s.email);
+  if (sentinel !== "v2") {
+    for (const s of BOOTSTRAP_SEEDS) {
+      const existing = await getUser(env, s.email);
+      if (existing) continue;
+      const salt = randomHex(16);
+      const hash = await hashPassword(s.password, salt, env.DASHBOARD_SESSION_SECRET || "fallback-pepper");
+      const u: User = {
+        email: s.email,
+        name: s.name,
+        role: s.role,
+        permissions: defaultPermsForRole(s.role),
+        password_hash: hash,
+        password_salt: salt,
+        created_at: new Date().toISOString(),
+        created_by: "bootstrap",
+      };
+      // Adam (CEO) gets credential viewing; managers (Kebrina, Mido) don't.
+      if (s.role === "ceo") u.permissions.can_view_credentials = true;
+      await putUser(env, u);
+      seeded.push(s.email);
+    }
   }
 
-  await env.DIAL_STATE.put(BOOTSTRAP_SENTINEL_KEY, "1");
-  return { ran: true, seeded };
+  // ALWAYS make sure the users:index includes the seeded emails (in case
+  // bootstrap ran before the index existed in an earlier deploy).
+  const idx = await readUsersIndex(env);
+  let reindexed = 0;
+  for (const s of BOOTSTRAP_SEEDS) {
+    if (!idx.includes(s.email)) {
+      idx.push(s.email);
+      reindexed++;
+    }
+  }
+  if (reindexed > 0) await writeUsersIndex(env, idx);
+
+  // Bump the sentinel to v2 so we don't re-run the seeding side; the
+  // reindexing side is now idempotent and runs on every boot until idx is
+  // synced.
+  await env.DIAL_STATE.put(BOOTSTRAP_SENTINEL_KEY, "v2");
+  return { ran: seeded.length > 0 || reindexed > 0, seeded, reindexed };
 }
+
 
 // =============================================================================
 // Auth — verify password + require permission
