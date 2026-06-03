@@ -44,6 +44,10 @@ import {
   serveSnapshot as serveWebsitesSnapshot,
   runDailyWebsiteSnapshots,
 } from "./websites-tab";
+import {
+  renderRoadmapPage,
+  buildRoadmapDataJson,
+} from "./roadmap-tab";
 
 export interface Env {
   BLAKE_GHL_PIT: string;
@@ -940,6 +944,55 @@ export default {
         });
       } catch (e: any) {
         return new Response(JSON.stringify({ ok: false, error: String(e?.message || e) }), {
+          status: 500, headers: { "content-type": "application/json" },
+        });
+      }
+    }
+
+    // /roadmap — visual companion to the APG Plan-of-Record markdown.
+    // Year → quarter → month → day drill-down rendered server-side from the
+    // bundled APG-Vault/Strategy/*.md (see por-sources.ts + sync_por_sources.py).
+    // Reusable for any future POR doc: drop a .md in Strategy/, add it to
+    // INCLUDED_DOCS in sync_por_sources.py, re-run, redeploy — then visit
+    // `/roadmap?source=<slug>`. No code change required.
+    //
+    // Companion route:
+    //   GET /roadmap-data?source=<slug>   → structured JSON of the parsed doc
+    //                                       (year/quarters/months/tasks)
+    if (req.method === "GET" && url.pathname === "/roadmap") {
+      const auth = await requireAuth(req, env);
+      if (!auth.ok) {
+        return new Response(null, {
+          status: 302,
+          headers: { Location: `/login?next=${encodeURIComponent("/roadmap" + url.search)}` },
+        });
+      }
+      try {
+        const html = await renderRoadmapPage({}, url);
+        return new Response(html, {
+          status: 200,
+          headers: { "content-type": "text/html; charset=utf-8", "cache-control": "no-store" },
+        });
+      } catch (e: any) {
+        const safe = String(e?.message || e).replace(/[<>&]/g, (c) => ({ "<": "&lt;", ">": "&gt;", "&": "&amp;" }[c]!));
+        return new Response(`Roadmap render failed: ${safe}`, {
+          status: 500, headers: { "content-type": "text/html; charset=utf-8" },
+        });
+      }
+    }
+
+    if (req.method === "GET" && url.pathname === "/roadmap-data") {
+      const auth = await requireAuth(req, env);
+      if (!auth.ok) return new Response(JSON.stringify({ error: "unauthorized" }), {
+        status: 401, headers: { "content-type": "application/json" },
+      });
+      try {
+        const data = await buildRoadmapDataJson({}, url);
+        return new Response(JSON.stringify(data, null, 2), {
+          status: 200, headers: { "content-type": "application/json", "cache-control": "no-store" },
+        });
+      } catch (e: any) {
+        return new Response(JSON.stringify({ error: String(e?.message || e) }), {
           status: 500, headers: { "content-type": "application/json" },
         });
       }
@@ -7077,6 +7130,7 @@ function apgTopNav(activeTab: string = ""): string {
     { href: "/",          key: "hub",        label: "Desk" },
     { href: "/blake",     key: "blake",      label: "Blake" },
     { href: "/progress",  key: "progress",   label: "Tracker" },
+    { href: "/roadmap",   key: "roadmap",    label: "Roadmap" },
     { href: "/followups", key: "followups",  label: "Follow-ups" },
     { href: "/deals",     key: "deals",      label: "Deals" },
     { href: "/weekly",    key: "weekly",     label: "Docket" },
