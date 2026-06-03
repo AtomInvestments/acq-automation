@@ -7097,10 +7097,15 @@ function getCookie(req: Request, name: string): string {
 }
 
 async function requireAuth(req: Request, env: Env): Promise<{ ok: boolean; user?: string }> {
-  const cookie = getCookie(req, SESSION_COOKIE_NAME);
-  if (!cookie) return { ok: false };
-  const v = await verifySessionCookie(cookie, env.DASHBOARD_SESSION_SECRET);
-  return v.ok ? { ok: true, user: v.user } : { ok: false };
+  // Multi-user upgrade (2026-06-03): delegate to requireAuthV2 which checks
+  // the new v2 session cookie first, then falls back to the legacy signed
+  // cookie. Every existing call site (~30 routes) keeps the same boolean
+  // contract; this gives all those routes free access to per-email sessions
+  // without changing each handler. Per-permission gating lives in the new
+  // /admin/* + /me handlers; existing routes remain role-agnostic for now
+  // (next-session work to tighten on a per-tab basis).
+  const v = await requireAuthV2(req, env);
+  return v.ok ? { ok: true, user: v.user?.email || "mido" } : { ok: false };
 }
 
 // =============================================================================
