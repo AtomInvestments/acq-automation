@@ -48,6 +48,43 @@ import {
   renderRoadmapPage,
   buildRoadmapDataJson,
 } from "./roadmap-tab";
+import {
+  bootstrapIfNeeded,
+  requireAuthV2,
+  hasPermission,
+  verifyPassword,
+  createSession,
+  deleteSession,
+  buildV2CookieHeader,
+  clearV2CookieHeader,
+  getUser,
+  putUser,
+  deleteUser,
+  listUsers,
+  listTemplates,
+  getTemplate,
+  hashPassword,
+  generatePassphrase,
+  defaultPermsForRole,
+  clampPermsForRole,
+  parsePermsFromForm,
+  permsAllTrue,
+  audit,
+  listRecentAudit,
+  checkLoginRateLimit,
+  bumpLoginRateLimit,
+  normalizeEmail,
+  adminPageHtml,
+  renderUsersListBody,
+  renderUsersNewBody,
+  renderUserEditBody,
+  renderTemplatesBody,
+  renderMeBody,
+  renderLoginV2Html,
+  type User,
+  type Role,
+  type Permissions,
+} from "./admin-v2";
 
 export interface Env {
   BLAKE_GHL_PIT: string;
@@ -314,6 +351,12 @@ export default {
   async fetch(req: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     const url = new URL(req.url);
 
+    // Multi-user bootstrap: seed Adam (CEO) + Kebrina (Manager) + Mido (Manager)
+    // into KV on first request after deploy. Idempotent — guarded by a KV
+    // sentinel so we only hit KV puts once per Worker lifetime. Cheap to call
+    // on every request (one KV.get for the sentinel).
+    ctx.waitUntil(bootstrapIfNeeded(env).catch((e) => console.error(`[bootstrap] ${e}`)));
+
     // --- Dashboard auth & gated pages ----------------------------------
     // Public asset routes (no auth) — needed so the login page can show the logo.
     // favicon.svg is INLINED in the Worker so the login page works without
@@ -377,18 +420,20 @@ export default {
       return proxyGithubRawJson(`weekly/${filename}`);
     }
 
-    // /login — GET shows the form, POST validates the password.
+    // /login — GET shows the form, POST validates email+password OR legacy
+    // username+password ("mido" + env.DASHBOARD_PASSWORD).
     if (req.method === "GET" && url.pathname === "/login") {
       const next = url.searchParams.get("next") || "";
+      const info = url.searchParams.get("info") || "";
       // If already authed, skip the form — land on the hub by default.
-      const auth = await requireAuth(req, env);
+      const auth = await requireAuthV2(req, env);
       if (auth.ok) {
         return new Response(null, {
           status: 302,
           headers: { Location: next || "/" },
         });
       }
-      return new Response(loginPageHtml({ next }), {
+      return new Response(renderLoginV2Html({ next, info }), {
         status: 200,
         headers: {
           "content-type": "text/html; charset=utf-8",
@@ -398,62 +443,106 @@ export default {
     }
 
     if (req.method === "POST" && url.pathname === "/login") {
+      let email = "";
       let password = "";
       let next = "";
       try {
         const ct = req.headers.get("content-type") || "";
         if (ct.includes("application/json")) {
           const j: any = await req.json();
+          email = String(j?.email || j?.username || "");
           password = String(j?.password || "");
           next = String(j?.next || "");
         } else {
           const form = await req.formData();
+          email = String(form.get("email") || form.get("username") || "");
           password = String(form.get("password") || "");
           next = String(form.get("next") || "");
         }
       } catch {
-        // fall through with empty password → error response
+        // fall through with empty values → error response
       }
-      if (!env.DASHBOARD_PASSWORD) {
-        return new Response(loginPageHtml({ error: "Server misconfigured: DASHBOARD_PASSWORD secret not set" }), {
-          status: 500,
+
+      // Rate limit by IP to slow brute-force attempts (5 / 15 min).
+      const ip = req.headers.get("cf-connecting-ip") || req.headers.get("x-forwarded-for") || "unknown";
+      const rl = await checkLoginRateLimit(env, ip);
+      if (!rl.ok) {
+        return new Response(renderLoginV2Html({ error: "Too many sign-in attempts. Try again in 15 minutes.", next }), {
+          status: 429,
           headers: { "content-type": "text/html; charset=utf-8" },
         });
       }
-      // Constant-time string compare (don't reveal length via short-circuit)
-      const a = password;
-      const b = env.DASHBOARD_PASSWORD;
-      let diff = a.length ^ b.length;
-      for (let i = 0; i < Math.max(a.length, b.length); i++) {
-        diff |= (a.charCodeAt(i) || 0) ^ (b.charCodeAt(i) || 0);
-      }
-      if (diff !== 0) {
-        return new Response(loginPageHtml({ error: "Incorrect password.", next }), {
-          status: 401,
-          headers: { "content-type": "text/html; charset=utf-8" },
+
+      // Backwards-compat: bare username "mido" or empty email path falls back
+      // to env.DASHBOARD_PASSWORD constant-time compare against the OLD secret.
+      // This keeps Mido logged in during the migration window even before he
+      // changes to his new email-based password.
+      const looksLikeEmail = email.includes("@");
+      if (!looksLikeEmail) {
+        if (!env.DASHBOARD_PASSWORD) {
+          await bumpLoginRateLimit(env, ip);
+          return new Response(renderLoginV2Html({ error: "Incorrect email or password.", next }), {
+            status: 401, headers: { "content-type": "text/html; charset=utf-8" },
+          });
+        }
+        const a = password;
+        const b = env.DASHBOARD_PASSWORD;
+        let diff = a.length ^ b.length;
+        for (let i = 0; i < Math.max(a.length, b.length); i++) {
+          diff |= (a.charCodeAt(i) || 0) ^ (b.charCodeAt(i) || 0);
+        }
+        if (diff !== 0) {
+          await bumpLoginRateLimit(env, ip);
+          return new Response(renderLoginV2Html({ error: "Incorrect email or password.", next }), {
+            status: 401, headers: { "content-type": "text/html; charset=utf-8" },
+          });
+        }
+        // Legacy login path — issue an old-style signed cookie + the v2
+        // synthetic-mido cookie alongside, so subsequent requests resolve
+        // via requireAuthV2 (which prefers v2 then falls back to legacy).
+        const cookie = await signSessionCookie(env.DASHBOARD_SESSION_SECRET);
+        const safeNext = next && next.startsWith("/") ? next : "/";
+        return new Response(null, {
+          status: 302,
+          headers: {
+            Location: safeNext,
+            "Set-Cookie": buildSessionCookieHeader(cookie),
+          },
         });
       }
-      const cookie = await signSessionCookie(env.DASHBOARD_SESSION_SECRET);
-      // Default post-login destination is the landing hub at "/" — gives the
-      // user a clear nav to all dashboards instead of dumping them on Blake.
+
+      // V2 path — look up the user in KV by email + verify hashed password.
+      const u = await verifyPassword(env, email, password);
+      if (!u) {
+        await bumpLoginRateLimit(env, ip);
+        return new Response(renderLoginV2Html({ error: "Incorrect email or password.", next }), {
+          status: 401, headers: { "content-type": "text/html; charset=utf-8" },
+        });
+      }
+      // Update last_login + create a server-side session.
+      u.last_login = new Date().toISOString();
+      await putUser(env, u);
+      const sid = await createSession(env, u, ip);
       const safeNext = next && next.startsWith("/") ? next : "/";
       return new Response(null, {
         status: 302,
         headers: {
           Location: safeNext,
-          "Set-Cookie": buildSessionCookieHeader(cookie),
+          "Set-Cookie": buildV2CookieHeader(sid),
         },
       });
     }
 
     if (req.method === "GET" && url.pathname === "/logout") {
-      return new Response(null, {
-        status: 302,
-        headers: {
-          Location: "/login",
-          "Set-Cookie": clearSessionCookieHeader(),
-        },
-      });
+      // Best-effort: tear down the server-side session if a v2 cookie exists.
+      const sid = (req.headers.get("cookie") || "")
+        .split(";").map((s) => s.trim()).find((s) => s.startsWith("apg_session_v2="));
+      if (sid) await deleteSession(env, sid.slice("apg_session_v2=".length));
+      // Clear both cookies so any old single-tenant cookie also goes away.
+      const headers = new Headers({ Location: "/login" });
+      headers.append("Set-Cookie", clearSessionCookieHeader());
+      headers.append("Set-Cookie", clearV2CookieHeader());
+      return new Response(null, { status: 302, headers });
     }
 
     // Gated dashboard pages — proxy github.io HTML behind session check.
@@ -1854,6 +1943,16 @@ export default {
     // import bursts without blowing CF subrequest budget.
     if (req.method === "POST" && url.pathname === "/ghl-webhook") {
       return handleGhlWebhook(req, env, ctx);
+    }
+
+    // ==========================================================================
+    // Multi-user admin (manager+ only)
+    // ==========================================================================
+    if (url.pathname === "/admin/users" || url.pathname === "/admin/users/" ||
+        url.pathname === "/admin/users/new" || url.pathname.startsWith("/admin/users/") ||
+        url.pathname === "/admin/templates" || url.pathname === "/me" ||
+        url.pathname === "/me/rotate-password") {
+      return handleAdminRoutes(req, env, url);
     }
 
     return new Response("Not Found", { status: 404 });
@@ -7178,20 +7277,30 @@ function applyApgShell(html: string, activeTab: string): string {
   return html;
 }
 
-function apgTopNav(activeTab: string = ""): string {
-  const tabs = [
-    { href: "/",          key: "hub",        label: "Desk" },
-    { href: "/blake",     key: "blake",      label: "Blake" },
-    { href: "/progress",  key: "progress",   label: "Tracker" },
-    { href: "/roadmap",   key: "roadmap",    label: "Roadmap" },
-    { href: "/followups", key: "followups",  label: "Follow-ups" },
-    { href: "/deals",     key: "deals",      label: "Deals" },
-    { href: "/weekly",    key: "weekly",     label: "Docket" },
-    { href: "/priorities", key: "priorities", label: "Priority" },
-    { href: "/markets",   key: "markets",    label: "Markets" },
-    { href: "/insights",  key: "insights",   label: "Insights" },
+function apgTopNav(activeTab: string = "", user?: User): string {
+  const tabs: Array<{ href: string; key: string; label: string; permKey?: keyof Permissions }> = [
+    { href: "/",          key: "hub",        label: "Desk",        permKey: "hub" },
+    { href: "/blake",     key: "blake",      label: "Blake",       permKey: "blake" },
+    { href: "/progress",  key: "progress",   label: "Tracker",     permKey: "progress" },
+    { href: "/roadmap",   key: "roadmap",    label: "Roadmap",     permKey: "roadmap" },
+    { href: "/followups", key: "followups",  label: "Follow-ups",  permKey: "followups" },
+    { href: "/deals",     key: "deals",      label: "Deals",       permKey: "deals" },
+    { href: "/weekly",    key: "weekly",     label: "Docket",      permKey: "weekly" },
+    { href: "/priorities", key: "priorities", label: "Priority",   permKey: "priorities" },
+    { href: "/markets",   key: "markets",    label: "Markets",     permKey: "markets" },
+    { href: "/insights",  key: "insights",   label: "Insights",    permKey: "insights" },
   ];
-  const tabHtml = tabs.map((t) => {
+  // Filter tabs by user's per-tab permissions. If no user given (legacy call
+  // sites that haven't been migrated yet), show all tabs — the route handler
+  // will gate access regardless.
+  const visibleTabs = user
+    ? tabs.filter((t) => !t.permKey || hasPermission(user, t.permKey))
+    : tabs;
+  // Append a "Team" tab if the user can manage other users (managers + CEO).
+  if (user && hasPermission(user, "can_add_users")) {
+    visibleTabs.push({ href: "/admin/users", key: "admin", label: "Team" });
+  }
+  const tabHtml = visibleTabs.map((t) => {
     const active = t.key === activeTab ? " apg-nav-tab--active" : "";
     return `<a class="apg-nav-tab${active}" href="${t.href}">${t.label}</a>`;
   }).join("");
@@ -10333,5 +10442,270 @@ async function runDripAgent(
     console.log(`[drip] sent=${out.sent} considered=${out.candidates_considered} of ${out.candidates_total}`);
   }
   return out;
+}
+
+// =============================================================================
+// Multi-user admin route handler — dispatched from main fetch() above.
+// Every route here requires a valid v2 session AND role >= manager (except /me
+// which any signed-in user can hit).
+// =============================================================================
+async function handleAdminRoutes(req: Request, env: Env, url: URL): Promise<Response> {
+  const auth = await requireAuthV2(req, env);
+  if (!auth.ok || !auth.user) {
+    return new Response(null, {
+      status: 302,
+      headers: { Location: `/login?next=${encodeURIComponent(url.pathname + url.search)}` },
+    });
+  }
+  const me = auth.user;
+  const topNav = apgTopNav("admin", me);
+
+  // ---- /me — any signed-in user ----
+  if (req.method === "GET" && url.pathname === "/me") {
+    return new Response(adminPageHtml({
+      title: "My Profile",
+      topNav,
+      body: renderMeBody(me),
+    }), { status: 200, headers: { "content-type": "text/html; charset=utf-8", "cache-control": "no-store" } });
+  }
+
+  if (req.method === "POST" && url.pathname === "/me/rotate-password") {
+    if (auth.legacy) {
+      return new Response(adminPageHtml({
+        title: "My Profile",
+        topNav,
+        body: renderMeBody(me),
+        flash: { kind: "error", text: "Legacy session — sign in with your email + password first, then rotate." },
+      }), { status: 400, headers: { "content-type": "text/html; charset=utf-8" } });
+    }
+    const fresh = await getUser(env, me.email);
+    if (!fresh) return new Response("Not found", { status: 404 });
+    const newPass = generatePassphrase();
+    const salt = generateRandomSaltHex();
+    fresh.password_hash = await hashPassword(newPass, salt, env.DASHBOARD_SESSION_SECRET);
+    fresh.password_salt = salt;
+    await putUser(env, fresh);
+    await audit(env, { actor: me.email, action: "rotate_password", target: me.email });
+    return new Response(adminPageHtml({
+      title: "My Profile",
+      topNav,
+      body: renderMeBody(fresh),
+      flash: { kind: "success", text: `New password generated: ${newPass}  —  save it now; it is not recoverable.` },
+    }), { status: 200, headers: { "content-type": "text/html; charset=utf-8", "cache-control": "no-store" } });
+  }
+
+  // ---- /admin/* — manager+ only ----
+  if (me.role === "employee") {
+    return new Response(adminPageHtml({
+      title: "Access denied",
+      topNav,
+      body: `<header class="adm-hero"><div><h1>Access <em>denied</em>.</h1><p>This area is restricted to managers. Contact Adam or Kebrina if you need broader access.</p></div><div class="btn-row"><a class="btn" href="/">Back to dashboard</a></div></header>`,
+    }), { status: 403, headers: { "content-type": "text/html; charset=utf-8" } });
+  }
+
+  // ---- /admin/users — list view ----
+  if (req.method === "GET" && (url.pathname === "/admin/users" || url.pathname === "/admin/users/")) {
+    const [users, recent] = await Promise.all([listUsers(env), listRecentAudit(env, 25)]);
+    return new Response(adminPageHtml({
+      title: "Team",
+      topNav,
+      body: renderUsersListBody(users, me, recent),
+    }), { status: 200, headers: { "content-type": "text/html; charset=utf-8", "cache-control": "no-store" } });
+  }
+
+  // ---- /admin/users/new ----
+  if (req.method === "GET" && url.pathname === "/admin/users/new") {
+    const templates = await listTemplates(env);
+    return new Response(adminPageHtml({
+      title: "Invite a teammate",
+      topNav,
+      body: renderUsersNewBody(me, templates),
+    }), { status: 200, headers: { "content-type": "text/html; charset=utf-8", "cache-control": "no-store" } });
+  }
+
+  if (req.method === "POST" && url.pathname === "/admin/users/new") {
+    const form = await req.formData();
+    const name = String(form.get("name") || "").trim();
+    const email = normalizeEmail(String(form.get("email") || ""));
+    let role = String(form.get("role") || "employee").toLowerCase() as Role;
+    const template = String(form.get("template") || "").trim();
+
+    // Hard guardrails: managers cannot create CEO/Manager accounts.
+    if (me.role === "manager" && role !== "employee") role = "employee";
+    if (!["ceo", "manager", "employee"].includes(role)) role = "employee";
+    if (!name || !email || !email.includes("@")) {
+      const templates = await listTemplates(env);
+      return new Response(adminPageHtml({
+        title: "Invite a teammate",
+        topNav,
+        body: renderUsersNewBody(me, templates),
+        flash: { kind: "error", text: "Name and a valid email are both required." },
+      }), { status: 400, headers: { "content-type": "text/html; charset=utf-8" } });
+    }
+    const exists = await getUser(env, email);
+    if (exists) {
+      const templates = await listTemplates(env);
+      return new Response(adminPageHtml({
+        title: "Invite a teammate",
+        topNav,
+        body: renderUsersNewBody(me, templates),
+        flash: { kind: "error", text: `A user with email ${email} already exists.` },
+      }), { status: 409, headers: { "content-type": "text/html; charset=utf-8" } });
+    }
+
+    // Permissions: start from template if given, then layer per-checkbox.
+    let perms = defaultPermsForRole(role);
+    if (template && role === "employee") {
+      const t = await getTemplate(env, template);
+      if (t) perms = { ...t.permissions };
+    }
+    // For any role, if the form actually submitted perm:* checkboxes, those
+    // take precedence over the template default.
+    const formHadPerms = Array.from(form.keys()).some((k) => k.startsWith("perm:"));
+    if (formHadPerms) perms = parsePermsFromForm(form, role);
+    perms = clampPermsForRole(role, perms);
+
+    const password = generatePassphrase();
+    const salt = generateRandomSaltHex();
+    const hash = await hashPassword(password, salt, env.DASHBOARD_SESSION_SECRET);
+    const u: User = {
+      email,
+      name,
+      role,
+      template: template || undefined,
+      permissions: perms,
+      password_hash: hash,
+      password_salt: salt,
+      created_at: new Date().toISOString(),
+      created_by: me.email,
+    };
+    await putUser(env, u);
+    await audit(env, {
+      actor: me.email,
+      action: "create_user",
+      target: email,
+      details: { role, template: template || null },
+    });
+    const templates = await listTemplates(env);
+    return new Response(adminPageHtml({
+      title: "Invite a teammate",
+      topNav,
+      body: renderUsersNewBody(me, templates, { kind: "success", text: `User ${name} (${email}) created.`, newPassword: password, newEmail: email }),
+    }), { status: 201, headers: { "content-type": "text/html; charset=utf-8", "cache-control": "no-store" } });
+  }
+
+  // ---- /admin/users/<email>/delete (GET for the confirm-link UX) ----
+  if (req.method === "GET" && url.pathname.startsWith("/admin/users/") && url.pathname.endsWith("/delete")) {
+    const targetEmail = normalizeEmail(decodeURIComponent(url.pathname.slice("/admin/users/".length, -"/delete".length)));
+    const target = await getUser(env, targetEmail);
+    if (!target) return new Response("Not found", { status: 404 });
+    // Permission: CEO can remove anyone except themselves; manager can only
+    // remove employees they (or another manager) created.
+    if (target.email === me.email) return new Response("Cannot remove yourself.", { status: 400 });
+    if (me.role === "manager" && target.role !== "employee") {
+      return new Response("Managers can only remove employees.", { status: 403 });
+    }
+    await deleteUser(env, target.email);
+    await audit(env, {
+      actor: me.email,
+      action: "delete_user",
+      target: target.email,
+      details: { role: target.role, name: target.name },
+    });
+    return new Response(null, { status: 302, headers: { Location: "/admin/users" } });
+  }
+
+  // ---- /admin/users/<email> — edit (GET) + save (POST) ----
+  if (url.pathname.startsWith("/admin/users/") && !url.pathname.endsWith("/delete") && url.pathname !== "/admin/users/new") {
+    const targetEmail = normalizeEmail(decodeURIComponent(url.pathname.slice("/admin/users/".length)));
+    const target = await getUser(env, targetEmail);
+    if (!target) return new Response("Not found", { status: 404 });
+    // Permission: managers can only edit employees.
+    if (me.role === "manager" && target.role !== "employee" && target.email !== me.email) {
+      return new Response("Managers can only edit employees.", { status: 403 });
+    }
+    const templates = await listTemplates(env);
+
+    if (req.method === "GET") {
+      return new Response(adminPageHtml({
+        title: `Edit ${target.name}`,
+        topNav,
+        body: renderUserEditBody(me, target, templates),
+      }), { status: 200, headers: { "content-type": "text/html; charset=utf-8", "cache-control": "no-store" } });
+    }
+
+    if (req.method === "POST") {
+      const form = await req.formData();
+      const action = String(form.get("action") || "save");
+      const name = String(form.get("name") || target.name).trim();
+      let role = String(form.get("role") || target.role).toLowerCase() as Role;
+      const template = String(form.get("template") || "").trim();
+      if (me.role === "manager") role = "employee"; // can't promote
+      if (!["ceo", "manager", "employee"].includes(role)) role = target.role;
+
+      if (action === "regen_password") {
+        const newPass = generatePassphrase();
+        const salt = generateRandomSaltHex();
+        target.password_hash = await hashPassword(newPass, salt, env.DASHBOARD_SESSION_SECRET);
+        target.password_salt = salt;
+        await putUser(env, target);
+        await audit(env, { actor: me.email, action: "regen_password", target: target.email });
+        return new Response(adminPageHtml({
+          title: `Edit ${target.name}`,
+          topNav,
+          body: renderUserEditBody(me, target, templates, { kind: "success", text: "New password generated below.", newPassword: newPass }),
+        }), { status: 200, headers: { "content-type": "text/html; charset=utf-8", "cache-control": "no-store" } });
+      }
+
+      // Save changes — clamp perms by final role, audit the change.
+      const formHadPerms = Array.from(form.keys()).some((k) => k.startsWith("perm:"));
+      let perms: Permissions = target.permissions;
+      if (template && template !== target.template) {
+        const t = await getTemplate(env, template);
+        if (t) perms = { ...t.permissions };
+      }
+      if (formHadPerms) perms = parsePermsFromForm(form, role);
+      perms = clampPermsForRole(role, perms);
+
+      const before = { role: target.role, template: target.template, permissions: target.permissions };
+      target.name = name;
+      target.role = role;
+      target.template = template || undefined;
+      target.permissions = perms;
+      await putUser(env, target);
+      await audit(env, {
+        actor: me.email,
+        action: "update_user",
+        target: target.email,
+        details: { before, after: { role, template: target.template, permissions: perms } },
+      });
+      return new Response(adminPageHtml({
+        title: `Edit ${target.name}`,
+        topNav,
+        body: renderUserEditBody(me, target, templates, { kind: "success", text: "Changes saved." }),
+      }), { status: 200, headers: { "content-type": "text/html; charset=utf-8", "cache-control": "no-store" } });
+    }
+  }
+
+  // ---- /admin/templates — read-only list (edit UI deferred) ----
+  if (req.method === "GET" && url.pathname === "/admin/templates") {
+    const templates = await listTemplates(env);
+    return new Response(adminPageHtml({
+      title: "Templates",
+      topNav,
+      body: renderTemplatesBody(templates),
+    }), { status: 200, headers: { "content-type": "text/html; charset=utf-8", "cache-control": "no-store" } });
+  }
+
+  return new Response("Not found", { status: 404 });
+}
+
+// Helper for admin routes — random 16-byte salt as hex.
+function generateRandomSaltHex(): string {
+  const b = new Uint8Array(16);
+  crypto.getRandomValues(b);
+  let s = "";
+  for (let i = 0; i < b.length; i++) s += b[i].toString(16).padStart(2, "0");
+  return s;
 }
 
