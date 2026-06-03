@@ -680,5 +680,27 @@
     "match_cid": "bgd8UoYwqjz1xbkEH8Pn",
     "match_confidence": "high",
     "summary": "Keon Charles confirmed property is fully renovated, asking $475K, willing to sell for right offer with 3-month timeline to buy another place."
+  },
+  "C06MM4DQZ28:1780512921.275809": {
+    "field_updates": {
+      "asking_price": 305000,
+      "motivation": "Personal choice",
+      "reason_for_selling": "Personal choice - currently completing full rehab with plans to sell by end of June",
+      "timeline": "90 days"
+    },
+    "match_cid": "RtO9IAtznsmpylqu3l2f",
+    "match_confidence": "high",
+    "summary": "James is rehabbing 9 Chelsea Pl with full repaint, new LVP flooring, counters and appliances, targeting $305k based on comparable sale, timeline end of June."
+  },
+  "C06MM4DQZ28:1780513457.441809": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": "Will sell if price is right; planning to list soon",
+      "reason_for_selling": "No specific reason stated; owner mentioned will be listing property soon",
+      "timeline": "No rush"
+    },
+    "match_cid": "rUNF0PmarYpWqtTfTs1G",
+    "match_confidence": "high",
+    "summary": "Michael Bonner confirmed property needs full renovation, is on R20 zoning with subdivision potential, is in no rush but will sell if price is right, and plans to list it soon."
   }
 }
