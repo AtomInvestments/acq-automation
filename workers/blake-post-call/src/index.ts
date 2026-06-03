@@ -6547,9 +6547,12 @@ async function runDialBatch(
         await Promise.all([
           incrementDialedToday(env),
           env.DIAL_STATE.put(`last_attempt:${contactId}`, now.toISOString(), {
-            // 30-day TTL — long enough to prevent re-dialing during warm-up, short
-            // enough to allow re-attempts on contacts that didn't pick up.
-            expirationTtl: 60 * 60 * 24 * 30,
+            // 3-day TTL — dial pool stays fresh, prevents the "30-day trap" where
+            // every contact gets locked out after one attempt and Blake goes silent.
+            // Was 30d (2026-05-27 commit fa62f3a) — caused production outage 2026-05-29
+            // when 40/40 candidates returned `already_dialed`. Burned the keys + dropped
+            // TTL to 3d so the pool self-recovers within a working week.
+            expirationTtl: 60 * 60 * 24 * 3,
           }),
           // 1-hour TTL on the gap key — far longer than any realistic gap;
           // auto-cleans if dialing stops.
