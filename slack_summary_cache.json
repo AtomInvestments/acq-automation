@@ -724,5 +724,16 @@
     "match_cid": "NzhjUtMSJUBXKAR0ts3Y",
     "match_confidence": "high",
     "summary": "James wants $400k firm, needs carpet replacement but otherwise average condition, selling to buy another property with 2-month timeline."
+  },
+  "C06MM4DQZ28:1780605311.704129": {
+    "field_updates": {
+      "asking_price": 450000,
+      "motivation": "Would consider selling for right price, no urgency",
+      "reason_for_selling": "No specific reason provided",
+      "timeline": "6+ months"
+    },
+    "match_cid": "GcAhpAkc81ODNr3vsfbT",
+    "match_confidence": "high",
+    "summary": "Mason indicated willingness to sell if offer exceeds $450k, timeline is a few months to a year, minimal interior work needed, recent upgrades include new siding, windows, shed, and hot water heater."
   }
 }
