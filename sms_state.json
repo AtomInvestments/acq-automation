@@ -620,11 +620,11 @@
   },
   "cT0UGMAVCtDc40DnBjJY": {
     "dormant": false,
-    "last_from_number": null,
-    "last_sms_at": null,
+    "last_from_number": "+12568006289",
+    "last_sms_at": "2026-06-04T23:56:07.801263+00:00",
     "replied": false,
     "replied_at": null,
-    "sms_count": 0,
+    "sms_count": 1,
     "stage_entered_at": "2026-05-28T21:02:54.379174+00:00",
     "stage_name": "qualified"
   },

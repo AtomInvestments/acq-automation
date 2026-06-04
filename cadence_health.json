@@ -143,7 +143,7 @@
     {
       "date": "2026-06-04",
       "had_business_hour_run": true,
-      "sends": 0
+      "sends": 1
     }
   ],
   "last_alerted_at": "2026-05-22T10:35:03.241312+00:00"
