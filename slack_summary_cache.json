@@ -702,5 +702,27 @@
     "match_cid": "rUNF0PmarYpWqtTfTs1G",
     "match_confidence": "high",
     "summary": "Michael Bonner confirmed property needs full renovation, is on R20 zoning with subdivision potential, is in no rush but will sell if price is right, and plans to list it soon."
+  },
+  "C06MM4DQZ28:1780589797.766079": {
+    "field_updates": {
+      "asking_price": 319400,
+      "motivation": "Property is actively for sale, open to investor/realtor contact",
+      "reason_for_selling": "Property is currently listed for sale and owner is scheduling walk-throughs with potential buyers",
+      "timeline": "ASAP"
+    },
+    "match_cid": "R1DW4RXshMuHzGyOnYP2",
+    "match_confidence": "high",
+    "summary": "John confirmed the property is for sale and scheduled a call for 12:30 PM today to discuss details."
+  },
+  "C06MM4DQZ28:1780593442.695989": {
+    "field_updates": {
+      "asking_price": 400000,
+      "motivation": "Looking to buy another property",
+      "reason_for_selling": "Seller is looking to buy another property",
+      "timeline": "60 days"
+    },
+    "match_cid": "NzhjUtMSJUBXKAR0ts3Y",
+    "match_confidence": "high",
+    "summary": "James wants $400k firm, needs carpet replacement but otherwise average condition, selling to buy another property with 2-month timeline."
   }
 }
