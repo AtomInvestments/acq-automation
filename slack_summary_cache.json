@@ -735,5 +735,16 @@
     "match_cid": "GcAhpAkc81ODNr3vsfbT",
     "match_confidence": "high",
     "summary": "Mason indicated willingness to sell if offer exceeds $450k, timeline is a few months to a year, minimal interior work needed, recent upgrades include new siding, windows, shed, and hot water heater."
+  },
+  "C06MM4DQZ28:1780695806.498289": {
+    "field_updates": {
+      "asking_price": 205000,
+      "motivation": "No specific motivation - property not on market",
+      "reason_for_selling": "No specific reason for selling, property is not currently on the market",
+      "timeline": "No rush"
+    },
+    "match_cid": "iSGPij5Edzhg2LPS0kgQ",
+    "match_confidence": "high",
+    "summary": "Joseph quoted $205,000 asking price, property is rented to same tenants for 18 years with recent updates (roof 2023, hot water heater 2019, electric 2016), only needs cosmetic work inside, not currently on market and has no timeline to sell."
   }
 }
