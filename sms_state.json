@@ -627,6 +627,7 @@
     "reply_attempts": 0,
     "reply_class": "POSITIVE",
     "reply_text": "Yes, still thinking about selling",
+    "skip_reason": "tag-already-routed",
     "sms_count": 1,
     "stage_entered_at": "2026-05-28T21:02:54.379174+00:00",
     "stage_name": "qualified"
@@ -820,11 +821,11 @@
   },
   "u5bThCERB26HstQfLQvT": {
     "dormant": false,
-    "last_from_number": "+16094388996",
-    "last_sms_at": "2026-05-29T19:54:55.044700+00:00",
+    "last_from_number": "+12676197270",
+    "last_sms_at": "2026-06-05T22:44:40.048960+00:00",
     "replied": false,
     "replied_at": null,
-    "sms_count": 3,
+    "sms_count": 4,
     "stage_entered_at": "2026-05-07T23:07:26.668700+00:00",
     "stage_name": "rr"
   },
