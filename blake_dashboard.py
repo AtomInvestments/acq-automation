@@ -259,6 +259,7 @@ h2 .sec-count { margin-left: auto; font-size: 11px; letter-spacing: 0.18em; text
     <a href="markets.html">Markets</a>
     <a href="blake.html" class="active">Blake</a>
     <a href="progress.html">Progress</a>
+    <a href="por.html">Plan of Record</a>
     <a href="ai-agents-plan.html">AI Agents Plan</a>
     <a href="about.html">About</a>
   </nav>
