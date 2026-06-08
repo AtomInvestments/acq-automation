@@ -989,6 +989,14 @@ a:hover { color: var(--ink); }
   background: var(--gold); color: var(--ink); letter-spacing: 0.14em;
 }
 </style>
+<!-- Microsoft Clarity (heatmaps + session recordings) -->
+<script type="text/javascript">
+(function(c,l,a,r,i,t,y){
+  c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+  t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+  y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+})(window,document,"clarity","script","MIDO_CLARITY_ID"); // TODO: replace MIDO_CLARITY_ID with real project id from clarity.microsoft.com
+</script>
 </head>
 <body>
 <div class="shell">
