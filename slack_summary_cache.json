@@ -757,5 +757,60 @@
     "match_cid": "iSGPij5Edzhg2LPS0kgQ",
     "match_confidence": "high",
     "summary": "Joseph quoted $205,000 asking price, property is rented to same tenants for 18 years with recent updates (roof 2023, hot water heater 2019, electric 2016), only needs cosmetic work inside, not currently on market and has no timeline to sell."
+  },
+  "C06MM4DQZ28:1780946129.907309": {
+    "field_updates": {
+      "asking_price": 425000,
+      "motivation": "Not actively motivated - responded to outreach but questioned if buyer is ready",
+      "reason_for_selling": "Not seeking to sell proactively, responding to investor inquiry",
+      "timeline": "No rush"
+    },
+    "match_cid": "i44oWooVaahXTDNIVceY",
+    "match_confidence": "high",
+    "summary": "Garfield is willing to sell at $425k, lives in the property, has made recent updates (new roof 9 months ago, new windows, kitchen, carpet, water heater), no central air but planning mini splits, and questioned buyer's readiness."
+  },
+  "C06MM4DQZ28:1780946607.468409": {
+    "field_updates": {
+      "asking_price": 250000,
+      "motivation": "Moving to Florida",
+      "reason_for_selling": "Moving to Florida",
+      "timeline": "ASAP"
+    },
+    "match_cid": "XOI3bismpZh73wgZnqYD",
+    "match_confidence": "high",
+    "summary": "Eugene Wolverton confirmed asking price of $250K, wants to sell now because moving to Florida, property is vacant and available to show anytime."
+  },
+  "C06MM4DQZ28:1780948427.979039": {
+    "field_updates": {
+      "asking_price": 415000,
+      "motivation": "Selling current inventory as real estate investor",
+      "reason_for_selling": "Real estate investor liquidating current inventory after completing renovations",
+      "timeline": "60 days"
+    },
+    "match_cid": "SlzyRrEphH0E9yOWSrrC",
+    "match_confidence": "high",
+    "summary": "Yordano is a real estate investor/Realtor finishing renovations on 606 Cedar Ave, planning to list July 1st at around $385-415k, currently vacant with first mortgage, only interested in off-market sale if above market value."
+  },
+  "C06MM4DQZ28:1780948737.605909": {
+    "field_updates": {
+      "asking_price": 130000,
+      "motivation": "Wants to sell immediately, firm on price",
+      "reason_for_selling": "Not explicitly stated in conversation",
+      "timeline": "ASAP"
+    },
+    "match_cid": "w8wRfulqNvHlWt1Ueoti",
+    "match_confidence": "high",
+    "summary": "Jonathan Oliver is asking $130K for his property at 231 Church St which needs repairs, has 2 bed/2 bath with new bathroom and kitchen, is vacant, and he wants to sell now (ASAP timeline)."
+  },
+  "C06MM4DQZ28:1780949359.564579": {
+    "field_updates": {
+      "asking_price": 275000,
+      "motivation": "Sales price - wants to liquidate rental property",
+      "reason_for_selling": "Owner wants to sell rental property for the sales price proceeds",
+      "timeline": "ASAP"
+    },
+    "match_cid": "ygtoYTG2BADuDJ4N7TtZ",
+    "match_confidence": "high",
+    "summary": "Donald confirmed asking price of $275k as-is for duplex rental property (2 units at $950/month), good condition with new roof, tenants on year leases ending end of year, wants to sell ASAP."
   }
 }
