@@ -109,6 +109,7 @@
     "reply_attempts": 0,
     "reply_class": "NEGATIVE",
     "reply_text": "Halt",
+    "skip_reason": "tag-already-routed",
     "sms_count": 1,
     "stage_entered_at": "2026-05-07T23:08:25.931164+00:00",
     "stage_name": "fu15mo"
