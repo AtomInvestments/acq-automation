@@ -4,7 +4,7 @@
     "updated": "2026-06-08",
     "notes": "Multi-project PoR data file. APG has real content. Projects B/C/D are placeholder shells — fill in name + scope + tasks before exposing to non-managers.",
     "roles": {
-      "manager": "Sees all projects, can edit. Members: Adam, Cabrina, Mido.",
+      "manager": "Sees all projects, can edit. Members: Adam, Kebrina, Mido.",
       "employee": "Sees only assigned projects, view-only."
     },
     "task_fields": "id, title, owner, status, start (ISO date), end (ISO date), pillar"
@@ -12,7 +12,7 @@
 
   "users": [
     { "id": "adam",    "name": "Adam Chodes",      "role": "manager",  "projects": ["apg", "proj-b", "proj-c", "proj-d"] },
-    { "id": "cabrina", "name": "Cabrina Richards", "role": "manager",  "projects": ["apg", "proj-b", "proj-c", "proj-d"] },
+    { "id": "kebrina", "name": "Kebrina Richards", "role": "manager",  "projects": ["apg", "proj-b", "proj-c", "proj-d"] },
     { "id": "mido",    "name": "Mike Yasser",      "role": "manager",  "projects": ["apg", "proj-b", "proj-c", "proj-d"] },
     { "id": "rj",      "name": "RJ",               "role": "employee", "projects": ["apg"] },
     { "id": "brady",   "name": "Brady",            "role": "employee", "projects": ["apg"] }
@@ -27,14 +27,14 @@
       "frame": "Real-time, event-driven, no cron. Webhooks + Cloudflare Workers. Source-of-truth PoR — see site/por.html for the full v1 doc.",
       "owners": [
         { "name": "Adam Chodes",      "role": "CEO · Founder",           "lane": "Strategy · Sign-off" },
-        { "name": "Cabrina Richards", "role": "Manager · Strategy",      "lane": "Concepts · Vault" },
+        { "name": "Kebrina Richards", "role": "Manager · Strategy",      "lane": "Concepts · Vault" },
         { "name": "Mike Yasser",      "role": "Manager · Build",         "lane": "All builds" },
         { "name": "RJ",               "role": "Acquisitions Closer",     "lane": "Outbound · Dials" },
         { "name": "Brady",            "role": "Construction Services",   "lane": "Construction" },
         { "name": "Blake (AI)",       "role": "Voice Agent",             "lane": "Outbound · Pillar A" }
       ],
       "roadmap": [
-        { "id": "apg-p0", "name": "Phase 0 — This Week",         "when": "By 2026-06-13", "items": ["RJ call-audio analysis", "RJ direct conversation + decision", "Updated NDA signed", "Adam voice recording session", "Confirm APG-hold question with Cabrina"] },
+        { "id": "apg-p0", "name": "Phase 0 — This Week",         "when": "By 2026-06-13", "items": ["RJ call-audio analysis", "RJ direct conversation + decision", "Updated NDA signed", "Adam voice recording session", "Confirm APG-hold question with Kebrina"] },
         { "id": "apg-p1", "name": "Phase 1 — Dashboard asks",    "when": "By 2026-06-22", "items": ["Appointment drill-down", "Claude conversation-rating agent", "Success-rate-vs-target widget", "Calendar view", "Permission tiers"] },
         { "id": "apg-p2", "name": "Phase 2 — Outbound rebuild",  "when": "By 2026-07-15", "items": ["Blake v4.0 deployed", "Cloudflare Workers backbone", "Pre/post-call context", "GHL workflow audit", "Slack call-incoming routing"] },
         { "id": "apg-p3", "name": "Phase 3 — Realtor engine",    "when": "By 2026-08-31", "items": ["Zillow → MAO → SMS pipeline hardening", "Realtor partner motion", "Entry-offer lead magnet", "14-day close guarantee"] },
@@ -57,7 +57,7 @@
       "decisions": [
         { "title": "Dashboard build proceeds with Adam's three asks",            "status": "decided", "date": "2026-06-03", "body": "Drill-down, Claude conversation ratings, success-rate-vs-target. Calendar view preferred over column view." },
         { "title": "231 Lafayette — $7,500 refund accepted from Mario",           "status": "decided", "date": "2026-06-03", "body": "Relationship amicable; project paused; $12k still out of pocket." },
-        { "title": "APG hold to pivot toward three concepts",                     "status": "pending", "date": null,         "body": "Pending Cabrina confirmation." },
+        { "title": "APG hold to pivot toward three concepts",                     "status": "pending", "date": null,         "body": "Pending Kebrina confirmation." },
         { "title": "RJ likely terminated",                                        "status": "pending", "date": null,         "body": "Tied to call-audio analysis result." }
       ],
       "backlog": [
@@ -83,7 +83,7 @@
       "frame": "// TODO: positioning + posture.",
       "owners": [
         { "name": "Adam Chodes",      "role": "// TODO", "lane": "// TODO" },
-        { "name": "Cabrina Richards", "role": "// TODO", "lane": "// TODO" },
+        { "name": "Kebrina Richards", "role": "// TODO", "lane": "// TODO" },
         { "name": "Mike Yasser",      "role": "// TODO", "lane": "// TODO" }
       ],
       "roadmap": [
@@ -108,7 +108,7 @@
       "frame": "// TODO: positioning + posture.",
       "owners": [
         { "name": "Adam Chodes",      "role": "// TODO", "lane": "// TODO" },
-        { "name": "Cabrina Richards", "role": "// TODO", "lane": "// TODO" },
+        { "name": "Kebrina Richards", "role": "// TODO", "lane": "// TODO" },
         { "name": "Mike Yasser",      "role": "// TODO", "lane": "// TODO" }
       ],
       "roadmap": [
@@ -131,7 +131,7 @@
       "frame": "// TODO: positioning + posture.",
       "owners": [
         { "name": "Adam Chodes",      "role": "// TODO", "lane": "// TODO" },
-        { "name": "Cabrina Richards", "role": "// TODO", "lane": "// TODO" },
+        { "name": "Kebrina Richards", "role": "// TODO", "lane": "// TODO" },
         { "name": "Mike Yasser",      "role": "// TODO", "lane": "// TODO" }
       ],
       "roadmap": [
