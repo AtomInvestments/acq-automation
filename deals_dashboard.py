@@ -694,16 +694,17 @@ section h2, h2 {
   </header>
 
   <nav class="topnav">
-    <a href="index.html">Follow-Ups</a>
+    <a href="/">Desk</a>
+    <a href="blake.html">Blake</a>
+    <a href="progress.html">Tracker</a>
+    <a href="projects.html">Roadmap</a>
+    <a href="index.html">Follow-ups</a>
     <a href="deals.html" class="active">Deals</a>
-    <a href="weekly.html">Weekly</a>
+    <a href="weekly.html">Docket</a>
     <a href="priorities.html">Priority</a>
     <a href="markets.html">Markets</a>
-    <a href="blake.html">Blake</a>
-    <a href="progress.html">Progress</a>
-    <a href="por.html">Plan of Record</a>
-    <a href="ai-agents-plan.html">AI Agents Plan</a>
-    <a href="about.html">About</a>
+    <a href="/insights">Insights</a>
+    <a href="sms-test.html">SMS Test</a>
   </nav>
 
   <section class="sec">

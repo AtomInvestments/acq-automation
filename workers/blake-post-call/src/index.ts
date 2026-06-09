@@ -400,6 +400,7 @@ export default {
       "/markets.json":           "site/markets.json",
       "/priorities.json":        "site/priorities.json",
       "/priority_activity.json": "site/priority_activity.json",  // may 404
+      "/data/projects.json":     "site/data/projects.json",
     };
     if (req.method === "GET" && JSON_DATA_ROUTES[url.pathname]) {
       const auth = await requireAuth(req, env);
@@ -627,6 +628,10 @@ export default {
       "/ai-agents-plan.html": "ai-agents-plan.html",
       "/sms-test": "sms-test.html",
       "/sms-test.html": "sms-test.html",
+      "/projects": "projects.html",
+      "/projects.html": "projects.html",
+      "/por": "por.html",
+      "/por.html": "por.html",
     };
     if (req.method === "GET" && gated[url.pathname]) {
       const auth = await requireAuth(req, env);
@@ -656,6 +661,8 @@ export default {
           "setup.html": "",
           "ai-agents-plan.html": "",
           "sms-test.html": "sms-test",
+          "projects.html": "roadmap",
+          "por.html": "roadmap",
         };
         const wrapped = applyApgShell(inline, tabMap[filename] || "");
         return new Response(wrapped, {
@@ -1161,9 +1168,21 @@ export default {
           headers: { Location: `/login?next=${encodeURIComponent("/roadmap" + url.search)}` },
         });
       }
+      // Default /roadmap (no ?source= param) → multi-project canvas (the new
+      // landing). The deep parsed POR view is reachable via /roadmap?source=...
+      // (or directly at /por for the single-page editorial doc).
+      if (!url.searchParams.get("source")) {
+        return new Response(null, {
+          status: 302,
+          headers: { Location: "/projects" },
+        });
+      }
       try {
         const html = await renderRoadmapPage({}, url);
-        return new Response(html, {
+        // Wrap in apgShell so the deep roadmap view gets the unified topnav
+        // (back-nav to Desk, consistent across all gated pages).
+        const wrapped = applyApgShell(html, "roadmap");
+        return new Response(wrapped, {
           status: 200,
           headers: { "content-type": "text/html; charset=utf-8", "cache-control": "no-store" },
         });

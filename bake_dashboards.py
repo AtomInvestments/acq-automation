@@ -36,6 +36,8 @@ DASHBOARDS = [
     "setup.html",
     "ai-agents-plan.html",
     "sms-test.html",       # O2 entry-offer A/B/C test results
+    "projects.html",       # Multi-project PoR canvas (new Roadmap landing)
+    "por.html",            # Single-doc editorial APG Plan-of-Record
 ]
 
 

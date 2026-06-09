@@ -1011,15 +1011,17 @@ a:hover { color: var(--ink); }
   </header>
 
   <nav class="topnav">
-    <a href="index.html">Follow-Ups</a>
+    <a href="/">Desk</a>
+    <a href="blake.html">Blake</a>
+    <a href="progress.html">Tracker</a>
+    <a href="projects.html">Roadmap</a>
+    <a href="index.html">Follow-ups</a>
     <a href="deals.html">Deals</a>
-    <a href="weekly.html" class="active">Weekly</a>
+    <a href="weekly.html" class="active">Docket</a>
     <a href="priorities.html">Priority</a>
     <a href="markets.html">Markets</a>
-    <a href="blake.html">Blake</a>
-    <a href="progress.html">Progress</a>
-    <a href="ai-agents-plan.html">AI Agents Plan</a>
-    <a href="about.html">About</a>
+    <a href="/insights">Insights</a>
+    <a href="sms-test.html">SMS Test</a>
     <span class="spacer"></span>
     <span class="week-pick">
       <label for="weekSel">Week:</label>

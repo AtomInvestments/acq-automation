@@ -2,7 +2,7 @@
   "_schema": {
     "version": 1,
     "updated": "2026-06-08",
-    "notes": "Multi-project PoR data file. APG has real content. Projects B/C/D are placeholder shells — fill in name + scope + tasks before exposing to non-managers.",
+    "notes": "Multi-project PoR data file. APG has real content. Owner attribution: Adam = strategy/vision/niche/sign-off; Kebrina = vault concepts + pivot direction; Mike Yasser (Mido) = build/infra/dashboards/Blake/pipeline/GHL; RJ = acquisitions/closing; Brady = construction services. Projects B/C/D are placeholder shells.",
     "roles": {
       "manager": "Sees all projects, can edit. Members: Adam, Kebrina, Mido.",
       "employee": "Sees only assigned projects, view-only."
@@ -41,24 +41,29 @@
         { "id": "apg-p4", "name": "Phase 4 — Pivot concepts",    "when": "2026-Q3+",      "items": ["NDA-gated meeting project", "Dating app concept", "Legacy / memorialization app", "Vault architecture decision"] }
       ],
       "tasks": [
-        { "id": "apg-t1", "title": "RJ call-audio analysis",            "owner": "Mido",  "status": "inflight", "start": "2026-06-08", "end": "2026-06-13", "pillar": "Ops" },
-        { "id": "apg-t2", "title": "Updated NDA signed",                "owner": "Mido",  "status": "notstart", "start": "2026-06-09", "end": "2026-06-13", "pillar": "Ops" },
-        { "id": "apg-t3", "title": "Adam voice recording session",      "owner": "Adam",  "status": "notstart", "start": "2026-06-10", "end": "2026-06-14", "pillar": "Blake / A" },
-        { "id": "apg-t4", "title": "Appointment drill-down",            "owner": "Mido",  "status": "notstart", "start": "2026-06-13", "end": "2026-06-18", "pillar": "Ops" },
-        { "id": "apg-t5", "title": "Claude conversation-rating agent",  "owner": "Mido",  "status": "notstart", "start": "2026-06-15", "end": "2026-06-22", "pillar": "Blake / A" },
-        { "id": "apg-t6", "title": "Calendar view",                     "owner": "Mido",  "status": "notstart", "start": "2026-06-16", "end": "2026-06-22", "pillar": "Ops" },
-        { "id": "apg-t7", "title": "Permission tiers",                  "owner": "Mido",  "status": "inflight", "start": "2026-06-08", "end": "2026-06-22", "pillar": "Ops" },
-        { "id": "apg-t8", "title": "Blake v4.0 prompt deploy",          "owner": "Mido",  "status": "blocked",  "start": "2026-06-22", "end": "2026-07-15", "pillar": "Blake / A" },
-        { "id": "apg-t9", "title": "Cloudflare Workers event backbone", "owner": "Mido",  "status": "notstart", "start": "2026-06-25", "end": "2026-07-10", "pillar": "Infra" },
-        { "id": "apg-t10","title": "Zillow → MAO → SMS hardening",      "owner": "Mido",  "status": "inflight", "start": "2026-07-01", "end": "2026-08-15", "pillar": "Listings / B" },
-        { "id": "apg-t11","title": "Realtor partner motion",            "owner": "Adam · Mido", "status": "notstart", "start": "2026-07-15", "end": "2026-08-31", "pillar": "Listings / B" },
-        { "id": "apg-t12","title": "Entry-offer lead magnet",           "owner": "Adam · Mido", "status": "notstart", "start": "2026-08-01", "end": "2026-08-31", "pillar": "Offer" }
+        { "id": "apg-t1", "title": "RJ call-audio analysis + go/no-go",  "owner": "Adam",  "status": "inflight", "start": "2026-06-08", "end": "2026-06-13", "pillar": "Strategy" },
+        { "id": "apg-t2", "title": "Updated NDA signed",                 "owner": "Adam",  "status": "notstart", "start": "2026-06-09", "end": "2026-06-13", "pillar": "Strategy" },
+        { "id": "apg-t3", "title": "Adam voice recording session",       "owner": "Adam",  "status": "notstart", "start": "2026-06-10", "end": "2026-06-14", "pillar": "Blake / A" },
+        { "id": "apg-t4", "title": "Appointment drill-down",             "owner": "Mike Yasser", "status": "notstart", "start": "2026-06-13", "end": "2026-06-18", "pillar": "Dashboard" },
+        { "id": "apg-t5", "title": "Claude conversation-rating agent",   "owner": "Mike Yasser", "status": "notstart", "start": "2026-06-15", "end": "2026-06-22", "pillar": "Blake / A" },
+        { "id": "apg-t6", "title": "Calendar view",                      "owner": "Mike Yasser", "status": "notstart", "start": "2026-06-16", "end": "2026-06-22", "pillar": "Dashboard" },
+        { "id": "apg-t7", "title": "Permission tiers",                   "owner": "Mike Yasser", "status": "inflight", "start": "2026-06-08", "end": "2026-06-22", "pillar": "Dashboard" },
+        { "id": "apg-t8", "title": "Blake v4.0 prompt deploy",           "owner": "Mike Yasser", "status": "blocked",  "start": "2026-06-22", "end": "2026-07-15", "pillar": "Blake / A" },
+        { "id": "apg-t9", "title": "Cloudflare Workers event backbone",  "owner": "Mike Yasser", "status": "notstart", "start": "2026-06-25", "end": "2026-07-10", "pillar": "Infra" },
+        { "id": "apg-t10","title": "Zillow → MAO → SMS hardening",       "owner": "Mike Yasser", "status": "inflight", "start": "2026-07-01", "end": "2026-08-15", "pillar": "Listings / B" },
+        { "id": "apg-t11","title": "Realtor partner motion",             "owner": "Adam",        "status": "notstart", "start": "2026-07-15", "end": "2026-08-31", "pillar": "Strategy" },
+        { "id": "apg-t12","title": "Entry-offer lead magnet (positioning)", "owner": "Adam",     "status": "notstart", "start": "2026-08-01", "end": "2026-08-31", "pillar": "Strategy" },
+        { "id": "apg-t13","title": "Niche decision — Roofing+Siding NJ vs MF 5+ HNW", "owner": "Adam", "status": "inflight", "start": "2026-06-09", "end": "2026-06-22", "pillar": "Strategy" },
+        { "id": "apg-t14","title": "Acquisitions closing — outbound dials → contracts",  "owner": "RJ", "status": "inflight", "start": "2026-06-08", "end": "2026-08-31", "pillar": "Acquisitions" },
+        { "id": "apg-t15","title": "Construction Services — pipeline & ops",  "owner": "Brady", "status": "inflight", "start": "2026-06-08", "end": "2026-08-31", "pillar": "Construction" },
+        { "id": "apg-t16","title": "Vault concepts & pivot direction",        "owner": "Kebrina · Adam", "status": "inflight", "start": "2026-06-08", "end": "2026-07-31", "pillar": "Concepts" }
       ],
       "decisions": [
-        { "title": "Dashboard build proceeds with Adam's three asks",            "status": "decided", "date": "2026-06-03", "body": "Drill-down, Claude conversation ratings, success-rate-vs-target. Calendar view preferred over column view." },
-        { "title": "231 Lafayette — $7,500 refund accepted from Mario",           "status": "decided", "date": "2026-06-03", "body": "Relationship amicable; project paused; $12k still out of pocket." },
-        { "title": "APG hold to pivot toward three concepts",                     "status": "pending", "date": null,         "body": "Pending Kebrina confirmation." },
-        { "title": "RJ likely terminated",                                        "status": "pending", "date": null,         "body": "Tied to call-audio analysis result." }
+        { "title": "Dashboard build proceeds with Adam's three asks",            "status": "decided", "date": "2026-06-03", "body": "Adam set direction; Mike Yasser executes (drill-down, Claude conversation ratings, success-rate-vs-target, calendar view)." },
+        { "title": "231 Lafayette — $7,500 refund accepted from Mario",           "status": "decided", "date": "2026-06-03", "body": "Adam called; relationship amicable; project paused; $12k still out of pocket." },
+        { "title": "APG hold to pivot toward three concepts",                     "status": "pending", "date": null,         "body": "Adam + Kebrina deciding; pending Kebrina confirmation. Mike Yasser holds builds until direction settles." },
+        { "title": "RJ go/no-go decision",                                        "status": "pending", "date": null,         "body": "Adam owns. Tied to RJ call-audio analysis result (Friday)." },
+        { "title": "Niche down 90 days",                                          "status": "pending", "date": null,         "body": "Adam owns. Roofing+siding Northern NJ vs MF 5+ HNW." }
       ],
       "backlog": [
         { "id": "O1", "title": "Add 14-day close / $1k risk-reversal guarantee to every outbound surface" },

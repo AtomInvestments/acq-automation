@@ -201,17 +201,17 @@ h1 .accent { color: var(--gold); font-style: italic; }
   </header>
 
   <nav class="topnav">
-    <a href="index.html">Follow-Ups</a>
+    <a href="/">Desk</a>
+    <a href="blake.html">Blake</a>
+    <a href="progress.html" class="active">Tracker</a>
+    <a href="projects.html">Roadmap</a>
+    <a href="index.html">Follow-ups</a>
     <a href="deals.html">Deals</a>
-    <a href="weekly.html">Weekly</a>
+    <a href="weekly.html">Docket</a>
     <a href="priorities.html">Priority</a>
     <a href="markets.html">Markets</a>
-    <a href="blake.html">Blake</a>
-    <a href="progress.html" class="active">Progress</a>
-    <a href="por.html">Plan of Record</a>
-    <a href="projects.html">Projects</a>
-    <a href="ai-agents-plan.html">AI Agents Plan</a>
-    <a href="about.html">About</a>
+    <a href="/insights">Insights</a>
+    <a href="sms-test.html">SMS Test</a>
   </nav>
 
   <div class="summary-row">
@@ -848,17 +848,17 @@ a:hover { color: var(--ink); }
   </header>
 
   <nav class="topnav">
-    <a href="index.html">Follow-Ups</a>
+    <a href="/">Desk</a>
+    <a href="blake.html">Blake</a>
+    <a href="progress.html">Tracker</a>
+    <a href="projects.html">Roadmap</a>
+    <a href="index.html">Follow-ups</a>
     <a href="deals.html">Deals</a>
-    <a href="weekly.html" class="active">Weekly</a>
+    <a href="weekly.html" class="active">Docket</a>
     <a href="priorities.html">Priority</a>
     <a href="markets.html">Markets</a>
-    <a href="blake.html">Blake</a>
-    <a href="progress.html">Progress</a>
-    <a href="por.html">Plan of Record</a>
-    <a href="projects.html">Projects</a>
-    <a href="ai-agents-plan.html">AI Agents Plan</a>
-    <a href="about.html">About</a>
+    <a href="/insights">Insights</a>
+    <a href="sms-test.html">SMS Test</a>
     <span class="spacer"></span>
     <span class="week-pick">
       <label for="weekSel">Week:</label>
@@ -1809,17 +1809,17 @@ h2 .sec-count { margin-left: auto; font-size: 11px; letter-spacing: 0.18em; text
   </header>
 
   <nav class="topnav">
-    <a href="index.html">Follow-Ups</a>
+    <a href="/">Desk</a>
+    <a href="blake.html">Blake</a>
+    <a href="progress.html">Tracker</a>
+    <a href="projects.html">Roadmap</a>
+    <a href="index.html">Follow-ups</a>
     <a href="deals.html">Deals</a>
-    <a href="weekly.html">Weekly</a>
+    <a href="weekly.html">Docket</a>
     <a href="priorities.html" class="active">Priority</a>
     <a href="markets.html">Markets</a>
-    <a href="blake.html">Blake</a>
-    <a href="progress.html">Progress</a>
-    <a href="por.html">Plan of Record</a>
-    <a href="projects.html">Projects</a>
-    <a href="ai-agents-plan.html">AI Agents Plan</a>
-    <a href="about.html">About</a>
+    <a href="/insights">Insights</a>
+    <a href="sms-test.html">SMS Test</a>
   </nav>
 
   <div id="content"><div class="empty-state" style="text-align:center;padding:60px">Loading priority deals…</div></div>
@@ -2395,17 +2395,17 @@ table.markets tbody tr.tenant { border-left: 4px solid var(--bad); opacity: 0.6;
   </header>
 
   <nav class="topnav">
-    <a href="index.html">Follow-Ups</a>
+    <a href="/">Desk</a>
+    <a href="blake.html">Blake</a>
+    <a href="progress.html">Tracker</a>
+    <a href="projects.html">Roadmap</a>
+    <a href="index.html">Follow-ups</a>
     <a href="deals.html">Deals</a>
-    <a href="weekly.html">Weekly</a>
+    <a href="weekly.html">Docket</a>
     <a href="priorities.html">Priority</a>
     <a href="markets.html" class="active">Markets</a>
-    <a href="blake.html">Blake</a>
-    <a href="progress.html">Progress</a>
-    <a href="por.html">Plan of Record</a>
-    <a href="projects.html">Projects</a>
-    <a href="ai-agents-plan.html">AI Agents Plan</a>
-    <a href="about.html">About</a>
+    <a href="/insights">Insights</a>
+    <a href="sms-test.html">SMS Test</a>
   </nav>
 
   <div id="content"><div class="empty-state" style="text-align:center;padding:60px">Loading market analysis…</div></div>
@@ -3114,17 +3114,17 @@ section h2, h2 {
   </header>
 
   <nav class="topnav">
-    <a href="index.html">Follow-Ups</a>
+    <a href="/">Desk</a>
+    <a href="blake.html">Blake</a>
+    <a href="progress.html">Tracker</a>
+    <a href="projects.html">Roadmap</a>
+    <a href="index.html">Follow-ups</a>
     <a href="deals.html">Deals</a>
-    <a href="weekly.html">Weekly</a>
+    <a href="weekly.html">Docket</a>
     <a href="priorities.html">Priority</a>
     <a href="markets.html">Markets</a>
-    <a href="blake.html">Blake</a>
-    <a href="progress.html">Progress</a>
-    <a href="por.html">Plan of Record</a>
-    <a href="projects.html">Projects</a>
-    <a href="ai-agents-plan.html">AI Agents Plan</a>
-    <a href="about.html" class="active">About</a>
+    <a href="/insights">Insights</a>
+    <a href="sms-test.html">SMS Test</a>
   </nav>
 
   <!-- ── TABLE OF CONTENTS ────────────────────────────────── -->
@@ -4856,4 +4856,1107 @@ h2 .num { display: inline-block; min-width: 34px; padding: 4px 10px;
 </div>
 </body>
 </html>`,
+  'projects.html': `<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>APG — Projects (Multi-PoR)</title>
+
+<!-- Microsoft Clarity (heatmaps + session recordings) -->
+<script type="text/javascript">
+(function(c,l,a,r,i,t,y){
+  c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+  t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+  y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+})(window,document,"clarity","script","wwbe84z9my"); // TODO: replace wwbe84z9my with real project id from clarity.microsoft.com
+</script>
+
+<style>
+:root {
+  --ink: #0A1F44;
+  --ink-deep: #061331;
+  --ink-soft: #1A3A7A;
+  --gold: #F5C518;
+  --gold-soft: #FFE58A;
+  --gold-wash: #FFF6D0;
+  --cream: #FAF7EC;
+  --cream-deep: #F3EED8;
+  --paper: #FFFFFF;
+  --rule: #C9C2A8;
+  --rule-soft: #E5E0C8;
+  --muted: #5A6786;
+  --muted-soft: #8A93AA;
+  --text: #101827;
+  --s-uc:   #B91C1C;
+  --s-live: #10B981;
+  --s-warm: #EA580C;
+  --s-hold: #EAB308;
+  --s-dead: #6B625A;
+  --bg: var(--cream);
+  --gold-deep: var(--ink);
+  --rule-strong: var(--ink);
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0; padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Top masthead (matches por.html / about.html) ─────── */
+.container { max-width: 1280px; margin: 0 auto; padding: 28px 36px 80px; }
+.meta-bar {
+  display: flex; justify-content: space-between; align-items: center;
+  border-top: 4px solid var(--ink);
+  padding: 14px 0 0;
+  font-size: 11px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.14em;
+  color: var(--ink-soft);
+}
+.doc-header { padding: 30px 0 22px; }
+.doc-header h1 {
+  font-family: Georgia, "Times New Roman", serif;
+  font-weight: 600;
+  font-size: 52px; line-height: 1.05; letter-spacing: -0.01em;
+  margin: 0 0 14px; color: var(--ink);
+}
+.doc-header h1 .accent { font-style: italic; color: var(--gold-deep); }
+.doc-header .lede {
+  font-family: Georgia, "Times New Roman", serif; font-style: italic;
+  font-size: 17px; color: var(--ink-soft); max-width: 820px; margin: 0;
+  line-height: 1.55;
+}
+.doc-header hr { border: 0; border-top: 1px solid var(--rule); margin: 28px 0 0; }
+.topnav {
+  position: sticky; top: 0; z-index: 50;
+  background: rgba(250, 247, 236, 0.96); backdrop-filter: blur(6px);
+  border-bottom: 1px solid var(--rule);
+  margin: 0 -36px 28px; padding: 10px 36px;
+  font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--muted);
+  display: flex; gap: 18px; overflow-x: auto; white-space: nowrap; align-items: center;
+}
+.topnav a {
+  color: var(--ink-soft); text-decoration: none; font-weight: 700;
+  padding: 4px 0; border-bottom: 2px solid transparent;
+}
+.topnav a:hover, .topnav a.active { color: var(--ink); border-bottom: 2px solid var(--gold); }
+
+/* ── Identity strip (current user + role) ─────────────── */
+.identity {
+  display: flex; align-items: center; gap: 18px;
+  padding: 10px 14px; margin: 0 0 18px;
+  background: var(--paper); border: 1px solid var(--rule);
+  border-left: 4px solid var(--gold);
+  border-radius: 0 4px 4px 0;
+  font-size: 12px; flex-wrap: wrap;
+}
+.identity .lbl {
+  font-size: 10px; font-weight: 800; letter-spacing: 0.16em;
+  text-transform: uppercase; color: var(--muted);
+}
+.identity select {
+  font-family: inherit; font-size: 12px;
+  padding: 4px 8px; border: 1px solid var(--rule);
+  background: var(--cream); color: var(--ink); border-radius: 3px;
+}
+.identity .role-pill {
+  display: inline-block; padding: 2px 9px; border-radius: 999px;
+  font-size: 10px; font-weight: 700; letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.role-pill.manager  { background: rgba(245,197,24,0.30); color: #8a6d00; }
+.role-pill.employee { background: rgba(106,103,134,0.18); color: var(--muted); }
+
+/* ── Two-column shell ─────────────────────────────────── */
+.shell { display: grid; grid-template-columns: 240px 1fr; gap: 28px; align-items: start; }
+@media (max-width: 900px) { .shell { grid-template-columns: 1fr; } }
+
+/* ── Sidebar (project selector) ───────────────────────── */
+.sidebar {
+  background: var(--paper); border: 1px solid var(--rule);
+  border-radius: 4px; padding: 16px 14px;
+  position: sticky; top: 64px;
+}
+.sidebar h3 {
+  font-size: 10px; font-weight: 800; letter-spacing: 0.16em;
+  text-transform: uppercase; color: var(--muted);
+  margin: 0 0 10px;
+}
+.sidebar .proj-row {
+  display: flex; align-items: center; gap: 8px;
+  padding: 6px 0; border-bottom: 1px solid var(--rule-soft);
+  cursor: pointer; user-select: none;
+}
+.sidebar .proj-row:last-child { border-bottom: 0; }
+.sidebar .proj-row.disabled { opacity: 0.4; cursor: not-allowed; }
+.sidebar .proj-row input[type=checkbox] { accent-color: var(--ink); }
+.sidebar .swatch {
+  width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0;
+}
+.sidebar .proj-name { font-size: 13px; font-weight: 600; color: var(--ink); }
+.sidebar .proj-name.placeholder { font-style: italic; color: var(--muted); font-weight: 500; }
+.sidebar .controls {
+  display: flex; gap: 6px; margin-top: 10px;
+  font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em;
+}
+.sidebar .controls button {
+  flex: 1; padding: 5px 6px; border: 1px solid var(--rule);
+  background: var(--cream); color: var(--ink-soft);
+  font: inherit; font-size: 9px; font-weight: 700;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  cursor: pointer; border-radius: 3px;
+}
+.sidebar .controls button:hover { background: var(--gold-wash); border-color: var(--gold-deep); }
+
+/* ── Main content ─────────────────────────────────────── */
+.main { min-width: 0; }
+
+.sec { margin: 0 0 36px; }
+.sec .tag-row { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+.sec .num {
+  display: inline-block; background: var(--gold); color: var(--ink);
+  font-weight: 800; font-size: 12px; letter-spacing: 0.04em;
+  padding: 3px 8px; border-radius: 3px;
+  font-family: ui-monospace, "SF Mono", monospace;
+}
+.sec h2 {
+  font-family: Georgia, "Times New Roman", serif;
+  font-weight: 600; font-size: 24px; letter-spacing: -0.005em;
+  margin: 0; color: var(--ink);
+}
+.sec hr { border: 0; border-top: 1px solid var(--rule); margin: 0 0 16px; }
+
+/* ── Overlap timeline (swimlanes) ─────────────────────── */
+.timeline-wrap {
+  background: var(--paper); border: 1px solid var(--rule);
+  border-radius: 4px; padding: 16px; overflow-x: auto;
+}
+.timeline-grid {
+  display: grid;
+  grid-template-columns: 160px 1fr;
+  gap: 6px 0;
+  font-size: 12px;
+  min-width: 720px;
+}
+.timeline-header {
+  font-size: 9px; font-weight: 800; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--muted);
+  padding: 4px 8px;
+}
+.timeline-axis {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  border-bottom: 1px solid var(--rule);
+  font-size: 9px; letter-spacing: 0.06em;
+  color: var(--muted);
+}
+.timeline-axis .tick {
+  padding: 4px 0 6px; text-align: left;
+  border-left: 1px dashed var(--rule-soft);
+  padding-left: 4px;
+}
+.timeline-axis .tick:first-child { border-left: 0; }
+
+.swimlane-label {
+  padding: 8px; border-right: 2px solid var(--ink);
+  font-size: 12px; font-weight: 700; color: var(--ink);
+  display: flex; align-items: center; gap: 8px;
+}
+.swimlane-track {
+  position: relative; min-height: 30px;
+  padding: 4px 0;
+  border-bottom: 1px solid var(--rule-soft);
+}
+.swimlane-track:last-child { border-bottom: 0; }
+.task-bar {
+  position: absolute; top: 6px; height: 18px;
+  border-radius: 3px;
+  font-size: 10px; font-weight: 700; color: #fff;
+  padding: 2px 6px; line-height: 14px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.15);
+  cursor: default;
+}
+.task-bar.status-notstart { opacity: 0.55; }
+.task-bar.status-blocked  { border: 2px solid var(--s-uc); }
+.task-bar.status-shipped  { opacity: 0.4; }
+
+/* ── Per-project PoR panel template ───────────────────── */
+.project-panel {
+  background: var(--paper); border: 1px solid var(--rule);
+  border-left: 6px solid var(--ink);
+  border-radius: 0 4px 4px 0;
+  padding: 18px 22px; margin: 0 0 20px;
+}
+.project-panel.placeholder { border-left-style: dashed; }
+.project-panel h3 {
+  font-family: Georgia, serif; font-size: 22px; font-weight: 600;
+  margin: 0 0 4px; color: var(--ink);
+  display: flex; align-items: center; gap: 12px;
+}
+.project-panel h3 .pid {
+  font-family: ui-monospace, "SF Mono", monospace;
+  font-size: 10px; padding: 2px 7px;
+  background: var(--cream-deep); border-radius: 3px;
+  color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase;
+}
+.project-panel .panel-lede {
+  font-family: Georgia, serif; font-style: italic;
+  font-size: 14px; color: var(--ink-soft);
+  margin: 0 0 14px;
+}
+.panel-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 14px;
+}
+.panel-block {
+  background: var(--cream-deep); border-radius: 3px; padding: 12px 14px;
+}
+.panel-block h4 {
+  font-size: 10px; font-weight: 800; letter-spacing: 0.16em;
+  text-transform: uppercase; color: var(--muted);
+  margin: 0 0 8px;
+}
+.panel-block ul { margin: 0; padding-left: 16px; font-size: 13px; }
+.panel-block li { margin: 3px 0; color: var(--ink); }
+.panel-block .empty { font-size: 12px; color: var(--muted); font-style: italic; }
+
+.pill {
+  display: inline-block; padding: 2px 9px; border-radius: 999px;
+  font-size: 10px; font-weight: 700; letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.pill.shipped   { background: rgba(16,185,129,0.15); color: var(--s-live); }
+.pill.inflight  { background: rgba(245,197,24,0.25); color: #8a6d00; }
+.pill.notstart  { background: rgba(106,103,134,0.15); color: var(--muted); }
+.pill.blocked   { background: rgba(185,28,28,0.13); color: var(--s-uc); }
+.pill.hold      { background: rgba(234,179,8,0.18); color: #7c5a00; }
+
+.empty-state {
+  background: var(--paper); border: 1px dashed var(--rule);
+  padding: 28px; text-align: center;
+  font-size: 14px; color: var(--muted); font-style: italic;
+  border-radius: 4px;
+}
+
+footer.foot {
+  margin-top: 60px; padding-top: 18px;
+  border-top: 3px double var(--ink);
+  display: flex; justify-content: space-between;
+  font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--muted); font-weight: 700; flex-wrap: wrap; gap: 12px;
+}
+footer.foot .gold-stamp {
+  display: inline-block; padding: 4px 10px;
+  background: var(--gold); color: var(--ink); letter-spacing: 0.14em;
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="meta-bar">
+    <span>Atom Property Group · Projects (Multi-PoR)</span>
+    <span>v0.1 skeleton · 2026-06-08</span>
+  </div>
+
+  <header class="doc-header">
+    <h1>The <span class="accent">Canvas.</span></h1>
+    <p class="lede">Multi-project Plan-of-Record shell. Filter to one project, or multi-select to see overlapping timelines across all active builds. APG is the only project with real content today — three placeholder skeletons stand ready for the next concepts.</p>
+    <hr>
+  </header>
+
+  <nav class="topnav">
+    <a href="/">Desk</a>
+    <a href="blake.html">Blake</a>
+    <a href="progress.html">Tracker</a>
+    <a href="projects.html" class="active">Roadmap</a>
+    <a href="index.html">Follow-ups</a>
+    <a href="deals.html">Deals</a>
+    <a href="weekly.html">Docket</a>
+    <a href="priorities.html">Priority</a>
+    <a href="markets.html">Markets</a>
+    <a href="/insights">Insights</a>
+    <a href="sms-test.html">SMS Test</a>
+  </nav>
+
+  <!-- ── Identity strip ──────────────────────────────── -->
+  <div class="identity">
+    <span class="lbl">Viewing as</span>
+    <select id="user-select"></select>
+    <span class="role-pill" id="role-pill">…</span>
+    <span class="lbl" style="margin-left:auto">Override via <code>?user=mido</code> or localStorage</span>
+  </div>
+
+  <!-- ── Two-column shell ────────────────────────────── -->
+  <div class="shell">
+
+    <aside class="sidebar">
+      <h3>Projects</h3>
+      <div id="project-list"><!-- rendered by JS --></div>
+      <div class="controls">
+        <button id="btn-all">All</button>
+        <button id="btn-none">None</button>
+      </div>
+    </aside>
+
+    <main class="main">
+
+      <!-- 01 · Overlap timeline -->
+      <section class="sec" id="overlap">
+        <div class="tag-row"><span class="num">01</span><h2>Overlap Timeline</h2></div>
+        <hr>
+        <div class="timeline-wrap">
+          <div id="timeline-empty" class="empty-state" style="display:none">No projects selected. Tick one or more in the sidebar.</div>
+          <div id="timeline" class="timeline-grid" style="display:none"></div>
+        </div>
+        <p style="font-size:11px; color:var(--muted); margin: 10px 2px 0; letter-spacing:0.04em;">
+          One row per project. Bars span task start→end. Multi-select to compare; single-select to focus.
+        </p>
+      </section>
+
+      <!-- 02 · Per-project panels -->
+      <section class="sec" id="panels">
+        <div class="tag-row"><span class="num">02</span><h2>Project Detail</h2></div>
+        <hr>
+        <div id="panels-container"><!-- rendered by JS --></div>
+      </section>
+
+    </main>
+  </div>
+
+  <footer class="foot">
+    <span>Data: <code>data/projects.json</code> · skeleton only · auth stub via <code>?user=&lt;id&gt;</code></span>
+    <span class="gold-stamp">v0.1 · 2026-06-08</span>
+  </footer>
+
+</div>
+
+<script>
+(async function () {
+  const DATA_URL = 'data/projects.json';
+  const LS_USER = 'apg_projects_user_v1';
+  const LS_SELECTED = 'apg_projects_selected_v1';
+
+  // ── Resolve current user (?user=, localStorage, or first manager) ──
+  const params = new URLSearchParams(location.search);
+  const urlUser = params.get('user');
+  let userId = urlUser || localStorage.getItem(LS_USER) || 'mido';
+  if (urlUser) localStorage.setItem(LS_USER, urlUser);
+
+  let data;
+  try {
+    const r = await fetch(DATA_URL, { cache: 'no-store' });
+    data = await r.json();
+  } catch (e) {
+    document.querySelector('.main').innerHTML =
+      '<div class="empty-state">Failed to load <code>data/projects.json</code>.</div>';
+    return;
+  }
+
+  const user = data.users.find(u => u.id === userId) || data.users.find(u => u.role === 'manager');
+  userId = user.id;
+  const isManager = user.role === 'manager';
+  const visibleProjectIds = isManager
+    ? data.projects.map(p => p.id)
+    : (user.projects || []);
+
+  // ── Identity strip ──
+  const userSel = document.getElementById('user-select');
+  data.users.forEach(u => {
+    const o = document.createElement('option');
+    o.value = u.id; o.textContent = u.name + ' (' + u.role + ')';
+    if (u.id === userId) o.selected = true;
+    userSel.appendChild(o);
+  });
+  userSel.addEventListener('change', () => {
+    localStorage.setItem(LS_USER, userSel.value);
+    location.search = '?user=' + encodeURIComponent(userSel.value);
+  });
+  const rolePill = document.getElementById('role-pill');
+  rolePill.textContent = user.role;
+  rolePill.classList.add(user.role);
+
+  // ── Sidebar ──
+  let selected = JSON.parse(localStorage.getItem(LS_SELECTED) || 'null');
+  if (!selected || !Array.isArray(selected)) {
+    selected = visibleProjectIds.slice(); // default: all visible
+  }
+  selected = selected.filter(id => visibleProjectIds.includes(id));
+
+  const listEl = document.getElementById('project-list');
+  function renderSidebar() {
+    listEl.innerHTML = '';
+    data.projects.forEach(p => {
+      const visible = visibleProjectIds.includes(p.id);
+      const row = document.createElement('label');
+      row.className = 'proj-row' + (visible ? '' : ' disabled');
+      const isPlaceholder = (p.lede || '').includes('// TODO');
+      row.innerHTML =
+        '<input type="checkbox" ' + (visible ? '' : 'disabled ') +
+          (selected.includes(p.id) ? 'checked' : '') + '>' +
+        '<span class="swatch" style="background:' + p.color + '"></span>' +
+        '<span class="proj-name' + (isPlaceholder ? ' placeholder' : '') + '">' + p.name + '</span>';
+      const cb = row.querySelector('input');
+      cb.addEventListener('change', () => {
+        if (cb.checked) selected.push(p.id);
+        else selected = selected.filter(id => id !== p.id);
+        localStorage.setItem(LS_SELECTED, JSON.stringify(selected));
+        renderTimeline(); renderPanels();
+      });
+      listEl.appendChild(row);
+    });
+  }
+
+  document.getElementById('btn-all').addEventListener('click', () => {
+    selected = visibleProjectIds.slice();
+    localStorage.setItem(LS_SELECTED, JSON.stringify(selected));
+    renderSidebar(); renderTimeline(); renderPanels();
+  });
+  document.getElementById('btn-none').addEventListener('click', () => {
+    selected = [];
+    localStorage.setItem(LS_SELECTED, JSON.stringify(selected));
+    renderSidebar(); renderTimeline(); renderPanels();
+  });
+
+  // ── Timeline (week-axis swimlanes) ──
+  const tlEmpty = document.getElementById('timeline-empty');
+  const tlEl = document.getElementById('timeline');
+  function renderTimeline() {
+    const chosen = data.projects.filter(p => selected.includes(p.id));
+    if (chosen.length === 0) {
+      tlEmpty.style.display = 'block'; tlEl.style.display = 'none'; return;
+    }
+    tlEmpty.style.display = 'none'; tlEl.style.display = 'grid';
+
+    // Span: min start → max end across all chosen tasks
+    let minDate = null, maxDate = null;
+    chosen.forEach(p => (p.tasks || []).forEach(t => {
+      const s = new Date(t.start), e = new Date(t.end);
+      if (!minDate || s < minDate) minDate = s;
+      if (!maxDate || e > maxDate) maxDate = e;
+    }));
+    if (!minDate) { tlEmpty.style.display = 'block'; tlEl.style.display = 'none'; return; }
+
+    // Pad axis a touch
+    minDate = new Date(minDate); minDate.setDate(minDate.getDate() - 3);
+    maxDate = new Date(maxDate); maxDate.setDate(maxDate.getDate() + 3);
+    const span = maxDate - minDate;
+
+    // Build axis ticks (weekly)
+    const ticks = [];
+    const cursor = new Date(minDate);
+    while (cursor <= maxDate) {
+      ticks.push(new Date(cursor));
+      cursor.setDate(cursor.getDate() + 7);
+    }
+
+    tlEl.innerHTML = '';
+    // Header row
+    const hLbl = document.createElement('div'); hLbl.className = 'timeline-header';
+    hLbl.textContent = 'Project'; tlEl.appendChild(hLbl);
+    const hAxis = document.createElement('div'); hAxis.className = 'timeline-axis';
+    hAxis.style.gridTemplateColumns = 'repeat(' + ticks.length + ', 1fr)';
+    ticks.forEach(d => {
+      const t = document.createElement('div'); t.className = 'tick';
+      t.textContent = (d.getMonth()+1) + '/' + d.getDate();
+      hAxis.appendChild(t);
+    });
+    tlEl.appendChild(hAxis);
+
+    // Swimlanes
+    chosen.forEach(p => {
+      const lbl = document.createElement('div'); lbl.className = 'swimlane-label';
+      lbl.innerHTML = '<span class="swatch" style="background:' + p.color + '"></span>' + p.name;
+      tlEl.appendChild(lbl);
+
+      const track = document.createElement('div'); track.className = 'swimlane-track';
+      (p.tasks || []).forEach(t => {
+        const s = new Date(t.start), e = new Date(t.end);
+        const leftPct  = ((s - minDate) / span) * 100;
+        const widthPct = Math.max(((e - s) / span) * 100, 1.2);
+        const bar = document.createElement('div');
+        bar.className = 'task-bar status-' + t.status;
+        bar.style.left = leftPct + '%';
+        bar.style.width = widthPct + '%';
+        bar.style.background = p.color;
+        bar.title = t.title + ' — ' + t.owner + ' — ' + t.start + ' → ' + t.end + ' (' + t.status + ')';
+        bar.textContent = t.title;
+        track.appendChild(bar);
+      });
+      tlEl.appendChild(track);
+    });
+  }
+
+  // ── Per-project panels (same template for each) ──
+  function panelBlock(title, items, renderer) {
+    if (!items || items.length === 0) {
+      return '<div class="panel-block"><h4>' + title + '</h4><div class="empty">// TODO</div></div>';
+    }
+    return '<div class="panel-block"><h4>' + title + '</h4><ul>' +
+      items.map(renderer).join('') + '</ul></div>';
+  }
+
+  function renderPanels() {
+    const chosen = data.projects.filter(p => selected.includes(p.id));
+    const wrap = document.getElementById('panels-container');
+    if (chosen.length === 0) {
+      wrap.innerHTML = '<div class="empty-state">No projects selected.</div>';
+      return;
+    }
+    wrap.innerHTML = chosen.map(p => {
+      const placeholder = (p.lede || '').includes('// TODO');
+      const ownersBlock = panelBlock('Owners', p.owners, o =>
+        '<li><strong>' + o.name + '</strong> — ' + o.role + ' · ' + o.lane + '</li>');
+      const roadmapBlock = panelBlock('Roadmap', p.roadmap, r =>
+        '<li><strong>' + r.name + '</strong> <span style="color:var(--muted)">· ' + r.when + '</span></li>');
+      const workBlock = panelBlock('Workstreams', p.tasks, t =>
+        '<li>' + t.title + ' <span class="pill ' + t.status + '">' + t.status + '</span> — <em style="color:var(--muted)">' + t.owner + '</em></li>');
+      const decBlock = panelBlock('Decisions', p.decisions, d =>
+        '<li><strong>' + d.title + '</strong> — ' + d.body + '</li>');
+      const backBlock = panelBlock('Backlog', p.backlog, b =>
+        '<li><code>' + b.id + '</code> ' + b.title + '</li>');
+      const linksBlock = panelBlock('Linked Artifacts', p.links, l =>
+        '<li><a href="' + l.href + '" style="color:var(--ink-soft)">' + l.label + '</a></li>');
+
+      return '<div class="project-panel' + (placeholder ? ' placeholder' : '') +
+        '" style="border-left-color:' + p.color + '">' +
+        '<h3>' + p.name + ' <span class="pid">' + p.id + '</span></h3>' +
+        '<p class="panel-lede">' + (p.lede || '// TODO') + '</p>' +
+        '<div class="panel-grid">' +
+          ownersBlock + roadmapBlock + workBlock + decBlock + backBlock + linksBlock +
+        '</div>' +
+      '</div>';
+    }).join('');
+  }
+
+  renderSidebar();
+  renderTimeline();
+  renderPanels();
+})();
+</script>
+</body>
+</html>
+`,
+  'por.html': `<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>APG — Plan of Record</title>
+<style>
+:root {
+  --ink: #0A1F44;
+  --ink-deep: #061331;
+  --ink-soft: #1A3A7A;
+  --gold: #F5C518;
+  --gold-soft: #FFE58A;
+  --gold-wash: #FFF6D0;
+  --cream: #FAF7EC;
+  --cream-deep: #F3EED8;
+  --paper: #FFFFFF;
+  --rule: #C9C2A8;
+  --rule-soft: #E5E0C8;
+  --muted: #5A6786;
+  --muted-soft: #8A93AA;
+  --text: #101827;
+  --s-uc:   #B91C1C;
+  --s-live: #10B981;
+  --s-warm: #EA580C;
+  --s-hold: #EAB308;
+  --s-dead: #6B625A;
+  --bg: var(--cream);
+  --gold-deep: var(--ink);
+  --rule-strong: var(--ink);
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0; padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+.container { max-width: 1080px; margin: 0 auto; padding: 28px 36px 80px; }
+
+.meta-bar {
+  display: flex; justify-content: space-between; align-items: center;
+  border-top: 4px solid var(--ink);
+  padding: 14px 0 0;
+  font-size: 11px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.14em;
+  color: var(--ink-soft);
+}
+.doc-header { padding: 30px 0 22px; }
+.doc-header h1 {
+  font-family: Georgia, "Times New Roman", serif;
+  font-weight: 600;
+  font-size: 56px; line-height: 1.05; letter-spacing: -0.01em;
+  margin: 0 0 14px; color: var(--ink);
+}
+.doc-header h1 .accent { font-style: italic; color: var(--gold-deep); }
+.doc-header .lede {
+  font-family: Georgia, "Times New Roman", serif; font-style: italic;
+  font-size: 17px; color: var(--ink-soft); max-width: 720px; margin: 0;
+  line-height: 1.55;
+}
+.doc-header hr { border: 0; border-top: 1px solid var(--rule); margin: 28px 0 0; }
+
+.topnav {
+  position: sticky; top: 0; z-index: 50;
+  background: rgba(250, 247, 236, 0.96); backdrop-filter: blur(6px);
+  border-bottom: 1px solid var(--rule);
+  margin: 0 -36px 28px; padding: 10px 36px;
+  font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--muted);
+  display: flex; gap: 18px; overflow-x: auto; white-space: nowrap;
+  align-items: center;
+}
+.topnav a {
+  color: var(--ink-soft); text-decoration: none; font-weight: 700;
+  padding: 4px 0; border-bottom: 2px solid transparent;
+}
+.topnav a:hover, .topnav a.active { color: var(--ink); border-bottom: 2px solid var(--gold); }
+
+.sec { margin: 48px 0 22px; }
+.sec .tag-row { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+.sec .num {
+  display: inline-block; background: var(--gold); color: var(--ink);
+  font-weight: 800; font-size: 12px; letter-spacing: 0.04em;
+  padding: 3px 8px; border-radius: 3px;
+  font-family: ui-monospace, "SF Mono", monospace;
+}
+.sec h2 {
+  font-family: Georgia, "Times New Roman", serif;
+  font-weight: 600; font-size: 26px; letter-spacing: -0.005em;
+  margin: 0; color: var(--ink);
+}
+.sec hr { border: 0; border-top: 1px solid var(--rule); margin: 0 0 20px; }
+
+.callout {
+  background: var(--gold-soft);
+  border-left: 4px solid var(--gold-deep);
+  padding: 16px 20px; margin: 14px 0;
+  border-radius: 0 4px 4px 0;
+}
+.callout p { margin: 0 0 8px; }
+.callout p:last-child { margin-bottom: 0; }
+.rule-label {
+  font-size: 10px; font-weight: 800; letter-spacing: 0.18em;
+  text-transform: uppercase; color: var(--ink-soft); margin-bottom: 8px;
+}
+
+/* ── Roadmap timeline ──────────────────────────────────── */
+.timeline {
+  display: grid; grid-template-columns: 1fr; gap: 14px; margin-top: 14px;
+}
+.phase {
+  background: var(--paper); border: 1px solid var(--rule);
+  border-left: 4px solid var(--ink);
+  padding: 16px 20px; border-radius: 0 4px 4px 0;
+}
+.phase .phase-head {
+  display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+.phase .phase-name {
+  font-family: Georgia, serif; font-size: 19px; font-weight: 600; color: var(--ink);
+}
+.phase .phase-when {
+  font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--muted); font-weight: 700;
+}
+.phase ul { margin: 6px 0 0; padding-left: 18px; }
+.phase li { margin: 4px 0; font-size: 14px; }
+
+/* ── Status pills ──────────────────────────────────────── */
+.pill {
+  display: inline-block; padding: 2px 9px; border-radius: 999px;
+  font-size: 10px; font-weight: 700; letter-spacing: 0.08em;
+  text-transform: uppercase; vertical-align: middle;
+}
+.pill.shipped   { background: rgba(16,185,129,0.15); color: var(--s-live); }
+.pill.inflight  { background: rgba(245,197,24,0.25); color: #8a6d00; }
+.pill.notstart  { background: rgba(106,103,134,0.15); color: var(--muted); }
+.pill.blocked   { background: rgba(185,28,28,0.13); color: var(--s-uc); }
+.pill.hold      { background: rgba(234,179,8,0.18); color: #7c5a00; }
+.owner {
+  display: inline-block; background: var(--cream-deep);
+  border: 1px solid var(--rule);
+  font-size: 10px; font-weight: 700; padding: 2px 8px;
+  letter-spacing: 0.06em; text-transform: uppercase;
+  color: var(--ink-soft); border-radius: 3px;
+}
+
+/* ── Tables ────────────────────────────────────────────── */
+table.por {
+  width: 100%; border-collapse: collapse; margin: 14px 0 6px;
+  font-size: 13px; background: var(--paper);
+  border: 1px solid var(--rule);
+}
+table.por th, table.por td {
+  padding: 9px 12px; text-align: left; vertical-align: top;
+  border-bottom: 1px solid var(--rule-soft);
+}
+table.por th {
+  background: var(--cream-deep); font-size: 10px;
+  text-transform: uppercase; letter-spacing: 0.1em; color: var(--ink-soft);
+  font-weight: 800; border-bottom: 2px solid var(--ink);
+}
+table.por tr:last-child td { border-bottom: 0; }
+table.por td.who { white-space: nowrap; }
+table.por td.eff { white-space: nowrap; color: var(--muted); font-size: 12px; }
+
+/* ── Decisions log ─────────────────────────────────────── */
+.decisions { display: grid; gap: 10px; margin-top: 10px; }
+.decision {
+  background: var(--paper); border: 1px solid var(--rule);
+  border-left: 4px solid var(--s-live);
+  padding: 12px 16px; border-radius: 0 4px 4px 0; font-size: 14px;
+}
+.decision.pending { border-left-color: var(--s-warm); }
+.decision .dec-head {
+  font-weight: 700; color: var(--ink);
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+}
+.decision .dec-body { color: var(--ink-soft); margin-top: 4px; font-size: 13px; }
+
+/* ── Linked artifacts ──────────────────────────────────── */
+.links { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; margin-top: 10px; }
+.links a {
+  display: block; background: var(--paper); border: 1px solid var(--rule);
+  padding: 10px 14px; text-decoration: none; color: var(--ink);
+  font-weight: 600; font-size: 13px; border-radius: 3px;
+}
+.links a:hover { border-color: var(--gold-deep); background: var(--gold-wash); }
+.links a .lbl {
+  display: block; font-size: 10px; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--muted); margin-bottom: 3px; font-weight: 700;
+}
+
+footer.foot {
+  margin-top: 60px; padding-top: 18px;
+  border-top: 3px double var(--ink);
+  display: flex; justify-content: space-between;
+  font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--muted); font-weight: 700; flex-wrap: wrap; gap: 12px;
+}
+footer.foot .gold-stamp {
+  display: inline-block; padding: 4px 10px;
+  background: var(--gold); color: var(--ink); letter-spacing: 0.14em;
+}
+</style>
+<!-- Microsoft Clarity (heatmaps + session recordings) -->
+<script type="text/javascript">
+(function(c,l,a,r,i,t,y){
+  c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+  t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+  y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+})(window,document,"clarity","script","wwbe84z9my"); // TODO: replace wwbe84z9my with real project id from clarity.microsoft.com
+</script>
+</head>
+<body>
+<div class="container">
+
+  <div class="meta-bar">
+    <span>Atom Property Group · Plan of Record</span>
+    <span>v1 · 2026-06-08</span>
+  </div>
+
+  <header class="doc-header">
+    <h1>The <span class="accent">Plan</span> of Record.</h1>
+    <p class="lede">What APG is building, in what order, who owns it, and where each piece stands today. Synthesized from the 2026-06-03 strategy call with Adam and Kebrina, the master roadmap, and the live workflow inventory.</p>
+    <hr>
+  </header>
+
+  <nav class="topnav">
+    <a href="/">Desk</a>
+    <a href="blake.html">Blake</a>
+    <a href="progress.html">Tracker</a>
+    <a href="projects.html" class="active">Roadmap</a>
+    <a href="index.html">Follow-ups</a>
+    <a href="deals.html">Deals</a>
+    <a href="weekly.html">Docket</a>
+    <a href="priorities.html">Priority</a>
+    <a href="markets.html">Markets</a>
+    <a href="/insights">Insights</a>
+    <a href="sms-test.html">SMS Test</a>
+  </nav>
+
+  <!-- ── TABLE OF CONTENTS ─────────────────────────────── -->
+  <section class="sec" id="toc" style="margin-top: 6px;">
+    <div class="callout" style="background: var(--cream-deep); border-left-color: var(--ink);">
+      <div class="rule-label">Contents</div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 6px 18px; font-size: 13px; margin-top: 6px;">
+        <a href="#frame">00 · The Frame</a>
+        <a href="#owners">01 · Owners</a>
+        <a href="#roadmap">02 · Roadmap Timeline</a>
+        <a href="#workstreams">03 · Workstreams &amp; Status</a>
+        <a href="#decisions">04 · Decisions Log</a>
+        <a href="#enhancements">05 · Enhancement Backlog</a>
+        <a href="#links">06 · Linked Artifacts</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 00 · FRAME ─────────────────────────────────────── -->
+  <section class="sec" id="frame">
+    <div class="tag-row"><span class="num">00</span><h2>The Frame</h2></div>
+    <hr>
+    <div class="callout">
+      <p><strong>The Plan of Record is the one place Adam, Kebrina, and the build team look to answer: "what are we doing, who's doing it, when does it land?"</strong> Every workstream below ties to one of the four pillars in the master roadmap (Blake voice agent, listing pipeline, vault + self-improvement, training videos) and one of the build asks from the 2026-06-03 strategy call.</p>
+      <p><strong style="color:var(--gold-deep)">Posture.</strong> Real-time, event-driven, no cron. Webhooks + Cloudflare Workers. The only periodic thing is the prompt-iteration loop, and even that fires on transcript volume, not the calendar.</p>
+    </div>
+    <div class="callout">
+      <div class="rule-label">From the 2026-06-03 call — Adam's build asks (treat as spec)</div>
+      <ol style="margin: 6px 0 0; padding-left: 18px;">
+        <li><strong>Appointment drill-down</strong> — click "36 appointments in contract" → view the individual profiles behind the number.</li>
+        <li><strong>Claude-assessed conversation ratings</strong> — individual metrics derived from the actual call audio, not a manual score.</li>
+        <li><strong>Success-rate-vs-target display</strong> — e.g. are we hitting 70% of the success measure for a given task.</li>
+        <li><strong>Calendar view preferred</strong> over a plain column view (to confirm).</li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ── 01 · OWNERS ────────────────────────────────────── -->
+  <section class="sec" id="owners">
+    <div class="tag-row"><span class="num">01</span><h2>Owners</h2></div>
+    <hr>
+    <table class="por">
+      <thead>
+        <tr><th>Person</th><th>Role</th><th>Lane</th><th>Notes</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Adam Chodes</strong></td><td>CEO · Founder</td><td>Strategy · Sign-off</td><td>Final call on offer, persona, and which pillar gets focus.</td></tr>
+        <tr><td><strong>Kebrina Richards</strong></td><td>Manager · Strategy partner</td><td>Concepts · Vault</td><td>Co-deciding the pivot question and the Legacy app concept.</td></tr>
+        <tr><td><strong>Mike Yasser</strong> (Mido)</td><td>Manager · Build</td><td>All builds</td><td>Dashboard suite, GHL workflows, Blake prompt, vault sync, infra.</td></tr>
+        <tr><td><strong>RJ</strong></td><td>Acquisitions Closer</td><td>Outbound · Dials</td><td>Currently sole human closer. Performance under review (see Decisions).</td></tr>
+        <tr><td><strong>Brady</strong></td><td>Construction Services lead</td><td>Construction</td><td>Owns the Construction Services GHL pipeline + Mario relationship handoff.</td></tr>
+        <tr><td><strong>Blake</strong> (AI)</td><td>Voice Agent</td><td>Outbound · Pillar A</td><td>ElevenLabs + Twilio. v4.0 prompt drafted, not deployed.</td></tr>
+        <tr><td><strong>Mario</strong> (vendor)</td><td>Hamilton vendor</td><td>231 Lafayette</td><td>$7,500 refund accepted; relationship amicable, project paused.</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ── 02 · ROADMAP TIMELINE ──────────────────────────── -->
+  <section class="sec" id="roadmap">
+    <div class="tag-row"><span class="num">02</span><h2>Roadmap Timeline</h2></div>
+    <hr>
+    <div class="timeline">
+      <div class="phase">
+        <div class="phase-head">
+          <span class="phase-name">Phase 0 — This Week (the "Do Today" box)</span>
+          <span class="phase-when">By 2026-06-13</span>
+        </div>
+        <ul>
+          <li><strong>RJ call-audio analysis</strong> — count calls &gt;5s, verify conversations are real <span class="owner">Mido</span> <span class="pill inflight">In Progress</span></li>
+          <li><strong>RJ direct conversation</strong> + decision (continue / terminate / Jef return) <span class="owner">Adam</span> <span class="pill inflight">In Progress</span></li>
+          <li><strong>Updated NDA signed</strong> → unlock the "powerful meeting" recording <span class="owner">Mido</span> <span class="pill notstart">Not Started</span></li>
+          <li><strong>Adam voice recording session booked</strong> — 30 min quiet room <span class="owner">Adam</span> <span class="pill notstart">Not Started</span></li>
+          <li><strong>Confirm APG-hold question with Kebrina</strong> — Sunday-night agreement <span class="owner">Adam · Kebrina</span> <span class="pill blocked">Blocked</span></li>
+        </ul>
+      </div>
+
+      <div class="phase">
+        <div class="phase-head">
+          <span class="phase-name">Phase 1 — Next 2 Weeks (Adam's dashboard asks)</span>
+          <span class="phase-when">By 2026-06-22</span>
+        </div>
+        <ul>
+          <li><strong>Appointment drill-down</strong> — number → individual profile links <span class="owner">Mido</span> <span class="pill notstart">Not Started</span></li>
+          <li><strong>Claude conversation-rating agent</strong> — per-call score from transcript <span class="owner">Mido</span> <span class="pill notstart">Not Started</span></li>
+          <li><strong>Success-rate-vs-target widget</strong> — % attainment per task/period <span class="owner">Mido</span> <span class="pill notstart">Not Started</span></li>
+          <li><strong>Calendar view</strong> on the PoR (quarter / month / day) <span class="owner">Mido</span> <span class="pill notstart">Not Started</span></li>
+          <li><strong>Permission tiers</strong> — exec/manager (Adam, Kebrina) vs employee <span class="owner">Mido</span> <span class="pill notstart">Not Started</span></li>
+        </ul>
+      </div>
+
+      <div class="phase">
+        <div class="phase-head">
+          <span class="phase-name">Phase 2 — Outbound Stack Rebuild</span>
+          <span class="phase-when">By 2026-07-15</span>
+        </div>
+        <ul>
+          <li><strong>Blake v4.0 deployed on Twilio number</strong> — gated by Adam voice clone <span class="owner">Mido</span> <span class="pill blocked">Blocked</span></li>
+          <li><strong>Cloudflare Workers event backbone</strong> — webhook fan-out <span class="owner">Mido</span> <span class="pill notstart">Not Started</span></li>
+          <li><strong>Pre-call context fetcher</strong> + post-call router <span class="owner">Mido</span> <span class="pill notstart">Not Started</span></li>
+          <li><strong>GHL workflow audit</strong> — kill 22 drafts → keep, publish, or delete <span class="owner">Mido</span> <span class="pill inflight">In Progress</span></li>
+          <li><strong>Call Incoming Notification → Slack</strong> (out of RJ's inbox) <span class="owner">Mido</span> <span class="pill notstart">Not Started</span></li>
+        </ul>
+      </div>
+
+      <div class="phase">
+        <div class="phase-head">
+          <span class="phase-name">Phase 3 — Realtor + Inbound Engine</span>
+          <span class="phase-when">By 2026-08-31</span>
+        </div>
+        <ul>
+          <li><strong>Zillow/Redfin → MAO → SMS-to-listing-agent</strong> hardening + reply routing <span class="owner">Mido</span> <span class="pill inflight">In Progress</span></li>
+          <li><strong>Realtor partner motion</strong> — turn one-touch SMS into a repeat affiliate channel <span class="owner">Adam · Mido</span> <span class="pill notstart">Not Started</span></li>
+          <li><strong>Entry offer ("free 24-hr cash-offer range")</strong> as lead magnet, replace cold "we buy houses" <span class="owner">Adam · Mido</span> <span class="pill notstart">Not Started</span></li>
+          <li><strong>14-day close guarantee</strong> ($1k pay-out) — risk reversal as the wedge <span class="owner">Adam</span> <span class="pill notstart">Not Started</span></li>
+        </ul>
+      </div>
+
+      <div class="phase">
+        <div class="phase-head">
+          <span class="phase-name">Phase 4 — Pivot Concepts (NDA-gated, future scope)</span>
+          <span class="phase-when">2026-Q3+</span>
+        </div>
+        <ul>
+          <li><strong>The "powerful meeting" project</strong> — recording unlocked after NDA <span class="owner">Adam</span> <span class="pill hold">On Hold</span></li>
+          <li><strong>Dating app concept</strong> — scope TBD <span class="owner">Adam</span> <span class="pill hold">On Hold</span></li>
+          <li><strong>Legacy / memorialization app</strong> (Kebrina) — Legacy Book + Pocket Guide <span class="owner">Kebrina · Mido</span> <span class="pill hold">On Hold</span></li>
+          <li><strong>Vault architecture decision</strong> — one vault vs separate-per-idea on shared infra <span class="owner">Adam · Mido</span> <span class="pill blocked">Blocked</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 03 · WORKSTREAMS ──────────────────────────────── -->
+  <section class="sec" id="workstreams">
+    <div class="tag-row"><span class="num">03</span><h2>Workstreams &amp; Status</h2></div>
+    <hr>
+    <table class="por">
+      <thead>
+        <tr><th>Workstream</th><th>Pillar</th><th>Owner</th><th>Status</th><th>Effort</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Dashboard suite (4 pages live + PoR)</td><td>Vault / C</td><td class="who">Mido</td><td><span class="pill shipped">Shipped</span></td><td class="eff">—</td></tr>
+        <tr><td>About page — workflow inventory</td><td>Ops</td><td class="who">Mido</td><td><span class="pill shipped">Shipped</span></td><td class="eff">—</td></tr>
+        <tr><td>Plan-of-Record tab (this page)</td><td>Ops</td><td class="who">Mido</td><td><span class="pill shipped">Shipped</span></td><td class="eff">0.5d</td></tr>
+        <tr><td>Appointment drill-down view</td><td>Ops</td><td class="who">Mido</td><td><span class="pill notstart">Not Started</span></td><td class="eff">2d</td></tr>
+        <tr><td>Claude conversation-rating agent</td><td>Blake / A</td><td class="who">Mido</td><td><span class="pill notstart">Not Started</span></td><td class="eff">3d</td></tr>
+        <tr><td>Success-rate-vs-target widget</td><td>Ops</td><td class="who">Mido</td><td><span class="pill notstart">Not Started</span></td><td class="eff">1d</td></tr>
+        <tr><td>Calendar view (quarter / month / day)</td><td>Ops</td><td class="who">Mido</td><td><span class="pill notstart">Not Started</span></td><td class="eff">2d</td></tr>
+        <tr><td>Permission tiers (exec / manager / employee)</td><td>Ops</td><td class="who">Mido</td><td><span class="pill notstart">Not Started</span></td><td class="eff">2d</td></tr>
+        <tr><td>RJ call-audio analysis (&gt;5s + conversation realness)</td><td>Outbound</td><td class="who">Mido</td><td><span class="pill inflight">In Progress</span></td><td class="eff">0.5d</td></tr>
+        <tr><td>Blake v4.0 family-company persona prompt</td><td>Blake / A</td><td class="who">Mido</td><td><span class="pill inflight">In Progress</span></td><td class="eff">1d</td></tr>
+        <tr><td>Adam ElevenLabs voice clone</td><td>Blake / A</td><td class="who">Adam</td><td><span class="pill blocked">Blocked</span></td><td class="eff">0.5d</td></tr>
+        <tr><td>Cloudflare Workers event backbone</td><td>Infra</td><td class="who">Mido</td><td><span class="pill notstart">Not Started</span></td><td class="eff">4d</td></tr>
+        <tr><td>Zillow listing pipeline (MAO → SMS-to-realtor)</td><td>Listings / B</td><td class="who">Mido</td><td><span class="pill inflight">In Progress</span></td><td class="eff">2d</td></tr>
+        <tr><td>Realtor partner / affiliate motion</td><td>Listings / B</td><td class="who">Adam · Mido</td><td><span class="pill notstart">Not Started</span></td><td class="eff">3d</td></tr>
+        <tr><td>Entry-offer lead magnet (24-hr cash-offer range)</td><td>Offer</td><td class="who">Adam · Mido</td><td><span class="pill notstart">Not Started</span></td><td class="eff">2d</td></tr>
+        <tr><td>14-day close guarantee ($1k risk reversal)</td><td>Offer</td><td class="who">Adam</td><td><span class="pill notstart">Not Started</span></td><td class="eff">decide</td></tr>
+        <tr><td>GHL workflow audit (38 → publish/delete/rename)</td><td>Ops</td><td class="who">Mido</td><td><span class="pill inflight">In Progress</span></td><td class="eff">1d</td></tr>
+        <tr><td>Call Incoming Notification → Slack reroute</td><td>Ops</td><td class="who">Mido</td><td><span class="pill notstart">Not Started</span></td><td class="eff">0.5d</td></tr>
+        <tr><td>Delete the two "New Workflow : 17770…" scratch drafts</td><td>Ops</td><td class="who">Mido</td><td><span class="pill notstart">Not Started</span></td><td class="eff">15min</td></tr>
+        <tr><td>Vault sync daemon (Conversations / Calls / Listings)</td><td>Vault / C</td><td class="who">Mido</td><td><span class="pill shipped">Shipped</span></td><td class="eff">—</td></tr>
+        <tr><td>Prompt-iteration loop (volume-triggered, 50+ transcripts)</td><td>Vault / C</td><td class="who">Mido</td><td><span class="pill notstart">Not Started</span></td><td class="eff">3d</td></tr>
+        <tr><td>SOP → Fal.AI training videos (Pillar D)</td><td>Training / D</td><td class="who">Mido</td><td><span class="pill notstart">Not Started</span></td><td class="eff">later</td></tr>
+        <tr><td>NDA-gated concepts (powerful meeting / dating / Legacy)</td><td>Concepts</td><td class="who">Adam · Kebrina</td><td><span class="pill hold">On Hold</span></td><td class="eff">~1yr</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ── 04 · DECISIONS LOG ────────────────────────────── -->
+  <section class="sec" id="decisions">
+    <div class="tag-row"><span class="num">04</span><h2>Decisions Log</h2></div>
+    <hr>
+    <div class="decisions">
+      <div class="decision">
+        <div class="dec-head">Dashboard build proceeds with Adam's three asks <span class="pill shipped">Decided 2026-06-03</span></div>
+        <div class="dec-body">Drill-down, Claude conversation ratings, success-rate-vs-target. Calendar view preferred over column view.</div>
+      </div>
+      <div class="decision">
+        <div class="dec-head">231 Lafayette — $7,500 refund accepted from Mario <span class="pill shipped">Decided 2026-06-03</span></div>
+        <div class="dec-body">Relationship kept amicable. Mido to sign updated NDA right away. Still $12k out of pocket on the project.</div>
+      </div>
+      <div class="decision pending">
+        <div class="dec-head">APG on hold to pivot toward the three concepts <span class="pill hold">Pending — confirm with Kebrina</span></div>
+        <div class="dec-body">Sunday-night agreement was meant to be the hold point. Adam wants to confirm directly with Kebrina before flipping the switch.</div>
+      </div>
+      <div class="decision pending">
+        <div class="dec-head">RJ likely terminated <span class="pill hold">Pending — direct conversation + audio analysis</span></div>
+        <div class="dec-body">Adam targeting Friday / "probably tomorrow." Mido's call-audio agent (&gt;5s call counts, conversation realness) is the tiebreaker between the SMS-saturation read and the operational-effectiveness read.</div>
+      </div>
+      <div class="decision pending">
+        <div class="dec-head">Bring Jef back on the leads? <span class="pill hold">Pending</span></div>
+        <div class="dec-body">Adam floated it — "he had that charm." Vault canonical: Jef = Jef De los Santos, prior closer, currently tombstoned. Reversal under consideration.</div>
+      </div>
+      <div class="decision pending">
+        <div class="dec-head">Vault architecture — one vault vs separate-per-idea <span class="pill hold">Pending</span></div>
+        <div class="dec-body">Leaning toward separate projects/grids on shared infrastructure. Not finalized.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 05 · ENHANCEMENT BACKLOG ─────────────────────── -->
+  <section class="sec" id="enhancements">
+    <div class="tag-row"><span class="num">05</span><h2>Enhancement Backlog — from the 2026-06-08 blend audit</h2></div>
+    <hr>
+
+    <h3 style="font-family: Georgia, serif; font-size: 19px; margin: 22px 0 10px; color: var(--ink);">5a · Outbound marketing blend (Blake / SMS / dialer)</h3>
+    <table class="por">
+      <thead>
+        <tr><th>#</th><th>Enhancement</th><th>Source</th><th>Owner</th><th>Effort</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>O1</td><td>Add risk-reversal guarantee to every outbound surface (Blake script, SMS, landing). "14-day close at agreed price or we pay you $1,000."</td><td>Hormozi</td><td class="who">Adam · Mido</td><td class="eff">1d</td></tr>
+        <tr><td>O2</td><td>Replace cold "we buy houses cash" SMS with entry-offer wedge: "free 24-hr written cash-offer range, no obligation."</td><td>Hormozi</td><td class="who">Mido</td><td class="eff">2d</td></tr>
+        <tr><td>O3</td><td>Niche down for next 90 days — pick roofing+siding Northern NJ OR MF 5+ HNW corridors. Stop being a generalist on the cold channel.</td><td>Hormozi</td><td class="who">Adam</td><td class="eff">decide</td></tr>
+        <tr><td>O4</td><td>Turn Zillow listing pipeline from one-touch SMS into a repeat realtor-affiliate motion (commission model, named partners, monthly digest).</td><td>Hormozi</td><td class="who">Adam · Mido</td><td class="eff">5d</td></tr>
+        <tr><td>O5</td><td>Pull RJ off cold 456-lead pile this week → put him on realtors who already replied to a Zillow SMS in last 30 days.</td><td>Hormozi</td><td class="who">RJ · Adam</td><td class="eff">0d (route)</td></tr>
+        <tr><td>O6</td><td>Cut every "warm / conversational / ethically honest" adjective from Blake's prompt. Replace with three specifics: what Blake <em>notices</em>, what he <em>refuses to do</em>, what he says when the conversation stops being about the house.</td><td>Rubin</td><td class="who">Mido</td><td class="eff">1d</td></tr>
+        <tr><td>O7</td><td>Rewrite first-touch SMS so it notices the specific property (address detail, board-up, listing age) instead of announcing the buyer.</td><td>Rubin</td><td class="who">Mido</td><td class="eff">1d</td></tr>
+        <tr><td>O8</td><td>Add a "what does Blake do when the seller says something that breaks his heart?" branch to the prompt — character, not posture.</td><td>Rubin</td><td class="who">Mido</td><td class="eff">0.5d</td></tr>
+        <tr><td>O9</td><td>Stand up a CLOSER-framework call card for RJ + Blake (Clarify · Label · Overview past pain · Sell the vacation · Explain · Reinforce).</td><td>Hormozi</td><td class="who">Mido · RJ</td><td class="eff">1d</td></tr>
+        <tr><td>O10</td><td>Engineer real scarcity on the Zillow-pipeline SMS — cap weekly offers at N realtors / N properties so the buyer feels selected, not blasted.</td><td>Hormozi</td><td class="who">Mido</td><td class="eff">0.5d</td></tr>
+      </tbody>
+    </table>
+
+    <h3 style="font-family: Georgia, serif; font-size: 19px; margin: 28px 0 10px; color: var(--ink);">5b · Internal ops blend (dashboards / GH Actions / GHL workflows)</h3>
+    <table class="por">
+      <thead>
+        <tr><th>#</th><th>Enhancement</th><th>Source</th><th>Owner</th><th>Effort</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>I1</td><td>Reroute <em>Call Incoming Notification</em> from RJ's email to Slack <code>#base1-sms-leadgen</code>. Single morning digest replaces the per-call email blast.</td><td>about.html audit</td><td class="who">Mido</td><td class="eff">0.5d</td></tr>
+        <tr><td>I2</td><td>Delete <em>New Workflow : 1777068701780</em> and <em>New Workflow : 1777429426658</em> — abandoned scratch from 2026-04-24 / 2026-04-29.</td><td>about.html audit</td><td class="who">Mido</td><td class="eff">15min</td></tr>
+        <tr><td>I3</td><td>Publish the two SMS workflows that are currently DRAFT and ready (<em>CTA First msg</em>, <em>Auto Missed Call Text-Back</em>) once SMS halt lifts. Until then, document them as <em>paused-intentional</em> not <em>draft</em>.</td><td>about.html audit</td><td class="who">Mido</td><td class="eff">1d</td></tr>
+        <tr><td>I4</td><td>Retire the three GHL-native AI bot drafts (<em>2. Ai Appointment Booking</em>, <em>{VER 2}</em>, <em>3. Customer Replied - Auto Handling</em>) — superseded by Blake + the GH Actions Claude classifier. Delete or move to <em>Archive</em> folder.</td><td>about.html audit</td><td class="who">Mido</td><td class="eff">15min</td></tr>
+        <tr><td>I5</td><td>Decommission <code>sms_followup.py</code> cron (caused production fires per vault hard-rule #4). Move to event-driven via Cloudflare Worker on GHL <em>customer replied</em> webhook.</td><td>vault rule #4</td><td class="who">Mido</td><td class="eff">3d</td></tr>
+        <tr><td>I6</td><td>Add a "last viewed" timestamp + view-count tracker per dashboard tab. Tabs nobody opens for 30 days move to <code>/archive/</code>.</td><td>noise audit</td><td class="who">Mido</td><td class="eff">1d</td></tr>
+        <tr><td>I7</td><td>Consolidate <em>5. Testing Workflow</em> (56 versions deep) — extract anything still useful, kill the rest.</td><td>about.html audit</td><td class="who">Mido</td><td class="eff">0.5d</td></tr>
+        <tr><td>I8</td><td>Rename <em>Reactivaiton of all leads</em> draft (GHL-side typo) and decide: publish for ACQ dead-stage reactivation (legal — per <code>feedback_dead_deals.md</code>) or delete.</td><td>about.html audit</td><td class="who">Mido</td><td class="eff">15min</td></tr>
+        <tr><td>I9</td><td>Token audit on GH Actions — <code>acq.yml</code>, <code>weekly.yml</code>, <code>slack.yml</code> are the biggest LLM spenders. Cache transcripts + diff Slack pulls to cut Claude tokens ~40%.</td><td>cost audit</td><td class="who">Mido</td><td class="eff">2d</td></tr>
+        <tr><td>I10</td><td>Add an "ops health" sub-section to the PoR page (this page) that pulls live workflow run-counts + failure rates from GitHub API + GHL API. Self-policing dashboard.</td><td>self</td><td class="who">Mido</td><td class="eff">3d</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ── 06 · LINKED ARTIFACTS ─────────────────────────── -->
+  <section class="sec" id="links">
+    <div class="tag-row"><span class="num">06</span><h2>Linked Artifacts</h2></div>
+    <hr>
+    <div class="links">
+      <a href="about.html"><span class="lbl">Dashboard</span>How the Robots Work — full workflow inventory</a>
+      <a href="priorities.html"><span class="lbl">Dashboard</span>Priority Deals — Adam's weekly action queue</a>
+      <a href="weekly.html"><span class="lbl">Dashboard</span>Weekly Snapshot — momentum + closed-pipeline math</a>
+      <a href="markets.html"><span class="lbl">Dashboard</span>Markets — Route 30 PA, Northern NJ corridors</a>
+      <a href="blake.html"><span class="lbl">Dashboard</span>Blake — voice-agent operations</a>
+      <a href="progress.html"><span class="lbl">Dashboard</span>Progress — system build status</a>
+      <a href="ai-agents-plan.html"><span class="lbl">Dashboard</span>AI Agents Plan — published roadmap</a>
+      <a href="index.html"><span class="lbl">Dashboard</span>Follow-Ups — daily lead queue</a>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <span>Auto-synced from the master roadmap · vault path: APG-Vault/_system/master-roadmap.md</span>
+    <span class="gold-stamp">v1 · 2026-06-08</span>
+  </footer>
+
+</div>
+</body>
+</html>
+`,
 };
