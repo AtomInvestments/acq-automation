@@ -5,7 +5,7 @@ that polls the Cloudflare Worker's /dashboard-data endpoint every 10 seconds.
 No data is baked into the HTML at build time; the cron still runs this script
 to ensure the shell exists at /blake.html, but the actual content is fetched
 client-side from
-   https://acq-automation.mithchell.workers.dev/dashboard-data
+   https://apg-dashboard.mithchell.workers.dev/dashboard-data
 which the Worker caches in KV for 30 sec.
 
 This means: when a new Blake call ends, the page sees it within ~30-40 seconds
@@ -18,7 +18,7 @@ from datetime import datetime
 from zoneinfo import ZoneInfo
 
 ET = ZoneInfo("America/New_York")
-WORKER_BASE = "https://acq-automation.mithchell.workers.dev"
+WORKER_BASE = "https://apg-dashboard.mithchell.workers.dev"
 
 
 SHELL_HTML = """<!doctype html>
@@ -32,11 +32,11 @@ SHELL_HTML = """<!doctype html>
 <meta name="theme-color" content="#1A2840">
 <script>
   // If anyone hits this dashboard via github.io directly (bypassing the Worker
-  // auth gate at acq-automation.mithchell.workers.dev), redirect to /login.
+  // auth gate at apg-dashboard.mithchell.workers.dev), redirect to /login.
   // The canonical URL for this dashboard is the Worker route; github.io is
   // a build artifact, not the supported entry point.
   if (location.hostname === "atominvestments.github.io") {
-    location.replace("https://acq-automation.mithchell.workers.dev/login?next=/blake");
+    location.replace("https://apg-dashboard.mithchell.workers.dev/login?next=/blake");
   }
 </script>
 <style>
@@ -238,6 +238,14 @@ h2 .sec-count { margin-left: auto; font-size: 11px; letter-spacing: 0.18em; text
 }
 .footer .gold-stamp { display: inline-block; padding: 4px 10px; background: var(--gold); color: var(--ink); letter-spacing: 0.14em; }
 </style>
+<!-- Microsoft Clarity (heatmaps + session recordings) -->
+<script type="text/javascript">
+(function(c,l,a,r,i,t,y){
+  c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+  t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+  y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+})(window,document,"clarity","script","wwbe84z9my"); // TODO: replace wwbe84z9my with real project id from clarity.microsoft.com
+</script>
 </head>
 <body>
 <div class="shell">
@@ -252,15 +260,17 @@ h2 .sec-count { margin-left: auto; font-size: 11px; letter-spacing: 0.18em; text
   </header>
 
   <nav class="topnav">
-    <a href="index.html">Follow-Ups</a>
+    <a href="/">Desk</a>
+    <a href="blake.html" class="active">Blake</a>
+    <a href="progress.html">Tracker</a>
+    <a href="projects.html">Roadmap</a>
+    <a href="index.html">Follow-ups</a>
     <a href="deals.html">Deals</a>
-    <a href="weekly.html">Weekly</a>
+    <a href="weekly.html">Docket</a>
     <a href="priorities.html">Priority</a>
     <a href="markets.html">Markets</a>
-    <a href="blake.html" class="active">Blake</a>
-    <a href="progress.html">Progress</a>
-    <a href="ai-agents-plan.html">AI Agents Plan</a>
-    <a href="about.html">About</a>
+    <a href="/insights">Insights</a>
+    <a href="sms-test.html">SMS Test</a>
   </nav>
 
   <section>

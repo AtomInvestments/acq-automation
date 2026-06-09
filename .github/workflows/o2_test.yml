@@ -1,0 +1,67 @@
+name: O2 Entry-Offer A/B/C Test
+
+# workflow_dispatch ONLY for now. When sms_paused flips false in
+# o2_test_config.json, swap to a cron schedule. The test infra is wired such
+# that a dry-run is safe with sms_paused=true (assignments + reconciliation
+# still run; no actual SMS goes out).
+on:
+  workflow_dispatch:
+  # Uncomment when ready to fire sends on a cron:
+  # schedule:
+  #   - cron: '0 14,18 * * 1-5'  # 10am + 2pm ET, Mon-Fri only
+
+permissions:
+  contents: write    # persist sms_test_state.json + o2_test_config.json back to main
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run O2 entry-offer pipeline
+        env:
+          GHL_TOKEN: ${{ secrets.GHL_TOKEN }}
+        run: python o2_entry_offer.py
+
+      - name: Refresh SMS A/B/C test dashboard
+        run: python sms_test_dashboard.py
+
+      - name: Persist test state back to main
+        if: always()
+        run: |
+          set -e
+          present=()
+          [ -f sms_test_state.json ]    && present+=("sms_test_state.json")
+          [ -f sms_variant_state.json ] && present+=("sms_variant_state.json")
+          [ -f o2_test_config.json ]    && present+=("o2_test_config.json")
+          [ -f site/sms-test.html ]     && present+=("site/sms-test.html")
+          if [ ${#present[@]} -eq 0 ]; then
+            echo "Nothing to persist."
+            exit 0
+          fi
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "${present[@]}"
+          if git diff --cached --quiet; then
+            echo "No state changes."
+            exit 0
+          fi
+          git commit -m "chore: O2 test state update [skip ci]"
+          for i in 1 2 3; do
+            if git pull --rebase --autostash origin main && git push origin HEAD:main; then
+              echo "Pushed (attempt $i)."
+              exit 0
+            fi
+            echo "Push attempt $i failed; retrying..."
+            sleep 3
+          done
+          echo "ERROR: failed to push after 3 attempts." >&2
+          exit 1
