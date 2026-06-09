@@ -573,6 +573,8 @@ export default {
       "/setup.html": "setup.html",
       "/ai-agents-plan": "ai-agents-plan.html",
       "/ai-agents-plan.html": "ai-agents-plan.html",
+      "/sms-test": "sms-test.html",
+      "/sms-test.html": "sms-test.html",
     };
     if (req.method === "GET" && gated[url.pathname]) {
       const auth = await requireAuth(req, env);
@@ -601,6 +603,7 @@ export default {
           "about.html": "",
           "setup.html": "",
           "ai-agents-plan.html": "",
+          "sms-test.html": "sms-test",
         };
         const wrapped = applyApgShell(inline, tabMap[filename] || "");
         return new Response(wrapped, {
@@ -7294,6 +7297,7 @@ function apgTopNav(activeTab: string = "", user?: User): string {
     { href: "/priorities", key: "priorities", label: "Priority",   permKey: "priorities" },
     { href: "/markets",   key: "markets",    label: "Markets",     permKey: "markets" },
     { href: "/insights",  key: "insights",   label: "Insights",    permKey: "insights" },
+    { href: "/sms-test",  key: "sms-test",   label: "SMS Test" },
   ];
   // Filter tabs by user's per-tab permissions. If no user given (legacy call
   // sites that haven't been migrated yet), show all tabs — the route handler

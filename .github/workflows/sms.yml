@@ -52,8 +52,11 @@ jobs:
           set -e
           # Track which state files were produced this run.
           present=()
-          [ -f sms_state.json ]      && present+=("sms_state.json")
-          [ -f cadence_health.json ] && present+=("cadence_health.json")
+          [ -f sms_state.json ]          && present+=("sms_state.json")
+          [ -f cadence_health.json ]     && present+=("cadence_health.json")
+          [ -f sms_test_state.json ]     && present+=("sms_test_state.json")
+          [ -f sms_variant_state.json ]  && present+=("sms_variant_state.json")
+          [ -f o2_test_config.json ]     && present+=("o2_test_config.json")
           if [ ${#present[@]} -eq 0 ]; then
             echo "No state files present — nothing to persist."
             exit 0
@@ -111,6 +114,9 @@ jobs:
 
       - name: Generate Project Tracker dashboard
         run: python progress_dashboard.py || echo "progress_dashboard.py failed (non-fatal); continuing"
+
+      - name: Generate SMS A/B/C test dashboard
+        run: python sms_test_dashboard.py || echo "sms_test_dashboard.py failed (non-fatal); continuing"
 
       - name: Refresh site/weekly.html shell with latest layout
         env:
