@@ -634,8 +634,11 @@ export default {
       "/por.html": "por.html",
     };
     if (req.method === "GET" && gated[url.pathname]) {
-      const auth = await requireAuth(req, env);
-      if (!auth.ok) {
+      // Use requireAuthV2 directly so we can pipe the full User object into
+      // applyApgShell (welcome banner + permission-aware top nav need name/role,
+      // not just email). Falls through the same redirect path on auth fail.
+      const authV2 = await requireAuthV2(req, env);
+      if (!authV2.ok) {
         return new Response(null, {
           status: 302,
           headers: { Location: `/login?next=${encodeURIComponent(url.pathname)}` },
@@ -664,7 +667,7 @@ export default {
           "projects.html": "roadmap",
           "por.html": "roadmap",
         };
-        const wrapped = applyApgShell(inline, tabMap[filename] || "");
+        const wrapped = applyApgShell(inline, tabMap[filename] || "", authV2.user);
         return new Response(wrapped, {
           status: 200,
           headers: {
@@ -679,14 +682,14 @@ export default {
     // Landing hub at "/" — if logged in, show the dashboard navigation page;
     // if not, redirect to /login. (Health JSON moves to /health only.)
     if (req.method === "GET" && url.pathname === "/") {
-      const auth = await requireAuth(req, env);
-      if (!auth.ok) {
+      const authV2 = await requireAuthV2(req, env);
+      if (!authV2.ok) {
         return new Response(null, {
           status: 302,
           headers: { Location: "/login?next=/" },
         });
       }
-      return new Response(landingHubHtml(), {
+      return new Response(landingHubHtml(authV2.user), {
         status: 200,
         headers: { "content-type": "text/html; charset=utf-8", "cache-control": "no-store" },
       });
@@ -911,8 +914,8 @@ export default {
     }
 
     if (req.method === "GET" && url.pathname === "/insights") {
-      const auth = await requireAuth(req, env);
-      if (!auth.ok) {
+      const authV2Ins = await requireAuthV2(req, env);
+      if (!authV2Ins.ok) {
         return new Response(null, {
           status: 302,
           headers: { Location: `/login?next=${encodeURIComponent("/insights")}` },
@@ -922,7 +925,7 @@ export default {
       // no "Loading..." state possible. If WP or ATTOM are broken, the cards
       // render with the error inline so the operator can see what's happening.
       const html = await renderInsightsDashboardServerSide(env);
-      const wrapped = applyApgShell(html, "insights");
+      const wrapped = applyApgShell(html, "insights", authV2Ins.user);
       return new Response(wrapped, {
         status: 200,
         headers: { "content-type": "text/html; charset=utf-8", "cache-control": "no-store" },
@@ -1161,8 +1164,8 @@ export default {
     //   GET /roadmap-data?source=<slug>   → structured JSON of the parsed doc
     //                                       (year/quarters/months/tasks)
     if (req.method === "GET" && url.pathname === "/roadmap") {
-      const auth = await requireAuth(req, env);
-      if (!auth.ok) {
+      const authV2Roadmap = await requireAuthV2(req, env);
+      if (!authV2Roadmap.ok) {
         return new Response(null, {
           status: 302,
           headers: { Location: `/login?next=${encodeURIComponent("/roadmap" + url.search)}` },
@@ -1181,7 +1184,7 @@ export default {
         const html = await renderRoadmapPage({}, url);
         // Wrap in apgShell so the deep roadmap view gets the unified topnav
         // (back-nav to Desk, consistent across all gated pages).
-        const wrapped = applyApgShell(html, "roadmap");
+        const wrapped = applyApgShell(html, "roadmap", authV2Roadmap.user);
         return new Response(wrapped, {
           status: 200,
           headers: { "content-type": "text/html; charset=utf-8", "cache-control": "no-store" },
@@ -7310,11 +7313,26 @@ function apgDesignTokens(): string {
 //      their own <nav class="dashboard-nav"> / <nav class="topnav"> etc;
 //      we hide them by class+tag selectors without breaking the body.
 //   3. Prepend apgTopNav inside <body>.
+//   4. Inject `window.__APG_USER__` so client-side pages (projects.html's
+//      welcome banner + "my tasks" filter) know who is logged in without an
+//      extra round-trip. Email + name + role only — never anything sensitive.
 // Reversible: if it visually breaks a page, removing applyApgShell from the
 // route handler instantly restores the original dashboard HTML.
-function applyApgShell(html: string, activeTab: string): string {
+function applyApgShell(html: string, activeTab: string, user?: User): string {
   const tokens = apgDesignTokens();
-  const nav = apgTopNav(activeTab);
+  const nav = apgTopNav(activeTab, user);
+  // Surface the current user to client-side JS. Kept tiny + safe — first name
+  // derivation happens in the page (welcome banner needs it; "Welcome, Adam"
+  // not "Welcome, Adam Chodes"). JSON.stringify avoids HTML/script injection
+  // since we control the User shape.
+  const userPayload = user
+    ? {
+        email: user.email,
+        name: user.name,
+        role: user.role,
+      }
+    : null;
+  const userScript = `\n<script>window.__APG_USER__ = ${JSON.stringify(userPayload)};</script>\n`;
   const overrideCss = `
   /* APG shell override — minimalist. Let the dashboard's own editorial CSS
      (Georgia serif h1s, italic gold accents, newspaper-masthead gold strip)
@@ -7339,7 +7357,7 @@ function applyApgShell(html: string, activeTab: string): string {
   }
   body { padding-top: 0 !important; }
   `;
-  const injectionHead = `\n<style>${tokens}</style>\n<style>${overrideCss}</style>\n`;
+  const injectionHead = `\n<style>${tokens}</style>\n<style>${overrideCss}</style>${userScript}`;
   const headRe = /<\/head>/i;
   if (headRe.test(html)) {
     html = html.replace(headRe, `${injectionHead}</head>`);
@@ -7583,7 +7601,11 @@ ${apgTopNav(opts.activeTab)}
 // not a generic shadcn dashboard. Inspired by APG's existing /blake and
 // /progress dashboards (Georgia h1 with italic gold accent, gold rule under
 // the masthead, all-caps tracked metadata, cream paper bg).
-function landingHubHtml(): string {
+//
+// `user` (optional) drives the welcome banner — "Welcome, <first name>" plus
+// today's date in long form, mirroring the projects.html surface so logged-in
+// users see the same identity strip everywhere.
+function landingHubHtml(user?: User): string {
   const cards: Array<{ href: string; title: string; subtitle: string; live?: boolean; section: string; verb: string }> = [
     { href: "/blake",      title: "Blake",            subtitle: "The voice agent. Calls, transcripts, outcomes — live.", live: true,  section: "DESK · VOICE",       verb: "Listen in" },
     { href: "/progress",   title: "The Tracker",      subtitle: "Pillar A–D delivery. Click any task to mark it shipped.",            section: "ROADMAP · DESK",     verb: "Check progress" },
@@ -7760,11 +7782,69 @@ function landingHubHtml(): string {
     background: var(--gold); color: var(--ink);
     letter-spacing: 0.14em;
   }
+
+  /* Welcome banner + top-of-agenda strip */
+  .welcome-strip {
+    margin: 0 0 24px;
+    padding: 14px 18px;
+    background: var(--cream);
+    border-left: 4px solid var(--gold);
+    display: flex; flex-wrap: wrap;
+    justify-content: space-between; align-items: center; gap: 10px 18px;
+  }
+  .welcome-line {
+    font-family: Georgia, serif; font-size: 17px; color: var(--ink);
+  }
+  .welcome-line strong { font-weight: 700; }
+  .welcome-date {
+    color: var(--ink-soft);
+    font-style: italic;
+  }
+  .welcome-agenda {
+    display: flex; flex-wrap: wrap; gap: 6px;
+    font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--muted); font-weight: 700;
+  }
+  .welcome-agenda-loading { font-style: italic; text-transform: none; letter-spacing: 0.04em; }
+  .welcome-agenda .chip {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 4px 10px;
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    color: var(--ink);
+    cursor: pointer;
+    transition: background 120ms, border-color 120ms;
+    text-decoration: none;
+  }
+  .welcome-agenda .chip:hover { background: var(--gold-wash); border-color: var(--gold); }
+  .welcome-agenda .chip .n {
+    background: var(--ink); color: var(--cream);
+    padding: 0 6px; border-radius: 999px;
+    font-size: 10px; font-weight: 800;
+    min-width: 18px; text-align: center;
+  }
+  .welcome-agenda .chip.overdue .n { background: #B91C1C; }
+  .welcome-agenda .chip.decision .n { background: #EA580C; }
+  .welcome-agenda .chip.zero { opacity: 0.55; cursor: default; }
+  .welcome-agenda .chip.zero:hover { background: var(--paper); border-color: var(--rule); }
 </style>
 </head>
 <body>
-${apgTopNav("hub")}
+${apgTopNav("hub", user)}
 <div class="shell">
+  ${(() => {
+    const firstName = (user?.name || "").trim().split(/\s+/)[0] || "there";
+    const today = new Date().toLocaleDateString("en-US", {
+      weekday: "long", month: "long", day: "numeric", year: "numeric",
+      timeZone: "America/New_York",
+    });
+    return `<div class="welcome-strip" data-user-name="${user?.name || ""}" data-user-email="${user?.email || ""}" data-user-role="${user?.role || ""}">
+      <div class="welcome-line">Welcome, <strong>${firstName}</strong> · <span class="welcome-date">${today}</span></div>
+      <div class="welcome-agenda" id="hub-agenda">
+        <span class="welcome-agenda-loading">Loading top-of-agenda…</span>
+      </div>
+    </div>`;
+  })()}
   <header class="masthead">
     <div class="brandrow">
       <span class="brand">The Operations Console</span>
@@ -7785,6 +7865,61 @@ ${apgTopNav("hub")}
     <span class="gold-stamp">Live Desk</span>
   </footer>
 </div>
+<script>
+(async function () {
+  // Top-of-agenda strip: fetch the multi-project PoR JSON, find tasks owned by
+  // the current user, count today / pending decisions / overdue. Counts are
+  // clickable links to /projects which deep-links the relevant view.
+  const strip = document.getElementById('hub-agenda');
+  if (!strip) return;
+  const wrap = document.querySelector('.welcome-strip');
+  const userName = wrap ? (wrap.getAttribute('data-user-name') || '') : '';
+  const userRole = wrap ? (wrap.getAttribute('data-user-role') || '') : '';
+  if (!userName) {
+    strip.innerHTML = '<span class="welcome-agenda-loading">Sign in to see your agenda.</span>';
+    return;
+  }
+  try {
+    const r = await fetch('/data/projects.json', { cache: 'no-store', credentials: 'same-origin' });
+    if (!r.ok) throw new Error('agenda_fetch_failed');
+    const data = await r.json();
+    const today = new Date(); today.setHours(0,0,0,0);
+    const todayStr = today.toISOString().slice(0,10);
+    // Match owner by exact name or by first name (so "Adam" matches "Adam + Mido" too)
+    const firstName = userName.split(/\s+/)[0].toLowerCase();
+    const matches = (owner) => {
+      if (!owner) return false;
+      const o = String(owner).toLowerCase();
+      return o.includes(userName.toLowerCase()) || o.split(/[+,/&·]/).map(s => s.trim()).some(s => s === firstName || s.startsWith(firstName + ' '));
+    };
+    let todayN = 0, overdueN = 0, decisionN = 0;
+    for (const p of (data.projects || [])) {
+      for (const t of (p.tasks || [])) {
+        if (!matches(t.owner)) continue;
+        if (t.status === 'done' || t.status === 'shipped') continue;
+        if (t.start && t.end && t.start <= todayStr && todayStr <= t.end) todayN++;
+        if (t.end && t.end < todayStr) overdueN++;
+      }
+      for (const d of (p.decisions || [])) {
+        if (d.status !== 'pending') continue;
+        // Decisions don't always have explicit owners; surface to managers only.
+        if (userRole === 'employee') continue;
+        decisionN++;
+      }
+    }
+    const chip = (cls, label, n) =>
+      '<a class="chip ' + cls + (n === 0 ? ' zero' : '') + '" href="/projects">' +
+        '<span>' + label + '</span><span class="n">' + n + '</span>' +
+      '</a>';
+    strip.innerHTML =
+      chip('today', "Today's tasks", todayN) +
+      chip('decision', 'Decisions pending', decisionN) +
+      chip('overdue', 'Overdue', overdueN);
+  } catch (e) {
+    strip.innerHTML = '<span class="welcome-agenda-loading">Agenda unavailable.</span>';
+  }
+})();
+</script>
 </body>
 </html>`;
 }

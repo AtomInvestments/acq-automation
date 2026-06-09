@@ -11,9 +11,9 @@
   },
 
   "users": [
-    { "id": "adam",    "name": "Adam Chodes",      "role": "manager",  "projects": ["apg", "proj-b", "proj-c", "proj-d"] },
-    { "id": "kebrina", "name": "Kebrina Richards", "role": "manager",  "projects": ["apg", "proj-b", "proj-c", "proj-d"] },
-    { "id": "mido",    "name": "Mike Yasser",      "role": "manager",  "projects": ["apg", "proj-b", "proj-c", "proj-d"] }
+    { "id": "adam",    "name": "Adam Chodes",      "email": "adam@atompropertygroup.org",     "role": "manager",  "projects": ["apg", "proj-b", "proj-c", "proj-d"] },
+    { "id": "kebrina", "name": "Kebrina Richards", "email": "kebrina.a.richards@gmail.com",   "role": "manager",  "projects": ["apg", "proj-b", "proj-c", "proj-d"] },
+    { "id": "mido",    "name": "Mike Yasser",      "email": "mido@atompropertygroup.org",     "role": "manager",  "projects": ["apg", "proj-b", "proj-c", "proj-d"] }
   ],
 
   "projects": [
