@@ -81,6 +81,14 @@ import {
   renderTemplatesBody,
   renderMeBody,
   renderLoginV2Html,
+  renderForgotHtml,
+  renderPasswordRequestsBody,
+  reseedBootstrapPasswords,
+  createPasswordRequest,
+  listPasswordRequests,
+  fulfillPasswordRequest,
+  checkForgotRateLimit,
+  bumpForgotRateLimit,
   type User,
   type Role,
   type Permissions,
@@ -530,6 +538,50 @@ export default {
           Location: safeNext,
           "Set-Cookie": buildV2CookieHeader(sid),
         },
+      });
+    }
+
+    // /forgot — public password-reset request (Option C: no email infra).
+    // Logs request to KV; managers see + fulfill via /admin/password-requests.
+    if (req.method === "GET" && url.pathname === "/forgot") {
+      return new Response(renderForgotHtml(), {
+        status: 200,
+        headers: { "content-type": "text/html; charset=utf-8", "cache-control": "no-store" },
+      });
+    }
+    if (req.method === "POST" && url.pathname === "/forgot") {
+      let email = "";
+      try {
+        const ct = req.headers.get("content-type") || "";
+        if (ct.includes("application/json")) {
+          const j: any = await req.json();
+          email = String(j?.email || "");
+        } else {
+          const form = await req.formData();
+          email = String(form.get("email") || "");
+        }
+      } catch { /* fall through */ }
+      email = String(email || "").trim().toLowerCase();
+      const ip = req.headers.get("cf-connecting-ip") || req.headers.get("x-forwarded-for") || "unknown";
+      if (!email || !email.includes("@")) {
+        return new Response(renderForgotHtml({ error: "Please enter a valid email.", email }), {
+          status: 400, headers: { "content-type": "text/html; charset=utf-8" },
+        });
+      }
+      // Rate-limit to prevent queue spam (3/hr per IP).
+      const rl = await checkForgotRateLimit(env, ip);
+      if (!rl.ok) {
+        return new Response(renderForgotHtml({ error: "Too many requests. Try again in an hour.", email }), {
+          status: 429, headers: { "content-type": "text/html; charset=utf-8" },
+        });
+      }
+      await bumpForgotRateLimit(env, ip);
+      // Always log the request — even if the user doesn't exist, so we don't
+      // leak which emails are valid. A manager will see the email and either
+      // fulfill it or ignore it.
+      await createPasswordRequest(env, email, ip);
+      return new Response(renderForgotHtml({ submitted: true, email }), {
+        status: 200, headers: { "content-type": "text/html; charset=utf-8", "cache-control": "no-store" },
       });
     }
 
@@ -1954,7 +2006,9 @@ export default {
     if (url.pathname === "/admin/users" || url.pathname === "/admin/users/" ||
         url.pathname === "/admin/users/new" || url.pathname.startsWith("/admin/users/") ||
         url.pathname === "/admin/templates" || url.pathname === "/me" ||
-        url.pathname === "/me/rotate-password") {
+        url.pathname === "/me/rotate-password" ||
+        url.pathname === "/admin/password-requests" ||
+        url.pathname === "/admin/bootstrap-reseed") {
       return handleAdminRoutes(req, env, url);
     }
 
@@ -10704,6 +10758,139 @@ async function handleAdminRoutes(req: Request, env: Env, url: URL): Promise<Resp
       topNav,
       body: renderTemplatesBody(templates),
     }), { status: 200, headers: { "content-type": "text/html; charset=utf-8", "cache-control": "no-store" } });
+  }
+
+  // ---- /admin/password-requests — manager queue (no email infra: Option C) ----
+  if (req.method === "GET" && url.pathname === "/admin/password-requests") {
+    const requests = await listPasswordRequests(env);
+    return new Response(adminPageHtml({
+      title: "Password requests",
+      topNav,
+      body: renderPasswordRequestsBody(requests),
+    }), { status: 200, headers: { "content-type": "text/html; charset=utf-8", "cache-control": "no-store" } });
+  }
+
+  if (req.method === "POST" && url.pathname === "/admin/password-requests") {
+    const form = await req.formData();
+    const action = String(form.get("action") || "").trim();
+    const key = String(form.get("key") || "").trim();
+    if (!key || (action !== "reset" && action !== "ignore")) {
+      return new Response("Bad request", { status: 400 });
+    }
+    // Extract email from key: "password-request:<email>:<ts>"
+    const stripped = key.startsWith("password-request:") ? key.slice("password-request:".length) : key;
+    // Email may contain dots but not colons; ts is ISO so it does contain colons.
+    // The first ":" after "@" terminates the email.
+    const atIdx = stripped.indexOf("@");
+    let targetEmail = "";
+    if (atIdx >= 0) {
+      const tail = stripped.slice(atIdx);
+      const colonIdx = tail.indexOf(":");
+      targetEmail = colonIdx >= 0
+        ? stripped.slice(0, atIdx) + tail.slice(0, colonIdx)
+        : stripped;
+    } else {
+      const colonIdx = stripped.indexOf(":");
+      targetEmail = colonIdx >= 0 ? stripped.slice(0, colonIdx) : stripped;
+    }
+    targetEmail = normalizeEmail(targetEmail);
+
+    if (action === "ignore") {
+      await fulfillPasswordRequest(env, key, me.email, "ignored");
+      await audit(env, { actor: me.email, action: "ignore_password_request", target: targetEmail });
+      const requests = await listPasswordRequests(env);
+      return new Response(adminPageHtml({
+        title: "Password requests",
+        topNav,
+        body: renderPasswordRequestsBody(requests, { kind: "success", text: `Request for ${targetEmail} marked ignored.` }),
+      }), { status: 200, headers: { "content-type": "text/html; charset=utf-8", "cache-control": "no-store" } });
+    }
+
+    // action === "reset" — generate new passphrase, hash + store, fulfill,
+    // display once.
+    const target = await getUser(env, targetEmail);
+    if (!target) {
+      await fulfillPasswordRequest(env, key, me.email, "ignored");
+      const requests = await listPasswordRequests(env);
+      return new Response(adminPageHtml({
+        title: "Password requests",
+        topNav,
+        body: renderPasswordRequestsBody(requests, { kind: "error", text: `No user found for ${targetEmail}. Request marked ignored.` }),
+      }), { status: 200, headers: { "content-type": "text/html; charset=utf-8", "cache-control": "no-store" } });
+    }
+    if (me.role === "manager" && target.role !== "employee" && target.email !== me.email) {
+      return new Response("Managers can only reset employee passwords. Ask Adam (CEO) for manager resets.", { status: 403 });
+    }
+    const newPass = generatePassphrase();
+    const salt = generateRandomSaltHex();
+    target.password_hash = await hashPassword(newPass, salt, env.DASHBOARD_SESSION_SECRET);
+    target.password_salt = salt;
+    await putUser(env, target);
+    await fulfillPasswordRequest(env, key, me.email, "fulfilled");
+    await audit(env, { actor: me.email, action: "fulfill_password_request", target: target.email });
+    const requests = await listPasswordRequests(env);
+    return new Response(adminPageHtml({
+      title: "Password requests",
+      topNav,
+      body: renderPasswordRequestsBody(requests, {
+        kind: "success",
+        text: "",
+        resetEmail: target.email,
+        resetPassword: newPass,
+      }),
+    }), { status: 200, headers: { "content-type": "text/html; charset=utf-8", "cache-control": "no-store" } });
+  }
+
+  // ---- /admin/bootstrap-reseed — re-hash bootstrap passphrases against
+  // current DASHBOARD_SESSION_SECRET. Required after the secret rotates.
+  // Manager+ only (Mido reaches this via legacy single-tenant fallback). ----
+  if (url.pathname === "/admin/bootstrap-reseed") {
+    if (req.method === "GET") {
+      return new Response(adminPageHtml({
+        title: "Bootstrap re-seed",
+        topNav,
+        body: `<header class="adm-hero">
+          <div>
+            <h1>Bootstrap <em>re-seed</em>.</h1>
+            <p>Re-hashes the 3 bootstrap passphrases (Adam, Kebrina, Mido) against the current <code>DASHBOARD_SESSION_SECRET</code>. Required after a session-secret rotation &mdash; the old <code>password_hash</code> values were computed with the old pepper and will never verify.</p>
+            <p><strong>Bootstrap passphrases used:</strong> the values pinned in <code>APG-Vault/_internal/credentials.md</code> (the <em>indigo-jasper-... / solstice-timber-... / onyx-zenith-...</em> set).</p>
+          </div>
+          <div class="btn-row">
+            <form method="POST" action="/admin/bootstrap-reseed">
+              <button type="submit" class="btn btn-primary">Re-seed now &rarr;</button>
+            </form>
+          </div>
+        </header>`,
+      }), { status: 200, headers: { "content-type": "text/html; charset=utf-8", "cache-control": "no-store" } });
+    }
+    if (req.method === "POST") {
+      const result = await reseedBootstrapPasswords(env);
+      await audit(env, {
+        actor: me.email,
+        action: "bootstrap_reseed",
+        target: "bootstrap",
+        details: result,
+      });
+      return new Response(adminPageHtml({
+        title: "Bootstrap re-seed",
+        topNav,
+        body: `<header class="adm-hero">
+          <div>
+            <h1>Re-seed <em>complete</em>.</h1>
+            <p>The 3 bootstrap users now verify against the bootstrap passphrases in the vault.</p>
+            <ul>
+              <li><strong>Re-hashed existing:</strong> ${result.reseeded.join(", ") || "(none)"}</li>
+              <li><strong>Created missing:</strong> ${result.created.join(", ") || "(none)"}</li>
+            </ul>
+            <p>Adam, Kebrina, and Mido can sign in now with the vault passphrases. Each should hit <code>/me</code> and rotate to something only they know.</p>
+          </div>
+          <div class="btn-row">
+            <a class="btn" href="/admin/users">Back to Team</a>
+            <a class="btn" href="/login">Test login &rarr;</a>
+          </div>
+        </header>`,
+      }), { status: 200, headers: { "content-type": "text/html; charset=utf-8", "cache-control": "no-store" } });
+    }
   }
 
   return new Response("Not found", { status: 404 });

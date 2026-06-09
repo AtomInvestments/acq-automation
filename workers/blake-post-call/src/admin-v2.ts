@@ -534,6 +534,155 @@ export async function bootstrapIfNeeded(env: Env): Promise<{ ran: boolean; seede
   return { ran: seeded.length > 0 || reindexed > 0, seeded, reindexed };
 }
 
+/**
+ * Re-seed the bootstrap users' passwords against the CURRENT
+ * `DASHBOARD_SESSION_SECRET`. Required after the secret is rotated — the old
+ * stored `password_hash` was computed against the old pepper and will never
+ * match anymore.
+ *
+ * Unlike `bootstrapIfNeeded`, this:
+ *   - Always overwrites the password_hash + password_salt for the 3 seeds,
+ *     even if the user record already exists.
+ *   - Preserves role, permissions, created_at, created_by on existing
+ *     records — only credentials change.
+ *   - Creates the user record if it's missing (safety net).
+ *
+ * Designed to be triggered from a one-shot admin route. Idempotent — safe to
+ * run repeatedly; each run resets the 3 users to their bootstrap passphrases.
+ */
+export async function reseedBootstrapPasswords(env: Env): Promise<{ reseeded: string[]; created: string[] }> {
+  const reseeded: string[] = [];
+  const created: string[] = [];
+  for (const s of BOOTSTRAP_SEEDS) {
+    const salt = randomHex(16);
+    const hash = await hashPassword(s.password, salt, env.DASHBOARD_SESSION_SECRET || "fallback-pepper");
+    const existing = await getUser(env, s.email);
+    if (existing) {
+      existing.password_hash = hash;
+      existing.password_salt = salt;
+      await putUser(env, existing);
+      reseeded.push(s.email);
+    } else {
+      const u: User = {
+        email: s.email,
+        name: s.name,
+        role: s.role,
+        permissions: defaultPermsForRole(s.role),
+        password_hash: hash,
+        password_salt: salt,
+        created_at: new Date().toISOString(),
+        created_by: "bootstrap-reseed",
+      };
+      if (s.role === "ceo") u.permissions.can_view_credentials = true;
+      await putUser(env, u);
+      created.push(s.email);
+    }
+  }
+  return { reseeded, created };
+}
+
+// =============================================================================
+// Forgot-password — KV-backed request queue (Option C: no email infra)
+// =============================================================================
+//
+// Public form at /forgot writes a "pending" entry. Managers see the queue at
+// /admin/password-requests and click "Reset" to issue a fresh passphrase
+// (shown ONCE on screen). No email sent — manager relays via Slack/SMS.
+
+export interface PasswordRequest {
+  email: string;       // normalized
+  ts: string;          // ISO submitted
+  ip: string;          // requester IP (for abuse trace)
+  status: "pending" | "fulfilled" | "ignored";
+  fulfilled_by?: string;
+  fulfilled_at?: string;
+}
+
+const PASSWORD_REQUEST_PREFIX = "password-request:";
+const PASSWORD_REQUEST_INDEX = "password-requests:index";
+const PASSWORD_REQUEST_INDEX_CAP = 100;
+
+interface PasswordRequestIndexEntry {
+  key: string;     // full KV key
+  email: string;
+  ts: string;
+  status: "pending" | "fulfilled" | "ignored";
+}
+
+async function readPasswordRequestIndex(env: Env): Promise<PasswordRequestIndexEntry[]> {
+  const raw = await env.DIAL_STATE.get(PASSWORD_REQUEST_INDEX);
+  if (!raw) return [];
+  try {
+    const arr = JSON.parse(raw);
+    return Array.isArray(arr) ? arr : [];
+  } catch { return []; }
+}
+
+async function writePasswordRequestIndex(env: Env, entries: PasswordRequestIndexEntry[]): Promise<void> {
+  // Newest first, capped.
+  const sorted = entries.slice().sort((a, b) => b.ts.localeCompare(a.ts)).slice(0, PASSWORD_REQUEST_INDEX_CAP);
+  await env.DIAL_STATE.put(PASSWORD_REQUEST_INDEX, JSON.stringify(sorted));
+}
+
+export async function createPasswordRequest(env: Env, email: string, ip: string): Promise<void> {
+  const normalized = normalizeEmail(email);
+  const ts = new Date().toISOString();
+  const key = `${PASSWORD_REQUEST_PREFIX}${normalized}:${ts}`;
+  const req: PasswordRequest = { email: normalized, ts, ip, status: "pending" };
+  // 30 day TTL so the queue self-prunes if no manager acts.
+  await env.DIAL_STATE.put(key, JSON.stringify(req), { expirationTtl: 30 * 24 * 3600 });
+  const idx = await readPasswordRequestIndex(env);
+  idx.push({ key, email: normalized, ts, status: "pending" });
+  await writePasswordRequestIndex(env, idx);
+}
+
+export async function listPasswordRequests(env: Env): Promise<Array<PasswordRequest & { key: string }>> {
+  const idx = await readPasswordRequestIndex(env);
+  const out: Array<PasswordRequest & { key: string }> = [];
+  for (const e of idx) {
+    const raw = await env.DIAL_STATE.get(e.key);
+    if (!raw) continue;
+    try {
+      const r = JSON.parse(raw) as PasswordRequest;
+      out.push({ ...r, key: e.key });
+    } catch { /* skip */ }
+  }
+  return out;
+}
+
+export async function fulfillPasswordRequest(env: Env, key: string, fulfilledBy: string, status: "fulfilled" | "ignored" = "fulfilled"): Promise<void> {
+  const raw = await env.DIAL_STATE.get(key);
+  if (!raw) return;
+  try {
+    const r = JSON.parse(raw) as PasswordRequest;
+    r.status = status;
+    r.fulfilled_by = fulfilledBy;
+    r.fulfilled_at = new Date().toISOString();
+    await env.DIAL_STATE.put(key, JSON.stringify(r), { expirationTtl: 30 * 24 * 3600 });
+  } catch { /* swallow */ }
+  // Update index status too.
+  const idx = await readPasswordRequestIndex(env);
+  for (const e of idx) {
+    if (e.key === key) e.status = status;
+  }
+  await writePasswordRequestIndex(env, idx);
+}
+
+// Rate limit /forgot — 3 requests per IP per hour, prevent abuse-spam of the queue.
+export async function checkForgotRateLimit(env: Env, ip: string): Promise<{ ok: boolean; remaining: number }> {
+  const key = `ratelimit:forgot:${ip}`;
+  const raw = await env.DIAL_STATE.get(key);
+  const n = raw ? parseInt(raw, 10) || 0 : 0;
+  return { ok: n < 3, remaining: Math.max(0, 3 - n) };
+}
+
+export async function bumpForgotRateLimit(env: Env, ip: string): Promise<void> {
+  const key = `ratelimit:forgot:${ip}`;
+  const raw = await env.DIAL_STATE.get(key);
+  const n = (raw ? parseInt(raw, 10) || 0 : 0) + 1;
+  await env.DIAL_STATE.put(key, String(n), { expirationTtl: 3600 });
+}
+
 
 // =============================================================================
 // Auth — verify password + require permission
@@ -1550,6 +1699,9 @@ body { display: flex; align-items: center; justify-content: center; padding: 24p
     <div class="submit-row">
       <button type="submit" class="btn btn-primary">Sign in &rarr;</button>
     </div>
+    <div style="margin-top:10px; font: 500 13px/1 'Inter',sans-serif; text-align:right;">
+      <a href="/forgot" style="color: var(--muted); text-decoration: underline; text-underline-offset: 3px;">Forgot password?</a>
+    </div>
   </form>
   <div class="foot">
     <span>Authorized personnel only</span>
@@ -1558,4 +1710,162 @@ body { display: flex; align-items: center; justify-content: center; padding: 24p
 </div>
 </body>
 </html>`;
+}
+
+// ---- /forgot — public password-reset request form ----
+export function renderForgotHtml(opts: { error?: string; submitted?: boolean; email?: string } = {}): string {
+  const errorBlock = opts.error
+    ? `<div class="alert error">${escapeHtml(opts.error)}</div>`
+    : "";
+  const body = opts.submitted
+    ? `<h1>Request <em>received</em>.</h1>
+       <p class="dek">A manager has been notified. They will issue a fresh password and share it with you over Slack or text. If you don't hear back within a business day, ping Adam or Kebrina directly.</p>
+       <div class="submit-row"><a class="btn btn-primary" href="/login">Back to sign in &rarr;</a></div>`
+    : `<h1>Forgot your <em>password</em>?</h1>
+       <p class="dek">Submit your email and a manager will issue a new one out-of-band. No email is sent &mdash; reset is delivered over your usual channel.</p>
+       ${errorBlock}
+       <form method="POST" action="/forgot">
+         <div class="field">
+           <label for="email">Email</label>
+           <input type="email" id="email" name="email" autocomplete="email" autofocus required placeholder="you@company.com" value="${escapeHtml(opts.email || "")}">
+         </div>
+         <div class="submit-row">
+           <button type="submit" class="btn btn-primary">Request reset &rarr;</button>
+         </div>
+         <div style="margin-top:10px; font: 500 13px/1 'Inter',sans-serif; text-align:right;">
+           <a href="/login" style="color: var(--muted); text-decoration: underline; text-underline-offset: 3px;">Back to sign in</a>
+         </div>
+       </form>`;
+  return `<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>APG — Forgot password</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<meta name="theme-color" content="#0A1F44">
+<style>
+${ADMIN_CSS}
+body { display: flex; align-items: center; justify-content: center; padding: 24px; }
+.login-card {
+  width: 100%; max-width: 460px;
+  background: #fff;
+  border-radius: var(--clay-r-lg);
+  box-shadow: var(--clay-shadow);
+  padding: 40px 36px;
+  position: relative;
+}
+.login-card::before {
+  content: ""; position: absolute; left: 0; top: 0;
+  width: 120px; height: 4px; background: var(--gold);
+  border-radius: var(--clay-r-lg) 0 var(--clay-r-lg) 0;
+}
+.mark { display: flex; align-items: center; gap: 10px; margin-bottom: 18px; }
+.mark img { width: 36px; height: 36px; }
+.mark span {
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 600; font-size: 16px; color: var(--navy);
+}
+.mark span em { color: var(--gold); font-style: italic; font-weight: 500; }
+.login-card h1 {
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 500;
+  font-size: 32px; line-height: 1.1;
+  letter-spacing: -0.02em;
+  margin: 0 0 8px; color: var(--navy);
+}
+.login-card h1 em { color: var(--gold); font-style: italic; font-weight: 500; }
+.login-card .dek {
+  font-family: Georgia, serif; font-style: italic;
+  font-size: 15px; color: var(--muted);
+  margin: 0 0 22px;
+}
+.login-card form { display: grid; gap: 12px; }
+.login-card .submit-row { margin-top: 14px; display: flex; gap: 10px; }
+.login-card .submit-row .btn { flex: 1; }
+</style>
+</head>
+<body>
+<div class="login-card">
+  <div class="mark">
+    <img src="/favicon.svg" alt="">
+    <span>At<em>o</em>m Property Group</span>
+  </div>
+  ${body}
+</div>
+</body>
+</html>`;
+}
+
+// ---- /admin/password-requests — manager queue ----
+export function renderPasswordRequestsBody(
+  requests: Array<PasswordRequest & { key: string }>,
+  flash?: { kind: "success" | "error"; text: string; resetEmail?: string; resetPassword?: string },
+): string {
+  const pending = requests.filter((r) => r.status === "pending");
+  const recent = requests.filter((r) => r.status !== "pending").slice(0, 25);
+
+  const flashBlock = flash?.resetPassword
+    ? `<div class="alert success" style="font-family: 'JetBrains Mono', monospace; word-break: break-all;">
+         <strong>New password for ${escapeHtml(flash.resetEmail || "")}:</strong><br>
+         <span style="font-size: 18px;">${escapeHtml(flash.resetPassword)}</span><br>
+         <small style="font-family: 'Inter',sans-serif; font-style: italic;">Copy now &mdash; this is shown ONCE. Share with the user over Slack or text.</small>
+       </div>`
+    : flash
+      ? `<div class="alert ${flash.kind}">${escapeHtml(flash.text)}</div>`
+      : "";
+
+  const pendingRows = pending.length === 0
+    ? `<tr><td colspan="4" style="font-style: italic; color: var(--muted); text-align: center; padding: 20px;">No pending password requests.</td></tr>`
+    : pending.map((r) => `
+        <tr>
+          <td>${escapeHtml(r.email)}</td>
+          <td style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--muted);">${escapeHtml(r.ts)}</td>
+          <td style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--muted);">${escapeHtml(r.ip)}</td>
+          <td>
+            <form method="POST" action="/admin/password-requests" style="display: inline;">
+              <input type="hidden" name="action" value="reset">
+              <input type="hidden" name="key" value="${escapeHtml(r.key)}">
+              <button type="submit" class="btn btn-primary" style="padding: 6px 14px;">Reset</button>
+            </form>
+            <form method="POST" action="/admin/password-requests" style="display: inline; margin-left: 6px;">
+              <input type="hidden" name="action" value="ignore">
+              <input type="hidden" name="key" value="${escapeHtml(r.key)}">
+              <button type="submit" class="btn" style="padding: 6px 14px;">Ignore</button>
+            </form>
+          </td>
+        </tr>`).join("");
+
+  const recentRows = recent.length === 0
+    ? `<tr><td colspan="4" style="font-style: italic; color: var(--muted); text-align: center; padding: 20px;">No recent activity.</td></tr>`
+    : recent.map((r) => `
+        <tr>
+          <td>${escapeHtml(r.email)}</td>
+          <td style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--muted);">${escapeHtml(r.ts)}</td>
+          <td>${escapeHtml(r.status)}</td>
+          <td style="font-size: 12px; color: var(--muted);">${escapeHtml(r.fulfilled_by || "")} ${r.fulfilled_at ? escapeHtml("@ " + r.fulfilled_at) : ""}</td>
+        </tr>`).join("");
+
+  return `
+    <header class="adm-hero">
+      <div>
+        <h1>Password <em>requests</em>.</h1>
+        <p>Users who submitted /forgot. Click Reset to generate a fresh passphrase &mdash; shown ONCE on screen. Share it with the user over Slack or text.</p>
+      </div>
+    </header>
+    ${flashBlock}
+    <section style="margin-top: 24px;">
+      <h2 style="font-family: 'Fraunces', Georgia, serif; font-weight: 500; font-size: 22px; color: var(--navy); margin: 0 0 12px;">Pending</h2>
+      <table class="adm-table">
+        <thead><tr><th>Email</th><th>Requested</th><th>IP</th><th>Actions</th></tr></thead>
+        <tbody>${pendingRows}</tbody>
+      </table>
+    </section>
+    <section style="margin-top: 32px;">
+      <h2 style="font-family: 'Fraunces', Georgia, serif; font-weight: 500; font-size: 22px; color: var(--navy); margin: 0 0 12px;">Recent</h2>
+      <table class="adm-table">
+        <thead><tr><th>Email</th><th>Requested</th><th>Status</th><th>Resolved by</th></tr></thead>
+        <tbody>${recentRows}</tbody>
+      </table>
+    </section>`;
 }
