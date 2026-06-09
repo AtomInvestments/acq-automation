@@ -65,6 +65,17 @@
     "match_confidence": "high",
     "summary": "Harish is considering using the apartment for a project but will sell in less than 30 days if the offer makes sense; requesting callback today with offer."
   },
+  "C05M7E1TJP7:1781019179.943579": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": "Been thinking about selling",
+      "reason_for_selling": "Has been considering selling but wants to wait, open to future discussion in 6-8 months",
+      "timeline": "6+ months"
+    },
+    "match_cid": "E4HRpwf36u0ocNYUb04p",
+    "match_confidence": "high",
+    "summary": "Paul stated he's been thinking about selling but not right now, agreed to follow up in 6-8 months."
+  },
   "C05MP6K9RNV:1779136440.549199": {
     "field_updates": {
       "asking_price": null,
@@ -823,5 +834,16 @@
     "match_cid": "ygtoYTG2BADuDJ4N7TtZ",
     "match_confidence": "high",
     "summary": "Donald confirmed asking price of $275k as-is for duplex rental property (2 units at $950/month), good condition with new roof, tenants on year leases ending end of year, wants to sell ASAP."
+  },
+  "C06MM4DQZ28:1781029713.286409": {
+    "field_updates": {
+      "asking_price": 750000,
+      "motivation": "Retiring/Moving",
+      "reason_for_selling": "Retiring and moving to new location",
+      "timeline": "90 days"
+    },
+    "match_cid": "xoZDOExwlJK4ofP9TItR",
+    "match_confidence": "high",
+    "summary": "Darren confirmed interest in selling his fully renovated property at 92 Union Ave for $700-800k within a few months due to retirement/moving."
   }
 }
