@@ -5179,7 +5179,7 @@ async function handleWebhook(req: Request, env: Env, ctx: ExecutionContext): Pro
   // 6. Compose recording URL — proxy through this Worker so GHL team can play
   // the audio without ElevenLabs auth.
   const recordingUrl = conversationId && conversationId !== "unknown"
-    ? `https://acq-automation.mithchell.workers.dev/audio/${conversationId}`
+    ? `https://apg-dashboard.mithchell.workers.dev/audio/${conversationId}`
     : "";
 
   // Note write deferred — happens inside the extraction promise below so the
@@ -7936,12 +7936,12 @@ function clearSessionCookieHeader(): string {
   ].join("; ");
 }
 
-// Proxy a static page from GitHub Pages (atominvestments.github.io/acq-automation/X)
+// Proxy a static page from GitHub Pages (atominvestments.github.io/apg-dashboard/X)
 // so the Worker can gate it behind auth. The HTML's relative refs to
 // /dashboard-data, /logo.svg, /favicon.svg all resolve to the Worker (which
 // serves those endpoints natively). No URL rewriting needed.
 async function proxyGithubPagesHtml(path: string): Promise<Response> {
-  const upstream = `https://atominvestments.github.io/acq-automation/${path}`;
+  const upstream = `https://atominvestments.github.io/apg-dashboard/${path}`;
   const res = await fetch(upstream, { cf: { cacheTtl: 30, cacheEverything: true } as any });
   if (!res.ok) {
     return new Response(`Upstream fetch failed: ${res.status}`, { status: 502 });
@@ -7958,7 +7958,7 @@ async function proxyGithubPagesHtml(path: string): Promise<Response> {
 
 // Pass through a static asset (logo.svg, favicon.svg) from GitHub Pages.
 async function proxyGithubPagesAsset(path: string, contentType: string): Promise<Response> {
-  const upstream = `https://atominvestments.github.io/acq-automation/${path}`;
+  const upstream = `https://atominvestments.github.io/apg-dashboard/${path}`;
   const res = await fetch(upstream, { cf: { cacheTtl: 3600, cacheEverything: true } as any });
   if (!res.ok) return new Response("Not found", { status: 404 });
   return new Response(await res.arrayBuffer(), {
@@ -9514,7 +9514,7 @@ async function runDailySlackSummary(env: Env): Promise<{ ok: boolean; posted: bo
     `:phone: Blake calls: *${blakeCalls}*` +
     (blakeCalls ? ` (avg ${avgDur}s, longest ${blakeLongestS}s)` : "") + `\n` +
     `:speech_balloon: GHL conversations updated: *${inboundCount + outboundCount}* (inbound ${inboundCount}, outbound ${outboundCount})\n` +
-    `:link: <https://acq-automation.mithchell.workers.dev/blake.html|live dashboard> · <https://acq-automation.mithchell.workers.dev/insights|website insights>`;
+    `:link: <https://apg-dashboard.mithchell.workers.dev/blake.html|live dashboard> · <https://apg-dashboard.mithchell.workers.dev/insights|website insights>`;
 
   const slack = await postSlackMessage(env, SLACK_ALERTS_CHANNEL, text);
   return { ok: true, posted: slack.ok, error: slack.ok ? undefined : `slack ${slack.status}` };
@@ -9764,7 +9764,7 @@ async function runAllAgentReviews(env: Env): Promise<{
   if (env.SLACK_BOT_TOKEN && out.reviewed > 0) {
     const teaser =
       `:notebook: *Agent reviews refreshed* — ${out.reviewed}/${APG_AGENT_ROSTER.length} agents reviewed\n` +
-      `Open the dashboard's Agents tab to read: https://acq-automation.mithchell.workers.dev/dashboard#agents`;
+      `Open the dashboard's Agents tab to read: https://apg-dashboard.mithchell.workers.dev/dashboard#agents`;
     await postSlackMessage(env, SLACK_ALERTS_CHANNEL, teaser).catch(() => {});
   }
   return out;

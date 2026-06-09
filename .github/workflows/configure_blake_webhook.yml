@@ -18,9 +18,9 @@ on:
           - apply
         default: discover
       url:
-        description: 'Webhook URL (required when mode=apply). Default: https://acq-automation.mithchell.workers.dev/webhook'
+        description: 'Webhook URL (required when mode=apply). Default: https://apg-dashboard.mithchell.workers.dev/webhook'
         required: false
-        default: 'https://acq-automation.mithchell.workers.dev/webhook'
+        default: 'https://apg-dashboard.mithchell.workers.dev/webhook'
 
 permissions:
   contents: read

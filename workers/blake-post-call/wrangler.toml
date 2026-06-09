@@ -1,4 +1,4 @@
-name = "acq-automation"
+name = "apg-dashboard"
 main = "src/index.ts"
 compatibility_date = "2026-05-20"
 
@@ -40,13 +40,14 @@ id = "c3e5500651af4248889c8ed69e5ec47b"
 #                              b8fb424de9e19010920dd0cea9545fce
 
 # Worker URL:
-#   https://acq-automation.mithchell.workers.dev
+#   https://apg-dashboard.mithchell.workers.dev
 #
 # Naming note: the Worker code in this directory is conceptually the
-# "blake-post-call" handler, but the deployed Worker is named "acq-automation"
-# to match the CF Workers Builds project name (and to keep one URL for the
-# APG automation surface). Later Workers (listing-pipeline, slack-listener,
-# sms-reply-handler) live under their own CF projects with their own names.
+# "blake-post-call" handler, but the deployed Worker is named "apg-dashboard"
+# (renamed from "acq-automation" 2026-06-09 to reflect the multi-pillar
+# dashboard scope — Blake + listings + websites + POR + insights). The repo
+# stays as AtomInvestments/acq-automation. Later Workers (listing-pipeline,
+# slack-listener, sms-reply-handler) live under their own CF projects.
 #
 # Secrets — set via `wrangler secret put NAME` locally, OR via the
 # .github/workflows/deploy-blake-post-call.yml workflow on push:

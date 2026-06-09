@@ -285,7 +285,7 @@ HTML = """<!doctype html>
 <meta name="theme-color" content="#1A2840">
 <script>
   if (location.hostname === "atominvestments.github.io") {
-    location.replace("https://acq-automation.mithchell.workers.dev/login");
+    location.replace("https://apg-dashboard.mithchell.workers.dev/login");
   }
 </script>
 <style>

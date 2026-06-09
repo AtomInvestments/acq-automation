@@ -11,7 +11,7 @@ Usage:
     python configure_blake_webhook.py
 
     # Apply mode — PATCH the post-call webhook URL onto workspace settings.
-    python configure_blake_webhook.py --apply --url https://acq-automation.mithchell.workers.dev/webhook
+    python configure_blake_webhook.py --apply --url https://apg-dashboard.mithchell.workers.dev/webhook
 
 Env:
     ELEVENLABS_API_KEY      ElevenLabs account API key (required)

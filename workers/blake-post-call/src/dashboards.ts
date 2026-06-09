@@ -14,11 +14,11 @@ export const DASHBOARDS: Record<string, string> = {
 <meta name="theme-color" content="#1A2840">
 <script>
   // If anyone hits this dashboard via github.io directly (bypassing the Worker
-  // auth gate at acq-automation.mithchell.workers.dev), redirect to /login.
+  // auth gate at apg-dashboard.mithchell.workers.dev), redirect to /login.
   // The canonical URL for this dashboard is the Worker route; github.io is
   // a build artifact, not the supported entry point.
   if (location.hostname === "atominvestments.github.io") {
-    location.replace("https://acq-automation.mithchell.workers.dev/login?next=/blake");
+    location.replace("https://apg-dashboard.mithchell.workers.dev/login?next=/blake");
   }
 </script>
 <style>
@@ -270,7 +270,7 @@ h2 .sec-count { margin-left: auto; font-size: 11px; letter-spacing: 0.18em; text
 </div>
 
 <script>
-const DATA_URL = "https://acq-automation.mithchell.workers.dev/dashboard-data";
+const DATA_URL = "https://apg-dashboard.mithchell.workers.dev/dashboard-data";
 const POLL_INTERVAL_MS = 10000;
 const ET_TZ = "America/New_York";
 
@@ -438,7 +438,7 @@ setInterval(refresh, POLL_INTERVAL_MS);
 <meta name="theme-color" content="#1A2840">
 <script>
   if (location.hostname === "atominvestments.github.io") {
-    location.replace("https://acq-automation.mithchell.workers.dev/login?next=/progress");
+    location.replace("https://apg-dashboard.mithchell.workers.dev/login?next=/progress");
   }
 </script>
 <style>
@@ -672,7 +672,7 @@ h1 .accent { color: var(--gold); font-style: italic; }
 <li class="task done" data-pillar-id="pillar-a-blake" data-task-label="GHL Private Integration Token (BLAKE_GHL_PIT) for tool calls" tabindex="0" role="checkbox" aria-checked="true"><span class="checkbox"></span><span class="label">GHL Private Integration Token (BLAKE_GHL_PIT) for tool calls</span></li>
 <li class="task done" data-pillar-id="pillar-a-blake" data-task-label="8 in-call tools wired (lookup, save summary, set lead temp, RJ task, stage move, DND, etc.)" tabindex="0" role="checkbox" aria-checked="true"><span class="checkbox"></span><span class="label">8 in-call tools wired (lookup, save summary, set lead temp, RJ task, stage move, DND, etc.)</span></li>
 <li class="task done" data-pillar-id="pillar-a-blake" data-task-label="Built-in tools enabled (end_call, voicemail_detection, skip_turn)" tabindex="0" role="checkbox" aria-checked="true"><span class="checkbox"></span><span class="label">Built-in tools enabled (end_call, voicemail_detection, skip_turn)</span></li>
-<li class="task done" data-pillar-id="pillar-a-blake" data-task-label="Cloudflare Worker \`acq-automation\` deployed" tabindex="0" role="checkbox" aria-checked="true"><span class="checkbox"></span><span class="label">Cloudflare Worker \`acq-automation\` deployed</span></li>
+<li class="task done" data-pillar-id="pillar-a-blake" data-task-label="Cloudflare Worker \`apg-dashboard\` deployed" tabindex="0" role="checkbox" aria-checked="true"><span class="checkbox"></span><span class="label">Cloudflare Worker \`apg-dashboard\` deployed</span></li>
 <li class="task done" data-pillar-id="pillar-a-blake" data-task-label="Post-call webhook → GHL backup note + recording URL + blake-called tag" tabindex="0" role="checkbox" aria-checked="true"><span class="checkbox"></span><span class="label">Post-call webhook → GHL backup note + recording URL + blake-called tag</span></li>
 <li class="task done" data-pillar-id="pillar-a-blake" data-task-label="/conversation-init webhook with Seller File pre-call briefing" tabindex="0" role="checkbox" aria-checked="true"><span class="checkbox"></span><span class="label">/conversation-init webhook with Seller File pre-call briefing</span></li>
 <li class="task done" data-pillar-id="pillar-a-blake" data-task-label="Post-call structured extractor (Claude Sonnet 4.6) → auto-writes address / lead temp / RJ task / opp stage" tabindex="0" role="checkbox" aria-checked="true"><span class="checkbox"></span><span class="label">Post-call structured extractor (Claude Sonnet 4.6) → auto-writes address / lead temp / RJ task / opp stage</span></li>
@@ -839,7 +839,7 @@ h1 .accent { color: var(--gold); font-style: italic; }
 <li class="task done" data-pillar-id="infrastructure" data-task-label="DIAL_STATE KV namespace for warm-up + dedupe + dashboard caches" tabindex="0" role="checkbox" aria-checked="true"><span class="checkbox"></span><span class="label">DIAL_STATE KV namespace for warm-up + dedupe + dashboard caches</span></li>
 <li class="task done" data-pillar-id="infrastructure" data-task-label="GHL Private Integration Token + scopes" tabindex="0" role="checkbox" aria-checked="true"><span class="checkbox"></span><span class="label">GHL Private Integration Token + scopes</span></li>
 <li class="task done" data-pillar-id="infrastructure" data-task-label="Master credentials inventory in APG-Vault/_internal/credentials.md" tabindex="0" role="checkbox" aria-checked="true"><span class="checkbox"></span><span class="label">Master credentials inventory in APG-Vault/_internal/credentials.md</span></li>
-<li class="task done" data-pillar-id="infrastructure" data-task-label="Live dashboard at atominvestments.github.io/acq-automation/blake.html" tabindex="0" role="checkbox" aria-checked="true"><span class="checkbox"></span><span class="label">Live dashboard at atominvestments.github.io/acq-automation/blake.html</span></li>
+<li class="task done" data-pillar-id="infrastructure" data-task-label="Live dashboard at atominvestments.github.io/apg-dashboard/blake.html" tabindex="0" role="checkbox" aria-checked="true"><span class="checkbox"></span><span class="label">Live dashboard at atominvestments.github.io/apg-dashboard/blake.html</span></li>
 <li class="task done" data-pillar-id="infrastructure" data-task-label="All-time call history visible on Blake dashboard" tabindex="0" role="checkbox" aria-checked="true"><span class="checkbox"></span><span class="label">All-time call history visible on Blake dashboard</span></li>
 <li class="task done" data-pillar-id="infrastructure" data-task-label="APG logo wired into Blake dashboard" tabindex="0" role="checkbox" aria-checked="true"><span class="checkbox"></span><span class="label">APG logo wired into Blake dashboard</span></li>
 <li class="task" data-pillar-id="infrastructure" data-task-label="SmarterContact account email migration to mithchell@atompropertygroup.org" tabindex="0" role="checkbox" aria-checked="false"><span class="checkbox"></span><span class="label">SmarterContact account email migration to mithchell@atompropertygroup.org</span></li>
@@ -962,7 +962,7 @@ h1 .accent { color: var(--gold); font-style: italic; }
 <meta name="theme-color" content="#1A2840">
 <script>
   if (location.hostname === "atominvestments.github.io") {
-    location.replace("https://acq-automation.mithchell.workers.dev/login?next=/weekly");
+    location.replace("https://apg-dashboard.mithchell.workers.dev/login?next=/weekly");
   }
 </script>
 <style>
@@ -3181,7 +3181,7 @@ main();
 <meta name="theme-color" content="#1A2840">
 <script>
   if (location.hostname === "atominvestments.github.io") {
-    location.replace("https://acq-automation.mithchell.workers.dev/login");
+    location.replace("https://apg-dashboard.mithchell.workers.dev/login");
   }
 </script>
 <style>
@@ -3754,7 +3754,7 @@ window.runEntranceAnimations = runEntranceAnimations;  // expose for re-render
 <meta name="theme-color" content="#1A2840">
 <script>
   if (location.hostname === "atominvestments.github.io") {
-    location.replace("https://acq-automation.mithchell.workers.dev/login");
+    location.replace("https://apg-dashboard.mithchell.workers.dev/login");
   }
 </script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
@@ -5324,7 +5324,7 @@ section h2, h2 {
       </div>
       <div class="body">
         <p class="lead-line">"Discover or set the ElevenLabs post-call webhook URL."</p>
-        <p>Inputs: <code>mode</code> = <code>discover</code> (read-only API probe) or <code>apply</code> (set it). Default URL is the Cloudflare Worker endpoint <code>https://acq-automation.mithchell.workers.dev/webhook</code>, which is what receives Blake's post-call transcripts and routes them into KV → vault sync → dashboard. The post-call webhook is a workspace-level setting that isn't exposed in the ElevenLabs UI on every plan tier — this workflow hits the API directly.</p>
+        <p>Inputs: <code>mode</code> = <code>discover</code> (read-only API probe) or <code>apply</code> (set it). Default URL is the Cloudflare Worker endpoint <code>https://apg-dashboard.mithchell.workers.dev/webhook</code>, which is what receives Blake's post-call transcripts and routes them into KV → vault sync → dashboard. The post-call webhook is a workspace-level setting that isn't exposed in the ElevenLabs UI on every plan tier — this workflow hits the API directly.</p>
       </div>
     </div>
 

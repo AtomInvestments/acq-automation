@@ -29,7 +29,7 @@ HTML_TEMPLATE = """<!doctype html>
 <meta name="theme-color" content="#1A2840">
 <script>
   if (location.hostname === "atominvestments.github.io") {
-    location.replace("https://acq-automation.mithchell.workers.dev/login?next=/progress");
+    location.replace("https://apg-dashboard.mithchell.workers.dev/login?next=/progress");
   }
 </script>
 <style>

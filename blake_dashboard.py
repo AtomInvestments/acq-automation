@@ -5,7 +5,7 @@ that polls the Cloudflare Worker's /dashboard-data endpoint every 10 seconds.
 No data is baked into the HTML at build time; the cron still runs this script
 to ensure the shell exists at /blake.html, but the actual content is fetched
 client-side from
-   https://acq-automation.mithchell.workers.dev/dashboard-data
+   https://apg-dashboard.mithchell.workers.dev/dashboard-data
 which the Worker caches in KV for 30 sec.
 
 This means: when a new Blake call ends, the page sees it within ~30-40 seconds
@@ -18,7 +18,7 @@ from datetime import datetime
 from zoneinfo import ZoneInfo
 
 ET = ZoneInfo("America/New_York")
-WORKER_BASE = "https://acq-automation.mithchell.workers.dev"
+WORKER_BASE = "https://apg-dashboard.mithchell.workers.dev"
 
 
 SHELL_HTML = """<!doctype html>
@@ -32,11 +32,11 @@ SHELL_HTML = """<!doctype html>
 <meta name="theme-color" content="#1A2840">
 <script>
   // If anyone hits this dashboard via github.io directly (bypassing the Worker
-  // auth gate at acq-automation.mithchell.workers.dev), redirect to /login.
+  // auth gate at apg-dashboard.mithchell.workers.dev), redirect to /login.
   // The canonical URL for this dashboard is the Worker route; github.io is
   // a build artifact, not the supported entry point.
   if (location.hostname === "atominvestments.github.io") {
-    location.replace("https://acq-automation.mithchell.workers.dev/login?next=/blake");
+    location.replace("https://apg-dashboard.mithchell.workers.dev/login?next=/blake");
   }
 </script>
 <style>

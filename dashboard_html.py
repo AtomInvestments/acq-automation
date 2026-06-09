@@ -263,7 +263,7 @@ HTML_TEMPLATE = """<!doctype html>
 <meta name="theme-color" content="#1A2840">
 <script>
   if (location.hostname === "atominvestments.github.io") {
-    location.replace("https://acq-automation.mithchell.workers.dev/login");
+    location.replace("https://apg-dashboard.mithchell.workers.dev/login");
   }
 </script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>

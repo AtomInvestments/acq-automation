@@ -1,6 +1,6 @@
-# acq-automation
+# apg-dashboard
 
-APG acquisitions automation stack. Single Cloudflare Worker + KV + a local Python vault-sync daemon. Deploys to `https://acq-automation.mithchell.workers.dev`.
+APG acquisitions automation stack. Single Cloudflare Worker + KV + a local Python vault-sync daemon. Deploys to `https://apg-dashboard.mithchell.workers.dev`. (Repo name stays `AtomInvestments/acq-automation`; the Worker was renamed from `acq-automation` to `apg-dashboard` on 2026-06-09 to reflect its multi-pillar scope.)
 
 ## What's here
 
