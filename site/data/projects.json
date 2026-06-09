@@ -2,7 +2,7 @@
   "_schema": {
     "version": 1,
     "updated": "2026-06-08",
-    "notes": "Multi-project PoR data file. APG has real content. Owner attribution: Adam = strategy/vision/niche/sign-off; Kebrina = vault concepts + pivot direction; Mike Yasser (Mido) = build/infra/dashboards/Blake/pipeline/GHL; RJ = acquisitions/closing; Brady = construction services. Projects B/C/D are placeholder shells.",
+    "notes": "Multi-project PoR data file. APG has real content. Owner attribution: Adam = strategy/vision/niche/sign-off; Kebrina = vault concepts + pivot direction; Mike Yasser (Mido) = build/infra/dashboards/Blake/pipeline/GHL. Projects B/C/D are placeholder shells.",
     "roles": {
       "manager": "Sees all projects, can edit. Members: Adam, Kebrina, Mido.",
       "employee": "Sees only assigned projects, view-only."
@@ -13,9 +13,7 @@
   "users": [
     { "id": "adam",    "name": "Adam Chodes",      "role": "manager",  "projects": ["apg", "proj-b", "proj-c", "proj-d"] },
     { "id": "kebrina", "name": "Kebrina Richards", "role": "manager",  "projects": ["apg", "proj-b", "proj-c", "proj-d"] },
-    { "id": "mido",    "name": "Mike Yasser",      "role": "manager",  "projects": ["apg", "proj-b", "proj-c", "proj-d"] },
-    { "id": "rj",      "name": "RJ",               "role": "employee", "projects": ["apg"] },
-    { "id": "brady",   "name": "Brady",            "role": "employee", "projects": ["apg"] }
+    { "id": "mido",    "name": "Mike Yasser",      "role": "manager",  "projects": ["apg", "proj-b", "proj-c", "proj-d"] }
   ],
 
   "projects": [
@@ -29,8 +27,6 @@
         { "name": "Adam Chodes",      "role": "CEO · Founder",           "lane": "Strategy · Sign-off" },
         { "name": "Kebrina Richards", "role": "Manager · Strategy",      "lane": "Concepts · Vault" },
         { "name": "Mike Yasser",      "role": "Manager · Build",         "lane": "All builds" },
-        { "name": "RJ",               "role": "Acquisitions Closer",     "lane": "Outbound · Dials" },
-        { "name": "Brady",            "role": "Construction Services",   "lane": "Construction" },
         { "name": "Blake (AI)",       "role": "Voice Agent",             "lane": "Outbound · Pillar A" }
       ],
       "roadmap": [
@@ -54,8 +50,6 @@
         { "id": "apg-t11","title": "Realtor partner motion",             "owner": "Adam",        "status": "notstart", "start": "2026-07-15", "end": "2026-08-31", "pillar": "Strategy" },
         { "id": "apg-t12","title": "Entry-offer lead magnet (positioning)", "owner": "Adam",     "status": "notstart", "start": "2026-08-01", "end": "2026-08-31", "pillar": "Strategy" },
         { "id": "apg-t13","title": "Niche decision — Roofing+Siding NJ vs MF 5+ HNW", "owner": "Adam", "status": "inflight", "start": "2026-06-09", "end": "2026-06-22", "pillar": "Strategy" },
-        { "id": "apg-t14","title": "Acquisitions closing — outbound dials → contracts",  "owner": "RJ", "status": "inflight", "start": "2026-06-08", "end": "2026-08-31", "pillar": "Acquisitions" },
-        { "id": "apg-t15","title": "Construction Services — pipeline & ops",  "owner": "Brady", "status": "inflight", "start": "2026-06-08", "end": "2026-08-31", "pillar": "Construction" },
         { "id": "apg-t16","title": "Vault concepts & pivot direction",        "owner": "Kebrina · Adam", "status": "inflight", "start": "2026-06-08", "end": "2026-07-31", "pillar": "Concepts" }
       ],
       "decisions": [
