@@ -14,11 +14,11 @@ export const DASHBOARDS: Record<string, string> = {
 <meta name="theme-color" content="#1A2840">
 <script>
   // If anyone hits this dashboard via github.io directly (bypassing the Worker
-  // auth gate at acq-automation.mithchell.workers.dev), redirect to /login.
+  // auth gate at apg-dashboard.mithchell.workers.dev), redirect to /login.
   // The canonical URL for this dashboard is the Worker route; github.io is
   // a build artifact, not the supported entry point.
   if (location.hostname === "atominvestments.github.io") {
-    location.replace("https://acq-automation.mithchell.workers.dev/login?next=/blake");
+    location.replace("https://apg-dashboard.mithchell.workers.dev/login?next=/blake");
   }
 </script>
 <style>
@@ -220,6 +220,14 @@ h2 .sec-count { margin-left: auto; font-size: 11px; letter-spacing: 0.18em; text
 }
 .footer .gold-stamp { display: inline-block; padding: 4px 10px; background: var(--gold); color: var(--ink); letter-spacing: 0.14em; }
 </style>
+<!-- Microsoft Clarity (heatmaps + session recordings) -->
+<script type="text/javascript">
+(function(c,l,a,r,i,t,y){
+  c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+  t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+  y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+})(window,document,"clarity","script","wwbe84z9my"); // TODO: replace wwbe84z9my with real project id from clarity.microsoft.com
+</script>
 </head>
 <body>
 <div class="shell">
@@ -234,15 +242,17 @@ h2 .sec-count { margin-left: auto; font-size: 11px; letter-spacing: 0.18em; text
   </header>
 
   <nav class="topnav">
-    <a href="index.html">Follow-Ups</a>
+    <a href="/">Desk</a>
+    <a href="blake.html" class="active">Blake</a>
+    <a href="progress.html">Tracker</a>
+    <a href="projects.html">Roadmap</a>
+    <a href="index.html">Follow-ups</a>
     <a href="deals.html">Deals</a>
-    <a href="weekly.html">Weekly</a>
+    <a href="weekly.html">Docket</a>
     <a href="priorities.html">Priority</a>
     <a href="markets.html">Markets</a>
-    <a href="blake.html" class="active">Blake</a>
-    <a href="progress.html">Progress</a>
-    <a href="ai-agents-plan.html">AI Agents Plan</a>
-    <a href="about.html">About</a>
+    <a href="/insights">Insights</a>
+    <a href="sms-test.html">SMS Test</a>
   </nav>
 
   <section>
@@ -270,7 +280,7 @@ h2 .sec-count { margin-left: auto; font-size: 11px; letter-spacing: 0.18em; text
 </div>
 
 <script>
-const DATA_URL = "https://acq-automation.mithchell.workers.dev/dashboard-data";
+const DATA_URL = "https://apg-dashboard.mithchell.workers.dev/dashboard-data";
 const POLL_INTERVAL_MS = 10000;
 const ET_TZ = "America/New_York";
 
@@ -438,7 +448,7 @@ setInterval(refresh, POLL_INTERVAL_MS);
 <meta name="theme-color" content="#1A2840">
 <script>
   if (location.hostname === "atominvestments.github.io") {
-    location.replace("https://acq-automation.mithchell.workers.dev/login?next=/progress");
+    location.replace("https://apg-dashboard.mithchell.workers.dev/login?next=/progress");
   }
 </script>
 <style>
@@ -620,6 +630,14 @@ h1 .accent { color: var(--gold); font-style: italic; }
 }
 .footer .gold-stamp { display: inline-block; padding: 4px 10px; background: var(--gold); color: var(--ink); letter-spacing: 0.14em; }
 </style>
+<!-- Microsoft Clarity (heatmaps + session recordings) -->
+<script type="text/javascript">
+(function(c,l,a,r,i,t,y){
+  c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+  t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+  y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+})(window,document,"clarity","script","wwbe84z9my"); // TODO: replace wwbe84z9my with real project id from clarity.microsoft.com
+</script>
 </head>
 <body>
 <div class="shell">
@@ -627,22 +645,24 @@ h1 .accent { color: var(--gold); font-style: italic; }
   <header class="masthead">
     <div class="brandrow">
       <img src="logo.svg" alt="Atom Property Group" style="height:32px;width:auto">
-      <span>Updated Jun 03, 2026 · 12:04 PM ET</span>
+      <span>Updated Jun 09, 2026 · 05:02 PM ET</span>
     </div>
     <h1>Project <span class="accent">Tracker.</span></h1>
     <p class="dek">Every active plan APG is shipping right now, with live checkbox state. Source of truth is <code>progress_state.json</code> in the repo — edit, commit, push, and this page re-renders on the next cron tick.</p>
   </header>
 
   <nav class="topnav">
-    <a href="index.html">Follow-Ups</a>
+    <a href="/">Desk</a>
+    <a href="blake.html">Blake</a>
+    <a href="progress.html" class="active">Tracker</a>
+    <a href="projects.html">Roadmap</a>
+    <a href="index.html">Follow-ups</a>
     <a href="deals.html">Deals</a>
-    <a href="weekly.html">Weekly</a>
+    <a href="weekly.html">Docket</a>
     <a href="priorities.html">Priority</a>
     <a href="markets.html">Markets</a>
-    <a href="blake.html">Blake</a>
-    <a href="progress.html" class="active">Progress</a>
-    <a href="ai-agents-plan.html">AI Agents Plan</a>
-    <a href="about.html">About</a>
+    <a href="/insights">Insights</a>
+    <a href="sms-test.html">SMS Test</a>
   </nav>
 
   <div class="summary-row">
@@ -672,7 +692,7 @@ h1 .accent { color: var(--gold); font-style: italic; }
 <li class="task done" data-pillar-id="pillar-a-blake" data-task-label="GHL Private Integration Token (BLAKE_GHL_PIT) for tool calls" tabindex="0" role="checkbox" aria-checked="true"><span class="checkbox"></span><span class="label">GHL Private Integration Token (BLAKE_GHL_PIT) for tool calls</span></li>
 <li class="task done" data-pillar-id="pillar-a-blake" data-task-label="8 in-call tools wired (lookup, save summary, set lead temp, RJ task, stage move, DND, etc.)" tabindex="0" role="checkbox" aria-checked="true"><span class="checkbox"></span><span class="label">8 in-call tools wired (lookup, save summary, set lead temp, RJ task, stage move, DND, etc.)</span></li>
 <li class="task done" data-pillar-id="pillar-a-blake" data-task-label="Built-in tools enabled (end_call, voicemail_detection, skip_turn)" tabindex="0" role="checkbox" aria-checked="true"><span class="checkbox"></span><span class="label">Built-in tools enabled (end_call, voicemail_detection, skip_turn)</span></li>
-<li class="task done" data-pillar-id="pillar-a-blake" data-task-label="Cloudflare Worker \`acq-automation\` deployed" tabindex="0" role="checkbox" aria-checked="true"><span class="checkbox"></span><span class="label">Cloudflare Worker \`acq-automation\` deployed</span></li>
+<li class="task done" data-pillar-id="pillar-a-blake" data-task-label="Cloudflare Worker \`apg-dashboard\` deployed" tabindex="0" role="checkbox" aria-checked="true"><span class="checkbox"></span><span class="label">Cloudflare Worker \`apg-dashboard\` deployed</span></li>
 <li class="task done" data-pillar-id="pillar-a-blake" data-task-label="Post-call webhook → GHL backup note + recording URL + blake-called tag" tabindex="0" role="checkbox" aria-checked="true"><span class="checkbox"></span><span class="label">Post-call webhook → GHL backup note + recording URL + blake-called tag</span></li>
 <li class="task done" data-pillar-id="pillar-a-blake" data-task-label="/conversation-init webhook with Seller File pre-call briefing" tabindex="0" role="checkbox" aria-checked="true"><span class="checkbox"></span><span class="label">/conversation-init webhook with Seller File pre-call briefing</span></li>
 <li class="task done" data-pillar-id="pillar-a-blake" data-task-label="Post-call structured extractor (Claude Sonnet 4.6) → auto-writes address / lead temp / RJ task / opp stage" tabindex="0" role="checkbox" aria-checked="true"><span class="checkbox"></span><span class="label">Post-call structured extractor (Claude Sonnet 4.6) → auto-writes address / lead temp / RJ task / opp stage</span></li>
@@ -839,7 +859,7 @@ h1 .accent { color: var(--gold); font-style: italic; }
 <li class="task done" data-pillar-id="infrastructure" data-task-label="DIAL_STATE KV namespace for warm-up + dedupe + dashboard caches" tabindex="0" role="checkbox" aria-checked="true"><span class="checkbox"></span><span class="label">DIAL_STATE KV namespace for warm-up + dedupe + dashboard caches</span></li>
 <li class="task done" data-pillar-id="infrastructure" data-task-label="GHL Private Integration Token + scopes" tabindex="0" role="checkbox" aria-checked="true"><span class="checkbox"></span><span class="label">GHL Private Integration Token + scopes</span></li>
 <li class="task done" data-pillar-id="infrastructure" data-task-label="Master credentials inventory in APG-Vault/_internal/credentials.md" tabindex="0" role="checkbox" aria-checked="true"><span class="checkbox"></span><span class="label">Master credentials inventory in APG-Vault/_internal/credentials.md</span></li>
-<li class="task done" data-pillar-id="infrastructure" data-task-label="Live dashboard at atominvestments.github.io/acq-automation/blake.html" tabindex="0" role="checkbox" aria-checked="true"><span class="checkbox"></span><span class="label">Live dashboard at atominvestments.github.io/acq-automation/blake.html</span></li>
+<li class="task done" data-pillar-id="infrastructure" data-task-label="Live dashboard at atominvestments.github.io/apg-dashboard/blake.html" tabindex="0" role="checkbox" aria-checked="true"><span class="checkbox"></span><span class="label">Live dashboard at atominvestments.github.io/apg-dashboard/blake.html</span></li>
 <li class="task done" data-pillar-id="infrastructure" data-task-label="All-time call history visible on Blake dashboard" tabindex="0" role="checkbox" aria-checked="true"><span class="checkbox"></span><span class="label">All-time call history visible on Blake dashboard</span></li>
 <li class="task done" data-pillar-id="infrastructure" data-task-label="APG logo wired into Blake dashboard" tabindex="0" role="checkbox" aria-checked="true"><span class="checkbox"></span><span class="label">APG logo wired into Blake dashboard</span></li>
 <li class="task" data-pillar-id="infrastructure" data-task-label="SmarterContact account email migration to mithchell@atompropertygroup.org" tabindex="0" role="checkbox" aria-checked="false"><span class="checkbox"></span><span class="label">SmarterContact account email migration to mithchell@atompropertygroup.org</span></li>
@@ -962,7 +982,7 @@ h1 .accent { color: var(--gold); font-style: italic; }
 <meta name="theme-color" content="#1A2840">
 <script>
   if (location.hostname === "atominvestments.github.io") {
-    location.replace("https://acq-automation.mithchell.workers.dev/login?next=/weekly");
+    location.replace("https://apg-dashboard.mithchell.workers.dev/login?next=/weekly");
   }
 </script>
 <style>
@@ -1416,6 +1436,14 @@ a:hover { color: var(--ink); }
   background: var(--gold); color: var(--ink); letter-spacing: 0.14em;
 }
 </style>
+<!-- Microsoft Clarity (heatmaps + session recordings) -->
+<script type="text/javascript">
+(function(c,l,a,r,i,t,y){
+  c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+  t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+  y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+})(window,document,"clarity","script","wwbe84z9my"); // TODO: replace wwbe84z9my with real project id from clarity.microsoft.com
+</script>
 </head>
 <body>
 <div class="shell">
@@ -1430,15 +1458,17 @@ a:hover { color: var(--ink); }
   </header>
 
   <nav class="topnav">
-    <a href="index.html">Follow-Ups</a>
+    <a href="/">Desk</a>
+    <a href="blake.html">Blake</a>
+    <a href="progress.html">Tracker</a>
+    <a href="projects.html">Roadmap</a>
+    <a href="index.html">Follow-ups</a>
     <a href="deals.html">Deals</a>
-    <a href="weekly.html" class="active">Weekly</a>
+    <a href="weekly.html" class="active">Docket</a>
     <a href="priorities.html">Priority</a>
     <a href="markets.html">Markets</a>
-    <a href="blake.html">Blake</a>
-    <a href="progress.html">Progress</a>
-    <a href="ai-agents-plan.html">AI Agents Plan</a>
-    <a href="about.html">About</a>
+    <a href="/insights">Insights</a>
+    <a href="sms-test.html">SMS Test</a>
     <span class="spacer"></span>
     <span class="week-pick">
       <label for="weekSel">Week:</label>
@@ -2367,6 +2397,14 @@ h2 .sec-count { margin-left: auto; font-size: 11px; letter-spacing: 0.18em; text
   background: var(--gold); color: var(--ink); letter-spacing: 0.14em;
 }
 </style>
+<!-- Microsoft Clarity (heatmaps + session recordings) -->
+<script type="text/javascript">
+(function(c,l,a,r,i,t,y){
+  c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+  t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+  y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+})(window,document,"clarity","script","wwbe84z9my"); // TODO: replace wwbe84z9my with real project id from clarity.microsoft.com
+</script>
 </head>
 <body>
 <div class="shell">
@@ -2381,15 +2419,17 @@ h2 .sec-count { margin-left: auto; font-size: 11px; letter-spacing: 0.18em; text
   </header>
 
   <nav class="topnav">
-    <a href="index.html">Follow-Ups</a>
+    <a href="/">Desk</a>
+    <a href="blake.html">Blake</a>
+    <a href="progress.html">Tracker</a>
+    <a href="projects.html">Roadmap</a>
+    <a href="index.html">Follow-ups</a>
     <a href="deals.html">Deals</a>
-    <a href="weekly.html">Weekly</a>
+    <a href="weekly.html">Docket</a>
     <a href="priorities.html" class="active">Priority</a>
     <a href="markets.html">Markets</a>
-    <a href="blake.html">Blake</a>
-    <a href="progress.html">Progress</a>
-    <a href="ai-agents-plan.html">AI Agents Plan</a>
-    <a href="about.html">About</a>
+    <a href="/insights">Insights</a>
+    <a href="sms-test.html">SMS Test</a>
   </nav>
 
   <div id="content"><div class="empty-state" style="text-align:center;padding:60px">Loading priority deals…</div></div>
@@ -2943,6 +2983,14 @@ table.markets tbody tr.tenant { border-left: 4px solid var(--bad); opacity: 0.6;
 }
 .scope-note strong { font-weight: 700; }
 </style>
+<!-- Microsoft Clarity (heatmaps + session recordings) -->
+<script type="text/javascript">
+(function(c,l,a,r,i,t,y){
+  c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+  t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+  y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+})(window,document,"clarity","script","wwbe84z9my"); // TODO: replace wwbe84z9my with real project id from clarity.microsoft.com
+</script>
 </head>
 <body>
 <div class="shell">
@@ -2957,15 +3005,17 @@ table.markets tbody tr.tenant { border-left: 4px solid var(--bad); opacity: 0.6;
   </header>
 
   <nav class="topnav">
-    <a href="index.html">Follow-Ups</a>
+    <a href="/">Desk</a>
+    <a href="blake.html">Blake</a>
+    <a href="progress.html">Tracker</a>
+    <a href="projects.html">Roadmap</a>
+    <a href="index.html">Follow-ups</a>
     <a href="deals.html">Deals</a>
-    <a href="weekly.html">Weekly</a>
+    <a href="weekly.html">Docket</a>
     <a href="priorities.html">Priority</a>
     <a href="markets.html" class="active">Markets</a>
-    <a href="blake.html">Blake</a>
-    <a href="progress.html">Progress</a>
-    <a href="ai-agents-plan.html">AI Agents Plan</a>
-    <a href="about.html">About</a>
+    <a href="/insights">Insights</a>
+    <a href="sms-test.html">SMS Test</a>
   </nav>
 
   <div id="content"><div class="empty-state" style="text-align:center;padding:60px">Loading market analysis…</div></div>
@@ -3181,7 +3231,7 @@ main();
 <meta name="theme-color" content="#1A2840">
 <script>
   if (location.hostname === "atominvestments.github.io") {
-    location.replace("https://acq-automation.mithchell.workers.dev/login");
+    location.replace("https://apg-dashboard.mithchell.workers.dev/login");
   }
 </script>
 <style>
@@ -3568,6 +3618,14 @@ section h2, h2 {
 }
 
 </style>
+<!-- Microsoft Clarity (heatmaps + session recordings) -->
+<script type="text/javascript">
+(function(c,l,a,r,i,t,y){
+  c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+  t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+  y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+})(window,document,"clarity","script","wwbe84z9my"); // TODO: replace wwbe84z9my with real project id from clarity.microsoft.com
+</script>
 </head>
 <body>
 <div class="container">
@@ -3575,22 +3633,24 @@ section h2, h2 {
   <header class="masthead">
     <div class="brandrow">
       <span class="brand">Atom Property Group · ACQ Operations</span>
-      <span>Last updated Jun 03, 2026 12:04 PM ET</span>
+      <span>Last updated Jun 09, 2026 05:02 PM ET</span>
     </div>
     <h1>Active <span class="accent">Deals.</span></h1>
     <p class="dek">Every property currently in stages 1-7 of the ACQ pipeline. Sorted by call rating within each stage so the strongest deals surface first.</p>
   </header>
 
   <nav class="topnav">
-    <a href="index.html">Follow-Ups</a>
+    <a href="/">Desk</a>
+    <a href="blake.html">Blake</a>
+    <a href="progress.html">Tracker</a>
+    <a href="projects.html">Roadmap</a>
+    <a href="index.html">Follow-ups</a>
     <a href="deals.html" class="active">Deals</a>
-    <a href="weekly.html">Weekly</a>
+    <a href="weekly.html">Docket</a>
     <a href="priorities.html">Priority</a>
     <a href="markets.html">Markets</a>
-    <a href="blake.html">Blake</a>
-    <a href="progress.html">Progress</a>
-    <a href="ai-agents-plan.html">AI Agents Plan</a>
-    <a href="about.html">About</a>
+    <a href="/insights">Insights</a>
+    <a href="sms-test.html">SMS Test</a>
   </nav>
 
   <section class="sec">
@@ -3623,7 +3683,7 @@ section h2, h2 {
     </div>
   </section>
 
-  <section class="sec deals-section"><div class="tag-row"><span class="num">03</span><h2>7. Disposition <span class="count">(1)</span></h2></div><hr><div class="grid"><div class="card stage-dispo" data-stage="7. Disposition" data-flags="" data-search="doris / marlin smith 4704 9th ave birmingham al birmingham, al, 35224     single family   7. disposition"><div class="top"><div><div class="name">Doris / Marlin Smith</div><div class="addr">4704 9th Ave</div><div class="place">Birmingham, AL, 35224</div></div><div class="stage-pill stage-dispo">7. Disposition</div></div><div class="pillrow"><span class="pill">⏱ Updated 9d ago</span></div><div class="specs"><span><strong>3</strong>bd / <strong>1</strong>ba</span><span><strong>1,478</strong> sqft</span></div><div class="fin-grid"><div class="fin"><div class="lab">Asking</div><div class="val">—</div></div><div class="fin"><div class="lab">ARV</div><div class="val">—</div></div><div class="fin"><div class="lab">70% MAO</div><div class="val">—</div></div><div class="fin"><div class="lab">Assign Fee</div><div class="val positive">$2k</div></div></div><div class="rating-row"><div><span class="label">Call</span><span class="rating gray">—</span></div><div class="summary">No call analysis yet.</div></div><div class="actions"><a class="btn primary" href="https://app.gohighlevel.com/v2/location/RCkiUmWqXX4BYQ39JXmm/contacts/detail/M6MrvW4KPONnpozrZFg7" target="_blank">Open in GHL</a><span class="btn ghost">No rehab yet</span><a class="btn secondary" href="https://www.zillow.com/homes/4704 9th Ave-Birmingham-AL-35224/" target="_blank">Zillow</a></div></div></div></section><section class="sec deals-section"><div class="tag-row"><span class="num">04</span><h2>6. Executed PSA <span class="count">(1)</span></h2></div><hr><div class="grid"><div class="card stage-psa" data-stage="6. Executed PSA" data-flags="" data-search="gloria haygood 7903 5th ave n birmingham al birmingham, al, 35206     single family   6. executed psa"><div class="top"><div><div class="name">Gloria Haygood</div><div class="addr">7903 5th Ave N</div><div class="place">Birmingham, AL, 35206</div></div><div class="stage-pill stage-psa">6. Executed PSA</div></div><div class="pillrow"><span class="pill">⏱ Updated 36d ago</span></div><div class="specs"><span><strong>2</strong>bd / <strong>1</strong>ba</span><span><strong>652</strong> sqft</span></div><div class="fin-grid"><div class="fin"><div class="lab">Asking</div><div class="val">—</div></div><div class="fin"><div class="lab">ARV</div><div class="val">—</div></div><div class="fin"><div class="lab">70% MAO</div><div class="val">—</div></div><div class="fin"><div class="lab">Assign Fee</div><div class="val">—</div></div></div><div class="rating-row"><div><span class="label">Call</span><span class="rating gray">—</span></div><div class="summary">No call analysis yet.</div></div><div class="actions"><a class="btn primary" href="https://app.gohighlevel.com/v2/location/RCkiUmWqXX4BYQ39JXmm/contacts/detail/bBpmVHj93tbolt6Nm2Q3" target="_blank">Open in GHL</a><span class="btn ghost">No rehab yet</span><a class="btn secondary" href="https://www.zillow.com/homes/7903 5th Ave N-Birmingham-AL-35206/" target="_blank">Zillow</a></div></div></div></section><section class="sec deals-section"><div class="tag-row"><span class="num">05</span><h2>5. Contract Sent <span class="count">(2)</span></h2></div><hr><div class="grid"><div class="card stage-contract" data-stage="5. Contract Sent" data-flags="" data-search="carl mccall 48 edgemere ave trenton nj trenton, nj, 08618     multi family   5. contract sent"><div class="top"><div><div class="name">Carl Mccall</div><div class="addr">48 Edgemere Ave</div><div class="place">Trenton, NJ, 08618</div></div><div class="stage-pill stage-contract">5. Contract Sent</div></div><div class="pillrow"><span class="pill">⏱ Updated 36d ago</span></div><div class="specs"><span><strong>5</strong>bd / <strong>1</strong>ba</span><span><strong>1,125</strong> sqft</span></div><div class="fin-grid"><div class="fin"><div class="lab">Asking</div><div class="val">—</div></div><div class="fin"><div class="lab">ARV</div><div class="val">—</div></div><div class="fin"><div class="lab">70% MAO</div><div class="val">—</div></div><div class="fin"><div class="lab">Assign Fee</div><div class="val">—</div></div></div><div class="rating-row"><div><span class="label">Call</span><span class="rating gray">—</span></div><div class="summary">No call analysis yet.</div></div><div class="actions"><a class="btn primary" href="https://app.gohighlevel.com/v2/location/RCkiUmWqXX4BYQ39JXmm/contacts/detail/3iBnE7gHv0MUStEdNMY9" target="_blank">Open in GHL</a><span class="btn ghost">No rehab yet</span><a class="btn secondary" href="https://www.zillow.com/homes/48 Edgemere Ave-Trenton-NJ-08618/" target="_blank">Zillow</a></div></div><div class="card stage-contract" data-stage="5. Contract Sent" data-flags="" data-search="kahalil ameen 8039 7th ave s, birmingham, al birmingham,, al, 35204  house is ready to go - just looking to break even. had another project that&#x27;s abt done and a tree fell in it so he needed to do damage control  asap single family unfinished reno - only thing it needs:   havac sheet rock elec wiring some windows  5. contract sent"><div class="top"><div><div class="name">Kahalil Ameen</div><div class="addr">8039 7th Ave S,</div><div class="place">birmingham,, AL, 35204</div></div><div class="stage-pill stage-contract">5. Contract Sent</div></div><div class="pillrow"><span class="pill">⏱ Updated 35d ago</span></div><div class="specs"><span><strong>2</strong>bd / <strong>1</strong>ba</span><span><strong>881</strong> sqft</span><span>Cond: <strong>Unfinished Reno - Only thing it needs:   Havac Sheet rock Elec Wiring Some windows</strong></span></div><div class="fin-grid"><div class="fin"><div class="lab">Asking</div><div class="val">$2k</div></div><div class="fin"><div class="lab">ARV</div><div class="val">—</div></div><div class="fin"><div class="lab">70% MAO</div><div class="val">—</div></div><div class="fin"><div class="lab">Assign Fee</div><div class="val">—</div></div></div><div class="rating-row"><div><span class="label">Call</span><span class="rating gray">—</span></div><div class="summary">No call analysis yet.</div></div><div class="deal-meta"><strong>Motivation:</strong> House is ready to go - just looking to break even. Had another project that&#x27;s abt done and a tree fell in it so he needed to do damage control<br><strong>Timeline:</strong> ASAP</div><div class="actions"><a class="btn primary" href="https://app.gohighlevel.com/v2/location/RCkiUmWqXX4BYQ39JXmm/contacts/detail/JXl4pgVXzgIhDAFEk9OU" target="_blank">Open in GHL</a><a class="btn secondary" href="https://docs.google.com/document/d/1He1l5shmKf3nWDlUv2jCGt4AULOMMlTy1fmQ5tnr0hU/edit" target="_blank">Rehab Report</a><a class="btn secondary" href="https://www.zillow.com/homes/839 7th St W,-Birmingham,-AL-35204/" target="_blank">Zillow</a></div></div></div></section><section class="sec deals-section"><div class="tag-row"><span class="num">06</span><h2>4. MAO <span class="count">(5)</span></h2></div><hr><div class="grid"><div class="card stage-mao" data-stage="4. MAO" data-flags="has-arv" data-search="mike 445 cleveland rd, cleveland, oh cleveland,, oh, 44108 cash was going to either flip or rent it out but open to just selling it as is seller is an investor who started tearout/demo but is open to selling the property as-is instead of completing the flip. depending on the deal single family rehab prop - rr done warm 4. mao"><div class="top"><div><div class="name">Mike</div><div class="addr">445 Cleveland Rd,</div><div class="place">cleveland,, OH, 44108</div></div><div class="stage-pill stage-mao">4. MAO</div></div><div class="pillrow"><span class="pill temp warm">🌡 Warm</span><span class="pill">⏱ Updated 26d ago</span><span class="pill">Cash</span></div><div class="specs"><span><strong>2</strong>bd / <strong>1</strong>ba</span><span><strong>1,385</strong> sqft</span><span>Cond: <strong>Rehab Prop - RR Done</strong></span></div><div class="fin-grid"><div class="fin"><div class="lab">Asking</div><div class="val">$50k</div></div><div class="fin"><div class="lab">ARV</div><div class="val">$100k</div></div><div class="fin"><div class="lab">70% MAO</div><div class="val">$70k</div></div><div class="fin"><div class="lab">Assign Fee</div><div class="val">—</div></div></div><div class="rating-row"><div><span class="label">Call</span><span class="rating warm">6/10</span></div><div class="summary">Seller Mike owns a 2-bed/1.5-bath single family in Cleveland, OH with a basement and a 3-car garage. He has partially demoed the kitchen, bathroom, and floors but has not put materials back in yet. He is open to selling as-is at $50K. The f</div></div><div class="deal-meta"><strong>Motivation:</strong> Was going to either Flip or Rent it out But open to just selling it AS IS<br><strong>Timeline:</strong> Depending on the deal<br><strong>Reason:</strong> Seller is an investor who started tearout/demo but is open to selling the property as-is instead of completing the flip.<br><strong>Repairs:</strong> Bathroom and kitchen demo&#x27;d (fixtures removed), flooring torn up in living/dining rooms, roof needs replacement, 3-car garage has roof damage on one side, may need to replace a cou</div><div class="actions"><a class="btn primary" href="https://app.gohighlevel.com/v2/location/RCkiUmWqXX4BYQ39JXmm/contacts/detail/R8XlWCeQVLbG5v1YZLQb" target="_blank">Open in GHL</a><a class="btn secondary" href="https://docs.google.com/document/d/1wR54OgkkUTN0CTwgsawDTp6TA1BtQj-wYha8LqBS_jU/edit" target="_blank">Rehab Report</a><a class="btn secondary" href="https://www.zillow.com/homes/445 Cleveland Rd,-Cleveland,-OH-44108/" target="_blank">Zillow</a></div></div><div class="card stage-mao" data-stage="4. MAO" data-flags="has-arv" data-search="mark hall (referred by phil) 1819 w 6th st, chester, pa chester,, pa, 19013     single family   4. mao"><div class="top"><div><div class="name">Mark Hall (Referred by Phil)</div><div class="addr">1819 W 6th St,</div><div class="place">Chester,, PA, 19013</div></div><div class="stage-pill stage-mao">4. MAO</div></div><div class="pillrow"><span class="pill">⏱ Updated 34d ago</span></div><div class="specs"><span><strong>3</strong>bd / <strong>1</strong>ba</span><span><strong>1,274</strong> sqft</span></div><div class="fin-grid"><div class="fin"><div class="lab">Asking</div><div class="val">—</div></div><div class="fin"><div class="lab">ARV</div><div class="val">$139k</div></div><div class="fin"><div class="lab">70% MAO</div><div class="val">$97k</div></div><div class="fin"><div class="lab">Assign Fee</div><div class="val">—</div></div></div><div class="rating-row"><div><span class="label">Call</span><span class="rating gray">—</span></div><div class="summary">No call analysis yet.</div></div><div class="actions"><a class="btn primary" href="https://app.gohighlevel.com/v2/location/RCkiUmWqXX4BYQ39JXmm/contacts/detail/r1aNgfnxNWzNrsrRuRmz" target="_blank">Open in GHL</a><span class="btn ghost">No rehab yet</span><a class="btn secondary" href="https://www.zillow.com/homedetails/1819-W-6th-St-Chester-PA-19013/9469528_zpid/" target="_blank">Zillow</a></div></div><div class="card stage-mao" data-stage="4. MAO" data-flags="" data-search="beata szyffer-hopkins 1030 n olden ave trenton nj trenton, nj, 08638        4. mao"><div class="top"><div><div class="name">Beata Szyffer-Hopkins</div><div class="addr">1030 N Olden Ave</div><div class="place">Trenton, NJ, 08638</div></div><div class="stage-pill stage-mao">4. MAO</div></div><div class="pillrow"><span class="pill">⏱ Updated 32d ago</span></div><div class="fin-grid"><div class="fin"><div class="lab">Asking</div><div class="val">—</div></div><div class="fin"><div class="lab">ARV</div><div class="val">—</div></div><div class="fin"><div class="lab">70% MAO</div><div class="val">—</div></div><div class="fin"><div class="lab">Assign Fee</div><div class="val">—</div></div></div><div class="rating-row"><div><span class="label">Call</span><span class="rating gray">—</span></div><div class="summary">No call analysis yet.</div></div><div class="actions"><a class="btn primary" href="https://app.gohighlevel.com/v2/location/RCkiUmWqXX4BYQ39JXmm/contacts/detail/YRG8M0LqKqxqFcaKFUAz" target="_blank">Open in GHL</a><span class="btn ghost">No rehab yet</span><a class="btn secondary" href="https://www.zillow.com/homes/1030-N-Olden-Ave-Trenton-NJ-08638_rb/" target="_blank">Zillow</a></div></div><div class="card stage-mao" data-stage="4. MAO" data-flags="has-arv" data-search="john harrington 1211 jersey st birmingham al birmingham, al, 35224     townhouse   4. mao"><div class="top"><div><div class="name">John Harrington</div><div class="addr">1211 Jersey St</div><div class="place">Birmingham, AL, 35224</div></div><div class="stage-pill stage-mao">4. MAO</div></div><div class="pillrow"><span class="pill">⏱ Updated 14d ago</span></div><div class="specs"><span><strong>2</strong>bd / <strong>1</strong>ba</span><span><strong>1,256</strong> sqft</span></div><div class="fin-grid"><div class="fin"><div class="lab">Asking</div><div class="val">—</div></div><div class="fin"><div class="lab">ARV</div><div class="val">$78k</div></div><div class="fin"><div class="lab">70% MAO</div><div class="val">$55k</div></div><div class="fin"><div class="lab">Assign Fee</div><div class="val">—</div></div></div><div class="rating-row"><div><span class="label">Call</span><span class="rating gray">—</span></div><div class="summary">No call analysis yet.</div></div><div class="actions"><a class="btn primary" href="https://app.gohighlevel.com/v2/location/RCkiUmWqXX4BYQ39JXmm/contacts/detail/vJ5DvKKJTNCj3bQvwus8" target="_blank">Open in GHL</a><span class="btn ghost">No rehab yet</span><a class="btn secondary" href="https://www.zillow.com/homes/undefined---/" target="_blank">Zillow</a></div></div><div class="card stage-mao" data-stage="4. MAO" data-flags="" data-search="joshua jenner 35 benson st bloomfield nj bloomfield, nj, 07003        4. mao"><div class="top"><div><div class="name">Joshua Jenner</div><div class="addr">35 Benson St</div><div class="place">Bloomfield, NJ, 07003</div></div><div class="stage-pill stage-mao">4. MAO</div></div><div class="pillrow"><span class="pill">⏱ Updated 13d ago</span></div><div class="fin-grid"><div class="fin"><div class="lab">Asking</div><div class="val">—</div></div><div class="fin"><div class="lab">ARV</div><div class="val">—</div></div><div class="fin"><div class="lab">70% MAO</div><div class="val">—</div></div><div class="fin"><div class="lab">Assign Fee</div><div class="val">—</div></div></div><div class="rating-row"><div><span class="label">Call</span><span class="rating gray">—</span></div><div class="summary">No call analysis yet.</div></div><div class="actions"><a class="btn primary" href="https://app.gohighlevel.com/v2/location/RCkiUmWqXX4BYQ39JXmm/contacts/detail/y9aNOWrnzpniPXN5b6N0" target="_blank">Open in GHL</a><span class="btn ghost">No rehab yet</span><a class="btn secondary" href="https://www.zillow.com/homes/35 Benson St-Bloomfield-NJ-07003-2721/" target="_blank">Zillow</a></div></div></div></section><section class="sec deals-section"><div class="tag-row"><span class="num">07</span><h2>3. Due Diligence <span class="count">(7)</span></h2></div><hr><div class="grid"><div class="card stage-rr" data-stage="3. Due Diligence" data-flags="has-arv" data-search="mac hall 2903 taylor st detroit, mi detroit,, mi, 48206 cash sister passed away in nov. was going to live in it sister who was going to live in the property passed away in november, so seller decided to sell. dependent on price - soon single family currently started working on it down to the studs full rehab warm 3. due diligence"><div class="top"><div><div class="name">Mac Hall</div><div class="addr">2903 Taylor St</div><div class="place">detroit,, MI, 48206</div></div><div class="stage-pill stage-rr">3. Due Diligence</div></div><div class="pillrow"><span class="pill temp warm">🌡 Warm</span><span class="pill">⏱ Updated 26d ago</span><span class="pill">Cash</span></div><div class="specs"><span><strong>6</strong>bd / <strong>3</strong>ba</span><span><strong>3,060</strong> sqft</span><span>Cond: <strong>currently started working on it down to the studs full rehab</strong></span></div><div class="fin-grid"><div class="fin"><div class="lab">Asking</div><div class="val">$300</div></div><div class="fin"><div class="lab">ARV</div><div class="val">$300k</div></div><div class="fin"><div class="lab">70% MAO</div><div class="val">$210k</div></div><div class="fin"><div class="lab">Assign Fee</div><div class="val">—</div></div></div><div class="rating-row"><div><span class="label">Call</span><span class="rating warm">6/10</span></div><div class="summary">Mac Hall is selling a 2-family property in Detroit, MI (2903-2905 Taylor Street) that was originally intended for his late sister who passed in November. The property is a 3/2 up and 3/2 down duplex currently stripped to the studs and in ne</div></div><div class="deal-meta"><strong>Motivation:</strong> Sister passed away in Nov. Was going to live in it<br><strong>Timeline:</strong> Dependent on Price - Soon<br><strong>Reason:</strong> Sister who was going to live in the property passed away in November, so seller decided to sell.<br><strong>Repairs:</strong> Full rehab needed, property stripped down to studs</div><div class="actions"><a class="btn primary" href="https://app.gohighlevel.com/v2/location/RCkiUmWqXX4BYQ39JXmm/contacts/detail/2AhPd8UUQ8GirpYMXKTR" target="_blank">Open in GHL</a><a class="btn secondary" href="https://docs.google.com/document/d/19ZD5DBw7VdVF-1hfHKfHRJU2DROHpLZyZaj8EBr4Y6c/edit" target="_blank">Rehab Report</a><a class="btn secondary" href="https://www.zillow.com/homes/2903 Taylor St-Detroit,-MI-48206/" target="_blank">Zillow</a></div></div><div class="card stage-rr" data-stage="3. Due Diligence" data-flags="has-arv" data-search="anthony lamendola 56 valley rd lambertville nj lambertville, nj, 08530     single family   3. due diligence"><div class="top"><div><div class="name">Anthony Lamendola</div><div class="addr">56 Valley Rd</div><div class="place">Lambertville, NJ, 08530</div></div><div class="stage-pill stage-rr">3. Due Diligence</div></div><div class="pillrow"><span class="pill">⏱ Updated 34d ago</span></div><div class="specs"><span><strong>3</strong>bd / <strong>1.5</strong>ba</span><span><strong>1,957</strong> sqft</span></div><div class="fin-grid"><div class="fin"><div class="lab">Asking</div><div class="val">—</div></div><div class="fin"><div class="lab">ARV</div><div class="val">$724k</div></div><div class="fin"><div class="lab">70% MAO</div><div class="val">$507k</div></div><div class="fin"><div class="lab">Assign Fee</div><div class="val">—</div></div></div><div class="rating-row"><div><span class="label">Call</span><span class="rating gray">—</span></div><div class="summary">No call analysis yet.</div></div><div class="actions"><a class="btn primary" href="https://app.gohighlevel.com/v2/location/RCkiUmWqXX4BYQ39JXmm/contacts/detail/ax5OIEkHv0LaPrHazcwa" target="_blank">Open in GHL</a><span class="btn ghost">No rehab yet</span><a class="btn secondary" href="https://www.zillow.com/homes/56 Valley Rd-Lambertville-NJ-08530-2509/" target="_blank">Zillow</a></div></div><div class="card stage-rr" data-stage="3. Due Diligence" data-flags="has-arv" data-search="lisa rivera 107 deepwater cir manalapan nj manalapan, nj, 07726     townhouse   3. due diligence"><div class="top"><div><div class="name">Lisa Rivera</div><div class="addr">107 Deepwater Cir</div><div class="place">Manalapan, NJ, 07726</div></div><div class="stage-pill stage-rr">3. Due Diligence</div></div><div class="pillrow"><span class="pill">⏱ Updated 34d ago</span></div><div class="specs"><span><strong>4</strong>bd / <strong>3</strong>ba</span><span><strong>2,022</strong> sqft</span></div><div class="fin-grid"><div class="fin"><div class="lab">Asking</div><div class="val">—</div></div><div class="fin"><div class="lab">ARV</div><div class="val">$790k</div></div><div class="fin"><div class="lab">70% MAO</div><div class="val">$553k</div></div><div class="fin"><div class="lab">Assign Fee</div><div class="val">—</div></div></div><div class="rating-row"><div><span class="label">Call</span><span class="rating gray">—</span></div><div class="summary">No call analysis yet.</div></div><div class="actions"><a class="btn primary" href="https://app.gohighlevel.com/v2/location/RCkiUmWqXX4BYQ39JXmm/contacts/detail/HwzVbJm77wIGukgzkcYK" target="_blank">Open in GHL</a><span class="btn ghost">No rehab yet</span><a class="btn secondary" href="https://www.zillow.com/homes/107 Deepwater Cir-Manalapan-NJ-07726-4143/" target="_blank">Zillow</a></div></div><div class="card stage-rr" data-stage="3. Due Diligence" data-flags="" data-search="beata szyffer-hopkins 412 neadow woods lane lawrenceville nj lawrenceville, nj, 08648     condo   3. due diligence"><div class="top"><div><div class="name">Beata Szyffer-Hopkins</div><div class="addr">412 Neadow Woods lane</div><div class="place">Lawrenceville, NJ, 08648</div></div><div class="stage-pill stage-rr">3. Due Diligence</div></div><div class="pillrow"><span class="pill">⏱ Updated 34d ago</span></div><div class="specs"><span><strong>1</strong>bd / <strong>?</strong>ba</span><span><strong>800</strong> sqft</span></div><div class="fin-grid"><div class="fin"><div class="lab">Asking</div><div class="val">—</div></div><div class="fin"><div class="lab">ARV</div><div class="val">—</div></div><div class="fin"><div class="lab">70% MAO</div><div class="val">—</div></div><div class="fin"><div class="lab">Assign Fee</div><div class="val">—</div></div></div><div class="rating-row"><div><span class="label">Call</span><span class="rating gray">—</span></div><div class="summary">No call analysis yet.</div></div><div class="actions"><a class="btn primary" href="https://app.gohighlevel.com/v2/location/RCkiUmWqXX4BYQ39JXmm/contacts/detail/u5bThCERB26HstQfLQvT" target="_blank">Open in GHL</a><span class="btn ghost">No rehab yet</span><a class="btn secondary" href="https://www.zillow.com/homes/708 Meadow Woods Ln-Lawrence Township-NJ-8648/" target="_blank">Zillow</a></div></div><div class="card stage-rr" data-stage="3. Due Diligence" data-flags="has-arv" data-search="adam shun 167 prospect ave edison nj edison, nj, 8817     single family   3. due diligence"><div class="top"><div><div class="name">Adam Shun</div><div class="addr">167 Prospect Ave</div><div class="place">Edison, NJ, 8817</div></div><div class="stage-pill stage-rr">3. Due Diligence</div></div><div class="pillrow"><span class="pill">⏱ Updated 34d ago</span></div><div class="specs"><span><strong>3</strong>bd / <strong>3</strong>ba</span><span><strong>1,766</strong> sqft</span></div><div class="fin-grid"><div class="fin"><div class="lab">Asking</div><div class="val">—</div></div><div class="fin"><div class="lab">ARV</div><div class="val">$629k</div></div><div class="fin"><div class="lab">70% MAO</div><div class="val">$440k</div></div><div class="fin"><div class="lab">Assign Fee</div><div class="val">—</div></div></div><div class="rating-row"><div><span class="label">Call</span><span class="rating gray">—</span></div><div class="summary">No call analysis yet.</div></div><div class="actions"><a class="btn primary" href="https://app.gohighlevel.com/v2/location/RCkiUmWqXX4BYQ39JXmm/contacts/detail/2nXJnTTarijChve5NLky" target="_blank">Open in GHL</a><span class="btn ghost">No rehab yet</span><a class="btn secondary" href="https://www.zillow.com/homedetails/167-Prospect-Ave-Edison-NJ-08817/39064486_zpid/" target="_blank">Zillow</a></div></div><div class="card stage-rr" data-stage="3. Due Diligence" data-flags="" data-search="mary &amp; marisa kaneda 405 pearl st media pa media, pa, 19063        3. due diligence"><div class="top"><div><div class="name">Mary &amp; Marisa Kaneda</div><div class="addr">405 Pearl St</div><div class="place">Media, PA, 19063</div></div><div class="stage-pill stage-rr">3. Due Diligence</div></div><div class="pillrow"><span class="pill">⏱ Updated 32d ago</span></div><div class="fin-grid"><div class="fin"><div class="lab">Asking</div><div class="val">—</div></div><div class="fin"><div class="lab">ARV</div><div class="val">—</div></div><div class="fin"><div class="lab">70% MAO</div><div class="val">—</div></div><div class="fin"><div class="lab">Assign Fee</div><div class="val">—</div></div></div><div class="rating-row"><div><span class="label">Call</span><span class="rating gray">—</span></div><div class="summary">No call analysis yet.</div></div><div class="actions"><a class="btn primary" href="https://app.gohighlevel.com/v2/location/RCkiUmWqXX4BYQ39JXmm/contacts/detail/bYenvNJd0x9PrU61vgcS" target="_blank">Open in GHL</a><span class="btn ghost">No rehab yet</span><a class="btn secondary" href="https://www.zillow.com/homes/405 Pearl St-Media-PA-19063/" target="_blank">Zillow</a></div></div><div class="card stage-rr" data-stage="3. Due Diligence" data-flags="" data-search="evelyn carter-amuzu 158 lawnside ave collingswood nj collingswood, nj, 08108        3. due diligence"><div class="top"><div><div class="name">Evelyn Carter-Amuzu</div><div class="addr">158 Lawnside Ave</div><div class="place">Collingswood, NJ, 08108</div></div><div class="stage-pill stage-rr">3. Due Diligence</div></div><div class="pillrow"><span class="pill">⏱ Updated 14d ago</span></div><div class="fin-grid"><div class="fin"><div class="lab">Asking</div><div class="val">—</div></div><div class="fin"><div class="lab">ARV</div><div class="val">—</div></div><div class="fin"><div class="lab">70% MAO</div><div class="val">—</div></div><div class="fin"><div class="lab">Assign Fee</div><div class="val">—</div></div></div><div class="rating-row"><div><span class="label">Call</span><span class="rating gray">—</span></div><div class="summary">No call analysis yet.</div></div><div class="actions"><a class="btn primary" href="https://app.gohighlevel.com/v2/location/RCkiUmWqXX4BYQ39JXmm/contacts/detail/C4FEzZnAC11S8u7Ehwc5" target="_blank">Open in GHL</a><span class="btn ghost">No rehab yet</span><a class="btn secondary" href="https://www.zillow.com/homes/158-Lawnside-Ave-Collingswood-NJ-08108_rb/" target="_blank">Zillow</a></div></div></div></section><section class="sec deals-section"><div class="tag-row"><span class="num">08</span><h2>2. LAO <span class="count">(5)</span></h2></div><hr><div class="grid"><div class="card stage-lao" data-stage="2. LAO" data-flags="has-arv" data-search="justin / danielle offutt 5910 wilber ave parma, oh parma,, oh, 44129 cash price seller completed renovation and is looking to exit for cash after finishing the property. asap - dependent on price single family recently renovated warm 2. lao"><div class="top"><div><div class="name">Justin / Danielle Offutt</div><div class="addr">5910 WILBER AVE</div><div class="place">parma,, OH, 44129</div></div><div class="stage-pill stage-lao">2. LAO</div></div><div class="pillrow"><span class="pill temp warm">🌡 Warm</span><span class="pill">⏱ Updated 26d ago</span><span class="pill">Cash</span></div><div class="specs"><span><strong>3</strong>bd / <strong>1</strong>ba</span><span><strong>1,338</strong> sqft</span><span>Cond: <strong>Recently Renovated</strong></span></div><div class="fin-grid"><div class="fin"><div class="lab">Asking</div><div class="val">$225</div></div><div class="fin"><div class="lab">ARV</div><div class="val">$221k</div></div><div class="fin"><div class="lab">70% MAO</div><div class="val">$155k</div></div><div class="fin"><div class="lab">Assign Fee</div><div class="val">—</div></div></div><div class="rating-row"><div><span class="label">Call</span><span class="rating warm">5/10</span></div><div class="summary">Justin is selling a recently renovated, vacant single-family home at 5910 Wilbur Ave, Parma, OH 44129. The property is 3 bed/1.5 bath, 1,338 sqft with a fully finished basement. Renovation is largely complete — plumbing, electric, paint all</div></div><div class="deal-meta"><strong>Motivation:</strong> Price<br><strong>Timeline:</strong> ASAP - Dependent on Price<br><strong>Reason:</strong> Seller completed renovation and is looking to exit for cash after finishing the property.<br><strong>Repairs:</strong> Roof replacement needed (25 years old, no leaks)</div><div class="actions"><a class="btn primary" href="https://app.gohighlevel.com/v2/location/RCkiUmWqXX4BYQ39JXmm/contacts/detail/MRKLKAwnTqp3ACulHvs8" target="_blank">Open in GHL</a><a class="btn secondary" href="https://docs.google.com/document/d/12MR2SUMZ3a4GSHb9Fwnlp1JqJgrqEqYHwqGJlLjQJsk/edit" target="_blank">Rehab Report</a><a class="btn secondary" href="https://www.zillow.com/homes/5910 WILBER AVE-Parma,-OH-44129/" target="_blank">Zillow</a></div></div><div class="card stage-lao" data-stage="2. LAO" data-flags="" data-search="angela martin 608 alabama ave sw birmingham al birmingham, al, 35211     single family   2. lao"><div class="top"><div><div class="name">Angela Martin</div><div class="addr">608 Alabama Ave Sw</div><div class="place">Birmingham, AL, 35211</div></div><div class="stage-pill stage-lao">2. LAO</div></div><div class="pillrow"><span class="pill">⏱ Updated 34d ago</span></div><div class="specs"><span><strong>3</strong>bd / <strong>1</strong>ba</span><span><strong>1,296</strong> sqft</span></div><div class="fin-grid"><div class="fin"><div class="lab">Asking</div><div class="val">—</div></div><div class="fin"><div class="lab">ARV</div><div class="val">—</div></div><div class="fin"><div class="lab">70% MAO</div><div class="val">—</div></div><div class="fin"><div class="lab">Assign Fee</div><div class="val">—</div></div></div><div class="rating-row"><div><span class="label">Call</span><span class="rating gray">—</span></div><div class="summary">No call analysis yet.</div></div><div class="actions"><a class="btn primary" href="https://app.gohighlevel.com/v2/location/RCkiUmWqXX4BYQ39JXmm/contacts/detail/JTIy2kcrcqm7unlWZuV3" target="_blank">Open in GHL</a><span class="btn ghost">No rehab yet</span><a class="btn secondary" href="https://www.zillow.com/homes/608 Alabama Ave Sw-Birmingham-AL-35211/" target="_blank">Zillow</a></div></div><div class="card stage-lao" data-stage="2. LAO" data-flags="" data-search="carla ider clyde limited partnership 118 66th pl n birmingham al birmingham, al, 35206 warm lead she said she planned to renovate it but got no time and funds to execute it. been planning to sell it.  3 months single family property&#x27;s condition is terrible. pics online are up to date.  2. lao"><div class="top"><div><div class="name">Carla Ider Clyde Limited Partnership</div><div class="addr">118 66TH PL N</div><div class="place">birmingham, AL, 35206</div></div><div class="stage-pill stage-lao">2. LAO</div></div><div class="pillrow"><span class="pill">⏱ Updated 34d ago</span><span class="pill">Warm Lead</span></div><div class="specs"><span><strong>3</strong>bd / <strong>1</strong>ba</span><span><strong>1,458</strong> sqft</span><span>Cond: <strong>Property&#x27;s condition is terrible. Pics online are up to date.</strong></span></div><div class="fin-grid"><div class="fin"><div class="lab">Asking</div><div class="val">—</div></div><div class="fin"><div class="lab">ARV</div><div class="val">—</div></div><div class="fin"><div class="lab">70% MAO</div><div class="val">—</div></div><div class="fin"><div class="lab">Assign Fee</div><div class="val">—</div></div></div><div class="rating-row"><div><span class="label">Call</span><span class="rating gray">—</span></div><div class="summary">No call analysis yet.</div></div><div class="deal-meta"><strong>Motivation:</strong> she said she planned to renovate it but got no time and funds to execute it. Been planning to sell it.<br><strong>Timeline:</strong> 3 months</div><div class="actions"><a class="btn primary" href="https://app.gohighlevel.com/v2/location/RCkiUmWqXX4BYQ39JXmm/contacts/detail/FkTzwNw25rcaBUMP49cl" target="_blank">Open in GHL</a><a class="btn secondary" href="https://docs.google.com/spreadsheets/d/12XTZhdq5aqbWEOULbzoMZ7KP0LqpT-mlf-b5iN2rEtI/edit?gid=0#gid=0" target="_blank">Rehab Report</a><a class="btn secondary" href="https://www.zillow.com/homes/118 66TH PL N-Birmingham-AL-35206-5033/" target="_blank">Zillow</a></div></div><div class="card stage-lao" data-stage="2. LAO" data-flags="" data-search="marcus patterson 5900 court m birmingham al birmingham, al, 35228  because he got too many properties.  right now  na  2. lao"><div class="top"><div><div class="name">Marcus Patterson</div><div class="addr">5900 Court M</div><div class="place">birmingham, AL, 35228</div></div><div class="stage-pill stage-lao">2. LAO</div></div><div class="pillrow"><span class="pill">⏱ Updated 32d ago</span></div><div class="specs"><span><strong>3</strong>bd / <strong>1</strong>ba</span><span><strong>7,140</strong> sqft</span><span>Cond: <strong>NA</strong></span></div><div class="fin-grid"><div class="fin"><div class="lab">Asking</div><div class="val">$50k</div></div><div class="fin"><div class="lab">ARV</div><div class="val">—</div></div><div class="fin"><div class="lab">70% MAO</div><div class="val">—</div></div><div class="fin"><div class="lab">Assign Fee</div><div class="val">—</div></div></div><div class="rating-row"><div><span class="label">Call</span><span class="rating gray">—</span></div><div class="summary">No call analysis yet.</div></div><div class="deal-meta"><strong>Motivation:</strong> Because he got too many properties.<br><strong>Timeline:</strong> Right now</div><div class="actions"><a class="btn primary" href="https://app.gohighlevel.com/v2/location/RCkiUmWqXX4BYQ39JXmm/contacts/detail/CSLasrrF0X07ZO6GCNwL" target="_blank">Open in GHL</a><a class="btn secondary" href="https://docs.google.com/spreadsheets/d/12XTZhdq5aqbWEOULbzoMZ7KP0LqpT-mlf-b5iN2rEtI/edit?gid=0#gid=0" target="_blank">Rehab Report</a><a class="btn secondary" href="https://www.zillow.com/homes/5900 Court M-Birmingham--35228/" target="_blank">Zillow</a></div></div><div class="card stage-lao" data-stage="2. LAO" data-flags="" data-search="nandor standi 56 la france ave bloomfield nj bloomfield, nj, 07003        2. lao"><div class="top"><div><div class="name">Nandor Standi</div><div class="addr">56 La France Ave</div><div class="place">Bloomfield, NJ, 07003</div></div><div class="stage-pill stage-lao">2. LAO</div></div><div class="pillrow"><span class="pill">⏱ Updated 32d ago</span></div><div class="fin-grid"><div class="fin"><div class="lab">Asking</div><div class="val">—</div></div><div class="fin"><div class="lab">ARV</div><div class="val">—</div></div><div class="fin"><div class="lab">70% MAO</div><div class="val">—</div></div><div class="fin"><div class="lab">Assign Fee</div><div class="val">—</div></div></div><div class="rating-row"><div><span class="label">Call</span><span class="rating gray">—</span></div><div class="summary">No call analysis yet.</div></div><div class="actions"><a class="btn primary" href="https://app.gohighlevel.com/v2/location/RCkiUmWqXX4BYQ39JXmm/contacts/detail/bujYWSls1NQkChukYgAj" target="_blank">Open in GHL</a><span class="btn ghost">No rehab yet</span><a class="btn secondary" href="https://www.zillow.com/homes/56 La France Ave-Bloomfield-NJ-07003-5632/" target="_blank">Zillow</a></div></div></div></section><section class="sec deals-section"><div class="tag-row"><span class="num">09</span><h2>1. Qualified <span class="count">(19)</span></h2></div><hr><div class="grid"><div class="card stage-qualified" data-stage="1. Qualified" data-flags="" data-search="avin 305, 315 &amp; 319 roosevelt ave forestdale al forestdale, al, 35214 cash inherited land - not going to do anything w/ it inherited three land parcels through death and wants to sell to use money for other purchases like a car since he won&#x27;t develop them. as soon as we can make a deal land bare land warm 1. qualified"><div class="top"><div><div class="name">Avin</div><div class="addr">305, 315 &amp; 319 Roosevelt ave</div><div class="place">forestdale, AL, 35214</div></div><div class="stage-pill stage-qualified">1. Qualified</div></div><div class="pillrow"><span class="pill temp warm">🌡 Warm</span><span class="pill">⏱ Updated 26d ago</span><span class="pill">Cash</span></div><div class="specs"><span><strong>NA</strong>bd / <strong>NA</strong>ba</span><span>Cond: <strong>Bare Land</strong></span></div><div class="fin-grid"><div class="fin"><div class="lab">Asking</div><div class="val">$12k</div></div><div class="fin"><div class="lab">ARV</div><div class="val">—</div></div><div class="fin"><div class="lab">70% MAO</div><div class="val">—</div></div><div class="fin"><div class="lab">Assign Fee</div><div class="val">—</div></div></div><div class="rating-row"><div><span class="label">Call</span><span class="rating warm">5/10</span></div><div class="summary">Seller Ivan has three inherited vacant land parcels on Roosevelt Avenue in Forestdale, Birmingham (zip 35214) — two at 0.14 acres and one at 0.29 acres — all bare land with no utilities confirmed, overgrown with trees and brush, and no dire</div></div><div class="deal-meta"><strong>Motivation:</strong> Inherited land - not going to do anything w/ it<br><strong>Timeline:</strong> As soon as we can make a deal<br><strong>Reason:</strong> Inherited three land parcels through death and wants to sell to use money for other purchases like a car since he won&#x27;t develop them.</div><div class="actions"><a class="btn primary" href="https://app.gohighlevel.com/v2/location/RCkiUmWqXX4BYQ39JXmm/contacts/detail/IRPxKVo95Vpix5DlNyN9" target="_blank">Open in GHL</a><a class="btn secondary" href="https://docs.google.com/document/d/1DsYMwxrWd2Nqzpb4-e49NNjrh1oyQr2N5sb56UVsAPo/edit" target="_blank">Rehab Report</a><a class="btn secondary" href="https://www.zillow.com/homes/305, 315 &amp; 319 Roosevelt ave-Forestdale-AL-35214/" target="_blank">Zillow</a></div></div><div class="card stage-qualified" data-stage="1. Qualified" data-flags="has-arv" data-search="kris 58 morris ln,, nj 08854 piscataway nj piscataway, nj, 08854 cash moving out of the state moving to west trenton to be closer to sister 30 to 40 single family good warm 1. qualified"><div class="top"><div><div class="name">Kris</div><div class="addr">58 Morris Ln,, NJ 08854</div><div class="place">piscataway, NJ, 08854</div></div><div class="stage-pill stage-qualified">1. Qualified</div></div><div class="pillrow"><span class="pill temp warm">🌡 Warm</span><span class="pill">⏱ Updated 26d ago</span><span class="pill">Cash</span></div><div class="specs"><span><strong>3</strong>bd / <strong>3</strong>ba</span><span><strong>2,178</strong> sqft</span><span>Cond: <strong>Good</strong></span></div><div class="fin-grid"><div class="fin"><div class="lab">Asking</div><div class="val">$700</div></div><div class="fin"><div class="lab">ARV</div><div class="val">$679k</div></div><div class="fin"><div class="lab">70% MAO</div><div class="val">$475k</div></div><div class="fin"><div class="lab">Assign Fee</div><div class="val">—</div></div></div><div class="rating-row"><div><span class="label">Call</span><span class="rating warm">5/10</span></div><div class="summary">Seller Chris owns 58 Morris Lane, Piscataway, NJ — a 3BR/3BA single-family home, approximately 1,800 sqft on a half-acre lot with one-car garage and attic. Major mechanicals (roof, HVAC, hot water heater, AC, kitchen) are all roughly 5 year</div></div><div class="deal-meta"><strong>Motivation:</strong> Moving out of the state<br><strong>Timeline:</strong> 30 to 40<br><strong>Reason:</strong> Moving to West Trenton to be closer to sister<br><strong>Repairs:</strong> Cosmetic updates - painting and minor touch-ups planned but not required</div><div class="actions"><a class="btn primary" href="https://app.gohighlevel.com/v2/location/RCkiUmWqXX4BYQ39JXmm/contacts/detail/feVgr9ChZKFVGHQClO1j" target="_blank">Open in GHL</a><a class="btn secondary" href="https://docs.google.com/document/d/1qPSCJjX-7nJRgt_Ggmsed0S8BXhlKY0HV3VGnWt_HaE/edit" target="_blank">Rehab Report</a><a class="btn secondary" href="https://www.zillow.com/homes/58 Morris Ln,, NJ 08854-Piscataway-NJ-08854/" target="_blank">Zillow</a></div></div><div class="card stage-qualified" data-stage="1. Qualified" data-flags="" data-search="jimmie lee 2823 29th place ensley birmingham al birmingham, al, 35208 cash vacant prop  been vacant for 20 yrs now - when he bought - 2002 originally bought it for his son to fix and move there but son decided not to move anymore property has been vacant since purchase in 2002, original plan to renovate for son fell through when son got married. asap / price land needs a new roof redo the inside been vacant for 20 yrs free &amp; clear no liens warm 1. qualified"><div class="top"><div><div class="name">Jimmie Lee</div><div class="addr">2823 29TH PLACE ENSLEY</div><div class="place">birmingham, AL, 35208</div></div><div class="stage-pill stage-qualified">1. Qualified</div></div><div class="pillrow"><span class="pill temp warm">🌡 Warm</span><span class="pill">⏱ Updated 26d ago</span><span class="pill">Cash</span></div><div class="specs"><span><strong>3</strong>bd / <strong>2</strong>ba</span><span><strong>1,412</strong> sqft</span><span>Cond: <strong>Needs a new roof Redo the inside Been Vacant for 20 yrs Free &amp; Clear No liens</strong></span></div><div class="fin-grid"><div class="fin"><div class="lab">Asking</div><div class="val">$75</div></div><div class="fin"><div class="lab">ARV</div><div class="val">—</div></div><div class="fin"><div class="lab">70% MAO</div><div class="val">—</div></div><div class="fin"><div class="lab">Assign Fee</div><div class="val">—</div></div></div><div class="rating-row"><div><span class="label">Call</span><span class="rating warm">5/10</span></div><div class="summary">Jimmy Lee owns a vacant SFR at 2823 29th Place in Ensley/West Birmingham that has been unoccupied since before he purchased it in 2002. The property needs a new roof, windows, and a full interior rehab but seller believes there is no struct</div></div><div class="deal-meta"><strong>Motivation:</strong> Vacant Prop  Been vacant for 20 yrs now - when he bought - 2002 Originally bought it for his son to fix and move there but son decided not to move anymore<br><strong>Timeline:</strong> ASAP / Price<br><strong>Reason:</strong> Property has been vacant since purchase in 2002, original plan to renovate for son fell through when son got married.<br><strong>Repairs:</strong> New roof needed, windows, full interior rehab</div><div class="actions"><a class="btn primary" href="https://app.gohighlevel.com/v2/location/RCkiUmWqXX4BYQ39JXmm/contacts/detail/CP7U85hQcVe72jam8Iw1" target="_blank">Open in GHL</a><a class="btn secondary" href="https://docs.google.com/spreadsheets/d/12XTZhdq5aqbWEOULbzoMZ7KP0LqpT-mlf-b5iN2rEtI/edit?gid=0#gid=0" target="_blank">Rehab Report</a><a class="btn secondary" href="https://www.zillow.com/homes/2823 29TH PLACE ENSLEY-Birmingham-AL-35208-3745/" target="_blank">Zillow</a></div></div><div class="card stage-qualified" data-stage="1. Qualified" data-flags="" data-search="elisha ruiz 4103 unruh ave philadelphia pa philadelphia, pa, 19135 cash tired landlord money tied up in other projects and need to focus on completing those instead of this fixer-upper asap single family great warm 1. qualified"><div class="top"><div><div class="name">Elisha Ruiz</div><div class="addr">4103 UNRUH AVE</div><div class="place">philadelphia, PA, 19135</div></div><div class="stage-pill stage-qualified">1. Qualified</div></div><div class="pillrow"><span class="pill temp warm">🌡 Warm</span><span class="pill">⏱ Updated 26d ago</span><span class="pill">Cash</span></div><div class="specs"><span>Cond: <strong>great</strong></span></div><div class="fin-grid"><div class="fin"><div class="lab">Asking</div><div class="val">$33</div></div><div class="fin"><div class="lab">ARV</div><div class="val">—</div></div><div class="fin"><div class="lab">70% MAO</div><div class="val">—</div></div><div class="fin"><div class="lab">Assign Fee</div><div class="val">—</div></div></div><div class="rating-row"><div><span class="label">Call</span><span class="rating hot">4/10</span></div><div class="summary">Seller Alicia Reese has a property at 3322 Hope Street in Philadelphia that she describes as a serious fixer-upper. She and her team started demo work — removing ceilings to begin electrical — but ran out of bandwidth and money due to other</div></div><div class="deal-meta"><strong>Motivation:</strong> Tired landlord<br><strong>Timeline:</strong> ASAP<br><strong>Reason:</strong> Money tied up in other projects and need to focus on completing those instead of this fixer-upper<br><strong>Repairs:</strong> Electrical work started, ceiling removed, described as not in greatest shape and real fixer upper</div><div class="actions"><a class="btn primary" href="https://app.gohighlevel.com/v2/location/RCkiUmWqXX4BYQ39JXmm/contacts/detail/BEyFlzfEhra9M6DR085v" target="_blank">Open in GHL</a><a class="btn secondary" href="https://docs.google.com/document/d/1_JE05c7PwVgUBP3BhT0Utc_bJ7qQjDizTiQYEXdUIR0/edit" target="_blank">Rehab Report</a><a class="btn secondary" href="https://www.zillow.com/homes/4103 UNRUH AVE-Philadelphia-PA-19135-2526/" target="_blank">Zillow</a></div></div><div class="card stage-qualified" data-stage="1. Qualified" data-flags="" data-search="joseph schili 1370 oriental ave gloucester city nj gloucester city, nj, 8030        1. qualified"><div class="top"><div><div class="name">Joseph Schili</div><div class="addr">1370 Oriental Ave</div><div class="place">Gloucester City, NJ, 8030</div></div><div class="stage-pill stage-qualified">1. Qualified</div></div><div class="pillrow"><span class="pill">⏱ Updated 34d ago</span></div><div class="fin-grid"><div class="fin"><div class="lab">Asking</div><div class="val">—</div></div><div class="fin"><div class="lab">ARV</div><div class="val">—</div></div><div class="fin"><div class="lab">70% MAO</div><div class="val">—</div></div><div class="fin"><div class="lab">Assign Fee</div><div class="val">—</div></div></div><div class="rating-row"><div><span class="label">Call</span><span class="rating gray">—</span></div><div class="summary">No call analysis yet.</div></div><div class="actions"><a class="btn primary" href="https://app.gohighlevel.com/v2/location/RCkiUmWqXX4BYQ39JXmm/contacts/detail/gDqGEpnvgGJKDtpxtmK6" target="_blank">Open in GHL</a><span class="btn ghost">No rehab yet</span><a class="btn secondary" href="https://www.zillow.com/homes/1370-Oriental-Ave-Gloucester-City-NJ-8030_rb/" target="_blank">Zillow</a></div></div><div class="card stage-qualified" data-stage="1. Qualified" data-flags="" data-search="shen zhou 365 bromley pl east brunswick nj east brunswick, nj, 8816        1. qualified"><div class="top"><div><div class="name">Shen Zhou</div><div class="addr">365 Bromley Pl</div><div class="place">East Brunswick, NJ, 8816</div></div><div class="stage-pill stage-qualified">1. Qualified</div></div><div class="pillrow"><span class="pill">⏱ Updated 34d ago</span></div><div class="fin-grid"><div class="fin"><div class="lab">Asking</div><div class="val">—</div></div><div class="fin"><div class="lab">ARV</div><div class="val">—</div></div><div class="fin"><div class="lab">70% MAO</div><div class="val">—</div></div><div class="fin"><div class="lab">Assign Fee</div><div class="val">—</div></div></div><div class="rating-row"><div><span class="label">Call</span><span class="rating gray">—</span></div><div class="summary">No call analysis yet.</div></div><div class="actions"><a class="btn primary" href="https://app.gohighlevel.com/v2/location/RCkiUmWqXX4BYQ39JXmm/contacts/detail/ypqYMfpxNqcNUfUxsayg" target="_blank">Open in GHL</a><span class="btn ghost">No rehab yet</span><a class="btn secondary" href="https://www.zillow.com/homes/365-Bromley-Pl-East-Brunswick-NJ-8816_rb/" target="_blank">Zillow</a></div></div><div class="card stage-qualified" data-stage="1. Qualified" data-flags="" data-search="sergei karpovitch 920 n olden ave trenton nj trenton, nj, 08638        1. qualified"><div class="top"><div><div class="name">Sergei Karpovitch</div><div class="addr">920 N Olden Ave</div><div class="place">Trenton, NJ, 08638</div></div><div class="stage-pill stage-qualified">1. Qualified</div></div><div class="pillrow"><span class="pill">⏱ Updated 34d ago</span></div><div class="fin-grid"><div class="fin"><div class="lab">Asking</div><div class="val">—</div></div><div class="fin"><div class="lab">ARV</div><div class="val">—</div></div><div class="fin"><div class="lab">70% MAO</div><div class="val">—</div></div><div class="fin"><div class="lab">Assign Fee</div><div class="val">—</div></div></div><div class="rating-row"><div><span class="label">Call</span><span class="rating gray">—</span></div><div class="summary">No call analysis yet.</div></div><div class="actions"><a class="btn primary" href="https://app.gohighlevel.com/v2/location/RCkiUmWqXX4BYQ39JXmm/contacts/detail/chuULOY0q8H6AaKiYNwP" target="_blank">Open in GHL</a><span class="btn ghost">No rehab yet</span><a class="btn secondary" href="https://www.zillow.com/homes/920-N-Olden-Ave-Trenton-NJ-08638_rb/" target="_blank">Zillow</a></div></div><div class="card stage-qualified" data-stage="1. Qualified" data-flags="" data-search="william lindsey 41 westminster dr voorhees nj voorhees, nj, 8043        1. qualified"><div class="top"><div><div class="name">William Lindsey</div><div class="addr">41 Westminster Dr</div><div class="place">Voorhees, NJ, 8043</div></div><div class="stage-pill stage-qualified">1. Qualified</div></div><div class="pillrow"><span class="pill">⏱ Updated 34d ago</span></div><div class="fin-grid"><div class="fin"><div class="lab">Asking</div><div class="val">—</div></div><div class="fin"><div class="lab">ARV</div><div class="val">—</div></div><div class="fin"><div class="lab">70% MAO</div><div class="val">—</div></div><div class="fin"><div class="lab">Assign Fee</div><div class="val">—</div></div></div><div class="rating-row"><div><span class="label">Call</span><span class="rating gray">—</span></div><div class="summary">No call analysis yet.</div></div><div class="actions"><a class="btn primary" href="https://app.gohighlevel.com/v2/location/RCkiUmWqXX4BYQ39JXmm/contacts/detail/zEK0tsqCBpZz5pNDQXNU" target="_blank">Open in GHL</a><span class="btn ghost">No rehab yet</span><a class="btn secondary" href="https://www.zillow.com/homes/41-Westminster-Dr-Voorhees-NJ-8043_rb/" target="_blank">Zillow</a></div></div><div class="card stage-qualified" data-stage="1. Qualified" data-flags="" data-search="brian cavallucci 29 fox hollow dr cherry hill nj cherry hill, nj, 8003        1. qualified"><div class="top"><div><div class="name">Brian Cavallucci</div><div class="addr">29 Fox Hollow Dr</div><div class="place">Cherry Hill, NJ, 8003</div></div><div class="stage-pill stage-qualified">1. Qualified</div></div><div class="pillrow"><span class="pill">⏱ Updated 34d ago</span></div><div class="fin-grid"><div class="fin"><div class="lab">Asking</div><div class="val">—</div></div><div class="fin"><div class="lab">ARV</div><div class="val">—</div></div><div class="fin"><div class="lab">70% MAO</div><div class="val">—</div></div><div class="fin"><div class="lab">Assign Fee</div><div class="val">—</div></div></div><div class="rating-row"><div><span class="label">Call</span><span class="rating gray">—</span></div><div class="summary">No call analysis yet.</div></div><div class="actions"><a class="btn primary" href="https://app.gohighlevel.com/v2/location/RCkiUmWqXX4BYQ39JXmm/contacts/detail/ueIo6e4QtyElCLNMEDAz" target="_blank">Open in GHL</a><span class="btn ghost">No rehab yet</span><a class="btn secondary" href="https://www.zillow.com/homes/29-Fox-Hollow-Dr-Cherry-Hill-NJ-8003_rb/" target="_blank">Zillow</a></div></div><div class="card stage-qualified" data-stage="1. Qualified" data-flags="" data-search="bryan carestia 26 tamar ct lawrence township nj lawrence township, nj, 8648        1. qualified"><div class="top"><div><div class="name">Bryan Carestia</div><div class="addr">26 Tamar Ct</div><div class="place">Lawrence Township, NJ, 8648</div></div><div class="stage-pill stage-qualified">1. Qualified</div></div><div class="pillrow"><span class="pill">⏱ Updated 34d ago</span></div><div class="fin-grid"><div class="fin"><div class="lab">Asking</div><div class="val">—</div></div><div class="fin"><div class="lab">ARV</div><div class="val">—</div></div><div class="fin"><div class="lab">70% MAO</div><div class="val">—</div></div><div class="fin"><div class="lab">Assign Fee</div><div class="val">—</div></div></div><div class="rating-row"><div><span class="label">Call</span><span class="rating gray">—</span></div><div class="summary">No call analysis yet.</div></div><div class="actions"><a class="btn primary" href="https://app.gohighlevel.com/v2/location/RCkiUmWqXX4BYQ39JXmm/contacts/detail/zOgmMtqGqZHOC8pC4rY6" target="_blank">Open in GHL</a><span class="btn ghost">No rehab yet</span><a class="btn secondary" href="https://www.zillow.com/homes/26-Tamar-Ct-Lawrence-Township-NJ-8648_rb/" target="_blank">Zillow</a></div></div><div class="card stage-qualified" data-stage="1. Qualified" data-flags="" data-search="linda a 4611 schooner rd # 1 brigantine nj brigantine, nj, 08203        1. qualified"><div class="top"><div><div class="name">Linda A</div><div class="addr">4611 Schooner Rd # 1</div><div class="place">Brigantine, NJ, 08203</div></div><div class="stage-pill stage-qualified">1. Qualified</div></div><div class="pillrow"><span class="pill">⏱ Updated 34d ago</span></div><div class="fin-grid"><div class="fin"><div class="lab">Asking</div><div class="val">—</div></div><div class="fin"><div class="lab">ARV</div><div class="val">—</div></div><div class="fin"><div class="lab">70% MAO</div><div class="val">—</div></div><div class="fin"><div class="lab">Assign Fee</div><div class="val">—</div></div></div><div class="rating-row"><div><span class="label">Call</span><span class="rating gray">—</span></div><div class="summary">No call analysis yet.</div></div><div class="actions"><a class="btn primary" href="https://app.gohighlevel.com/v2/location/RCkiUmWqXX4BYQ39JXmm/contacts/detail/VGnv3yBtLmUzNCZJwIcj" target="_blank">Open in GHL</a><span class="btn ghost">No rehab yet</span><a class="btn secondary" href="https://www.zillow.com/homes/4611-Schooner-Rd--1-Brigantine-NJ-08203_rb/" target="_blank">Zillow</a></div></div><div class="card stage-qualified" data-stage="1. Qualified" data-flags="" data-search="steven dadura 1629 s delaware st paulsboro nj paulsboro, nj, 8066        1. qualified"><div class="top"><div><div class="name">Steven Dadura</div><div class="addr">1629 S Delaware St</div><div class="place">Paulsboro, NJ, 8066</div></div><div class="stage-pill stage-qualified">1. Qualified</div></div><div class="pillrow"><span class="pill">⏱ Updated 34d ago</span></div><div class="fin-grid"><div class="fin"><div class="lab">Asking</div><div class="val">—</div></div><div class="fin"><div class="lab">ARV</div><div class="val">—</div></div><div class="fin"><div class="lab">70% MAO</div><div class="val">—</div></div><div class="fin"><div class="lab">Assign Fee</div><div class="val">—</div></div></div><div class="rating-row"><div><span class="label">Call</span><span class="rating gray">—</span></div><div class="summary">No call analysis yet.</div></div><div class="actions"><a class="btn primary" href="https://app.gohighlevel.com/v2/location/RCkiUmWqXX4BYQ39JXmm/contacts/detail/w5vdgtrOfVh3JIRObgeZ" target="_blank">Open in GHL</a><span class="btn ghost">No rehab yet</span><a class="btn secondary" href="https://www.zillow.com/homes/1629-S-Delaware-St-Paulsboro-NJ-8066_rb/" target="_blank">Zillow</a></div></div><div class="card stage-qualified" data-stage="1. Qualified" data-flags="" data-search="weiran dobrek 5 paddock way mount holly nj mount holly, nj        1. qualified"><div class="top"><div><div class="name">Weiran Dobrek</div><div class="addr">5 Paddock Way</div><div class="place">Mount Holly, NJ</div></div><div class="stage-pill stage-qualified">1. Qualified</div></div><div class="pillrow"><span class="pill">⏱ Updated 34d ago</span></div><div class="fin-grid"><div class="fin"><div class="lab">Asking</div><div class="val">—</div></div><div class="fin"><div class="lab">ARV</div><div class="val">—</div></div><div class="fin"><div class="lab">70% MAO</div><div class="val">—</div></div><div class="fin"><div class="lab">Assign Fee</div><div class="val">—</div></div></div><div class="rating-row"><div><span class="label">Call</span><span class="rating gray">—</span></div><div class="summary">No call analysis yet.</div></div><div class="actions"><a class="btn primary" href="https://app.gohighlevel.com/v2/location/RCkiUmWqXX4BYQ39JXmm/contacts/detail/ENJxwA2hMvDZ2yDJsdOj" target="_blank">Open in GHL</a><span class="btn ghost">No rehab yet</span><a class="btn secondary" href="https://www.zillow.com/homes/5-Paddock-Way-Mount-Holly-NJ_rb/" target="_blank">Zillow</a></div></div><div class="card stage-qualified" data-stage="1. Qualified" data-flags="" data-search="sheila 2901 n 23rd st, philadelphia, pa 19132 philadelphia pa philadelphia, pa, 19132 hot lead do not need the store  asap multi family poor  1. qualified"><div class="top"><div><div class="name">Sheila</div><div class="addr">2901 N 23rd St, Philadelphia, PA 19132</div><div class="place">philadelphia, PA, 19132</div></div><div class="stage-pill stage-qualified">1. Qualified</div></div><div class="pillrow"><span class="pill">⏱ Updated 34d ago</span><span class="pill">Hot Lead</span></div><div class="specs"><span><strong>3</strong>bd / <strong>1</strong>ba</span><span><strong>1,000</strong> sqft</span><span>Cond: <strong>poor</strong></span></div><div class="fin-grid"><div class="fin"><div class="lab">Asking</div><div class="val">$50</div></div><div class="fin"><div class="lab">ARV</div><div class="val">—</div></div><div class="fin"><div class="lab">70% MAO</div><div class="val">—</div></div><div class="fin"><div class="lab">Assign Fee</div><div class="val">—</div></div></div><div class="rating-row"><div><span class="label">Call</span><span class="rating gray">—</span></div><div class="summary">No call analysis yet.</div></div><div class="deal-meta"><strong>Motivation:</strong> do not need the store<br><strong>Timeline:</strong> ASAP</div><div class="actions"><a class="btn primary" href="https://app.gohighlevel.com/v2/location/RCkiUmWqXX4BYQ39JXmm/contacts/detail/6nTZ7jgrfWho6SMEjIWl" target="_blank">Open in GHL</a><span class="btn ghost">No rehab yet</span><a class="btn secondary" href="https://www.zillow.com/homes/2901 N 23rd St, Philadelphia, PA 19132-Philadelphia-PA-19132/" target="_blank">Zillow</a></div></div><div class="card stage-qualified" data-stage="1. Qualified" data-flags="" data-search="jimmie brown 4114 8th ave birmingham al birmingham, al, 35224     single family   1. qualified"><div class="top"><div><div class="name">Jimmie Brown</div><div class="addr">4114 8th Ave</div><div class="place">Birmingham, AL, 35224</div></div><div class="stage-pill stage-qualified">1. Qualified</div></div><div class="pillrow"><span class="pill">⏱ Updated 34d ago</span></div><div class="specs"><span><strong>4</strong>bd / <strong>2</strong>ba</span><span><strong>1,993</strong> sqft</span></div><div class="fin-grid"><div class="fin"><div class="lab">Asking</div><div class="val">—</div></div><div class="fin"><div class="lab">ARV</div><div class="val">—</div></div><div class="fin"><div class="lab">70% MAO</div><div class="val">—</div></div><div class="fin"><div class="lab">Assign Fee</div><div class="val">—</div></div></div><div class="rating-row"><div><span class="label">Call</span><span class="rating gray">—</span></div><div class="summary">No call analysis yet.</div></div><div class="actions"><a class="btn primary" href="https://app.gohighlevel.com/v2/location/RCkiUmWqXX4BYQ39JXmm/contacts/detail/jjW5FuSXm3eePGjmw1HV" target="_blank">Open in GHL</a><span class="btn ghost">No rehab yet</span><a class="btn secondary" href="https://www.zillow.com/homes/4114 8th Ave-Birmingham-AL-35224/" target="_blank">Zillow</a></div></div><div class="card stage-qualified" data-stage="1. Qualified" data-flags="" data-search="keith e amiano 1097 state route 173 asbury, nj asbury,, nj, 08802  financial problems  middle of summer single family needs a lot of work  1. qualified"><div class="top"><div><div class="name">Keith E Amiano</div><div class="addr">1097 State Route 173</div><div class="place">Asbury,, NJ, 08802</div></div><div class="stage-pill stage-qualified">1. Qualified</div></div><div class="pillrow"><span class="pill">⏱ Updated 34d ago</span></div><div class="specs"><span><strong>2</strong>bd / <strong>1.5</strong>ba</span><span><strong>2,318</strong> sqft</span><span>Cond: <strong>Needs a lot of work</strong></span></div><div class="fin-grid"><div class="fin"><div class="lab">Asking</div><div class="val">—</div></div><div class="fin"><div class="lab">ARV</div><div class="val">—</div></div><div class="fin"><div class="lab">70% MAO</div><div class="val">—</div></div><div class="fin"><div class="lab">Assign Fee</div><div class="val">—</div></div></div><div class="rating-row"><div><span class="label">Call</span><span class="rating gray">—</span></div><div class="summary">No call analysis yet.</div></div><div class="deal-meta"><strong>Motivation:</strong> Financial problems<br><strong>Timeline:</strong> Middle of Summer</div><div class="actions"><a class="btn primary" href="https://app.gohighlevel.com/v2/location/RCkiUmWqXX4BYQ39JXmm/contacts/detail/PTWYAAmfnYjfbtP6hotl" target="_blank">Open in GHL</a><span class="btn ghost">No rehab yet</span><a class="btn secondary" href="https://www.zillow.com/homes/1097 STATE ROUTE 173-Asbury--08802-1126/" target="_blank">Zillow</a></div></div><div class="card stage-qualified" data-stage="1. Qualified" data-flags="" data-search="clarissa williams 5648 camden ave birmingham al birmingham, al, 35228  price  anytime single family currently rented out for $1700/month just renewed lease last month  1. qualified"><div class="top"><div><div class="name">Clarissa Williams</div><div class="addr">5648 CAMDEN AVE</div><div class="place">birmingham, AL, 35228</div></div><div class="stage-pill stage-qualified">1. Qualified</div></div><div class="pillrow"><span class="pill">⏱ Updated 32d ago</span></div><div class="specs"><span><strong>3</strong>bd / <strong>2.5</strong>ba</span><span><strong>1,990</strong> sqft</span><span>Cond: <strong>Currently rented out for $1700/month Just renewed lease last month</strong></span></div><div class="fin-grid"><div class="fin"><div class="lab">Asking</div><div class="val">—</div></div><div class="fin"><div class="lab">ARV</div><div class="val">—</div></div><div class="fin"><div class="lab">70% MAO</div><div class="val">—</div></div><div class="fin"><div class="lab">Assign Fee</div><div class="val">—</div></div></div><div class="rating-row"><div><span class="label">Call</span><span class="rating gray">—</span></div><div class="summary">No call analysis yet.</div></div><div class="deal-meta"><strong>Motivation:</strong> Price<br><strong>Timeline:</strong> Anytime</div><div class="actions"><a class="btn primary" href="https://app.gohighlevel.com/v2/location/RCkiUmWqXX4BYQ39JXmm/contacts/detail/oGPPwfqJPM7zPtnispql" target="_blank">Open in GHL</a><a class="btn secondary" href="https://docs.google.com/spreadsheets/d/12XTZhdq5aqbWEOULbzoMZ7KP0LqpT-mlf-b5iN2rEtI/edit?gid=0#gid=0" target="_blank">Rehab Report</a><a class="btn secondary" href="https://www.zillow.com/homes/5648 CAMDEN AVE-Birmingham--35228-3715/" target="_blank">Zillow</a></div></div><div class="card stage-qualified" data-stage="1. Qualified" data-flags="" data-search="demetrius singleton 309 17th ave sw birmingham al birmingham, al, 35211  just need to let somebody have the opportunity to use it.  4 months single family 5  1. qualified"><div class="top"><div><div class="name">Demetrius Singleton</div><div class="addr">309 17TH AVE SW</div><div class="place">birmingham, AL, 35211</div></div><div class="stage-pill stage-qualified">1. Qualified</div></div><div class="pillrow"><span class="pill">⏱ Updated 32d ago</span></div><div class="specs"><span><strong>3</strong>bd / <strong>1.5</strong>ba</span><span><strong>1,583</strong> sqft</span><span>Cond: <strong>5</strong></span></div><div class="fin-grid"><div class="fin"><div class="lab">Asking</div><div class="val">$10k</div></div><div class="fin"><div class="lab">ARV</div><div class="val">—</div></div><div class="fin"><div class="lab">70% MAO</div><div class="val">—</div></div><div class="fin"><div class="lab">Assign Fee</div><div class="val">—</div></div></div><div class="rating-row"><div><span class="label">Call</span><span class="rating gray">—</span></div><div class="summary">No call analysis yet.</div></div><div class="deal-meta"><strong>Motivation:</strong> Just need to let somebody have the opportunity to use it.<br><strong>Timeline:</strong> 4 months</div><div class="actions"><a class="btn primary" href="https://app.gohighlevel.com/v2/location/RCkiUmWqXX4BYQ39JXmm/contacts/detail/JJH6kQvqgdeLZBSl6Nei" target="_blank">Open in GHL</a><a class="btn secondary" href="https://docs.google.com/spreadsheets/d/12XTZhdq5aqbWEOULbzoMZ7KP0LqpT-mlf-b5iN2rEtI/edit?gid=0#gid=0" target="_blank">Rehab Report</a><a class="btn secondary" href="https://www.zillow.com/homes/309 17TH AVE SW-Birmingham--35211-3837/" target="_blank">Zillow</a></div></div><div class="card stage-qualified" data-stage="1. Qualified" data-flags="" data-search="eleanor 500 jackson road newport al newport, al, 60603  was contacted by jeff who expressed interest in purchasing the property  2 months    1. qualified"><div class="top"><div><div class="name">Eleanor</div><div class="addr">500 Jackson Road</div><div class="place">Newport, AL, 60603</div></div><div class="stage-pill stage-qualified">1. Qualified</div></div><div class="pillrow"><span class="pill">⏱ Updated 4d ago</span></div><div class="fin-grid"><div class="fin"><div class="lab">Asking</div><div class="val">$300k</div></div><div class="fin"><div class="lab">ARV</div><div class="val">—</div></div><div class="fin"><div class="lab">70% MAO</div><div class="val">—</div></div><div class="fin"><div class="lab">Assign Fee</div><div class="val">—</div></div></div><div class="rating-row"><div><span class="label">Call</span><span class="rating gray">—</span></div><div class="summary">The agent, Blake from Atom Property Group, contacted Eleanor (initially mistaken as Jeff) regarding her property at 500 Jackson Road, Newport, Alabama. Eleanor described it as a small house on 76 acres, seeking $300,000 with a two-month sel</div></div><div class="deal-meta"><strong>Motivation:</strong> Was contacted by Jeff who expressed interest in purchasing the property<br><strong>Timeline:</strong> 2 months</div><div class="actions"><a class="btn primary" href="https://app.gohighlevel.com/v2/location/RCkiUmWqXX4BYQ39JXmm/contacts/detail/cT0UGMAVCtDc40DnBjJY" target="_blank">Open in GHL</a><span class="btn ghost">No rehab yet</span><a class="btn secondary" href="https://www.zillow.com/homes/undefined-CHICAGO-IL-60603/" target="_blank">Zillow</a></div></div></div></section>
+  <section class="sec deals-section"><div class="tag-row"><span class="num">03</span><h2>7. Disposition <span class="count">(1)</span></h2></div><hr><div class="grid"><div class="card stage-dispo" data-stage="7. Disposition" data-flags="" data-search="doris / marlin smith 4704 9th ave birmingham al birmingham, al, 35224     single family   7. disposition"><div class="top"><div><div class="name">Doris / Marlin Smith</div><div class="addr">4704 9th Ave</div><div class="place">Birmingham, AL, 35224</div></div><div class="stage-pill stage-dispo">7. Disposition</div></div><div class="pillrow"><span class="pill">⏱ Updated 16d ago</span></div><div class="specs"><span><strong>3</strong>bd / <strong>1</strong>ba</span><span><strong>1,478</strong> sqft</span></div><div class="fin-grid"><div class="fin"><div class="lab">Asking</div><div class="val">—</div></div><div class="fin"><div class="lab">ARV</div><div class="val">—</div></div><div class="fin"><div class="lab">70% MAO</div><div class="val">—</div></div><div class="fin"><div class="lab">Assign Fee</div><div class="val positive">$2k</div></div></div><div class="rating-row"><div><span class="label">Call</span><span class="rating gray">—</span></div><div class="summary">No call analysis yet.</div></div><div class="actions"><a class="btn primary" href="https://app.gohighlevel.com/v2/location/RCkiUmWqXX4BYQ39JXmm/contacts/detail/M6MrvW4KPONnpozrZFg7" target="_blank">Open in GHL</a><span class="btn ghost">No rehab yet</span><a class="btn secondary" href="https://www.zillow.com/homes/4704 9th Ave-Birmingham-AL-35224/" target="_blank">Zillow</a></div></div></div></section><section class="sec deals-section"><div class="tag-row"><span class="num">04</span><h2>6. Executed PSA <span class="count">(1)</span></h2></div><hr><div class="grid"><div class="card stage-psa" data-stage="6. Executed PSA" data-flags="" data-search="gloria haygood 7903 5th ave n birmingham al birmingham, al, 35206     single family   6. executed psa"><div class="top"><div><div class="name">Gloria Haygood</div><div class="addr">7903 5th Ave N</div><div class="place">Birmingham, AL, 35206</div></div><div class="stage-pill stage-psa">6. Executed PSA</div></div><div class="pillrow"><span class="pill">⏱ Updated 42d ago</span></div><div class="specs"><span><strong>2</strong>bd / <strong>1</strong>ba</span><span><strong>652</strong> sqft</span></div><div class="fin-grid"><div class="fin"><div class="lab">Asking</div><div class="val">—</div></div><div class="fin"><div class="lab">ARV</div><div class="val">—</div></div><div class="fin"><div class="lab">70% MAO</div><div class="val">—</div></div><div class="fin"><div class="lab">Assign Fee</div><div class="val">—</div></div></div><div class="rating-row"><div><span class="label">Call</span><span class="rating gray">—</span></div><div class="summary">No call analysis yet.</div></div><div class="actions"><a class="btn primary" href="https://app.gohighlevel.com/v2/location/RCkiUmWqXX4BYQ39JXmm/contacts/detail/bBpmVHj93tbolt6Nm2Q3" target="_blank">Open in GHL</a><span class="btn ghost">No rehab yet</span><a class="btn secondary" href="https://www.zillow.com/homes/7903 5th Ave N-Birmingham-AL-35206/" target="_blank">Zillow</a></div></div></div></section><section class="sec deals-section"><div class="tag-row"><span class="num">05</span><h2>5. Contract Sent <span class="count">(2)</span></h2></div><hr><div class="grid"><div class="card stage-contract" data-stage="5. Contract Sent" data-flags="" data-search="carl mccall 48 edgemere ave trenton nj trenton, nj, 08618     multi family   5. contract sent"><div class="top"><div><div class="name">Carl Mccall</div><div class="addr">48 Edgemere Ave</div><div class="place">Trenton, NJ, 08618</div></div><div class="stage-pill stage-contract">5. Contract Sent</div></div><div class="pillrow"><span class="pill">⏱ Updated 42d ago</span></div><div class="specs"><span><strong>5</strong>bd / <strong>1</strong>ba</span><span><strong>1,125</strong> sqft</span></div><div class="fin-grid"><div class="fin"><div class="lab">Asking</div><div class="val">—</div></div><div class="fin"><div class="lab">ARV</div><div class="val">—</div></div><div class="fin"><div class="lab">70% MAO</div><div class="val">—</div></div><div class="fin"><div class="lab">Assign Fee</div><div class="val">—</div></div></div><div class="rating-row"><div><span class="label">Call</span><span class="rating gray">—</span></div><div class="summary">No call analysis yet.</div></div><div class="actions"><a class="btn primary" href="https://app.gohighlevel.com/v2/location/RCkiUmWqXX4BYQ39JXmm/contacts/detail/3iBnE7gHv0MUStEdNMY9" target="_blank">Open in GHL</a><span class="btn ghost">No rehab yet</span><a class="btn secondary" href="https://www.zillow.com/homes/48 Edgemere Ave-Trenton-NJ-08618/" target="_blank">Zillow</a></div></div><div class="card stage-contract" data-stage="5. Contract Sent" data-flags="" data-search="kahalil ameen 8039 7th ave s, birmingham, al birmingham,, al, 35204  house is ready to go - just looking to break even. had another project that&#x27;s abt done and a tree fell in it so he needed to do damage control  asap single family unfinished reno - only thing it needs:   havac sheet rock elec wiring some windows  5. contract sent"><div class="top"><div><div class="name">Kahalil Ameen</div><div class="addr">8039 7th Ave S,</div><div class="place">birmingham,, AL, 35204</div></div><div class="stage-pill stage-contract">5. Contract Sent</div></div><div class="pillrow"><span class="pill">⏱ Updated 42d ago</span></div><div class="specs"><span><strong>2</strong>bd / <strong>1</strong>ba</span><span><strong>881</strong> sqft</span><span>Cond: <strong>Unfinished Reno - Only thing it needs:   Havac Sheet rock Elec Wiring Some windows</strong></span></div><div class="fin-grid"><div class="fin"><div class="lab">Asking</div><div class="val">$2k</div></div><div class="fin"><div class="lab">ARV</div><div class="val">—</div></div><div class="fin"><div class="lab">70% MAO</div><div class="val">—</div></div><div class="fin"><div class="lab">Assign Fee</div><div class="val">—</div></div></div><div class="rating-row"><div><span class="label">Call</span><span class="rating gray">—</span></div><div class="summary">No call analysis yet.</div></div><div class="deal-meta"><strong>Motivation:</strong> House is ready to go - just looking to break even. Had another project that&#x27;s abt done and a tree fell in it so he needed to do damage control<br><strong>Timeline:</strong> ASAP</div><div class="actions"><a class="btn primary" href="https://app.gohighlevel.com/v2/location/RCkiUmWqXX4BYQ39JXmm/contacts/detail/JXl4pgVXzgIhDAFEk9OU" target="_blank">Open in GHL</a><a class="btn secondary" href="https://docs.google.com/document/d/1He1l5shmKf3nWDlUv2jCGt4AULOMMlTy1fmQ5tnr0hU/edit" target="_blank">Rehab Report</a><a class="btn secondary" href="https://www.zillow.com/homes/839 7th St W,-Birmingham,-AL-35204/" target="_blank">Zillow</a></div></div></div></section><section class="sec deals-section"><div class="tag-row"><span class="num">06</span><h2>4. MAO <span class="count">(5)</span></h2></div><hr><div class="grid"><div class="card stage-mao" data-stage="4. MAO" data-flags="has-arv" data-search="mike 445 cleveland rd, cleveland, oh cleveland,, oh, 44108 cash was going to either flip or rent it out but open to just selling it as is seller is an investor who started tearout/demo but is open to selling the property as-is instead of completing the flip. depending on the deal single family rehab prop - rr done warm 4. mao"><div class="top"><div><div class="name">Mike</div><div class="addr">445 Cleveland Rd,</div><div class="place">cleveland,, OH, 44108</div></div><div class="stage-pill stage-mao">4. MAO</div></div><div class="pillrow"><span class="pill temp warm">🌡 Warm</span><span class="pill">⏱ Updated 32d ago</span><span class="pill">Cash</span></div><div class="specs"><span><strong>2</strong>bd / <strong>1</strong>ba</span><span><strong>1,385</strong> sqft</span><span>Cond: <strong>Rehab Prop - RR Done</strong></span></div><div class="fin-grid"><div class="fin"><div class="lab">Asking</div><div class="val">$50k</div></div><div class="fin"><div class="lab">ARV</div><div class="val">$100k</div></div><div class="fin"><div class="lab">70% MAO</div><div class="val">$70k</div></div><div class="fin"><div class="lab">Assign Fee</div><div class="val">—</div></div></div><div class="rating-row"><div><span class="label">Call</span><span class="rating warm">6/10</span></div><div class="summary">Seller Mike owns a 2-bed/1.5-bath single family in Cleveland, OH with a basement and a 3-car garage. He has partially demoed the kitchen, bathroom, and floors but has not put materials back in yet. He is open to selling as-is at $50K. The f</div></div><div class="deal-meta"><strong>Motivation:</strong> Was going to either Flip or Rent it out But open to just selling it AS IS<br><strong>Timeline:</strong> Depending on the deal<br><strong>Reason:</strong> Seller is an investor who started tearout/demo but is open to selling the property as-is instead of completing the flip.<br><strong>Repairs:</strong> Bathroom and kitchen demo&#x27;d (fixtures removed), flooring torn up in living/dining rooms, roof needs replacement, 3-car garage has roof damage on one side, may need to replace a cou</div><div class="actions"><a class="btn primary" href="https://app.gohighlevel.com/v2/location/RCkiUmWqXX4BYQ39JXmm/contacts/detail/R8XlWCeQVLbG5v1YZLQb" target="_blank">Open in GHL</a><a class="btn secondary" href="https://docs.google.com/document/d/1wR54OgkkUTN0CTwgsawDTp6TA1BtQj-wYha8LqBS_jU/edit" target="_blank">Rehab Report</a><a class="btn secondary" href="https://www.zillow.com/homes/445 Cleveland Rd,-Cleveland,-OH-44108/" target="_blank">Zillow</a></div></div><div class="card stage-mao" data-stage="4. MAO" data-flags="has-arv" data-search="mark hall (referred by phil) 1819 w 6th st, chester, pa chester,, pa, 19013     single family   4. mao"><div class="top"><div><div class="name">Mark Hall (Referred by Phil)</div><div class="addr">1819 W 6th St,</div><div class="place">Chester,, PA, 19013</div></div><div class="stage-pill stage-mao">4. MAO</div></div><div class="pillrow"><span class="pill">⏱ Updated 40d ago</span></div><div class="specs"><span><strong>3</strong>bd / <strong>1</strong>ba</span><span><strong>1,274</strong> sqft</span></div><div class="fin-grid"><div class="fin"><div class="lab">Asking</div><div class="val">—</div></div><div class="fin"><div class="lab">ARV</div><div class="val">$139k</div></div><div class="fin"><div class="lab">70% MAO</div><div class="val">$97k</div></div><div class="fin"><div class="lab">Assign Fee</div><div class="val">—</div></div></div><div class="rating-row"><div><span class="label">Call</span><span class="rating gray">—</span></div><div class="summary">No call analysis yet.</div></div><div class="actions"><a class="btn primary" href="https://app.gohighlevel.com/v2/location/RCkiUmWqXX4BYQ39JXmm/contacts/detail/r1aNgfnxNWzNrsrRuRmz" target="_blank">Open in GHL</a><span class="btn ghost">No rehab yet</span><a class="btn secondary" href="https://www.zillow.com/homedetails/1819-W-6th-St-Chester-PA-19013/9469528_zpid/" target="_blank">Zillow</a></div></div><div class="card stage-mao" data-stage="4. MAO" data-flags="" data-search="beata szyffer-hopkins 1030 n olden ave trenton nj trenton, nj, 08638        4. mao"><div class="top"><div><div class="name">Beata Szyffer-Hopkins</div><div class="addr">1030 N Olden Ave</div><div class="place">Trenton, NJ, 08638</div></div><div class="stage-pill stage-mao">4. MAO</div></div><div class="pillrow"><span class="pill">⏱ Updated 39d ago</span></div><div class="fin-grid"><div class="fin"><div class="lab">Asking</div><div class="val">—</div></div><div class="fin"><div class="lab">ARV</div><div class="val">—</div></div><div class="fin"><div class="lab">70% MAO</div><div class="val">—</div></div><div class="fin"><div class="lab">Assign Fee</div><div class="val">—</div></div></div><div class="rating-row"><div><span class="label">Call</span><span class="rating gray">—</span></div><div class="summary">No call analysis yet.</div></div><div class="actions"><a class="btn primary" href="https://app.gohighlevel.com/v2/location/RCkiUmWqXX4BYQ39JXmm/contacts/detail/YRG8M0LqKqxqFcaKFUAz" target="_blank">Open in GHL</a><span class="btn ghost">No rehab yet</span><a class="btn secondary" href="https://www.zillow.com/homes/1030-N-Olden-Ave-Trenton-NJ-08638_rb/" target="_blank">Zillow</a></div></div><div class="card stage-mao" data-stage="4. MAO" data-flags="has-arv" data-search="john harrington 1211 jersey st birmingham al birmingham, al, 35224     townhouse   4. mao"><div class="top"><div><div class="name">John Harrington</div><div class="addr">1211 Jersey St</div><div class="place">Birmingham, AL, 35224</div></div><div class="stage-pill stage-mao">4. MAO</div></div><div class="pillrow"><span class="pill">⏱ Updated 20d ago</span></div><div class="specs"><span><strong>2</strong>bd / <strong>1</strong>ba</span><span><strong>1,256</strong> sqft</span></div><div class="fin-grid"><div class="fin"><div class="lab">Asking</div><div class="val">—</div></div><div class="fin"><div class="lab">ARV</div><div class="val">$78k</div></div><div class="fin"><div class="lab">70% MAO</div><div class="val">$55k</div></div><div class="fin"><div class="lab">Assign Fee</div><div class="val">—</div></div></div><div class="rating-row"><div><span class="label">Call</span><span class="rating gray">—</span></div><div class="summary">No call analysis yet.</div></div><div class="actions"><a class="btn primary" href="https://app.gohighlevel.com/v2/location/RCkiUmWqXX4BYQ39JXmm/contacts/detail/vJ5DvKKJTNCj3bQvwus8" target="_blank">Open in GHL</a><span class="btn ghost">No rehab yet</span><a class="btn secondary" href="https://www.zillow.com/homes/undefined---/" target="_blank">Zillow</a></div></div><div class="card stage-mao" data-stage="4. MAO" data-flags="" data-search="joshua jenner 35 benson st bloomfield nj bloomfield, nj, 07003        4. mao"><div class="top"><div><div class="name">Joshua Jenner</div><div class="addr">35 Benson St</div><div class="place">Bloomfield, NJ, 07003</div></div><div class="stage-pill stage-mao">4. MAO</div></div><div class="pillrow"><span class="pill">⏱ Updated 20d ago</span></div><div class="fin-grid"><div class="fin"><div class="lab">Asking</div><div class="val">—</div></div><div class="fin"><div class="lab">ARV</div><div class="val">—</div></div><div class="fin"><div class="lab">70% MAO</div><div class="val">—</div></div><div class="fin"><div class="lab">Assign Fee</div><div class="val">—</div></div></div><div class="rating-row"><div><span class="label">Call</span><span class="rating gray">—</span></div><div class="summary">No call analysis yet.</div></div><div class="actions"><a class="btn primary" href="https://app.gohighlevel.com/v2/location/RCkiUmWqXX4BYQ39JXmm/contacts/detail/y9aNOWrnzpniPXN5b6N0" target="_blank">Open in GHL</a><span class="btn ghost">No rehab yet</span><a class="btn secondary" href="https://www.zillow.com/homes/35 Benson St-Bloomfield-NJ-07003-2721/" target="_blank">Zillow</a></div></div></div></section><section class="sec deals-section"><div class="tag-row"><span class="num">07</span><h2>3. Due Diligence <span class="count">(7)</span></h2></div><hr><div class="grid"><div class="card stage-rr" data-stage="3. Due Diligence" data-flags="has-arv" data-search="mac hall 2903 taylor st detroit, mi detroit,, mi, 48206 cash sister passed away in nov. was going to live in it sister who was going to live in the property passed away in november, so seller decided to sell. dependent on price - soon single family currently started working on it down to the studs full rehab warm 3. due diligence"><div class="top"><div><div class="name">Mac Hall</div><div class="addr">2903 Taylor St</div><div class="place">detroit,, MI, 48206</div></div><div class="stage-pill stage-rr">3. Due Diligence</div></div><div class="pillrow"><span class="pill temp warm">🌡 Warm</span><span class="pill">⏱ Updated 32d ago</span><span class="pill">Cash</span></div><div class="specs"><span><strong>6</strong>bd / <strong>3</strong>ba</span><span><strong>3,060</strong> sqft</span><span>Cond: <strong>currently started working on it down to the studs full rehab</strong></span></div><div class="fin-grid"><div class="fin"><div class="lab">Asking</div><div class="val">$300</div></div><div class="fin"><div class="lab">ARV</div><div class="val">$300k</div></div><div class="fin"><div class="lab">70% MAO</div><div class="val">$210k</div></div><div class="fin"><div class="lab">Assign Fee</div><div class="val">—</div></div></div><div class="rating-row"><div><span class="label">Call</span><span class="rating warm">6/10</span></div><div class="summary">Mac Hall is selling a 2-family property in Detroit, MI (2903-2905 Taylor Street) that was originally intended for his late sister who passed in November. The property is a 3/2 up and 3/2 down duplex currently stripped to the studs and in ne</div></div><div class="deal-meta"><strong>Motivation:</strong> Sister passed away in Nov. Was going to live in it<br><strong>Timeline:</strong> Dependent on Price - Soon<br><strong>Reason:</strong> Sister who was going to live in the property passed away in November, so seller decided to sell.<br><strong>Repairs:</strong> Full rehab needed, property stripped down to studs</div><div class="actions"><a class="btn primary" href="https://app.gohighlevel.com/v2/location/RCkiUmWqXX4BYQ39JXmm/contacts/detail/2AhPd8UUQ8GirpYMXKTR" target="_blank">Open in GHL</a><a class="btn secondary" href="https://docs.google.com/document/d/19ZD5DBw7VdVF-1hfHKfHRJU2DROHpLZyZaj8EBr4Y6c/edit" target="_blank">Rehab Report</a><a class="btn secondary" href="https://www.zillow.com/homes/2903 Taylor St-Detroit,-MI-48206/" target="_blank">Zillow</a></div></div><div class="card stage-rr" data-stage="3. Due Diligence" data-flags="has-arv" data-search="anthony lamendola 56 valley rd lambertville nj lambertville, nj, 08530     single family   3. due diligence"><div class="top"><div><div class="name">Anthony Lamendola</div><div class="addr">56 Valley Rd</div><div class="place">Lambertville, NJ, 08530</div></div><div class="stage-pill stage-rr">3. Due Diligence</div></div><div class="pillrow"><span class="pill">⏱ Updated 40d ago</span></div><div class="specs"><span><strong>3</strong>bd / <strong>1.5</strong>ba</span><span><strong>1,957</strong> sqft</span></div><div class="fin-grid"><div class="fin"><div class="lab">Asking</div><div class="val">—</div></div><div class="fin"><div class="lab">ARV</div><div class="val">$724k</div></div><div class="fin"><div class="lab">70% MAO</div><div class="val">$507k</div></div><div class="fin"><div class="lab">Assign Fee</div><div class="val">—</div></div></div><div class="rating-row"><div><span class="label">Call</span><span class="rating gray">—</span></div><div class="summary">No call analysis yet.</div></div><div class="actions"><a class="btn primary" href="https://app.gohighlevel.com/v2/location/RCkiUmWqXX4BYQ39JXmm/contacts/detail/ax5OIEkHv0LaPrHazcwa" target="_blank">Open in GHL</a><span class="btn ghost">No rehab yet</span><a class="btn secondary" href="https://www.zillow.com/homes/56 Valley Rd-Lambertville-NJ-08530-2509/" target="_blank">Zillow</a></div></div><div class="card stage-rr" data-stage="3. Due Diligence" data-flags="has-arv" data-search="lisa rivera 107 deepwater cir manalapan nj manalapan, nj, 07726     townhouse   3. due diligence"><div class="top"><div><div class="name">Lisa Rivera</div><div class="addr">107 Deepwater Cir</div><div class="place">Manalapan, NJ, 07726</div></div><div class="stage-pill stage-rr">3. Due Diligence</div></div><div class="pillrow"><span class="pill">⏱ Updated 40d ago</span></div><div class="specs"><span><strong>4</strong>bd / <strong>3</strong>ba</span><span><strong>2,022</strong> sqft</span></div><div class="fin-grid"><div class="fin"><div class="lab">Asking</div><div class="val">—</div></div><div class="fin"><div class="lab">ARV</div><div class="val">$790k</div></div><div class="fin"><div class="lab">70% MAO</div><div class="val">$553k</div></div><div class="fin"><div class="lab">Assign Fee</div><div class="val">—</div></div></div><div class="rating-row"><div><span class="label">Call</span><span class="rating gray">—</span></div><div class="summary">No call analysis yet.</div></div><div class="actions"><a class="btn primary" href="https://app.gohighlevel.com/v2/location/RCkiUmWqXX4BYQ39JXmm/contacts/detail/HwzVbJm77wIGukgzkcYK" target="_blank">Open in GHL</a><span class="btn ghost">No rehab yet</span><a class="btn secondary" href="https://www.zillow.com/homes/107 Deepwater Cir-Manalapan-NJ-07726-4143/" target="_blank">Zillow</a></div></div><div class="card stage-rr" data-stage="3. Due Diligence" data-flags="" data-search="beata szyffer-hopkins 412 neadow woods lane lawrenceville nj lawrenceville, nj, 08648     condo   3. due diligence"><div class="top"><div><div class="name">Beata Szyffer-Hopkins</div><div class="addr">412 Neadow Woods lane</div><div class="place">Lawrenceville, NJ, 08648</div></div><div class="stage-pill stage-rr">3. Due Diligence</div></div><div class="pillrow"><span class="pill">⏱ Updated 40d ago</span></div><div class="specs"><span><strong>1</strong>bd / <strong>?</strong>ba</span><span><strong>800</strong> sqft</span></div><div class="fin-grid"><div class="fin"><div class="lab">Asking</div><div class="val">—</div></div><div class="fin"><div class="lab">ARV</div><div class="val">—</div></div><div class="fin"><div class="lab">70% MAO</div><div class="val">—</div></div><div class="fin"><div class="lab">Assign Fee</div><div class="val">—</div></div></div><div class="rating-row"><div><span class="label">Call</span><span class="rating gray">—</span></div><div class="summary">No call analysis yet.</div></div><div class="actions"><a class="btn primary" href="https://app.gohighlevel.com/v2/location/RCkiUmWqXX4BYQ39JXmm/contacts/detail/u5bThCERB26HstQfLQvT" target="_blank">Open in GHL</a><span class="btn ghost">No rehab yet</span><a class="btn secondary" href="https://www.zillow.com/homes/708 Meadow Woods Ln-Lawrence Township-NJ-8648/" target="_blank">Zillow</a></div></div><div class="card stage-rr" data-stage="3. Due Diligence" data-flags="has-arv" data-search="adam shun 167 prospect ave edison nj edison, nj, 8817     single family   3. due diligence"><div class="top"><div><div class="name">Adam Shun</div><div class="addr">167 Prospect Ave</div><div class="place">Edison, NJ, 8817</div></div><div class="stage-pill stage-rr">3. Due Diligence</div></div><div class="pillrow"><span class="pill">⏱ Updated 40d ago</span></div><div class="specs"><span><strong>3</strong>bd / <strong>3</strong>ba</span><span><strong>1,766</strong> sqft</span></div><div class="fin-grid"><div class="fin"><div class="lab">Asking</div><div class="val">—</div></div><div class="fin"><div class="lab">ARV</div><div class="val">$629k</div></div><div class="fin"><div class="lab">70% MAO</div><div class="val">$440k</div></div><div class="fin"><div class="lab">Assign Fee</div><div class="val">—</div></div></div><div class="rating-row"><div><span class="label">Call</span><span class="rating gray">—</span></div><div class="summary">No call analysis yet.</div></div><div class="actions"><a class="btn primary" href="https://app.gohighlevel.com/v2/location/RCkiUmWqXX4BYQ39JXmm/contacts/detail/2nXJnTTarijChve5NLky" target="_blank">Open in GHL</a><span class="btn ghost">No rehab yet</span><a class="btn secondary" href="https://www.zillow.com/homedetails/167-Prospect-Ave-Edison-NJ-08817/39064486_zpid/" target="_blank">Zillow</a></div></div><div class="card stage-rr" data-stage="3. Due Diligence" data-flags="" data-search="mary &amp; marisa kaneda 405 pearl st media pa media, pa, 19063        3. due diligence"><div class="top"><div><div class="name">Mary &amp; Marisa Kaneda</div><div class="addr">405 Pearl St</div><div class="place">Media, PA, 19063</div></div><div class="stage-pill stage-rr">3. Due Diligence</div></div><div class="pillrow"><span class="pill">⏱ Updated 38d ago</span></div><div class="fin-grid"><div class="fin"><div class="lab">Asking</div><div class="val">—</div></div><div class="fin"><div class="lab">ARV</div><div class="val">—</div></div><div class="fin"><div class="lab">70% MAO</div><div class="val">—</div></div><div class="fin"><div class="lab">Assign Fee</div><div class="val">—</div></div></div><div class="rating-row"><div><span class="label">Call</span><span class="rating gray">—</span></div><div class="summary">No call analysis yet.</div></div><div class="actions"><a class="btn primary" href="https://app.gohighlevel.com/v2/location/RCkiUmWqXX4BYQ39JXmm/contacts/detail/bYenvNJd0x9PrU61vgcS" target="_blank">Open in GHL</a><span class="btn ghost">No rehab yet</span><a class="btn secondary" href="https://www.zillow.com/homes/405 Pearl St-Media-PA-19063/" target="_blank">Zillow</a></div></div><div class="card stage-rr" data-stage="3. Due Diligence" data-flags="" data-search="evelyn carter-amuzu 158 lawnside ave collingswood nj collingswood, nj, 08108        3. due diligence"><div class="top"><div><div class="name">Evelyn Carter-Amuzu</div><div class="addr">158 Lawnside Ave</div><div class="place">Collingswood, NJ, 08108</div></div><div class="stage-pill stage-rr">3. Due Diligence</div></div><div class="pillrow"><span class="pill">⏱ Updated 20d ago</span></div><div class="fin-grid"><div class="fin"><div class="lab">Asking</div><div class="val">—</div></div><div class="fin"><div class="lab">ARV</div><div class="val">—</div></div><div class="fin"><div class="lab">70% MAO</div><div class="val">—</div></div><div class="fin"><div class="lab">Assign Fee</div><div class="val">—</div></div></div><div class="rating-row"><div><span class="label">Call</span><span class="rating gray">—</span></div><div class="summary">No call analysis yet.</div></div><div class="actions"><a class="btn primary" href="https://app.gohighlevel.com/v2/location/RCkiUmWqXX4BYQ39JXmm/contacts/detail/C4FEzZnAC11S8u7Ehwc5" target="_blank">Open in GHL</a><span class="btn ghost">No rehab yet</span><a class="btn secondary" href="https://www.zillow.com/homes/158-Lawnside-Ave-Collingswood-NJ-08108_rb/" target="_blank">Zillow</a></div></div></div></section><section class="sec deals-section"><div class="tag-row"><span class="num">08</span><h2>2. LAO <span class="count">(5)</span></h2></div><hr><div class="grid"><div class="card stage-lao" data-stage="2. LAO" data-flags="has-arv" data-search="justin / danielle offutt 5910 wilber ave parma, oh parma,, oh, 44129 cash price seller completed renovation and is looking to exit for cash after finishing the property. asap - dependent on price single family recently renovated warm 2. lao"><div class="top"><div><div class="name">Justin / Danielle Offutt</div><div class="addr">5910 WILBER AVE</div><div class="place">parma,, OH, 44129</div></div><div class="stage-pill stage-lao">2. LAO</div></div><div class="pillrow"><span class="pill temp warm">🌡 Warm</span><span class="pill">⏱ Updated 32d ago</span><span class="pill">Cash</span></div><div class="specs"><span><strong>3</strong>bd / <strong>1</strong>ba</span><span><strong>1,338</strong> sqft</span><span>Cond: <strong>Recently Renovated</strong></span></div><div class="fin-grid"><div class="fin"><div class="lab">Asking</div><div class="val">$225</div></div><div class="fin"><div class="lab">ARV</div><div class="val">$221k</div></div><div class="fin"><div class="lab">70% MAO</div><div class="val">$155k</div></div><div class="fin"><div class="lab">Assign Fee</div><div class="val">—</div></div></div><div class="rating-row"><div><span class="label">Call</span><span class="rating warm">5/10</span></div><div class="summary">Justin is selling a recently renovated, vacant single-family home at 5910 Wilbur Ave, Parma, OH 44129. The property is 3 bed/1.5 bath, 1,338 sqft with a fully finished basement. Renovation is largely complete — plumbing, electric, paint all</div></div><div class="deal-meta"><strong>Motivation:</strong> Price<br><strong>Timeline:</strong> ASAP - Dependent on Price<br><strong>Reason:</strong> Seller completed renovation and is looking to exit for cash after finishing the property.<br><strong>Repairs:</strong> Roof replacement needed (25 years old, no leaks)</div><div class="actions"><a class="btn primary" href="https://app.gohighlevel.com/v2/location/RCkiUmWqXX4BYQ39JXmm/contacts/detail/MRKLKAwnTqp3ACulHvs8" target="_blank">Open in GHL</a><a class="btn secondary" href="https://docs.google.com/document/d/12MR2SUMZ3a4GSHb9Fwnlp1JqJgrqEqYHwqGJlLjQJsk/edit" target="_blank">Rehab Report</a><a class="btn secondary" href="https://www.zillow.com/homes/5910 WILBER AVE-Parma,-OH-44129/" target="_blank">Zillow</a></div></div><div class="card stage-lao" data-stage="2. LAO" data-flags="" data-search="angela martin 608 alabama ave sw birmingham al birmingham, al, 35211     single family   2. lao"><div class="top"><div><div class="name">Angela Martin</div><div class="addr">608 Alabama Ave Sw</div><div class="place">Birmingham, AL, 35211</div></div><div class="stage-pill stage-lao">2. LAO</div></div><div class="pillrow"><span class="pill">⏱ Updated 40d ago</span></div><div class="specs"><span><strong>3</strong>bd / <strong>1</strong>ba</span><span><strong>1,296</strong> sqft</span></div><div class="fin-grid"><div class="fin"><div class="lab">Asking</div><div class="val">—</div></div><div class="fin"><div class="lab">ARV</div><div class="val">—</div></div><div class="fin"><div class="lab">70% MAO</div><div class="val">—</div></div><div class="fin"><div class="lab">Assign Fee</div><div class="val">—</div></div></div><div class="rating-row"><div><span class="label">Call</span><span class="rating gray">—</span></div><div class="summary">No call analysis yet.</div></div><div class="actions"><a class="btn primary" href="https://app.gohighlevel.com/v2/location/RCkiUmWqXX4BYQ39JXmm/contacts/detail/JTIy2kcrcqm7unlWZuV3" target="_blank">Open in GHL</a><span class="btn ghost">No rehab yet</span><a class="btn secondary" href="https://www.zillow.com/homes/608 Alabama Ave Sw-Birmingham-AL-35211/" target="_blank">Zillow</a></div></div><div class="card stage-lao" data-stage="2. LAO" data-flags="" data-search="carla ider clyde limited partnership 118 66th pl n birmingham al birmingham, al, 35206 warm lead she said she planned to renovate it but got no time and funds to execute it. been planning to sell it.  3 months single family property&#x27;s condition is terrible. pics online are up to date.  2. lao"><div class="top"><div><div class="name">Carla Ider Clyde Limited Partnership</div><div class="addr">118 66TH PL N</div><div class="place">birmingham, AL, 35206</div></div><div class="stage-pill stage-lao">2. LAO</div></div><div class="pillrow"><span class="pill">⏱ Updated 40d ago</span><span class="pill">Warm Lead</span></div><div class="specs"><span><strong>3</strong>bd / <strong>1</strong>ba</span><span><strong>1,458</strong> sqft</span><span>Cond: <strong>Property&#x27;s condition is terrible. Pics online are up to date.</strong></span></div><div class="fin-grid"><div class="fin"><div class="lab">Asking</div><div class="val">—</div></div><div class="fin"><div class="lab">ARV</div><div class="val">—</div></div><div class="fin"><div class="lab">70% MAO</div><div class="val">—</div></div><div class="fin"><div class="lab">Assign Fee</div><div class="val">—</div></div></div><div class="rating-row"><div><span class="label">Call</span><span class="rating gray">—</span></div><div class="summary">No call analysis yet.</div></div><div class="deal-meta"><strong>Motivation:</strong> she said she planned to renovate it but got no time and funds to execute it. Been planning to sell it.<br><strong>Timeline:</strong> 3 months</div><div class="actions"><a class="btn primary" href="https://app.gohighlevel.com/v2/location/RCkiUmWqXX4BYQ39JXmm/contacts/detail/FkTzwNw25rcaBUMP49cl" target="_blank">Open in GHL</a><a class="btn secondary" href="https://docs.google.com/spreadsheets/d/12XTZhdq5aqbWEOULbzoMZ7KP0LqpT-mlf-b5iN2rEtI/edit?gid=0#gid=0" target="_blank">Rehab Report</a><a class="btn secondary" href="https://www.zillow.com/homes/118 66TH PL N-Birmingham-AL-35206-5033/" target="_blank">Zillow</a></div></div><div class="card stage-lao" data-stage="2. LAO" data-flags="" data-search="marcus patterson 5900 court m birmingham al birmingham, al, 35228  because he got too many properties.  right now  na  2. lao"><div class="top"><div><div class="name">Marcus Patterson</div><div class="addr">5900 Court M</div><div class="place">birmingham, AL, 35228</div></div><div class="stage-pill stage-lao">2. LAO</div></div><div class="pillrow"><span class="pill">⏱ Updated 39d ago</span></div><div class="specs"><span><strong>3</strong>bd / <strong>1</strong>ba</span><span><strong>7,140</strong> sqft</span><span>Cond: <strong>NA</strong></span></div><div class="fin-grid"><div class="fin"><div class="lab">Asking</div><div class="val">$50k</div></div><div class="fin"><div class="lab">ARV</div><div class="val">—</div></div><div class="fin"><div class="lab">70% MAO</div><div class="val">—</div></div><div class="fin"><div class="lab">Assign Fee</div><div class="val">—</div></div></div><div class="rating-row"><div><span class="label">Call</span><span class="rating gray">—</span></div><div class="summary">No call analysis yet.</div></div><div class="deal-meta"><strong>Motivation:</strong> Because he got too many properties.<br><strong>Timeline:</strong> Right now</div><div class="actions"><a class="btn primary" href="https://app.gohighlevel.com/v2/location/RCkiUmWqXX4BYQ39JXmm/contacts/detail/CSLasrrF0X07ZO6GCNwL" target="_blank">Open in GHL</a><a class="btn secondary" href="https://docs.google.com/spreadsheets/d/12XTZhdq5aqbWEOULbzoMZ7KP0LqpT-mlf-b5iN2rEtI/edit?gid=0#gid=0" target="_blank">Rehab Report</a><a class="btn secondary" href="https://www.zillow.com/homes/5900 Court M-Birmingham--35228/" target="_blank">Zillow</a></div></div><div class="card stage-lao" data-stage="2. LAO" data-flags="" data-search="nandor standi 56 la france ave bloomfield nj bloomfield, nj, 07003        2. lao"><div class="top"><div><div class="name">Nandor Standi</div><div class="addr">56 La France Ave</div><div class="place">Bloomfield, NJ, 07003</div></div><div class="stage-pill stage-lao">2. LAO</div></div><div class="pillrow"><span class="pill">⏱ Updated 38d ago</span></div><div class="fin-grid"><div class="fin"><div class="lab">Asking</div><div class="val">—</div></div><div class="fin"><div class="lab">ARV</div><div class="val">—</div></div><div class="fin"><div class="lab">70% MAO</div><div class="val">—</div></div><div class="fin"><div class="lab">Assign Fee</div><div class="val">—</div></div></div><div class="rating-row"><div><span class="label">Call</span><span class="rating gray">—</span></div><div class="summary">No call analysis yet.</div></div><div class="actions"><a class="btn primary" href="https://app.gohighlevel.com/v2/location/RCkiUmWqXX4BYQ39JXmm/contacts/detail/bujYWSls1NQkChukYgAj" target="_blank">Open in GHL</a><span class="btn ghost">No rehab yet</span><a class="btn secondary" href="https://www.zillow.com/homes/56 La France Ave-Bloomfield-NJ-07003-5632/" target="_blank">Zillow</a></div></div></div></section><section class="sec deals-section"><div class="tag-row"><span class="num">09</span><h2>1. Qualified <span class="count">(19)</span></h2></div><hr><div class="grid"><div class="card stage-qualified" data-stage="1. Qualified" data-flags="" data-search="avin 305, 315 &amp; 319 roosevelt ave forestdale al forestdale, al, 35214 cash inherited land - not going to do anything w/ it inherited three land parcels through death and wants to sell to use money for other purchases like a car since he won&#x27;t develop them. as soon as we can make a deal land bare land warm 1. qualified"><div class="top"><div><div class="name">Avin</div><div class="addr">305, 315 &amp; 319 Roosevelt ave</div><div class="place">forestdale, AL, 35214</div></div><div class="stage-pill stage-qualified">1. Qualified</div></div><div class="pillrow"><span class="pill temp warm">🌡 Warm</span><span class="pill">⏱ Updated 32d ago</span><span class="pill">Cash</span></div><div class="specs"><span><strong>NA</strong>bd / <strong>NA</strong>ba</span><span>Cond: <strong>Bare Land</strong></span></div><div class="fin-grid"><div class="fin"><div class="lab">Asking</div><div class="val">$12k</div></div><div class="fin"><div class="lab">ARV</div><div class="val">—</div></div><div class="fin"><div class="lab">70% MAO</div><div class="val">—</div></div><div class="fin"><div class="lab">Assign Fee</div><div class="val">—</div></div></div><div class="rating-row"><div><span class="label">Call</span><span class="rating warm">5/10</span></div><div class="summary">Seller Ivan has three inherited vacant land parcels on Roosevelt Avenue in Forestdale, Birmingham (zip 35214) — two at 0.14 acres and one at 0.29 acres — all bare land with no utilities confirmed, overgrown with trees and brush, and no dire</div></div><div class="deal-meta"><strong>Motivation:</strong> Inherited land - not going to do anything w/ it<br><strong>Timeline:</strong> As soon as we can make a deal<br><strong>Reason:</strong> Inherited three land parcels through death and wants to sell to use money for other purchases like a car since he won&#x27;t develop them.</div><div class="actions"><a class="btn primary" href="https://app.gohighlevel.com/v2/location/RCkiUmWqXX4BYQ39JXmm/contacts/detail/IRPxKVo95Vpix5DlNyN9" target="_blank">Open in GHL</a><a class="btn secondary" href="https://docs.google.com/document/d/1DsYMwxrWd2Nqzpb4-e49NNjrh1oyQr2N5sb56UVsAPo/edit" target="_blank">Rehab Report</a><a class="btn secondary" href="https://www.zillow.com/homes/305, 315 &amp; 319 Roosevelt ave-Forestdale-AL-35214/" target="_blank">Zillow</a></div></div><div class="card stage-qualified" data-stage="1. Qualified" data-flags="has-arv" data-search="kris 58 morris ln,, nj 08854 piscataway nj piscataway, nj, 08854 cash moving out of the state moving to west trenton to be closer to sister 30 to 40 single family good warm 1. qualified"><div class="top"><div><div class="name">Kris</div><div class="addr">58 Morris Ln,, NJ 08854</div><div class="place">piscataway, NJ, 08854</div></div><div class="stage-pill stage-qualified">1. Qualified</div></div><div class="pillrow"><span class="pill temp warm">🌡 Warm</span><span class="pill">⏱ Updated 32d ago</span><span class="pill">Cash</span></div><div class="specs"><span><strong>3</strong>bd / <strong>3</strong>ba</span><span><strong>2,178</strong> sqft</span><span>Cond: <strong>Good</strong></span></div><div class="fin-grid"><div class="fin"><div class="lab">Asking</div><div class="val">$700</div></div><div class="fin"><div class="lab">ARV</div><div class="val">$679k</div></div><div class="fin"><div class="lab">70% MAO</div><div class="val">$475k</div></div><div class="fin"><div class="lab">Assign Fee</div><div class="val">—</div></div></div><div class="rating-row"><div><span class="label">Call</span><span class="rating warm">5/10</span></div><div class="summary">Seller Chris owns 58 Morris Lane, Piscataway, NJ — a 3BR/3BA single-family home, approximately 1,800 sqft on a half-acre lot with one-car garage and attic. Major mechanicals (roof, HVAC, hot water heater, AC, kitchen) are all roughly 5 year</div></div><div class="deal-meta"><strong>Motivation:</strong> Moving out of the state<br><strong>Timeline:</strong> 30 to 40<br><strong>Reason:</strong> Moving to West Trenton to be closer to sister<br><strong>Repairs:</strong> Cosmetic updates - painting and minor touch-ups planned but not required</div><div class="actions"><a class="btn primary" href="https://app.gohighlevel.com/v2/location/RCkiUmWqXX4BYQ39JXmm/contacts/detail/feVgr9ChZKFVGHQClO1j" target="_blank">Open in GHL</a><a class="btn secondary" href="https://docs.google.com/document/d/1qPSCJjX-7nJRgt_Ggmsed0S8BXhlKY0HV3VGnWt_HaE/edit" target="_blank">Rehab Report</a><a class="btn secondary" href="https://www.zillow.com/homes/58 Morris Ln,, NJ 08854-Piscataway-NJ-08854/" target="_blank">Zillow</a></div></div><div class="card stage-qualified" data-stage="1. Qualified" data-flags="" data-search="jimmie lee 2823 29th place ensley birmingham al birmingham, al, 35208 cash vacant prop  been vacant for 20 yrs now - when he bought - 2002 originally bought it for his son to fix and move there but son decided not to move anymore property has been vacant since purchase in 2002, original plan to renovate for son fell through when son got married. asap / price land needs a new roof redo the inside been vacant for 20 yrs free &amp; clear no liens warm 1. qualified"><div class="top"><div><div class="name">Jimmie Lee</div><div class="addr">2823 29TH PLACE ENSLEY</div><div class="place">birmingham, AL, 35208</div></div><div class="stage-pill stage-qualified">1. Qualified</div></div><div class="pillrow"><span class="pill temp warm">🌡 Warm</span><span class="pill">⏱ Updated 32d ago</span><span class="pill">Cash</span></div><div class="specs"><span><strong>3</strong>bd / <strong>2</strong>ba</span><span><strong>1,412</strong> sqft</span><span>Cond: <strong>Needs a new roof Redo the inside Been Vacant for 20 yrs Free &amp; Clear No liens</strong></span></div><div class="fin-grid"><div class="fin"><div class="lab">Asking</div><div class="val">$75</div></div><div class="fin"><div class="lab">ARV</div><div class="val">—</div></div><div class="fin"><div class="lab">70% MAO</div><div class="val">—</div></div><div class="fin"><div class="lab">Assign Fee</div><div class="val">—</div></div></div><div class="rating-row"><div><span class="label">Call</span><span class="rating warm">5/10</span></div><div class="summary">Jimmy Lee owns a vacant SFR at 2823 29th Place in Ensley/West Birmingham that has been unoccupied since before he purchased it in 2002. The property needs a new roof, windows, and a full interior rehab but seller believes there is no struct</div></div><div class="deal-meta"><strong>Motivation:</strong> Vacant Prop  Been vacant for 20 yrs now - when he bought - 2002 Originally bought it for his son to fix and move there but son decided not to move anymore<br><strong>Timeline:</strong> ASAP / Price<br><strong>Reason:</strong> Property has been vacant since purchase in 2002, original plan to renovate for son fell through when son got married.<br><strong>Repairs:</strong> New roof needed, windows, full interior rehab</div><div class="actions"><a class="btn primary" href="https://app.gohighlevel.com/v2/location/RCkiUmWqXX4BYQ39JXmm/contacts/detail/CP7U85hQcVe72jam8Iw1" target="_blank">Open in GHL</a><a class="btn secondary" href="https://docs.google.com/spreadsheets/d/12XTZhdq5aqbWEOULbzoMZ7KP0LqpT-mlf-b5iN2rEtI/edit?gid=0#gid=0" target="_blank">Rehab Report</a><a class="btn secondary" href="https://www.zillow.com/homes/2823 29TH PLACE ENSLEY-Birmingham-AL-35208-3745/" target="_blank">Zillow</a></div></div><div class="card stage-qualified" data-stage="1. Qualified" data-flags="" data-search="elisha ruiz 4103 unruh ave philadelphia pa philadelphia, pa, 19135 cash tired landlord money tied up in other projects and need to focus on completing those instead of this fixer-upper asap single family great warm 1. qualified"><div class="top"><div><div class="name">Elisha Ruiz</div><div class="addr">4103 UNRUH AVE</div><div class="place">philadelphia, PA, 19135</div></div><div class="stage-pill stage-qualified">1. Qualified</div></div><div class="pillrow"><span class="pill temp warm">🌡 Warm</span><span class="pill">⏱ Updated 32d ago</span><span class="pill">Cash</span></div><div class="specs"><span>Cond: <strong>great</strong></span></div><div class="fin-grid"><div class="fin"><div class="lab">Asking</div><div class="val">$33</div></div><div class="fin"><div class="lab">ARV</div><div class="val">—</div></div><div class="fin"><div class="lab">70% MAO</div><div class="val">—</div></div><div class="fin"><div class="lab">Assign Fee</div><div class="val">—</div></div></div><div class="rating-row"><div><span class="label">Call</span><span class="rating hot">4/10</span></div><div class="summary">Seller Alicia Reese has a property at 3322 Hope Street in Philadelphia that she describes as a serious fixer-upper. She and her team started demo work — removing ceilings to begin electrical — but ran out of bandwidth and money due to other</div></div><div class="deal-meta"><strong>Motivation:</strong> Tired landlord<br><strong>Timeline:</strong> ASAP<br><strong>Reason:</strong> Money tied up in other projects and need to focus on completing those instead of this fixer-upper<br><strong>Repairs:</strong> Electrical work started, ceiling removed, described as not in greatest shape and real fixer upper</div><div class="actions"><a class="btn primary" href="https://app.gohighlevel.com/v2/location/RCkiUmWqXX4BYQ39JXmm/contacts/detail/BEyFlzfEhra9M6DR085v" target="_blank">Open in GHL</a><a class="btn secondary" href="https://docs.google.com/document/d/1_JE05c7PwVgUBP3BhT0Utc_bJ7qQjDizTiQYEXdUIR0/edit" target="_blank">Rehab Report</a><a class="btn secondary" href="https://www.zillow.com/homes/4103 UNRUH AVE-Philadelphia-PA-19135-2526/" target="_blank">Zillow</a></div></div><div class="card stage-qualified" data-stage="1. Qualified" data-flags="" data-search="joseph schili 1370 oriental ave gloucester city nj gloucester city, nj, 8030        1. qualified"><div class="top"><div><div class="name">Joseph Schili</div><div class="addr">1370 Oriental Ave</div><div class="place">Gloucester City, NJ, 8030</div></div><div class="stage-pill stage-qualified">1. Qualified</div></div><div class="pillrow"><span class="pill">⏱ Updated 40d ago</span></div><div class="fin-grid"><div class="fin"><div class="lab">Asking</div><div class="val">—</div></div><div class="fin"><div class="lab">ARV</div><div class="val">—</div></div><div class="fin"><div class="lab">70% MAO</div><div class="val">—</div></div><div class="fin"><div class="lab">Assign Fee</div><div class="val">—</div></div></div><div class="rating-row"><div><span class="label">Call</span><span class="rating gray">—</span></div><div class="summary">No call analysis yet.</div></div><div class="actions"><a class="btn primary" href="https://app.gohighlevel.com/v2/location/RCkiUmWqXX4BYQ39JXmm/contacts/detail/gDqGEpnvgGJKDtpxtmK6" target="_blank">Open in GHL</a><span class="btn ghost">No rehab yet</span><a class="btn secondary" href="https://www.zillow.com/homes/1370-Oriental-Ave-Gloucester-City-NJ-8030_rb/" target="_blank">Zillow</a></div></div><div class="card stage-qualified" data-stage="1. Qualified" data-flags="" data-search="shen zhou 365 bromley pl east brunswick nj east brunswick, nj, 8816        1. qualified"><div class="top"><div><div class="name">Shen Zhou</div><div class="addr">365 Bromley Pl</div><div class="place">East Brunswick, NJ, 8816</div></div><div class="stage-pill stage-qualified">1. Qualified</div></div><div class="pillrow"><span class="pill">⏱ Updated 40d ago</span></div><div class="fin-grid"><div class="fin"><div class="lab">Asking</div><div class="val">—</div></div><div class="fin"><div class="lab">ARV</div><div class="val">—</div></div><div class="fin"><div class="lab">70% MAO</div><div class="val">—</div></div><div class="fin"><div class="lab">Assign Fee</div><div class="val">—</div></div></div><div class="rating-row"><div><span class="label">Call</span><span class="rating gray">—</span></div><div class="summary">No call analysis yet.</div></div><div class="actions"><a class="btn primary" href="https://app.gohighlevel.com/v2/location/RCkiUmWqXX4BYQ39JXmm/contacts/detail/ypqYMfpxNqcNUfUxsayg" target="_blank">Open in GHL</a><span class="btn ghost">No rehab yet</span><a class="btn secondary" href="https://www.zillow.com/homes/365-Bromley-Pl-East-Brunswick-NJ-8816_rb/" target="_blank">Zillow</a></div></div><div class="card stage-qualified" data-stage="1. Qualified" data-flags="" data-search="sergei karpovitch 920 n olden ave trenton nj trenton, nj, 08638        1. qualified"><div class="top"><div><div class="name">Sergei Karpovitch</div><div class="addr">920 N Olden Ave</div><div class="place">Trenton, NJ, 08638</div></div><div class="stage-pill stage-qualified">1. Qualified</div></div><div class="pillrow"><span class="pill">⏱ Updated 40d ago</span></div><div class="fin-grid"><div class="fin"><div class="lab">Asking</div><div class="val">—</div></div><div class="fin"><div class="lab">ARV</div><div class="val">—</div></div><div class="fin"><div class="lab">70% MAO</div><div class="val">—</div></div><div class="fin"><div class="lab">Assign Fee</div><div class="val">—</div></div></div><div class="rating-row"><div><span class="label">Call</span><span class="rating gray">—</span></div><div class="summary">No call analysis yet.</div></div><div class="actions"><a class="btn primary" href="https://app.gohighlevel.com/v2/location/RCkiUmWqXX4BYQ39JXmm/contacts/detail/chuULOY0q8H6AaKiYNwP" target="_blank">Open in GHL</a><span class="btn ghost">No rehab yet</span><a class="btn secondary" href="https://www.zillow.com/homes/920-N-Olden-Ave-Trenton-NJ-08638_rb/" target="_blank">Zillow</a></div></div><div class="card stage-qualified" data-stage="1. Qualified" data-flags="" data-search="william lindsey 41 westminster dr voorhees nj voorhees, nj, 8043        1. qualified"><div class="top"><div><div class="name">William Lindsey</div><div class="addr">41 Westminster Dr</div><div class="place">Voorhees, NJ, 8043</div></div><div class="stage-pill stage-qualified">1. Qualified</div></div><div class="pillrow"><span class="pill">⏱ Updated 40d ago</span></div><div class="fin-grid"><div class="fin"><div class="lab">Asking</div><div class="val">—</div></div><div class="fin"><div class="lab">ARV</div><div class="val">—</div></div><div class="fin"><div class="lab">70% MAO</div><div class="val">—</div></div><div class="fin"><div class="lab">Assign Fee</div><div class="val">—</div></div></div><div class="rating-row"><div><span class="label">Call</span><span class="rating gray">—</span></div><div class="summary">No call analysis yet.</div></div><div class="actions"><a class="btn primary" href="https://app.gohighlevel.com/v2/location/RCkiUmWqXX4BYQ39JXmm/contacts/detail/zEK0tsqCBpZz5pNDQXNU" target="_blank">Open in GHL</a><span class="btn ghost">No rehab yet</span><a class="btn secondary" href="https://www.zillow.com/homes/41-Westminster-Dr-Voorhees-NJ-8043_rb/" target="_blank">Zillow</a></div></div><div class="card stage-qualified" data-stage="1. Qualified" data-flags="" data-search="brian cavallucci 29 fox hollow dr cherry hill nj cherry hill, nj, 8003        1. qualified"><div class="top"><div><div class="name">Brian Cavallucci</div><div class="addr">29 Fox Hollow Dr</div><div class="place">Cherry Hill, NJ, 8003</div></div><div class="stage-pill stage-qualified">1. Qualified</div></div><div class="pillrow"><span class="pill">⏱ Updated 40d ago</span></div><div class="fin-grid"><div class="fin"><div class="lab">Asking</div><div class="val">—</div></div><div class="fin"><div class="lab">ARV</div><div class="val">—</div></div><div class="fin"><div class="lab">70% MAO</div><div class="val">—</div></div><div class="fin"><div class="lab">Assign Fee</div><div class="val">—</div></div></div><div class="rating-row"><div><span class="label">Call</span><span class="rating gray">—</span></div><div class="summary">No call analysis yet.</div></div><div class="actions"><a class="btn primary" href="https://app.gohighlevel.com/v2/location/RCkiUmWqXX4BYQ39JXmm/contacts/detail/ueIo6e4QtyElCLNMEDAz" target="_blank">Open in GHL</a><span class="btn ghost">No rehab yet</span><a class="btn secondary" href="https://www.zillow.com/homes/29-Fox-Hollow-Dr-Cherry-Hill-NJ-8003_rb/" target="_blank">Zillow</a></div></div><div class="card stage-qualified" data-stage="1. Qualified" data-flags="" data-search="bryan carestia 26 tamar ct lawrence township nj lawrence township, nj, 8648        1. qualified"><div class="top"><div><div class="name">Bryan Carestia</div><div class="addr">26 Tamar Ct</div><div class="place">Lawrence Township, NJ, 8648</div></div><div class="stage-pill stage-qualified">1. Qualified</div></div><div class="pillrow"><span class="pill">⏱ Updated 40d ago</span></div><div class="fin-grid"><div class="fin"><div class="lab">Asking</div><div class="val">—</div></div><div class="fin"><div class="lab">ARV</div><div class="val">—</div></div><div class="fin"><div class="lab">70% MAO</div><div class="val">—</div></div><div class="fin"><div class="lab">Assign Fee</div><div class="val">—</div></div></div><div class="rating-row"><div><span class="label">Call</span><span class="rating gray">—</span></div><div class="summary">No call analysis yet.</div></div><div class="actions"><a class="btn primary" href="https://app.gohighlevel.com/v2/location/RCkiUmWqXX4BYQ39JXmm/contacts/detail/zOgmMtqGqZHOC8pC4rY6" target="_blank">Open in GHL</a><span class="btn ghost">No rehab yet</span><a class="btn secondary" href="https://www.zillow.com/homes/26-Tamar-Ct-Lawrence-Township-NJ-8648_rb/" target="_blank">Zillow</a></div></div><div class="card stage-qualified" data-stage="1. Qualified" data-flags="" data-search="linda a 4611 schooner rd # 1 brigantine nj brigantine, nj, 08203        1. qualified"><div class="top"><div><div class="name">Linda A</div><div class="addr">4611 Schooner Rd # 1</div><div class="place">Brigantine, NJ, 08203</div></div><div class="stage-pill stage-qualified">1. Qualified</div></div><div class="pillrow"><span class="pill">⏱ Updated 40d ago</span></div><div class="fin-grid"><div class="fin"><div class="lab">Asking</div><div class="val">—</div></div><div class="fin"><div class="lab">ARV</div><div class="val">—</div></div><div class="fin"><div class="lab">70% MAO</div><div class="val">—</div></div><div class="fin"><div class="lab">Assign Fee</div><div class="val">—</div></div></div><div class="rating-row"><div><span class="label">Call</span><span class="rating gray">—</span></div><div class="summary">No call analysis yet.</div></div><div class="actions"><a class="btn primary" href="https://app.gohighlevel.com/v2/location/RCkiUmWqXX4BYQ39JXmm/contacts/detail/VGnv3yBtLmUzNCZJwIcj" target="_blank">Open in GHL</a><span class="btn ghost">No rehab yet</span><a class="btn secondary" href="https://www.zillow.com/homes/4611-Schooner-Rd--1-Brigantine-NJ-08203_rb/" target="_blank">Zillow</a></div></div><div class="card stage-qualified" data-stage="1. Qualified" data-flags="" data-search="steven dadura 1629 s delaware st paulsboro nj paulsboro, nj, 8066        1. qualified"><div class="top"><div><div class="name">Steven Dadura</div><div class="addr">1629 S Delaware St</div><div class="place">Paulsboro, NJ, 8066</div></div><div class="stage-pill stage-qualified">1. Qualified</div></div><div class="pillrow"><span class="pill">⏱ Updated 40d ago</span></div><div class="fin-grid"><div class="fin"><div class="lab">Asking</div><div class="val">—</div></div><div class="fin"><div class="lab">ARV</div><div class="val">—</div></div><div class="fin"><div class="lab">70% MAO</div><div class="val">—</div></div><div class="fin"><div class="lab">Assign Fee</div><div class="val">—</div></div></div><div class="rating-row"><div><span class="label">Call</span><span class="rating gray">—</span></div><div class="summary">No call analysis yet.</div></div><div class="actions"><a class="btn primary" href="https://app.gohighlevel.com/v2/location/RCkiUmWqXX4BYQ39JXmm/contacts/detail/w5vdgtrOfVh3JIRObgeZ" target="_blank">Open in GHL</a><span class="btn ghost">No rehab yet</span><a class="btn secondary" href="https://www.zillow.com/homes/1629-S-Delaware-St-Paulsboro-NJ-8066_rb/" target="_blank">Zillow</a></div></div><div class="card stage-qualified" data-stage="1. Qualified" data-flags="" data-search="weiran dobrek 5 paddock way mount holly nj mount holly, nj        1. qualified"><div class="top"><div><div class="name">Weiran Dobrek</div><div class="addr">5 Paddock Way</div><div class="place">Mount Holly, NJ</div></div><div class="stage-pill stage-qualified">1. Qualified</div></div><div class="pillrow"><span class="pill">⏱ Updated 40d ago</span></div><div class="fin-grid"><div class="fin"><div class="lab">Asking</div><div class="val">—</div></div><div class="fin"><div class="lab">ARV</div><div class="val">—</div></div><div class="fin"><div class="lab">70% MAO</div><div class="val">—</div></div><div class="fin"><div class="lab">Assign Fee</div><div class="val">—</div></div></div><div class="rating-row"><div><span class="label">Call</span><span class="rating gray">—</span></div><div class="summary">No call analysis yet.</div></div><div class="actions"><a class="btn primary" href="https://app.gohighlevel.com/v2/location/RCkiUmWqXX4BYQ39JXmm/contacts/detail/ENJxwA2hMvDZ2yDJsdOj" target="_blank">Open in GHL</a><span class="btn ghost">No rehab yet</span><a class="btn secondary" href="https://www.zillow.com/homes/5-Paddock-Way-Mount-Holly-NJ_rb/" target="_blank">Zillow</a></div></div><div class="card stage-qualified" data-stage="1. Qualified" data-flags="" data-search="sheila 2901 n 23rd st, philadelphia, pa 19132 philadelphia pa philadelphia, pa, 19132 hot lead do not need the store  asap multi family poor  1. qualified"><div class="top"><div><div class="name">Sheila</div><div class="addr">2901 N 23rd St, Philadelphia, PA 19132</div><div class="place">philadelphia, PA, 19132</div></div><div class="stage-pill stage-qualified">1. Qualified</div></div><div class="pillrow"><span class="pill">⏱ Updated 40d ago</span><span class="pill">Hot Lead</span></div><div class="specs"><span><strong>3</strong>bd / <strong>1</strong>ba</span><span><strong>1,000</strong> sqft</span><span>Cond: <strong>poor</strong></span></div><div class="fin-grid"><div class="fin"><div class="lab">Asking</div><div class="val">$50</div></div><div class="fin"><div class="lab">ARV</div><div class="val">—</div></div><div class="fin"><div class="lab">70% MAO</div><div class="val">—</div></div><div class="fin"><div class="lab">Assign Fee</div><div class="val">—</div></div></div><div class="rating-row"><div><span class="label">Call</span><span class="rating gray">—</span></div><div class="summary">No call analysis yet.</div></div><div class="deal-meta"><strong>Motivation:</strong> do not need the store<br><strong>Timeline:</strong> ASAP</div><div class="actions"><a class="btn primary" href="https://app.gohighlevel.com/v2/location/RCkiUmWqXX4BYQ39JXmm/contacts/detail/6nTZ7jgrfWho6SMEjIWl" target="_blank">Open in GHL</a><span class="btn ghost">No rehab yet</span><a class="btn secondary" href="https://www.zillow.com/homes/2901 N 23rd St, Philadelphia, PA 19132-Philadelphia-PA-19132/" target="_blank">Zillow</a></div></div><div class="card stage-qualified" data-stage="1. Qualified" data-flags="" data-search="jimmie brown 4114 8th ave birmingham al birmingham, al, 35224     single family   1. qualified"><div class="top"><div><div class="name">Jimmie Brown</div><div class="addr">4114 8th Ave</div><div class="place">Birmingham, AL, 35224</div></div><div class="stage-pill stage-qualified">1. Qualified</div></div><div class="pillrow"><span class="pill">⏱ Updated 40d ago</span></div><div class="specs"><span><strong>4</strong>bd / <strong>2</strong>ba</span><span><strong>1,993</strong> sqft</span></div><div class="fin-grid"><div class="fin"><div class="lab">Asking</div><div class="val">—</div></div><div class="fin"><div class="lab">ARV</div><div class="val">—</div></div><div class="fin"><div class="lab">70% MAO</div><div class="val">—</div></div><div class="fin"><div class="lab">Assign Fee</div><div class="val">—</div></div></div><div class="rating-row"><div><span class="label">Call</span><span class="rating gray">—</span></div><div class="summary">No call analysis yet.</div></div><div class="actions"><a class="btn primary" href="https://app.gohighlevel.com/v2/location/RCkiUmWqXX4BYQ39JXmm/contacts/detail/jjW5FuSXm3eePGjmw1HV" target="_blank">Open in GHL</a><span class="btn ghost">No rehab yet</span><a class="btn secondary" href="https://www.zillow.com/homes/4114 8th Ave-Birmingham-AL-35224/" target="_blank">Zillow</a></div></div><div class="card stage-qualified" data-stage="1. Qualified" data-flags="" data-search="keith e amiano 1097 state route 173 asbury, nj asbury,, nj, 08802  financial problems  middle of summer single family needs a lot of work  1. qualified"><div class="top"><div><div class="name">Keith E Amiano</div><div class="addr">1097 State Route 173</div><div class="place">Asbury,, NJ, 08802</div></div><div class="stage-pill stage-qualified">1. Qualified</div></div><div class="pillrow"><span class="pill">⏱ Updated 40d ago</span></div><div class="specs"><span><strong>2</strong>bd / <strong>1.5</strong>ba</span><span><strong>2,318</strong> sqft</span><span>Cond: <strong>Needs a lot of work</strong></span></div><div class="fin-grid"><div class="fin"><div class="lab">Asking</div><div class="val">—</div></div><div class="fin"><div class="lab">ARV</div><div class="val">—</div></div><div class="fin"><div class="lab">70% MAO</div><div class="val">—</div></div><div class="fin"><div class="lab">Assign Fee</div><div class="val">—</div></div></div><div class="rating-row"><div><span class="label">Call</span><span class="rating gray">—</span></div><div class="summary">No call analysis yet.</div></div><div class="deal-meta"><strong>Motivation:</strong> Financial problems<br><strong>Timeline:</strong> Middle of Summer</div><div class="actions"><a class="btn primary" href="https://app.gohighlevel.com/v2/location/RCkiUmWqXX4BYQ39JXmm/contacts/detail/PTWYAAmfnYjfbtP6hotl" target="_blank">Open in GHL</a><span class="btn ghost">No rehab yet</span><a class="btn secondary" href="https://www.zillow.com/homes/1097 STATE ROUTE 173-Asbury--08802-1126/" target="_blank">Zillow</a></div></div><div class="card stage-qualified" data-stage="1. Qualified" data-flags="" data-search="clarissa williams 5648 camden ave birmingham al birmingham, al, 35228  price  anytime single family currently rented out for $1700/month just renewed lease last month  1. qualified"><div class="top"><div><div class="name">Clarissa Williams</div><div class="addr">5648 CAMDEN AVE</div><div class="place">birmingham, AL, 35228</div></div><div class="stage-pill stage-qualified">1. Qualified</div></div><div class="pillrow"><span class="pill">⏱ Updated 38d ago</span></div><div class="specs"><span><strong>3</strong>bd / <strong>2.5</strong>ba</span><span><strong>1,990</strong> sqft</span><span>Cond: <strong>Currently rented out for $1700/month Just renewed lease last month</strong></span></div><div class="fin-grid"><div class="fin"><div class="lab">Asking</div><div class="val">—</div></div><div class="fin"><div class="lab">ARV</div><div class="val">—</div></div><div class="fin"><div class="lab">70% MAO</div><div class="val">—</div></div><div class="fin"><div class="lab">Assign Fee</div><div class="val">—</div></div></div><div class="rating-row"><div><span class="label">Call</span><span class="rating gray">—</span></div><div class="summary">No call analysis yet.</div></div><div class="deal-meta"><strong>Motivation:</strong> Price<br><strong>Timeline:</strong> Anytime</div><div class="actions"><a class="btn primary" href="https://app.gohighlevel.com/v2/location/RCkiUmWqXX4BYQ39JXmm/contacts/detail/oGPPwfqJPM7zPtnispql" target="_blank">Open in GHL</a><a class="btn secondary" href="https://docs.google.com/spreadsheets/d/12XTZhdq5aqbWEOULbzoMZ7KP0LqpT-mlf-b5iN2rEtI/edit?gid=0#gid=0" target="_blank">Rehab Report</a><a class="btn secondary" href="https://www.zillow.com/homes/5648 CAMDEN AVE-Birmingham--35228-3715/" target="_blank">Zillow</a></div></div><div class="card stage-qualified" data-stage="1. Qualified" data-flags="" data-search="demetrius singleton 309 17th ave sw birmingham al birmingham, al, 35211  just need to let somebody have the opportunity to use it.  4 months single family 5  1. qualified"><div class="top"><div><div class="name">Demetrius Singleton</div><div class="addr">309 17TH AVE SW</div><div class="place">birmingham, AL, 35211</div></div><div class="stage-pill stage-qualified">1. Qualified</div></div><div class="pillrow"><span class="pill">⏱ Updated 38d ago</span></div><div class="specs"><span><strong>3</strong>bd / <strong>1.5</strong>ba</span><span><strong>1,583</strong> sqft</span><span>Cond: <strong>5</strong></span></div><div class="fin-grid"><div class="fin"><div class="lab">Asking</div><div class="val">$10k</div></div><div class="fin"><div class="lab">ARV</div><div class="val">—</div></div><div class="fin"><div class="lab">70% MAO</div><div class="val">—</div></div><div class="fin"><div class="lab">Assign Fee</div><div class="val">—</div></div></div><div class="rating-row"><div><span class="label">Call</span><span class="rating gray">—</span></div><div class="summary">No call analysis yet.</div></div><div class="deal-meta"><strong>Motivation:</strong> Just need to let somebody have the opportunity to use it.<br><strong>Timeline:</strong> 4 months</div><div class="actions"><a class="btn primary" href="https://app.gohighlevel.com/v2/location/RCkiUmWqXX4BYQ39JXmm/contacts/detail/JJH6kQvqgdeLZBSl6Nei" target="_blank">Open in GHL</a><a class="btn secondary" href="https://docs.google.com/spreadsheets/d/12XTZhdq5aqbWEOULbzoMZ7KP0LqpT-mlf-b5iN2rEtI/edit?gid=0#gid=0" target="_blank">Rehab Report</a><a class="btn secondary" href="https://www.zillow.com/homes/309 17TH AVE SW-Birmingham--35211-3837/" target="_blank">Zillow</a></div></div><div class="card stage-qualified" data-stage="1. Qualified" data-flags="" data-search="eleanor 500 jackson road newport al newport, al, 60603  was contacted by jeff who expressed interest in purchasing the property  2 months    1. qualified"><div class="top"><div><div class="name">Eleanor</div><div class="addr">500 Jackson Road</div><div class="place">Newport, AL, 60603</div></div><div class="stage-pill stage-qualified">1. Qualified</div></div><div class="pillrow"><span class="pill">⏱ Updated 11d ago</span></div><div class="fin-grid"><div class="fin"><div class="lab">Asking</div><div class="val">$300k</div></div><div class="fin"><div class="lab">ARV</div><div class="val">—</div></div><div class="fin"><div class="lab">70% MAO</div><div class="val">—</div></div><div class="fin"><div class="lab">Assign Fee</div><div class="val">—</div></div></div><div class="rating-row"><div><span class="label">Call</span><span class="rating gray">—</span></div><div class="summary">The agent, Blake from Atom Property Group, contacted Eleanor (initially mistaken as Jeff) regarding her property at 500 Jackson Road, Newport, Alabama. Eleanor described it as a small house on 76 acres, seeking $300,000 with a two-month sel</div></div><div class="deal-meta"><strong>Motivation:</strong> Was contacted by Jeff who expressed interest in purchasing the property<br><strong>Timeline:</strong> 2 months</div><div class="actions"><a class="btn primary" href="https://app.gohighlevel.com/v2/location/RCkiUmWqXX4BYQ39JXmm/contacts/detail/cT0UGMAVCtDc40DnBjJY" target="_blank">Open in GHL</a><span class="btn ghost">No rehab yet</span><a class="btn secondary" href="https://www.zillow.com/homes/undefined-CHICAGO-IL-60603/" target="_blank">Zillow</a></div></div></div></section>
 
   <footer>Auto-refreshed every 30 minutes by the GitHub Actions cron · APG ACQ Operating Layer</footer>
 </div>
@@ -3754,7 +3814,7 @@ window.runEntranceAnimations = runEntranceAnimations;  // expose for re-render
 <meta name="theme-color" content="#1A2840">
 <script>
   if (location.hostname === "atominvestments.github.io") {
-    location.replace("https://acq-automation.mithchell.workers.dev/login");
+    location.replace("https://apg-dashboard.mithchell.workers.dev/login");
   }
 </script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
@@ -4119,6 +4179,14 @@ section h2, h2 {
 }
 
 </style>
+<!-- Microsoft Clarity (heatmaps + session recordings) -->
+<script type="text/javascript">
+(function(c,l,a,r,i,t,y){
+  c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+  t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+  y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+})(window,document,"clarity","script","wwbe84z9my"); // TODO: replace wwbe84z9my with real project id from clarity.microsoft.com
+</script>
 </head>
 <body>
 <div class="container">
@@ -4126,35 +4194,37 @@ section h2, h2 {
   <header class="masthead">
     <div class="brandrow">
       <span class="brand">Atom Property Group · ACQ Operations</span>
-      <span>Last updated Jun 03, 2026 12:04 PM ET</span>
+      <span>Last updated Jun 09, 2026 05:02 PM ET</span>
     </div>
     <h1>SMS <span class="accent">Follow-Ups.</span></h1>
     <p class="dek">Action queue for Jeff and Mike — replies to call back, leads gone dormant, and everything still cycling through the SMS sequence.</p>
   </header>
 
   <nav class="topnav">
-    <a href="index.html" class="active">Follow-Ups</a>
+    <a href="/">Desk</a>
+    <a href="blake.html">Blake</a>
+    <a href="progress.html">Tracker</a>
+    <a href="projects.html">Roadmap</a>
+    <a href="index.html" class="active">Follow-ups</a>
     <a href="deals.html">Deals</a>
-    <a href="weekly.html">Weekly</a>
+    <a href="weekly.html">Docket</a>
     <a href="priorities.html">Priority</a>
     <a href="markets.html">Markets</a>
-    <a href="blake.html">Blake</a>
-    <a href="progress.html">Progress</a>
-    <a href="ai-agents-plan.html">AI Agents Plan</a>
-    <a href="about.html">About</a>
+    <a href="/insights">Insights</a>
+    <a href="sms-test.html">SMS Test</a>
   </nav>
 
-  <details class="run-grid-collapsed"><summary>All 6 cron jobs OK on last run — click for timestamps</summary><div class="run-grid"><div class="run-row"><span class="tag green">OK</span><span class="run-name">ACQ Call Recording Automation</span><span class="run-ts">Jun 03, 11:56 AM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">ACQ SMS Follow-Up + Dashboard</span><span class="run-ts">Jun 02, 06:15 PM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">APG Slack Scraper</span><span class="run-ts">Jun 02, 06:07 PM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">Market Analysis Refresh</span><span class="run-ts">May 31, 10:58 AM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">dashboard (script)</span><span class="run-ts">Jun 03, 12:04 PM</span><span class="run-detail">dashboard updated</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">sms (script)</span><span class="run-ts">Jun 03, 12:03 PM</span><span class="run-detail">{&quot;wait&quot;: 18, &quot;skipped-tag-prebail&quot;: 55, &quot;skipped&quot;: 5, &quot;no-phone&quot;: 1}</span></div></div></details><div class="status-banner on"><div class="status-text"><span class="pulse"></span>SMS Automation: <span style="color:var(--green);font-weight:800">ACTIVE</span></div><a class="btn btn-kill" href="https://docs.google.com/spreadsheets/d/1wc3Pt46ze-ejLaryL8WIRQf4OjEkirolc4-O8lsRQZY/edit#gid=0" target="_blank">EMERGENCY KILL SWITCH</a></div>
+  <details class="run-grid-collapsed"><summary>All 6 cron jobs OK on last run — click for timestamps</summary><div class="run-grid"><div class="run-row"><span class="tag green">OK</span><span class="run-name">ACQ Call Recording Automation</span><span class="run-ts">Jun 09, 02:29 PM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">ACQ SMS Follow-Up + Dashboard</span><span class="run-ts">Jun 09, 02:34 PM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">APG Slack Scraper</span><span class="run-ts">Jun 09, 02:34 PM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">Market Analysis Refresh</span><span class="run-ts">Jun 07, 11:12 AM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">dashboard (script)</span><span class="run-ts">Jun 09, 05:02 PM</span><span class="run-detail">dashboard updated</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">sms (script)</span><span class="run-ts">Jun 09, 05:02 PM</span><span class="run-detail">{&quot;skipped-tag-prebail&quot;: 57, &quot;skipped&quot;: 5, &quot;wait&quot;: 15, &quot;no-phone&quot;: 1}</span></div></div></details><div class="status-banner on"><div class="status-text"><span class="pulse"></span>SMS Automation: <span style="color:var(--green);font-weight:800">ACTIVE</span></div><a class="btn btn-kill" href="https://docs.google.com/spreadsheets/d/1wc3Pt46ze-ejLaryL8WIRQf4OjEkirolc4-O8lsRQZY/edit#gid=0" target="_blank">EMERGENCY KILL SWITCH</a></div>
 
   <section class="sec">
     <div class="tag-row"><span class="num">01</span><h2>At a Glance</h2></div>
     <hr>
     <div class="stat-row">
-      <div class="stat"><div class="lab">Total Leads</div><div class="v">79</div><div class="sub">across all stages</div></div>
-      <div class="stat"><div class="lab">In Sequence</div><div class="v">19</div><div class="sub">SMS scheduled</div></div>
-      <div class="stat hot"><div class="lab">Replied — Call Now</div><div class="v">55</div><div class="sub">Jeff has tasks</div></div>
+      <div class="stat"><div class="lab">Total Leads</div><div class="v">78</div><div class="sub">across all stages</div></div>
+      <div class="stat"><div class="lab">In Sequence</div><div class="v">16</div><div class="sub">SMS scheduled</div></div>
+      <div class="stat hot"><div class="lab">Replied — Call Now</div><div class="v">57</div><div class="sub">Jeff has tasks</div></div>
       <div class="stat warm"><div class="lab">Dormant — Manual Call</div><div class="v">0</div><div class="sub">no reply after sequence</div></div>
-      <div class="stat green"><div class="lab">Reply Rate</div><div class="v">74.3%</div><div class="sub">replied / total touched</div></div>
+      <div class="stat green"><div class="lab">Reply Rate</div><div class="v">78.1%</div><div class="sub">replied / total touched</div></div>
     </div>
   </section>
 
@@ -4174,7 +4244,8 @@ section h2, h2 {
   <section class="sec">
     <div class="tag-row"><span class="num">03</span><h2><span class="dot hot"></span>Replied — Action Needed</h2></div>
     <hr>
-    <div class="lead-table"><table><thead><tr><th>Contact</th><th>Address</th><th>Stage</th><th>Replied</th><th>Last Number</th></tr></thead><tbody><tr><td><strong>Joseph Schili</strong></td><td>1370 Oriental Ave</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot"></span></td><td>Jeff (NJ)</td></tr>
+    <div class="lead-table"><table><thead><tr><th>Contact</th><th>Address</th><th>Stage</th><th>Replied</th><th>Last Number</th></tr></thead><tbody><tr><td><strong>Eleanor</strong></td><td>500 Jackson Road</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot">Jun 04, 08:01 PM</span></td><td>AL Market</td></tr>
+<tr><td><strong>Joseph Schili</strong></td><td>1370 Oriental Ave</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot"></span></td><td>Jeff (NJ)</td></tr>
 <tr><td><strong>Avin</strong></td><td>305, 315 &amp; 319 Roosevelt ave</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot"></span></td><td>AL Market</td></tr>
 <tr><td><strong>Kris</strong></td><td>58 Morris Ln,, NJ 08854</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot"></span></td><td>Jeff (NJ)</td></tr>
 <tr><td><strong>Sheila</strong></td><td>2901 N 23rd St, Philadelphia, PA 19132</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot">May 14, 08:06 PM</span></td><td>PA Market</td></tr>
@@ -4206,6 +4277,7 @@ section h2, h2 {
 <tr><td><strong>Mark Hall (Referred by Phil)</strong></td><td>1819 W 6th St,</td><td><span class="tag">4. MAO</span></td><td><span class="tag hot"></span></td><td>PA Market</td></tr>
 <tr><td><strong>John Harrington</strong></td><td>1211 Jersey St</td><td><span class="tag">4. MAO</span></td><td><span class="tag hot"></span></td><td>AL Market</td></tr>
 <tr><td><strong>Beata Szyffer-Hopkins</strong></td><td>1030 N Olden Ave</td><td><span class="tag">4. MAO</span></td><td><span class="tag hot">May 09, 07:51 AM</span></td><td></td></tr>
+<tr><td><strong>Raymond Bowman Sr</strong></td><td>118 SHIP AVE</td><td><span class="tag">Follow Up 1.5mo</span></td><td><span class="tag hot">Jun 07, 11:15 AM</span></td><td>Jeff (NJ)</td></tr>
 <tr><td><strong>Dennis Gilmore</strong></td><td>39 Forge Hill Rd</td><td><span class="tag">Follow Up 1.5mo</span></td><td><span class="tag hot"></span></td><td></td></tr>
 <tr><td><strong>Virginia Williams</strong></td><td>1172 Atlantic Ave</td><td><span class="tag">Follow Up 1.5mo</span></td><td><span class="tag hot">May 07, 07:08 PM</span></td><td></td></tr>
 <tr><td><strong>Tony</strong></td><td>223 Tyler St</td><td><span class="tag">Follow Up 1.5mo</span></td><td><span class="tag hot">May 07, 07:08 PM</span></td><td></td></tr>
@@ -4253,19 +4325,16 @@ section h2, h2 {
     <div class="tag-row"><span class="num">06</span><h2><span class="dot green"></span>Active in Sequence</h2></div>
     <hr>
     <input type="text" class="search" id="searchActive" placeholder="Search by name, address, state...">
-    <div class="lead-table"><table id="activeTable"><thead><tr><th>Contact</th><th>Address</th><th>State</th><th>Stage</th><th>SMS Sent</th><th>Last Sent</th><th>From Number</th></tr></thead><tbody><tr><td><strong>Eleanor</strong></td><td>500 Jackson Road</td><td>AL</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Beata Szyffer-Hopkins</strong></td><td>412 Neadow Woods lane</td><td>NJ</td><td><span class="tag">3. Due Diligence</span></td><td><span class="tag green">3</span></td><td>May 29, 03:54 PM</td><td>Jeff (NJ)</td></tr>
-<tr><td><strong>Raymond Bowman Sr</strong></td><td>118 SHIP AVE</td><td>NJ</td><td><span class="tag">Follow Up 1.5mo</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Donnie Johnson</strong></td><td>1484 Stuyvesant Ave</td><td>NJ</td><td><span class="tag">Follow Up 1.5mo</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>David Williams</strong></td><td>435 KERRIGAN BLVD</td><td>NJ</td><td><span class="tag">Follow Up 1.5mo</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Chris Brindley</strong></td><td>41 JULIA AVE</td><td>NJ</td><td><span class="tag">Follow Up 1.5mo</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
+    <div class="lead-table"><table id="activeTable"><thead><tr><th>Contact</th><th>Address</th><th>State</th><th>Stage</th><th>SMS Sent</th><th>Last Sent</th><th>From Number</th></tr></thead><tbody><tr><td><strong>Beata Szyffer-Hopkins</strong></td><td>412 Neadow Woods lane</td><td>NJ</td><td><span class="tag">3. Due Diligence</span></td><td><span class="tag green">4</span></td><td>Jun 05, 06:44 PM</td><td>PA Market</td></tr>
+<tr><td><strong>Donnie Johnson</strong></td><td>1484 Stuyvesant Ave</td><td>NJ</td><td><span class="tag">Follow Up 1.5mo</span></td><td><span class="tag green">1</span></td><td>Jun 07, 11:12 AM</td><td>Jeff (NJ)</td></tr>
+<tr><td><strong>David Williams</strong></td><td>435 KERRIGAN BLVD</td><td>NJ</td><td><span class="tag">Follow Up 1.5mo</span></td><td><span class="tag green">1</span></td><td>Jun 07, 11:12 AM</td><td>Jeff (NJ)</td></tr>
+<tr><td><strong>Chris Brindley</strong></td><td>41 JULIA AVE</td><td>NJ</td><td><span class="tag">Follow Up 1.5mo</span></td><td><span class="tag green">1</span></td><td>Jun 07, 11:12 AM</td><td>Jeff (NJ)</td></tr>
 <tr><td><strong>Ben Clay</strong></td><td>206 16TH AVE S</td><td>AL</td><td><span class="tag">Follow Up 3mo</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
 <tr><td><strong>Vamsi Gude</strong></td><td>1402 Aspen Dr</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
 <tr><td><strong>Tim</strong></td><td>618 E Reynolds St</td><td>PA</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
 <tr><td><strong>Jose Valdez</strong></td><td>508 LAWRIE ST</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
 <tr><td><strong>Tom Elly</strong></td><td>17 CHRISTOPH AVE</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
 <tr><td><strong>Icaros Chacalos</strong></td><td>3795 W 37th St</td><td>OH</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>John P Primiano</strong></td><td>249 Clonmell Upland Rd</td><td>PA</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
 <tr><td><strong>Markus Green</strong></td><td>178 Brunswick Ave</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
 <tr><td><strong>George Bowman</strong></td><td>309 Phillips St</td><td>PA</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
 <tr><td><strong>Richard Brown</strong></td><td>607 66th Ave</td><td>PA</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
@@ -4277,7 +4346,9 @@ section h2, h2 {
   <section class="sec">
     <div class="tag-row"><span class="num">07</span><h2><span class="dot hot"></span>Open Tasks</h2></div>
     <hr>
-    <div class="lead-table"><table><thead><tr><th>Contact</th><th>Address</th><th>Task</th><th>Assignee</th><th>Due</th></tr></thead><tbody><tr><td><strong>Eleanor</strong></td><td>500 Jackson Road</td><td>Blake booked callback — RJ to follow up</td><td><span class="tag">Unassigned</span></td><td>May 28, 05:00 PM</td></tr>
+    <div class="lead-table"><table><thead><tr><th>Contact</th><th>Address</th><th>Task</th><th>Assignee</th><th>Due</th></tr></thead><tbody><tr><td><strong>Eleanor</strong></td><td>500 Jackson Road</td><td>REVIEW: Did Jeff call Eleanor back?</td><td><span class="tag">Mike</span></td><td>Jun 06, 02:29 PM</td></tr>
+<tr><td><strong>Eleanor</strong></td><td>500 Jackson Road</td><td>Call back: Eleanor (500 Jackson Road)</td><td><span class="tag">Jeff</span></td><td>Jun 05, 02:29 PM</td></tr>
+<tr><td><strong>Eleanor</strong></td><td>500 Jackson Road</td><td>Blake booked callback — RJ to follow up</td><td><span class="tag">Unassigned</span></td><td>May 28, 05:00 PM</td></tr>
 <tr><td><strong>Joseph Schili</strong></td><td>1370 Oriental Ave</td><td>🔥 Call Joseph Schili — Qualified seller (1h SLA)</td><td><span class="tag">Unassigned</span></td><td>May 27, 08:05 PM</td></tr>
 <tr><td><strong>Joseph Schili</strong></td><td>1370 Oriental Ave</td><td>REVIEW: Did Jeff call Joseph Schili? (Gloucester City)</td><td><span class="tag">Mike</span></td><td>May 11, 10:36 AM</td></tr>
 <tr><td><strong>Joseph Schili</strong></td><td>1370 Oriental Ave</td><td>CALL: Joseph Schili (Gloucester City)</td><td><span class="tag">Jeff</span></td><td>May 10, 10:36 AM</td></tr>
@@ -4408,25 +4479,25 @@ const palette = ['#C9A52A','#1A2840','#2F7D5B','#B57A1A','#C5443A','#6B7591','#8
 
 new Chart(document.getElementById('stageChart'), {
   type: 'doughnut',
-  data: { labels: ["1. Qualified", "2. LAO", "3. Due Diligence", "4. MAO", "Follow Up 1.5mo", "Follow Up 3mo", "Dead Deals"], datasets: [{ data: [19, 5, 7, 5, 10, 2, 31], backgroundColor: palette, borderWidth: 2, borderColor: '#FFFCF4' }] },
+  data: { labels: ["1. Qualified", "2. LAO", "3. Due Diligence", "4. MAO", "Follow Up 1.5mo", "Follow Up 3mo", "Dead Deals"], datasets: [{ data: [19, 5, 7, 5, 10, 2, 30], backgroundColor: palette, borderWidth: 2, borderColor: '#FFFCF4' }] },
   options: { plugins: { legend: { position: 'bottom', labels: { padding: 12, usePointStyle: true, color: '#455066' } } }, cutout: '65%' }
 });
 
 new Chart(document.getElementById('stateChart'), {
   type: 'bar',
-  data: { labels: ["NJ", "AL", "PA", "OH", "MI", "SC"], datasets: [{ data: [44, 14, 14, 5, 1, 1], backgroundColor: '#C9A52A', borderRadius: 4 }] },
+  data: { labels: ["NJ", "AL", "PA", "OH", "MI", "SC"], datasets: [{ data: [44, 14, 13, 5, 1, 1], backgroundColor: '#C9A52A', borderRadius: 4 }] },
   options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { precision: 0, color: '#6B7591' }, grid: { color: 'rgba(26,40,64,0.06)' } }, x: { ticks: { color: '#455066' }, grid: { display: false } } } }
 });
 
 new Chart(document.getElementById('progressChart'), {
   type: 'bar',
-  data: { labels: ['0','1','2','3','4','5','6'], datasets: [{ label: 'Contacts', data: [54, 23, 1, 1, 0, 0, 0], backgroundColor: '#1A2840', borderRadius: 4 }] },
+  data: { labels: ['0','1','2','3','4','5','6'], datasets: [{ label: 'Contacts', data: [48, 28, 1, 0, 1, 0, 0], backgroundColor: '#1A2840', borderRadius: 4 }] },
   options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { precision: 0, color: '#6B7591' }, grid: { color: 'rgba(26,40,64,0.06)' } }, x: { ticks: { color: '#455066' }, grid: { display: false } } } }
 });
 
 new Chart(document.getElementById('numberChart'), {
   type: 'bar',
-  data: { labels: ["Jeff (NJ)", "AL Market", "PA Market", "OH Market"], datasets: [{ data: [16, 5, 2, 2], backgroundColor: palette, borderRadius: 4 }] },
+  data: { labels: ["Jeff (NJ)", "AL Market", "PA Market", "OH Market"], datasets: [{ data: [19, 6, 3, 2], backgroundColor: palette, borderRadius: 4 }] },
   options: { indexAxis: 'y', plugins: { legend: { display: false } }, scales: { x: { beginAtZero: true, ticks: { precision: 0, color: '#6B7591' }, grid: { color: 'rgba(26,40,64,0.06)' } }, y: { ticks: { color: '#455066' }, grid: { display: false } } } }
 });
 
@@ -4976,6 +5047,14 @@ section h2, h2 {
 }
 
 </style>
+<!-- Microsoft Clarity (heatmaps + session recordings) -->
+<script type="text/javascript">
+(function(c,l,a,r,i,t,y){
+  c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+  t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+  y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+})(window,document,"clarity","script","wwbe84z9my"); // TODO: replace wwbe84z9my with real project id from clarity.microsoft.com
+</script>
 </head>
 <body>
 <div class="container">
@@ -4990,15 +5069,17 @@ section h2, h2 {
   </header>
 
   <nav class="topnav">
-    <a href="index.html">Follow-Ups</a>
+    <a href="/">Desk</a>
+    <a href="blake.html">Blake</a>
+    <a href="progress.html">Tracker</a>
+    <a href="projects.html">Roadmap</a>
+    <a href="index.html">Follow-ups</a>
     <a href="deals.html">Deals</a>
-    <a href="weekly.html">Weekly</a>
+    <a href="weekly.html">Docket</a>
     <a href="priorities.html">Priority</a>
     <a href="markets.html">Markets</a>
-    <a href="blake.html">Blake</a>
-    <a href="progress.html">Progress</a>
-    <a href="ai-agents-plan.html">AI Agents Plan</a>
-    <a href="about.html" class="active">About</a>
+    <a href="/insights">Insights</a>
+    <a href="sms-test.html">SMS Test</a>
   </nav>
 
   <!-- ── TABLE OF CONTENTS ────────────────────────────────── -->
@@ -5324,7 +5405,7 @@ section h2, h2 {
       </div>
       <div class="body">
         <p class="lead-line">"Discover or set the ElevenLabs post-call webhook URL."</p>
-        <p>Inputs: <code>mode</code> = <code>discover</code> (read-only API probe) or <code>apply</code> (set it). Default URL is the Cloudflare Worker endpoint <code>https://acq-automation.mithchell.workers.dev/webhook</code>, which is what receives Blake's post-call transcripts and routes them into KV → vault sync → dashboard. The post-call webhook is a workspace-level setting that isn't exposed in the ElevenLabs UI on every plan tier — this workflow hits the API directly.</p>
+        <p>Inputs: <code>mode</code> = <code>discover</code> (read-only API probe) or <code>apply</code> (set it). Default URL is the Cloudflare Worker endpoint <code>https://apg-dashboard.mithchell.workers.dev/webhook</code>, which is what receives Blake's post-call transcripts and routes them into KV → vault sync → dashboard. The post-call webhook is a workspace-level setting that isn't exposed in the ElevenLabs UI on every plan tier — this workflow hits the API directly.</p>
       </div>
     </div>
 
@@ -5683,6 +5764,7 @@ section h2, h2 {
       <a href="markets.html">Markets</a> ·
       <a href="blake.html">Blake (live)</a> ·
       <a href="progress.html">Progress</a> ·
+      <a href="por.html">Plan of Record</a> ·
       <a href="ai-agents-plan.html">AI Agents Plan</a>
     </p>
   </section>
@@ -5797,6 +5879,14 @@ a {
 }
 a:hover { background: #F5C518; color: #0A1F44; }
 </style>
+<!-- Microsoft Clarity (heatmaps + session recordings) -->
+<script type="text/javascript">
+(function(c,l,a,r,i,t,y){
+  c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+  t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+  y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+})(window,document,"clarity","script","wwbe84z9my"); // TODO: replace wwbe84z9my with real project id from clarity.microsoft.com
+</script>
 </head>
 <body>
   <div class="box">
@@ -6199,6 +6289,14 @@ a:hover { background: #F5C518; color: #0A1F44; }
     text-transform: uppercase; color: var(--muted); line-height: 1.9;
   }
 </style>
+<!-- Microsoft Clarity (heatmaps + session recordings) -->
+<script type="text/javascript">
+(function(c,l,a,r,i,t,y){
+  c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+  t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+  y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+})(window,document,"clarity","script","wwbe84z9my"); // TODO: replace wwbe84z9my with real project id from clarity.microsoft.com
+</script>
 </head>
 <body>
 <div class="sheet">
@@ -6525,6 +6623,1294 @@ a:hover { background: #F5C518; color: #0A1F44; }
 <script>
   function tog(el){ el.parentElement.classList.toggle('collapsed'); }
 </script>
+</body>
+</html>
+`,
+  'sms-test.html': `<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Atom Property Group — SMS A/B/C Test</title>
+<style>
+:root {
+  --ink: #0A1F44; --ink-soft: #1A3A7A; --gold: #F5C518; --gold-soft: #FFE58A;
+  --gold-wash: #FFF6D0; --cream: #FAF7EC; --cream-deep: #F3EED8; --paper: #FFFFFF;
+  --rule: #C9C2A8; --rule-soft: #E5E0C8; --muted: #5A6786; --text: #101827;
+  --good: #10B981; --bad: #B91C1C;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; background: var(--cream); color: var(--text);
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; font-size: 16px; line-height: 1.6; }
+.shell { max-width: 1240px; margin: 0 auto; padding: 40px 64px 120px; background: var(--paper); min-height: 100vh; }
+@media (max-width: 820px) { .shell { padding: 32px 24px 80px; } }
+
+.masthead { border-top: 5px solid var(--ink); border-bottom: 1px solid var(--rule);
+  padding: 28px 0 24px; margin-bottom: 24px; position: relative; }
+.masthead::before { content: ""; position: absolute; left: 0; top: 0; width: 160px; height: 5px; background: var(--gold); }
+.brandrow { display: flex; justify-content: space-between; align-items: baseline;
+  font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 16px; flex-wrap: wrap; gap: 8px; }
+.brand { color: var(--ink); font-weight: 700; }
+h1 { font-family: Georgia, "Times New Roman", serif; font-size: 54px; line-height: 1.04;
+  letter-spacing: -0.015em; margin: 0 0 14px; color: var(--ink); font-weight: 700; }
+h1 .accent { color: var(--gold); font-style: italic; }
+.dek { font-family: Georgia, serif; font-style: italic; font-size: 18px;
+  line-height: 1.5; color: var(--ink-soft); max-width: 820px; margin: 10px 0 0; }
+
+section { margin: 40px 0; }
+h2 { font-family: Georgia, serif; font-size: 26px; color: var(--ink);
+  margin: 0 0 16px; padding-bottom: 10px; border-bottom: 2px solid var(--ink);
+  letter-spacing: -0.01em; display: flex; align-items: center; gap: 14px; }
+h2 .num { display: inline-block; min-width: 34px; padding: 4px 10px;
+  background: var(--gold); color: var(--ink); font-family: "Helvetica Neue", Arial, sans-serif;
+  font-size: 12px; font-weight: 700; text-align: center; letter-spacing: 0.04em; }
+
+.kpi-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px; margin: 24px 0; }
+.kpi { background: var(--cream); border: 1px solid var(--rule);
+  border-left: 4px solid var(--gold); padding: 14px 18px; }
+.kpi .l { font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); font-weight: 700; }
+.kpi .v { font-family: Georgia, serif; font-size: 26px; color: var(--ink); margin-top: 6px; line-height: 1.1; }
+.kpi .s { font-size: 11px; color: var(--muted); margin-top: 4px; }
+
+.paused-banner { background: var(--gold-wash); border: 1px solid var(--gold);
+  border-left: 4px solid var(--gold); padding: 14px 18px; margin: 16px 0 24px;
+  font-size: 13.5px; line-height: 1.55; color: var(--ink); }
+.paused-banner code { background: #fff; border: 1px solid var(--rule); padding: 1px 6px; font-size: 12.5px; }
+
+.variant-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin: 16px 0; }
+@media (max-width: 980px) { .variant-grid { grid-template-columns: 1fr; } }
+.vcard { background: var(--paper); border: 1px solid var(--rule); padding: 18px; display: flex; flex-direction: column; gap: 12px; }
+.vcard-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.vletter { font-family: Georgia, serif; font-size: 32px; color: var(--gold); font-weight: 700; }
+.vrates { font-size: 11px; letter-spacing: 0.06em; color: var(--muted); font-weight: 700; }
+.vtemplate { font-family: Georgia, serif; font-style: italic; font-size: 13.5px;
+  line-height: 1.5; color: var(--ink-soft); background: var(--cream);
+  border: 1px solid var(--rule-soft); padding: 10px 12px; }
+.vfunnel { display: flex; flex-direction: column; gap: 6px; }
+.funbar-label { font-size: 11px; letter-spacing: 0.04em; color: var(--muted); margin-bottom: 2px; }
+.funbar-label strong { color: var(--ink); font-size: 12.5px; }
+.funbar-track { height: 8px; background: var(--cream-deep); border: 1px solid var(--rule-soft); position: relative; }
+.funbar-fill { height: 100%; transition: width 0.3s ease; }
+
+.sig { background: var(--cream); border: 1px solid var(--rule); padding: 16px 20px; margin: 16px 0; }
+.sig-head { font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); margin-bottom: 12px; font-weight: 700; }
+.sig-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.sig-table th { text-align: left; color: var(--muted); font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; padding: 6px 10px; border-bottom: 1px solid var(--rule); }
+.sig-table td { padding: 8px 10px; border-bottom: 1px dashed var(--rule-soft); }
+.sig-foot { margin-top: 12px; }
+.pill { display: inline-block; padding: 4px 10px; font-size: 11px; letter-spacing: 0.08em;
+  text-transform: uppercase; font-weight: 700; }
+.pill-good { background: var(--good); color: #fff; }
+.pill-muted { background: var(--cream-deep); color: var(--ink); border: 1px solid var(--rule); }
+.muted { color: var(--muted); }
+
+.stopping { background: var(--cream); border: 1px solid var(--rule); padding: 16px 20px; margin: 16px 0; font-size: 13px; }
+.stopping h3 { font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); margin: 0 0 10px; font-weight: 700; }
+.stopping ul { margin: 6px 0 0; padding-left: 22px; }
+.stopping li { margin: 4px 0; }
+.foot { margin-top: 40px; padding-top: 16px; border-top: 1px solid var(--rule); font-size: 11px;
+  color: var(--muted); letter-spacing: 0.06em; }
+</style>
+</head>
+<body>
+<div class="shell">
+  <div class="masthead">
+    <div class="brandrow"><span class="brand">Atom Property Group</span><span>SMS A/B/C Test</span></div>
+    <h1>O2 entry-offer <span class="accent">variants</span></h1>
+    <p class="dek">Three first-touch SMS variants compete on the fresh inbound pool. Reply / qualify / contract tracked per variant. Bayesian decisive-rule indicator below.</p>
+  </div>
+
+  <div class="paused-banner">SMS sends are <strong>PAUSED</strong> per APG Q2 strategy. Test infrastructure is fully wired — variant assignment, outcome tracking, and dashboard rendering all run. Flip <code>o2_test_config.json::global.sms_paused</code> to <code>false</code> to begin firing sends. Variant assignments computed during the pause are deterministic and survive the flip.</div>
+
+  
+        <section>
+          <h2><span class="num">01</span> O2 Entry Offer</h2>
+          <div class="kpi-strip">
+            <div class="kpi"><div class="l">Total sent</div><div class="v">0</div><div class="s">across A/B/C</div></div>
+            <div class="kpi"><div class="l">Days running</div><div class="v">0</div><div class="s">of 30-day cap</div></div>
+            <div class="kpi"><div class="l">Min per variant</div><div class="v">0</div><div class="s">target 200</div></div>
+            <div class="kpi"><div class="l">Status</div><div class="v" style="color:#B91C1C">PAUSED</div><div class="s">flip sms_paused=false to fire sends</div></div>
+          </div>
+          <div class="variant-grid">
+            
+    <div class="vcard">
+      <div class="vcard-head">
+        <span class="vletter">A</span>
+        <span class="vrates">0.0% reply · 0.0% qual · 0.0% contract</span>
+      </div>
+      <div class="vtemplate">Hi {first_name} — Blake with APG. I pulled a written cash-offer range for {address1} this morning. Want me to send it over? No commitment, no follow-up calls unless you ask. Reply STOP to opt out.</div>
+      <div class="vfunnel">
+        <div class="funbar"><div class="funbar-label">Sent <strong>0</strong> (0.0%)</div><div class="funbar-track"><div class="funbar-fill" style="width:0.0%;background:var(--ink)"></div></div></div>
+        <div class="funbar"><div class="funbar-label">Replied <strong>0</strong> (0.0%)</div><div class="funbar-track"><div class="funbar-fill" style="width:0.0%;background:#3B82F6"></div></div></div>
+        <div class="funbar"><div class="funbar-label">Qualified <strong>0</strong> (0.0%)</div><div class="funbar-track"><div class="funbar-fill" style="width:0.0%;background:var(--gold)"></div></div></div>
+        <div class="funbar"><div class="funbar-label">Contract <strong>0</strong> (0.0%)</div><div class="funbar-track"><div class="funbar-fill" style="width:0.0%;background:var(--good)"></div></div></div>
+      </div>
+    </div>
+    
+
+    <div class="vcard">
+      <div class="vcard-head">
+        <span class="vletter">B</span>
+        <span class="vrates">0.0% reply · 0.0% qual · 0.0% contract</span>
+      </div>
+      <div class="vtemplate">Hey {first_name}, Blake here. I had APG run a 24-hr cash-offer range on {address1} — looks like it'd land somewhere between {offer_low} and {offer_high}. Want the actual number? Reply STOP to opt out.</div>
+      <div class="vfunnel">
+        <div class="funbar"><div class="funbar-label">Sent <strong>0</strong> (0.0%)</div><div class="funbar-track"><div class="funbar-fill" style="width:0.0%;background:var(--ink)"></div></div></div>
+        <div class="funbar"><div class="funbar-label">Replied <strong>0</strong> (0.0%)</div><div class="funbar-track"><div class="funbar-fill" style="width:0.0%;background:#3B82F6"></div></div></div>
+        <div class="funbar"><div class="funbar-label">Qualified <strong>0</strong> (0.0%)</div><div class="funbar-track"><div class="funbar-fill" style="width:0.0%;background:var(--gold)"></div></div></div>
+        <div class="funbar"><div class="funbar-label">Contract <strong>0</strong> (0.0%)</div><div class="funbar-track"><div class="funbar-fill" style="width:0.0%;background:var(--good)"></div></div></div>
+      </div>
+    </div>
+    
+
+    <div class="vcard">
+      <div class="vcard-head">
+        <span class="vletter">C</span>
+        <span class="vrates">0.0% reply · 0.0% qual · 0.0% contract</span>
+      </div>
+      <div class="vtemplate">Hi {first_name} — Blake with APG. Saw {address1} is a {noticing} — those are the kind we put written offers on within 24 hours. Want me to send one? Reply STOP to opt out.</div>
+      <div class="vfunnel">
+        <div class="funbar"><div class="funbar-label">Sent <strong>0</strong> (0.0%)</div><div class="funbar-track"><div class="funbar-fill" style="width:0.0%;background:var(--ink)"></div></div></div>
+        <div class="funbar"><div class="funbar-label">Replied <strong>0</strong> (0.0%)</div><div class="funbar-track"><div class="funbar-fill" style="width:0.0%;background:#3B82F6"></div></div></div>
+        <div class="funbar"><div class="funbar-label">Qualified <strong>0</strong> (0.0%)</div><div class="funbar-track"><div class="funbar-fill" style="width:0.0%;background:var(--gold)"></div></div></div>
+        <div class="funbar"><div class="funbar-label">Contract <strong>0</strong> (0.0%)</div><div class="funbar-track"><div class="funbar-fill" style="width:0.0%;background:var(--good)"></div></div></div>
+      </div>
+    </div>
+    
+          </div>
+          
+    <div class="sig">
+      <div class="sig-head">Bayesian winner probability (Monte Carlo, n=5000)</div>
+      <table class="sig-table">
+        <thead><tr><th>Variant</th><th>P(best contract)</th><th>P(best qualify)</th></tr></thead>
+        <tbody><tr><td><strong>A</strong></td><td>34.0%</td><td>32.7%</td></tr><tr><td><strong>B</strong></td><td>33.1%</td><td>34.2%</td></tr><tr><td><strong>C</strong></td><td>33.0%</td><td>33.0%</td></tr></tbody>
+      </table>
+      <div class="sig-foot"><span class="pill pill-muted">Need 200 more sends to min sample (n=200)</span></div>
+    </div>
+    
+        </section>
+        
+
+  <section>
+    <h2><span class="num">SR</span> Stopping rules</h2>
+    <div class="stopping">
+      <h3>Decision protocol</h3>
+      <ul>
+        <li><strong>Minimum sample:</strong> 200 sends per variant before reading any results.</li>
+        <li><strong>Decisive lead:</strong> if one variant beats the others on contract rate by ≥ 3.0 percentage points at n ≥ 500/variant, declare winner.</li>
+        <li><strong>Time cap:</strong> 30 days from first send. Declare based on data even if inconclusive — and note the inconclusion.</li>
+        <li><strong>Bayesian read:</strong> P(best contract) reported per variant via Monte Carlo over Beta(1+x, 1+n-x) posteriors.</li>
+      </ul>
+      <p style="margin-top:10px;color:var(--muted);font-size:12px">Documented in <code>o2_test_config.json::global</code> and rendered above for visibility.</p>
+    </div>
+  </section>
+
+  <div class="foot">Generated 2026-06-09T21:02:59.991070+00:00 · sms_test_dashboard.py</div>
+</div>
+</body>
+</html>`,
+  'projects.html': `<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>APG — Projects (Multi-PoR)</title>
+
+<!-- Microsoft Clarity (heatmaps + session recordings) -->
+<script type="text/javascript">
+(function(c,l,a,r,i,t,y){
+  c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+  t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+  y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+})(window,document,"clarity","script","wwbe84z9my"); // TODO: replace wwbe84z9my with real project id from clarity.microsoft.com
+</script>
+
+<style>
+:root {
+  --ink: #0A1F44;
+  --ink-deep: #061331;
+  --ink-soft: #1A3A7A;
+  --gold: #F5C518;
+  --gold-soft: #FFE58A;
+  --gold-wash: #FFF6D0;
+  --cream: #FAF7EC;
+  --cream-deep: #F3EED8;
+  --paper: #FFFFFF;
+  --rule: #C9C2A8;
+  --rule-soft: #E5E0C8;
+  --muted: #5A6786;
+  --muted-soft: #8A93AA;
+  --text: #101827;
+  --s-uc:   #B91C1C;
+  --s-live: #10B981;
+  --s-warm: #EA580C;
+  --s-hold: #EAB308;
+  --s-dead: #6B625A;
+  --bg: var(--cream);
+  --gold-deep: var(--ink);
+  --rule-strong: var(--ink);
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0; padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Top masthead (matches por.html / about.html) ─────── */
+.container { max-width: 1280px; margin: 0 auto; padding: 28px 36px 80px; }
+.meta-bar {
+  display: flex; justify-content: space-between; align-items: center;
+  border-top: 4px solid var(--ink);
+  padding: 14px 0 0;
+  font-size: 11px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.14em;
+  color: var(--ink-soft);
+}
+.doc-header { padding: 30px 0 22px; }
+.doc-header h1 {
+  font-family: Georgia, "Times New Roman", serif;
+  font-weight: 600;
+  font-size: 52px; line-height: 1.05; letter-spacing: -0.01em;
+  margin: 0 0 14px; color: var(--ink);
+}
+.doc-header h1 .accent { font-style: italic; color: var(--gold-deep); }
+.doc-header .lede {
+  font-family: Georgia, "Times New Roman", serif; font-style: italic;
+  font-size: 17px; color: var(--ink-soft); max-width: 820px; margin: 0;
+  line-height: 1.55;
+}
+.doc-header hr { border: 0; border-top: 1px solid var(--rule); margin: 28px 0 0; }
+.topnav {
+  position: sticky; top: 0; z-index: 50;
+  background: rgba(250, 247, 236, 0.96); backdrop-filter: blur(6px);
+  border-bottom: 1px solid var(--rule);
+  margin: 0 -36px 28px; padding: 10px 36px;
+  font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--muted);
+  display: flex; gap: 18px; overflow-x: auto; white-space: nowrap; align-items: center;
+}
+.topnav a {
+  color: var(--ink-soft); text-decoration: none; font-weight: 700;
+  padding: 4px 0; border-bottom: 2px solid transparent;
+}
+.topnav a:hover, .topnav a.active { color: var(--ink); border-bottom: 2px solid var(--gold); }
+
+/* ── Identity strip (current user + role) ─────────────── */
+.identity {
+  display: flex; align-items: center; gap: 18px;
+  padding: 10px 14px; margin: 0 0 18px;
+  background: var(--paper); border: 1px solid var(--rule);
+  border-left: 4px solid var(--gold);
+  border-radius: 0 4px 4px 0;
+  font-size: 12px; flex-wrap: wrap;
+}
+.identity .lbl {
+  font-size: 10px; font-weight: 800; letter-spacing: 0.16em;
+  text-transform: uppercase; color: var(--muted);
+}
+.identity select {
+  font-family: inherit; font-size: 12px;
+  padding: 4px 8px; border: 1px solid var(--rule);
+  background: var(--cream); color: var(--ink); border-radius: 3px;
+}
+.identity .role-pill {
+  display: inline-block; padding: 2px 9px; border-radius: 999px;
+  font-size: 10px; font-weight: 700; letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.role-pill.manager  { background: rgba(245,197,24,0.30); color: #8a6d00; }
+.role-pill.employee { background: rgba(106,103,134,0.18); color: var(--muted); }
+
+/* ── Two-column shell ─────────────────────────────────── */
+.shell { display: grid; grid-template-columns: 240px 1fr; gap: 28px; align-items: start; }
+@media (max-width: 900px) { .shell { grid-template-columns: 1fr; } }
+
+/* ── Sidebar (project selector) ───────────────────────── */
+.sidebar {
+  background: var(--paper); border: 1px solid var(--rule);
+  border-radius: 4px; padding: 16px 14px;
+  position: sticky; top: 64px;
+}
+.sidebar h3 {
+  font-size: 10px; font-weight: 800; letter-spacing: 0.16em;
+  text-transform: uppercase; color: var(--muted);
+  margin: 0 0 10px;
+}
+.sidebar .proj-row {
+  display: flex; align-items: center; gap: 8px;
+  padding: 6px 0; border-bottom: 1px solid var(--rule-soft);
+  cursor: pointer; user-select: none;
+}
+.sidebar .proj-row:last-child { border-bottom: 0; }
+.sidebar .proj-row.disabled { opacity: 0.4; cursor: not-allowed; }
+.sidebar .proj-row input[type=checkbox] { accent-color: var(--ink); }
+.sidebar .swatch {
+  width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0;
+}
+.sidebar .proj-name { font-size: 13px; font-weight: 600; color: var(--ink); }
+.sidebar .proj-name.placeholder { font-style: italic; color: var(--muted); font-weight: 500; }
+.sidebar .controls {
+  display: flex; gap: 6px; margin-top: 10px;
+  font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em;
+}
+.sidebar .controls button {
+  flex: 1; padding: 5px 6px; border: 1px solid var(--rule);
+  background: var(--cream); color: var(--ink-soft);
+  font: inherit; font-size: 9px; font-weight: 700;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  cursor: pointer; border-radius: 3px;
+}
+.sidebar .controls button:hover { background: var(--gold-wash); border-color: var(--gold-deep); }
+
+/* ── Main content ─────────────────────────────────────── */
+.main { min-width: 0; }
+
+.sec { margin: 0 0 36px; }
+.sec .tag-row { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+.sec .num {
+  display: inline-block; background: var(--gold); color: var(--ink);
+  font-weight: 800; font-size: 12px; letter-spacing: 0.04em;
+  padding: 3px 8px; border-radius: 3px;
+  font-family: ui-monospace, "SF Mono", monospace;
+}
+.sec h2 {
+  font-family: Georgia, "Times New Roman", serif;
+  font-weight: 600; font-size: 24px; letter-spacing: -0.005em;
+  margin: 0; color: var(--ink);
+}
+.sec hr { border: 0; border-top: 1px solid var(--rule); margin: 0 0 16px; }
+
+/* ── Overlap timeline (swimlanes) ─────────────────────── */
+.timeline-wrap {
+  background: var(--paper); border: 1px solid var(--rule);
+  border-radius: 4px; padding: 16px; overflow-x: auto;
+}
+.timeline-grid {
+  display: grid;
+  grid-template-columns: 160px 1fr;
+  gap: 6px 0;
+  font-size: 12px;
+  min-width: 720px;
+}
+.timeline-header {
+  font-size: 9px; font-weight: 800; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--muted);
+  padding: 4px 8px;
+}
+.timeline-axis {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  border-bottom: 1px solid var(--rule);
+  font-size: 9px; letter-spacing: 0.06em;
+  color: var(--muted);
+}
+.timeline-axis .tick {
+  padding: 4px 0 6px; text-align: left;
+  border-left: 1px dashed var(--rule-soft);
+  padding-left: 4px;
+}
+.timeline-axis .tick:first-child { border-left: 0; }
+
+.swimlane-label {
+  padding: 8px; border-right: 2px solid var(--ink);
+  font-size: 12px; font-weight: 700; color: var(--ink);
+  display: flex; align-items: center; gap: 8px;
+}
+.swimlane-track {
+  position: relative; min-height: 30px;
+  padding: 4px 0;
+  border-bottom: 1px solid var(--rule-soft);
+}
+.swimlane-track:last-child { border-bottom: 0; }
+.task-bar {
+  position: absolute; top: 6px; height: 18px;
+  border-radius: 3px;
+  font-size: 10px; font-weight: 700; color: #fff;
+  padding: 2px 6px; line-height: 14px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.15);
+  cursor: default;
+}
+.task-bar.status-notstart { opacity: 0.55; }
+.task-bar.status-blocked  { border: 2px solid var(--s-uc); }
+.task-bar.status-shipped  { opacity: 0.4; }
+
+/* ── Per-project PoR panel template ───────────────────── */
+.project-panel {
+  background: var(--paper); border: 1px solid var(--rule);
+  border-left: 6px solid var(--ink);
+  border-radius: 0 4px 4px 0;
+  padding: 18px 22px; margin: 0 0 20px;
+}
+.project-panel.placeholder { border-left-style: dashed; }
+.project-panel h3 {
+  font-family: Georgia, serif; font-size: 22px; font-weight: 600;
+  margin: 0 0 4px; color: var(--ink);
+  display: flex; align-items: center; gap: 12px;
+}
+.project-panel h3 .pid {
+  font-family: ui-monospace, "SF Mono", monospace;
+  font-size: 10px; padding: 2px 7px;
+  background: var(--cream-deep); border-radius: 3px;
+  color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase;
+}
+.project-panel .panel-lede {
+  font-family: Georgia, serif; font-style: italic;
+  font-size: 14px; color: var(--ink-soft);
+  margin: 0 0 14px;
+}
+.panel-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 14px;
+}
+.panel-block {
+  background: var(--cream-deep); border-radius: 3px; padding: 12px 14px;
+}
+.panel-block h4 {
+  font-size: 10px; font-weight: 800; letter-spacing: 0.16em;
+  text-transform: uppercase; color: var(--muted);
+  margin: 0 0 8px;
+}
+.panel-block ul { margin: 0; padding-left: 16px; font-size: 13px; }
+.panel-block li { margin: 3px 0; color: var(--ink); }
+.panel-block .empty { font-size: 12px; color: var(--muted); font-style: italic; }
+
+.pill {
+  display: inline-block; padding: 2px 9px; border-radius: 999px;
+  font-size: 10px; font-weight: 700; letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.pill.shipped   { background: rgba(16,185,129,0.15); color: var(--s-live); }
+.pill.inflight  { background: rgba(245,197,24,0.25); color: #8a6d00; }
+.pill.notstart  { background: rgba(106,103,134,0.15); color: var(--muted); }
+.pill.blocked   { background: rgba(185,28,28,0.13); color: var(--s-uc); }
+.pill.hold      { background: rgba(234,179,8,0.18); color: #7c5a00; }
+
+.empty-state {
+  background: var(--paper); border: 1px dashed var(--rule);
+  padding: 28px; text-align: center;
+  font-size: 14px; color: var(--muted); font-style: italic;
+  border-radius: 4px;
+}
+
+footer.foot {
+  margin-top: 60px; padding-top: 18px;
+  border-top: 3px double var(--ink);
+  display: flex; justify-content: space-between;
+  font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--muted); font-weight: 700; flex-wrap: wrap; gap: 12px;
+}
+footer.foot .gold-stamp {
+  display: inline-block; padding: 4px 10px;
+  background: var(--gold); color: var(--ink); letter-spacing: 0.14em;
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="meta-bar">
+    <span>Atom Property Group · Projects (Multi-PoR)</span>
+    <span>v0.1 skeleton · 2026-06-08</span>
+  </div>
+
+  <header class="doc-header">
+    <h1>The <span class="accent">Canvas.</span></h1>
+    <p class="lede">Multi-project Plan-of-Record shell. Filter to one project, or multi-select to see overlapping timelines across all active builds. APG is the only project with real content today — three placeholder skeletons stand ready for the next concepts.</p>
+    <hr>
+  </header>
+
+  <nav class="topnav">
+    <a href="/">Desk</a>
+    <a href="blake.html">Blake</a>
+    <a href="progress.html">Tracker</a>
+    <a href="projects.html" class="active">Roadmap</a>
+    <a href="index.html">Follow-ups</a>
+    <a href="deals.html">Deals</a>
+    <a href="weekly.html">Docket</a>
+    <a href="priorities.html">Priority</a>
+    <a href="markets.html">Markets</a>
+    <a href="/insights">Insights</a>
+    <a href="sms-test.html">SMS Test</a>
+  </nav>
+
+  <!-- ── Identity strip ──────────────────────────────── -->
+  <div class="identity">
+    <span class="lbl">Viewing as</span>
+    <select id="user-select"></select>
+    <span class="role-pill" id="role-pill">…</span>
+    <span class="lbl" style="margin-left:auto">Override via <code>?user=mido</code> or localStorage</span>
+  </div>
+
+  <!-- ── Two-column shell ────────────────────────────── -->
+  <div class="shell">
+
+    <aside class="sidebar">
+      <h3>Projects</h3>
+      <div id="project-list"><!-- rendered by JS --></div>
+      <div class="controls">
+        <button id="btn-all">All</button>
+        <button id="btn-none">None</button>
+      </div>
+    </aside>
+
+    <main class="main">
+
+      <!-- 01 · Overlap timeline -->
+      <section class="sec" id="overlap">
+        <div class="tag-row"><span class="num">01</span><h2>Overlap Timeline</h2></div>
+        <hr>
+        <div class="timeline-wrap">
+          <div id="timeline-empty" class="empty-state" style="display:none">No projects selected. Tick one or more in the sidebar.</div>
+          <div id="timeline" class="timeline-grid" style="display:none"></div>
+        </div>
+        <p style="font-size:11px; color:var(--muted); margin: 10px 2px 0; letter-spacing:0.04em;">
+          One row per project. Bars span task start→end. Multi-select to compare; single-select to focus.
+        </p>
+      </section>
+
+      <!-- 02 · Per-project panels -->
+      <section class="sec" id="panels">
+        <div class="tag-row"><span class="num">02</span><h2>Project Detail</h2></div>
+        <hr>
+        <div id="panels-container"><!-- rendered by JS --></div>
+      </section>
+
+    </main>
+  </div>
+
+  <footer class="foot">
+    <span>Data: <code>data/projects.json</code> · skeleton only · auth stub via <code>?user=&lt;id&gt;</code></span>
+    <span class="gold-stamp">v0.1 · 2026-06-08</span>
+  </footer>
+
+</div>
+
+<script>
+(async function () {
+  const DATA_URL = 'data/projects.json';
+  const LS_USER = 'apg_projects_user_v1';
+  const LS_SELECTED = 'apg_projects_selected_v1';
+
+  // ── Resolve current user (?user=, localStorage, or first manager) ──
+  const params = new URLSearchParams(location.search);
+  const urlUser = params.get('user');
+  let userId = urlUser || localStorage.getItem(LS_USER) || 'mido';
+  if (urlUser) localStorage.setItem(LS_USER, urlUser);
+
+  let data;
+  try {
+    const r = await fetch(DATA_URL, { cache: 'no-store' });
+    data = await r.json();
+  } catch (e) {
+    document.querySelector('.main').innerHTML =
+      '<div class="empty-state">Failed to load <code>data/projects.json</code>.</div>';
+    return;
+  }
+
+  const user = data.users.find(u => u.id === userId) || data.users.find(u => u.role === 'manager');
+  userId = user.id;
+  const isManager = user.role === 'manager';
+  const visibleProjectIds = isManager
+    ? data.projects.map(p => p.id)
+    : (user.projects || []);
+
+  // ── Identity strip ──
+  const userSel = document.getElementById('user-select');
+  data.users.forEach(u => {
+    const o = document.createElement('option');
+    o.value = u.id; o.textContent = u.name + ' (' + u.role + ')';
+    if (u.id === userId) o.selected = true;
+    userSel.appendChild(o);
+  });
+  userSel.addEventListener('change', () => {
+    localStorage.setItem(LS_USER, userSel.value);
+    location.search = '?user=' + encodeURIComponent(userSel.value);
+  });
+  const rolePill = document.getElementById('role-pill');
+  rolePill.textContent = user.role;
+  rolePill.classList.add(user.role);
+
+  // ── Sidebar ──
+  let selected = JSON.parse(localStorage.getItem(LS_SELECTED) || 'null');
+  if (!selected || !Array.isArray(selected)) {
+    selected = visibleProjectIds.slice(); // default: all visible
+  }
+  selected = selected.filter(id => visibleProjectIds.includes(id));
+
+  const listEl = document.getElementById('project-list');
+  function renderSidebar() {
+    listEl.innerHTML = '';
+    data.projects.forEach(p => {
+      const visible = visibleProjectIds.includes(p.id);
+      const row = document.createElement('label');
+      row.className = 'proj-row' + (visible ? '' : ' disabled');
+      const isPlaceholder = (p.lede || '').includes('// TODO');
+      row.innerHTML =
+        '<input type="checkbox" ' + (visible ? '' : 'disabled ') +
+          (selected.includes(p.id) ? 'checked' : '') + '>' +
+        '<span class="swatch" style="background:' + p.color + '"></span>' +
+        '<span class="proj-name' + (isPlaceholder ? ' placeholder' : '') + '">' + p.name + '</span>';
+      const cb = row.querySelector('input');
+      cb.addEventListener('change', () => {
+        if (cb.checked) selected.push(p.id);
+        else selected = selected.filter(id => id !== p.id);
+        localStorage.setItem(LS_SELECTED, JSON.stringify(selected));
+        renderTimeline(); renderPanels();
+      });
+      listEl.appendChild(row);
+    });
+  }
+
+  document.getElementById('btn-all').addEventListener('click', () => {
+    selected = visibleProjectIds.slice();
+    localStorage.setItem(LS_SELECTED, JSON.stringify(selected));
+    renderSidebar(); renderTimeline(); renderPanels();
+  });
+  document.getElementById('btn-none').addEventListener('click', () => {
+    selected = [];
+    localStorage.setItem(LS_SELECTED, JSON.stringify(selected));
+    renderSidebar(); renderTimeline(); renderPanels();
+  });
+
+  // ── Timeline (week-axis swimlanes) ──
+  const tlEmpty = document.getElementById('timeline-empty');
+  const tlEl = document.getElementById('timeline');
+  function renderTimeline() {
+    const chosen = data.projects.filter(p => selected.includes(p.id));
+    if (chosen.length === 0) {
+      tlEmpty.style.display = 'block'; tlEl.style.display = 'none'; return;
+    }
+    tlEmpty.style.display = 'none'; tlEl.style.display = 'grid';
+
+    // Span: min start → max end across all chosen tasks
+    let minDate = null, maxDate = null;
+    chosen.forEach(p => (p.tasks || []).forEach(t => {
+      const s = new Date(t.start), e = new Date(t.end);
+      if (!minDate || s < minDate) minDate = s;
+      if (!maxDate || e > maxDate) maxDate = e;
+    }));
+    if (!minDate) { tlEmpty.style.display = 'block'; tlEl.style.display = 'none'; return; }
+
+    // Pad axis a touch
+    minDate = new Date(minDate); minDate.setDate(minDate.getDate() - 3);
+    maxDate = new Date(maxDate); maxDate.setDate(maxDate.getDate() + 3);
+    const span = maxDate - minDate;
+
+    // Build axis ticks (weekly)
+    const ticks = [];
+    const cursor = new Date(minDate);
+    while (cursor <= maxDate) {
+      ticks.push(new Date(cursor));
+      cursor.setDate(cursor.getDate() + 7);
+    }
+
+    tlEl.innerHTML = '';
+    // Header row
+    const hLbl = document.createElement('div'); hLbl.className = 'timeline-header';
+    hLbl.textContent = 'Project'; tlEl.appendChild(hLbl);
+    const hAxis = document.createElement('div'); hAxis.className = 'timeline-axis';
+    hAxis.style.gridTemplateColumns = 'repeat(' + ticks.length + ', 1fr)';
+    ticks.forEach(d => {
+      const t = document.createElement('div'); t.className = 'tick';
+      t.textContent = (d.getMonth()+1) + '/' + d.getDate();
+      hAxis.appendChild(t);
+    });
+    tlEl.appendChild(hAxis);
+
+    // Swimlanes
+    chosen.forEach(p => {
+      const lbl = document.createElement('div'); lbl.className = 'swimlane-label';
+      lbl.innerHTML = '<span class="swatch" style="background:' + p.color + '"></span>' + p.name;
+      tlEl.appendChild(lbl);
+
+      const track = document.createElement('div'); track.className = 'swimlane-track';
+      (p.tasks || []).forEach(t => {
+        const s = new Date(t.start), e = new Date(t.end);
+        const leftPct  = ((s - minDate) / span) * 100;
+        const widthPct = Math.max(((e - s) / span) * 100, 1.2);
+        const bar = document.createElement('div');
+        bar.className = 'task-bar status-' + t.status;
+        bar.style.left = leftPct + '%';
+        bar.style.width = widthPct + '%';
+        bar.style.background = p.color;
+        bar.title = t.title + ' — ' + t.owner + ' — ' + t.start + ' → ' + t.end + ' (' + t.status + ')';
+        bar.textContent = t.title;
+        track.appendChild(bar);
+      });
+      tlEl.appendChild(track);
+    });
+  }
+
+  // ── Per-project panels (same template for each) ──
+  function panelBlock(title, items, renderer) {
+    if (!items || items.length === 0) {
+      return '<div class="panel-block"><h4>' + title + '</h4><div class="empty">// TODO</div></div>';
+    }
+    return '<div class="panel-block"><h4>' + title + '</h4><ul>' +
+      items.map(renderer).join('') + '</ul></div>';
+  }
+
+  function renderPanels() {
+    const chosen = data.projects.filter(p => selected.includes(p.id));
+    const wrap = document.getElementById('panels-container');
+    if (chosen.length === 0) {
+      wrap.innerHTML = '<div class="empty-state">No projects selected.</div>';
+      return;
+    }
+    wrap.innerHTML = chosen.map(p => {
+      const placeholder = (p.lede || '').includes('// TODO');
+      const ownersBlock = panelBlock('Owners', p.owners, o =>
+        '<li><strong>' + o.name + '</strong> — ' + o.role + ' · ' + o.lane + '</li>');
+      const roadmapBlock = panelBlock('Roadmap', p.roadmap, r =>
+        '<li><strong>' + r.name + '</strong> <span style="color:var(--muted)">· ' + r.when + '</span></li>');
+      const workBlock = panelBlock('Workstreams', p.tasks, t =>
+        '<li>' + t.title + ' <span class="pill ' + t.status + '">' + t.status + '</span> — <em style="color:var(--muted)">' + t.owner + '</em></li>');
+      const decBlock = panelBlock('Decisions', p.decisions, d =>
+        '<li><strong>' + d.title + '</strong> — ' + d.body + '</li>');
+      const backBlock = panelBlock('Backlog', p.backlog, b =>
+        '<li><code>' + b.id + '</code> ' + b.title + '</li>');
+      const linksBlock = panelBlock('Linked Artifacts', p.links, l =>
+        '<li><a href="' + l.href + '" style="color:var(--ink-soft)">' + l.label + '</a></li>');
+
+      return '<div class="project-panel' + (placeholder ? ' placeholder' : '') +
+        '" style="border-left-color:' + p.color + '">' +
+        '<h3>' + p.name + ' <span class="pid">' + p.id + '</span></h3>' +
+        '<p class="panel-lede">' + (p.lede || '// TODO') + '</p>' +
+        '<div class="panel-grid">' +
+          ownersBlock + roadmapBlock + workBlock + decBlock + backBlock + linksBlock +
+        '</div>' +
+      '</div>';
+    }).join('');
+  }
+
+  renderSidebar();
+  renderTimeline();
+  renderPanels();
+})();
+</script>
+</body>
+</html>
+`,
+  'por.html': `<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>APG — Plan of Record</title>
+<style>
+:root {
+  --ink: #0A1F44;
+  --ink-deep: #061331;
+  --ink-soft: #1A3A7A;
+  --gold: #F5C518;
+  --gold-soft: #FFE58A;
+  --gold-wash: #FFF6D0;
+  --cream: #FAF7EC;
+  --cream-deep: #F3EED8;
+  --paper: #FFFFFF;
+  --rule: #C9C2A8;
+  --rule-soft: #E5E0C8;
+  --muted: #5A6786;
+  --muted-soft: #8A93AA;
+  --text: #101827;
+  --s-uc:   #B91C1C;
+  --s-live: #10B981;
+  --s-warm: #EA580C;
+  --s-hold: #EAB308;
+  --s-dead: #6B625A;
+  --bg: var(--cream);
+  --gold-deep: var(--ink);
+  --rule-strong: var(--ink);
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0; padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+.container { max-width: 1080px; margin: 0 auto; padding: 28px 36px 80px; }
+
+.meta-bar {
+  display: flex; justify-content: space-between; align-items: center;
+  border-top: 4px solid var(--ink);
+  padding: 14px 0 0;
+  font-size: 11px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.14em;
+  color: var(--ink-soft);
+}
+.doc-header { padding: 30px 0 22px; }
+.doc-header h1 {
+  font-family: Georgia, "Times New Roman", serif;
+  font-weight: 600;
+  font-size: 56px; line-height: 1.05; letter-spacing: -0.01em;
+  margin: 0 0 14px; color: var(--ink);
+}
+.doc-header h1 .accent { font-style: italic; color: var(--gold-deep); }
+.doc-header .lede {
+  font-family: Georgia, "Times New Roman", serif; font-style: italic;
+  font-size: 17px; color: var(--ink-soft); max-width: 720px; margin: 0;
+  line-height: 1.55;
+}
+.doc-header hr { border: 0; border-top: 1px solid var(--rule); margin: 28px 0 0; }
+
+.topnav {
+  position: sticky; top: 0; z-index: 50;
+  background: rgba(250, 247, 236, 0.96); backdrop-filter: blur(6px);
+  border-bottom: 1px solid var(--rule);
+  margin: 0 -36px 28px; padding: 10px 36px;
+  font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--muted);
+  display: flex; gap: 18px; overflow-x: auto; white-space: nowrap;
+  align-items: center;
+}
+.topnav a {
+  color: var(--ink-soft); text-decoration: none; font-weight: 700;
+  padding: 4px 0; border-bottom: 2px solid transparent;
+}
+.topnav a:hover, .topnav a.active { color: var(--ink); border-bottom: 2px solid var(--gold); }
+
+.sec { margin: 48px 0 22px; }
+.sec .tag-row { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+.sec .num {
+  display: inline-block; background: var(--gold); color: var(--ink);
+  font-weight: 800; font-size: 12px; letter-spacing: 0.04em;
+  padding: 3px 8px; border-radius: 3px;
+  font-family: ui-monospace, "SF Mono", monospace;
+}
+.sec h2 {
+  font-family: Georgia, "Times New Roman", serif;
+  font-weight: 600; font-size: 26px; letter-spacing: -0.005em;
+  margin: 0; color: var(--ink);
+}
+.sec hr { border: 0; border-top: 1px solid var(--rule); margin: 0 0 20px; }
+
+.callout {
+  background: var(--gold-soft);
+  border-left: 4px solid var(--gold-deep);
+  padding: 16px 20px; margin: 14px 0;
+  border-radius: 0 4px 4px 0;
+}
+.callout p { margin: 0 0 8px; }
+.callout p:last-child { margin-bottom: 0; }
+.rule-label {
+  font-size: 10px; font-weight: 800; letter-spacing: 0.18em;
+  text-transform: uppercase; color: var(--ink-soft); margin-bottom: 8px;
+}
+
+/* ── Roadmap timeline ──────────────────────────────────── */
+.timeline {
+  display: grid; grid-template-columns: 1fr; gap: 14px; margin-top: 14px;
+}
+.phase {
+  background: var(--paper); border: 1px solid var(--rule);
+  border-left: 4px solid var(--ink);
+  padding: 16px 20px; border-radius: 0 4px 4px 0;
+}
+.phase .phase-head {
+  display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+.phase .phase-name {
+  font-family: Georgia, serif; font-size: 19px; font-weight: 600; color: var(--ink);
+}
+.phase .phase-when {
+  font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--muted); font-weight: 700;
+}
+.phase ul { margin: 6px 0 0; padding-left: 18px; }
+.phase li { margin: 4px 0; font-size: 14px; }
+
+/* ── Status pills ──────────────────────────────────────── */
+.pill {
+  display: inline-block; padding: 2px 9px; border-radius: 999px;
+  font-size: 10px; font-weight: 700; letter-spacing: 0.08em;
+  text-transform: uppercase; vertical-align: middle;
+}
+.pill.shipped   { background: rgba(16,185,129,0.15); color: var(--s-live); }
+.pill.inflight  { background: rgba(245,197,24,0.25); color: #8a6d00; }
+.pill.notstart  { background: rgba(106,103,134,0.15); color: var(--muted); }
+.pill.blocked   { background: rgba(185,28,28,0.13); color: var(--s-uc); }
+.pill.hold      { background: rgba(234,179,8,0.18); color: #7c5a00; }
+.owner {
+  display: inline-block; background: var(--cream-deep);
+  border: 1px solid var(--rule);
+  font-size: 10px; font-weight: 700; padding: 2px 8px;
+  letter-spacing: 0.06em; text-transform: uppercase;
+  color: var(--ink-soft); border-radius: 3px;
+}
+
+/* ── Tables ────────────────────────────────────────────── */
+table.por {
+  width: 100%; border-collapse: collapse; margin: 14px 0 6px;
+  font-size: 13px; background: var(--paper);
+  border: 1px solid var(--rule);
+}
+table.por th, table.por td {
+  padding: 9px 12px; text-align: left; vertical-align: top;
+  border-bottom: 1px solid var(--rule-soft);
+}
+table.por th {
+  background: var(--cream-deep); font-size: 10px;
+  text-transform: uppercase; letter-spacing: 0.1em; color: var(--ink-soft);
+  font-weight: 800; border-bottom: 2px solid var(--ink);
+}
+table.por tr:last-child td { border-bottom: 0; }
+table.por td.who { white-space: nowrap; }
+table.por td.eff { white-space: nowrap; color: var(--muted); font-size: 12px; }
+
+/* ── Decisions log ─────────────────────────────────────── */
+.decisions { display: grid; gap: 10px; margin-top: 10px; }
+.decision {
+  background: var(--paper); border: 1px solid var(--rule);
+  border-left: 4px solid var(--s-live);
+  padding: 12px 16px; border-radius: 0 4px 4px 0; font-size: 14px;
+}
+.decision.pending { border-left-color: var(--s-warm); }
+.decision .dec-head {
+  font-weight: 700; color: var(--ink);
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+}
+.decision .dec-body { color: var(--ink-soft); margin-top: 4px; font-size: 13px; }
+
+/* ── Linked artifacts ──────────────────────────────────── */
+.links { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; margin-top: 10px; }
+.links a {
+  display: block; background: var(--paper); border: 1px solid var(--rule);
+  padding: 10px 14px; text-decoration: none; color: var(--ink);
+  font-weight: 600; font-size: 13px; border-radius: 3px;
+}
+.links a:hover { border-color: var(--gold-deep); background: var(--gold-wash); }
+.links a .lbl {
+  display: block; font-size: 10px; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--muted); margin-bottom: 3px; font-weight: 700;
+}
+
+footer.foot {
+  margin-top: 60px; padding-top: 18px;
+  border-top: 3px double var(--ink);
+  display: flex; justify-content: space-between;
+  font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--muted); font-weight: 700; flex-wrap: wrap; gap: 12px;
+}
+footer.foot .gold-stamp {
+  display: inline-block; padding: 4px 10px;
+  background: var(--gold); color: var(--ink); letter-spacing: 0.14em;
+}
+</style>
+<!-- Microsoft Clarity (heatmaps + session recordings) -->
+<script type="text/javascript">
+(function(c,l,a,r,i,t,y){
+  c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+  t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+  y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+})(window,document,"clarity","script","wwbe84z9my"); // TODO: replace wwbe84z9my with real project id from clarity.microsoft.com
+</script>
+</head>
+<body>
+<div class="container">
+
+  <div class="meta-bar">
+    <span>Atom Property Group · Plan of Record</span>
+    <span>v1 · 2026-06-08</span>
+  </div>
+
+  <header class="doc-header">
+    <h1>The <span class="accent">Plan</span> of Record.</h1>
+    <p class="lede">What APG is building, in what order, who owns it, and where each piece stands today. Synthesized from the 2026-06-03 strategy call with Adam and Kebrina, the master roadmap, and the live workflow inventory.</p>
+    <hr>
+  </header>
+
+  <nav class="topnav">
+    <a href="/">Desk</a>
+    <a href="blake.html">Blake</a>
+    <a href="progress.html">Tracker</a>
+    <a href="projects.html" class="active">Roadmap</a>
+    <a href="index.html">Follow-ups</a>
+    <a href="deals.html">Deals</a>
+    <a href="weekly.html">Docket</a>
+    <a href="priorities.html">Priority</a>
+    <a href="markets.html">Markets</a>
+    <a href="/insights">Insights</a>
+    <a href="sms-test.html">SMS Test</a>
+  </nav>
+
+  <!-- ── TABLE OF CONTENTS ─────────────────────────────── -->
+  <section class="sec" id="toc" style="margin-top: 6px;">
+    <div class="callout" style="background: var(--cream-deep); border-left-color: var(--ink);">
+      <div class="rule-label">Contents</div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 6px 18px; font-size: 13px; margin-top: 6px;">
+        <a href="#frame">00 · The Frame</a>
+        <a href="#owners">01 · Owners</a>
+        <a href="#roadmap">02 · Roadmap Timeline</a>
+        <a href="#workstreams">03 · Workstreams &amp; Status</a>
+        <a href="#decisions">04 · Decisions Log</a>
+        <a href="#enhancements">05 · Enhancement Backlog</a>
+        <a href="#links">06 · Linked Artifacts</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 00 · FRAME ─────────────────────────────────────── -->
+  <section class="sec" id="frame">
+    <div class="tag-row"><span class="num">00</span><h2>The Frame</h2></div>
+    <hr>
+    <div class="callout">
+      <p><strong>The Plan of Record is the one place Adam, Kebrina, and the build team look to answer: "what are we doing, who's doing it, when does it land?"</strong> Every workstream below ties to one of the four pillars in the master roadmap (Blake voice agent, listing pipeline, vault + self-improvement, training videos) and one of the build asks from the 2026-06-03 strategy call.</p>
+      <p><strong style="color:var(--gold-deep)">Posture.</strong> Real-time, event-driven, no cron. Webhooks + Cloudflare Workers. The only periodic thing is the prompt-iteration loop, and even that fires on transcript volume, not the calendar.</p>
+    </div>
+    <div class="callout">
+      <div class="rule-label">From the 2026-06-03 call — Adam's build asks (treat as spec)</div>
+      <ol style="margin: 6px 0 0; padding-left: 18px;">
+        <li><strong>Appointment drill-down</strong> — click "36 appointments in contract" → view the individual profiles behind the number.</li>
+        <li><strong>Claude-assessed conversation ratings</strong> — individual metrics derived from the actual call audio, not a manual score.</li>
+        <li><strong>Success-rate-vs-target display</strong> — e.g. are we hitting 70% of the success measure for a given task.</li>
+        <li><strong>Calendar view preferred</strong> over a plain column view (to confirm).</li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ── 01 · OWNERS ────────────────────────────────────── -->
+  <section class="sec" id="owners">
+    <div class="tag-row"><span class="num">01</span><h2>Owners</h2></div>
+    <hr>
+    <table class="por">
+      <thead>
+        <tr><th>Person</th><th>Role</th><th>Lane</th><th>Notes</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Adam Chodes</strong></td><td>CEO · Founder</td><td>Strategy · Sign-off</td><td>Final call on offer, persona, and which pillar gets focus.</td></tr>
+        <tr><td><strong>Kebrina Richards</strong></td><td>Manager · Strategy partner</td><td>Concepts · Vault</td><td>Co-deciding the pivot question and the Legacy app concept.</td></tr>
+        <tr><td><strong>Mike Yasser</strong> (Mido)</td><td>Manager · Build</td><td>All builds</td><td>Dashboard suite, GHL workflows, Blake prompt, vault sync, infra.</td></tr>
+        <tr><td><strong>RJ</strong></td><td>Acquisitions Closer</td><td>Outbound · Dials</td><td>Currently sole human closer. Performance under review (see Decisions).</td></tr>
+        <tr><td><strong>Brady</strong></td><td>Construction Services lead</td><td>Construction</td><td>Owns the Construction Services GHL pipeline + Mario relationship handoff.</td></tr>
+        <tr><td><strong>Blake</strong> (AI)</td><td>Voice Agent</td><td>Outbound · Pillar A</td><td>ElevenLabs + Twilio. v4.0 prompt drafted, not deployed.</td></tr>
+        <tr><td><strong>Mario</strong> (vendor)</td><td>Hamilton vendor</td><td>231 Lafayette</td><td>$7,500 refund accepted; relationship amicable, project paused.</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ── 02 · ROADMAP TIMELINE ──────────────────────────── -->
+  <section class="sec" id="roadmap">
+    <div class="tag-row"><span class="num">02</span><h2>Roadmap Timeline</h2></div>
+    <hr>
+    <div class="timeline">
+      <div class="phase">
+        <div class="phase-head">
+          <span class="phase-name">Phase 0 — This Week (the "Do Today" box)</span>
+          <span class="phase-when">By 2026-06-13</span>
+        </div>
+        <ul>
+          <li><strong>RJ call-audio analysis</strong> — count calls &gt;5s, verify conversations are real <span class="owner">Mido</span> <span class="pill inflight">In Progress</span></li>
+          <li><strong>RJ direct conversation</strong> + decision (continue / terminate / Jef return) <span class="owner">Adam</span> <span class="pill inflight">In Progress</span></li>
+          <li><strong>Updated NDA signed</strong> → unlock the "powerful meeting" recording <span class="owner">Mido</span> <span class="pill notstart">Not Started</span></li>
+          <li><strong>Adam voice recording session booked</strong> — 30 min quiet room <span class="owner">Adam</span> <span class="pill notstart">Not Started</span></li>
+          <li><strong>Confirm APG-hold question with Kebrina</strong> — Sunday-night agreement <span class="owner">Adam · Kebrina</span> <span class="pill blocked">Blocked</span></li>
+        </ul>
+      </div>
+
+      <div class="phase">
+        <div class="phase-head">
+          <span class="phase-name">Phase 1 — Next 2 Weeks (Adam's dashboard asks)</span>
+          <span class="phase-when">By 2026-06-22</span>
+        </div>
+        <ul>
+          <li><strong>Appointment drill-down</strong> — number → individual profile links <span class="owner">Mido</span> <span class="pill notstart">Not Started</span></li>
+          <li><strong>Claude conversation-rating agent</strong> — per-call score from transcript <span class="owner">Mido</span> <span class="pill notstart">Not Started</span></li>
+          <li><strong>Success-rate-vs-target widget</strong> — % attainment per task/period <span class="owner">Mido</span> <span class="pill notstart">Not Started</span></li>
+          <li><strong>Calendar view</strong> on the PoR (quarter / month / day) <span class="owner">Mido</span> <span class="pill notstart">Not Started</span></li>
+          <li><strong>Permission tiers</strong> — exec/manager (Adam, Kebrina) vs employee <span class="owner">Mido</span> <span class="pill notstart">Not Started</span></li>
+        </ul>
+      </div>
+
+      <div class="phase">
+        <div class="phase-head">
+          <span class="phase-name">Phase 2 — Outbound Stack Rebuild</span>
+          <span class="phase-when">By 2026-07-15</span>
+        </div>
+        <ul>
+          <li><strong>Blake v4.0 deployed on Twilio number</strong> — gated by Adam voice clone <span class="owner">Mido</span> <span class="pill blocked">Blocked</span></li>
+          <li><strong>Cloudflare Workers event backbone</strong> — webhook fan-out <span class="owner">Mido</span> <span class="pill notstart">Not Started</span></li>
+          <li><strong>Pre-call context fetcher</strong> + post-call router <span class="owner">Mido</span> <span class="pill notstart">Not Started</span></li>
+          <li><strong>GHL workflow audit</strong> — kill 22 drafts → keep, publish, or delete <span class="owner">Mido</span> <span class="pill inflight">In Progress</span></li>
+          <li><strong>Call Incoming Notification → Slack</strong> (out of RJ's inbox) <span class="owner">Mido</span> <span class="pill notstart">Not Started</span></li>
+        </ul>
+      </div>
+
+      <div class="phase">
+        <div class="phase-head">
+          <span class="phase-name">Phase 3 — Realtor + Inbound Engine</span>
+          <span class="phase-when">By 2026-08-31</span>
+        </div>
+        <ul>
+          <li><strong>Zillow/Redfin → MAO → SMS-to-listing-agent</strong> hardening + reply routing <span class="owner">Mido</span> <span class="pill inflight">In Progress</span></li>
+          <li><strong>Realtor partner motion</strong> — turn one-touch SMS into a repeat affiliate channel <span class="owner">Adam · Mido</span> <span class="pill notstart">Not Started</span></li>
+          <li><strong>Entry offer ("free 24-hr cash-offer range")</strong> as lead magnet, replace cold "we buy houses" <span class="owner">Adam · Mido</span> <span class="pill notstart">Not Started</span></li>
+          <li><strong>14-day close guarantee</strong> ($1k pay-out) — risk reversal as the wedge <span class="owner">Adam</span> <span class="pill notstart">Not Started</span></li>
+        </ul>
+      </div>
+
+      <div class="phase">
+        <div class="phase-head">
+          <span class="phase-name">Phase 4 — Pivot Concepts (NDA-gated, future scope)</span>
+          <span class="phase-when">2026-Q3+</span>
+        </div>
+        <ul>
+          <li><strong>The "powerful meeting" project</strong> — recording unlocked after NDA <span class="owner">Adam</span> <span class="pill hold">On Hold</span></li>
+          <li><strong>Dating app concept</strong> — scope TBD <span class="owner">Adam</span> <span class="pill hold">On Hold</span></li>
+          <li><strong>Legacy / memorialization app</strong> (Kebrina) — Legacy Book + Pocket Guide <span class="owner">Kebrina · Mido</span> <span class="pill hold">On Hold</span></li>
+          <li><strong>Vault architecture decision</strong> — one vault vs separate-per-idea on shared infra <span class="owner">Adam · Mido</span> <span class="pill blocked">Blocked</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 03 · WORKSTREAMS ──────────────────────────────── -->
+  <section class="sec" id="workstreams">
+    <div class="tag-row"><span class="num">03</span><h2>Workstreams &amp; Status</h2></div>
+    <hr>
+    <table class="por">
+      <thead>
+        <tr><th>Workstream</th><th>Pillar</th><th>Owner</th><th>Status</th><th>Effort</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Dashboard suite (4 pages live + PoR)</td><td>Vault / C</td><td class="who">Mido</td><td><span class="pill shipped">Shipped</span></td><td class="eff">—</td></tr>
+        <tr><td>About page — workflow inventory</td><td>Ops</td><td class="who">Mido</td><td><span class="pill shipped">Shipped</span></td><td class="eff">—</td></tr>
+        <tr><td>Plan-of-Record tab (this page)</td><td>Ops</td><td class="who">Mido</td><td><span class="pill shipped">Shipped</span></td><td class="eff">0.5d</td></tr>
+        <tr><td>Appointment drill-down view</td><td>Ops</td><td class="who">Mido</td><td><span class="pill notstart">Not Started</span></td><td class="eff">2d</td></tr>
+        <tr><td>Claude conversation-rating agent</td><td>Blake / A</td><td class="who">Mido</td><td><span class="pill notstart">Not Started</span></td><td class="eff">3d</td></tr>
+        <tr><td>Success-rate-vs-target widget</td><td>Ops</td><td class="who">Mido</td><td><span class="pill notstart">Not Started</span></td><td class="eff">1d</td></tr>
+        <tr><td>Calendar view (quarter / month / day)</td><td>Ops</td><td class="who">Mido</td><td><span class="pill notstart">Not Started</span></td><td class="eff">2d</td></tr>
+        <tr><td>Permission tiers (exec / manager / employee)</td><td>Ops</td><td class="who">Mido</td><td><span class="pill notstart">Not Started</span></td><td class="eff">2d</td></tr>
+        <tr><td>RJ call-audio analysis (&gt;5s + conversation realness)</td><td>Outbound</td><td class="who">Mido</td><td><span class="pill inflight">In Progress</span></td><td class="eff">0.5d</td></tr>
+        <tr><td>Blake v4.0 family-company persona prompt</td><td>Blake / A</td><td class="who">Mido</td><td><span class="pill inflight">In Progress</span></td><td class="eff">1d</td></tr>
+        <tr><td>Adam ElevenLabs voice clone</td><td>Blake / A</td><td class="who">Adam</td><td><span class="pill blocked">Blocked</span></td><td class="eff">0.5d</td></tr>
+        <tr><td>Cloudflare Workers event backbone</td><td>Infra</td><td class="who">Mido</td><td><span class="pill notstart">Not Started</span></td><td class="eff">4d</td></tr>
+        <tr><td>Zillow listing pipeline (MAO → SMS-to-realtor)</td><td>Listings / B</td><td class="who">Mido</td><td><span class="pill inflight">In Progress</span></td><td class="eff">2d</td></tr>
+        <tr><td>Realtor partner / affiliate motion</td><td>Listings / B</td><td class="who">Adam · Mido</td><td><span class="pill notstart">Not Started</span></td><td class="eff">3d</td></tr>
+        <tr><td>Entry-offer lead magnet (24-hr cash-offer range)</td><td>Offer</td><td class="who">Adam · Mido</td><td><span class="pill notstart">Not Started</span></td><td class="eff">2d</td></tr>
+        <tr><td>14-day close guarantee ($1k risk reversal)</td><td>Offer</td><td class="who">Adam</td><td><span class="pill notstart">Not Started</span></td><td class="eff">decide</td></tr>
+        <tr><td>GHL workflow audit (38 → publish/delete/rename)</td><td>Ops</td><td class="who">Mido</td><td><span class="pill inflight">In Progress</span></td><td class="eff">1d</td></tr>
+        <tr><td>Call Incoming Notification → Slack reroute</td><td>Ops</td><td class="who">Mido</td><td><span class="pill notstart">Not Started</span></td><td class="eff">0.5d</td></tr>
+        <tr><td>Delete the two "New Workflow : 17770…" scratch drafts</td><td>Ops</td><td class="who">Mido</td><td><span class="pill notstart">Not Started</span></td><td class="eff">15min</td></tr>
+        <tr><td>Vault sync daemon (Conversations / Calls / Listings)</td><td>Vault / C</td><td class="who">Mido</td><td><span class="pill shipped">Shipped</span></td><td class="eff">—</td></tr>
+        <tr><td>Prompt-iteration loop (volume-triggered, 50+ transcripts)</td><td>Vault / C</td><td class="who">Mido</td><td><span class="pill notstart">Not Started</span></td><td class="eff">3d</td></tr>
+        <tr><td>SOP → Fal.AI training videos (Pillar D)</td><td>Training / D</td><td class="who">Mido</td><td><span class="pill notstart">Not Started</span></td><td class="eff">later</td></tr>
+        <tr><td>NDA-gated concepts (powerful meeting / dating / Legacy)</td><td>Concepts</td><td class="who">Adam · Kebrina</td><td><span class="pill hold">On Hold</span></td><td class="eff">~1yr</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ── 04 · DECISIONS LOG ────────────────────────────── -->
+  <section class="sec" id="decisions">
+    <div class="tag-row"><span class="num">04</span><h2>Decisions Log</h2></div>
+    <hr>
+    <div class="decisions">
+      <div class="decision">
+        <div class="dec-head">Dashboard build proceeds with Adam's three asks <span class="pill shipped">Decided 2026-06-03</span></div>
+        <div class="dec-body">Drill-down, Claude conversation ratings, success-rate-vs-target. Calendar view preferred over column view.</div>
+      </div>
+      <div class="decision">
+        <div class="dec-head">231 Lafayette — $7,500 refund accepted from Mario <span class="pill shipped">Decided 2026-06-03</span></div>
+        <div class="dec-body">Relationship kept amicable. Mido to sign updated NDA right away. Still $12k out of pocket on the project.</div>
+      </div>
+      <div class="decision pending">
+        <div class="dec-head">APG on hold to pivot toward the three concepts <span class="pill hold">Pending — confirm with Kebrina</span></div>
+        <div class="dec-body">Sunday-night agreement was meant to be the hold point. Adam wants to confirm directly with Kebrina before flipping the switch.</div>
+      </div>
+      <div class="decision pending">
+        <div class="dec-head">RJ likely terminated <span class="pill hold">Pending — direct conversation + audio analysis</span></div>
+        <div class="dec-body">Adam targeting Friday / "probably tomorrow." Mido's call-audio agent (&gt;5s call counts, conversation realness) is the tiebreaker between the SMS-saturation read and the operational-effectiveness read.</div>
+      </div>
+      <div class="decision pending">
+        <div class="dec-head">Bring Jef back on the leads? <span class="pill hold">Pending</span></div>
+        <div class="dec-body">Adam floated it — "he had that charm." Vault canonical: Jef = Jef De los Santos, prior closer, currently tombstoned. Reversal under consideration.</div>
+      </div>
+      <div class="decision pending">
+        <div class="dec-head">Vault architecture — one vault vs separate-per-idea <span class="pill hold">Pending</span></div>
+        <div class="dec-body">Leaning toward separate projects/grids on shared infrastructure. Not finalized.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 05 · ENHANCEMENT BACKLOG ─────────────────────── -->
+  <section class="sec" id="enhancements">
+    <div class="tag-row"><span class="num">05</span><h2>Enhancement Backlog — from the 2026-06-08 blend audit</h2></div>
+    <hr>
+
+    <h3 style="font-family: Georgia, serif; font-size: 19px; margin: 22px 0 10px; color: var(--ink);">5a · Outbound marketing blend (Blake / SMS / dialer)</h3>
+    <table class="por">
+      <thead>
+        <tr><th>#</th><th>Enhancement</th><th>Source</th><th>Owner</th><th>Effort</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>O1</td><td>Add risk-reversal guarantee to every outbound surface (Blake script, SMS, landing). "14-day close at agreed price or we pay you $1,000."</td><td>Hormozi</td><td class="who">Adam · Mido</td><td class="eff">1d</td></tr>
+        <tr><td>O2</td><td>Replace cold "we buy houses cash" SMS with entry-offer wedge: "free 24-hr written cash-offer range, no obligation."</td><td>Hormozi</td><td class="who">Mido</td><td class="eff">2d</td></tr>
+        <tr><td>O3</td><td>Niche down for next 90 days — pick roofing+siding Northern NJ OR MF 5+ HNW corridors. Stop being a generalist on the cold channel.</td><td>Hormozi</td><td class="who">Adam</td><td class="eff">decide</td></tr>
+        <tr><td>O4</td><td>Turn Zillow listing pipeline from one-touch SMS into a repeat realtor-affiliate motion (commission model, named partners, monthly digest).</td><td>Hormozi</td><td class="who">Adam · Mido</td><td class="eff">5d</td></tr>
+        <tr><td>O5</td><td>Pull RJ off cold 456-lead pile this week → put him on realtors who already replied to a Zillow SMS in last 30 days.</td><td>Hormozi</td><td class="who">RJ · Adam</td><td class="eff">0d (route)</td></tr>
+        <tr><td>O6</td><td>Cut every "warm / conversational / ethically honest" adjective from Blake's prompt. Replace with three specifics: what Blake <em>notices</em>, what he <em>refuses to do</em>, what he says when the conversation stops being about the house.</td><td>Rubin</td><td class="who">Mido</td><td class="eff">1d</td></tr>
+        <tr><td>O7</td><td>Rewrite first-touch SMS so it notices the specific property (address detail, board-up, listing age) instead of announcing the buyer.</td><td>Rubin</td><td class="who">Mido</td><td class="eff">1d</td></tr>
+        <tr><td>O8</td><td>Add a "what does Blake do when the seller says something that breaks his heart?" branch to the prompt — character, not posture.</td><td>Rubin</td><td class="who">Mido</td><td class="eff">0.5d</td></tr>
+        <tr><td>O9</td><td>Stand up a CLOSER-framework call card for RJ + Blake (Clarify · Label · Overview past pain · Sell the vacation · Explain · Reinforce).</td><td>Hormozi</td><td class="who">Mido · RJ</td><td class="eff">1d</td></tr>
+        <tr><td>O10</td><td>Engineer real scarcity on the Zillow-pipeline SMS — cap weekly offers at N realtors / N properties so the buyer feels selected, not blasted.</td><td>Hormozi</td><td class="who">Mido</td><td class="eff">0.5d</td></tr>
+      </tbody>
+    </table>
+
+    <h3 style="font-family: Georgia, serif; font-size: 19px; margin: 28px 0 10px; color: var(--ink);">5b · Internal ops blend (dashboards / GH Actions / GHL workflows)</h3>
+    <table class="por">
+      <thead>
+        <tr><th>#</th><th>Enhancement</th><th>Source</th><th>Owner</th><th>Effort</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>I1</td><td>Reroute <em>Call Incoming Notification</em> from RJ's email to Slack <code>#base1-sms-leadgen</code>. Single morning digest replaces the per-call email blast.</td><td>about.html audit</td><td class="who">Mido</td><td class="eff">0.5d</td></tr>
+        <tr><td>I2</td><td>Delete <em>New Workflow : 1777068701780</em> and <em>New Workflow : 1777429426658</em> — abandoned scratch from 2026-04-24 / 2026-04-29.</td><td>about.html audit</td><td class="who">Mido</td><td class="eff">15min</td></tr>
+        <tr><td>I3</td><td>Publish the two SMS workflows that are currently DRAFT and ready (<em>CTA First msg</em>, <em>Auto Missed Call Text-Back</em>) once SMS halt lifts. Until then, document them as <em>paused-intentional</em> not <em>draft</em>.</td><td>about.html audit</td><td class="who">Mido</td><td class="eff">1d</td></tr>
+        <tr><td>I4</td><td>Retire the three GHL-native AI bot drafts (<em>2. Ai Appointment Booking</em>, <em>{VER 2}</em>, <em>3. Customer Replied - Auto Handling</em>) — superseded by Blake + the GH Actions Claude classifier. Delete or move to <em>Archive</em> folder.</td><td>about.html audit</td><td class="who">Mido</td><td class="eff">15min</td></tr>
+        <tr><td>I5</td><td>Decommission <code>sms_followup.py</code> cron (caused production fires per vault hard-rule #4). Move to event-driven via Cloudflare Worker on GHL <em>customer replied</em> webhook.</td><td>vault rule #4</td><td class="who">Mido</td><td class="eff">3d</td></tr>
+        <tr><td>I6</td><td>Add a "last viewed" timestamp + view-count tracker per dashboard tab. Tabs nobody opens for 30 days move to <code>/archive/</code>.</td><td>noise audit</td><td class="who">Mido</td><td class="eff">1d</td></tr>
+        <tr><td>I7</td><td>Consolidate <em>5. Testing Workflow</em> (56 versions deep) — extract anything still useful, kill the rest.</td><td>about.html audit</td><td class="who">Mido</td><td class="eff">0.5d</td></tr>
+        <tr><td>I8</td><td>Rename <em>Reactivaiton of all leads</em> draft (GHL-side typo) and decide: publish for ACQ dead-stage reactivation (legal — per <code>feedback_dead_deals.md</code>) or delete.</td><td>about.html audit</td><td class="who">Mido</td><td class="eff">15min</td></tr>
+        <tr><td>I9</td><td>Token audit on GH Actions — <code>acq.yml</code>, <code>weekly.yml</code>, <code>slack.yml</code> are the biggest LLM spenders. Cache transcripts + diff Slack pulls to cut Claude tokens ~40%.</td><td>cost audit</td><td class="who">Mido</td><td class="eff">2d</td></tr>
+        <tr><td>I10</td><td>Add an "ops health" sub-section to the PoR page (this page) that pulls live workflow run-counts + failure rates from GitHub API + GHL API. Self-policing dashboard.</td><td>self</td><td class="who">Mido</td><td class="eff">3d</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ── 06 · LINKED ARTIFACTS ─────────────────────────── -->
+  <section class="sec" id="links">
+    <div class="tag-row"><span class="num">06</span><h2>Linked Artifacts</h2></div>
+    <hr>
+    <div class="links">
+      <a href="about.html"><span class="lbl">Dashboard</span>How the Robots Work — full workflow inventory</a>
+      <a href="priorities.html"><span class="lbl">Dashboard</span>Priority Deals — Adam's weekly action queue</a>
+      <a href="weekly.html"><span class="lbl">Dashboard</span>Weekly Snapshot — momentum + closed-pipeline math</a>
+      <a href="markets.html"><span class="lbl">Dashboard</span>Markets — Route 30 PA, Northern NJ corridors</a>
+      <a href="blake.html"><span class="lbl">Dashboard</span>Blake — voice-agent operations</a>
+      <a href="progress.html"><span class="lbl">Dashboard</span>Progress — system build status</a>
+      <a href="ai-agents-plan.html"><span class="lbl">Dashboard</span>AI Agents Plan — published roadmap</a>
+      <a href="index.html"><span class="lbl">Dashboard</span>Follow-Ups — daily lead queue</a>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <span>Auto-synced from the master roadmap · vault path: APG-Vault/_system/master-roadmap.md</span>
+    <span class="gold-stamp">v1 · 2026-06-08</span>
+  </footer>
+
+</div>
 </body>
 </html>
 `,

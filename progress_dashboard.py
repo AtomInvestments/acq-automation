@@ -29,7 +29,7 @@ HTML_TEMPLATE = """<!doctype html>
 <meta name="theme-color" content="#1A2840">
 <script>
   if (location.hostname === "atominvestments.github.io") {
-    location.replace("https://acq-automation.mithchell.workers.dev/login?next=/progress");
+    location.replace("https://apg-dashboard.mithchell.workers.dev/login?next=/progress");
   }
 </script>
 <style>
@@ -211,6 +211,14 @@ h1 .accent { color: var(--gold); font-style: italic; }
 }
 .footer .gold-stamp { display: inline-block; padding: 4px 10px; background: var(--gold); color: var(--ink); letter-spacing: 0.14em; }
 </style>
+<!-- Microsoft Clarity (heatmaps + session recordings) -->
+<script type="text/javascript">
+(function(c,l,a,r,i,t,y){
+  c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+  t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+  y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+})(window,document,"clarity","script","wwbe84z9my"); // TODO: replace wwbe84z9my with real project id from clarity.microsoft.com
+</script>
 </head>
 <body>
 <div class="shell">
@@ -225,15 +233,17 @@ h1 .accent { color: var(--gold); font-style: italic; }
   </header>
 
   <nav class="topnav">
-    <a href="index.html">Follow-Ups</a>
+    <a href="/">Desk</a>
+    <a href="blake.html">Blake</a>
+    <a href="progress.html" class="active">Tracker</a>
+    <a href="projects.html">Roadmap</a>
+    <a href="index.html">Follow-ups</a>
     <a href="deals.html">Deals</a>
-    <a href="weekly.html">Weekly</a>
+    <a href="weekly.html">Docket</a>
     <a href="priorities.html">Priority</a>
     <a href="markets.html">Markets</a>
-    <a href="blake.html">Blake</a>
-    <a href="progress.html" class="active">Progress</a>
-    <a href="ai-agents-plan.html">AI Agents Plan</a>
-    <a href="about.html">About</a>
+    <a href="/insights">Insights</a>
+    <a href="sms-test.html">SMS Test</a>
   </nav>
 
   <div class="summary-row">

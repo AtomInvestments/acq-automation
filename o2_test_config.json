@@ -1,0 +1,35 @@
+{
+  "_comment": "O2 entry-offer A/B/C test config. Hot-reloaded each run. Multi-campaign-ready: add a row under `campaigns` to onboard a second test (e.g. O7 Zillow/Redfin specificity).",
+  "global": {
+    "sms_paused": true,
+    "_sms_paused_note": "Set to false to actually fire sends. Per APG Q2 strategy SMS is halted; this gate flips when Mido/Adam greenlight resuming SMS.",
+    "min_sends_per_variant": 200,
+    "decisive_lead_pp": 3.0,
+    "decisive_min_per_variant": 500,
+    "time_cap_days": 30
+  },
+  "campaigns": {
+    "o2_entry_offer": {
+      "active": true,
+      "field_key": "contact.sms_variant",
+      "from_number": "+16094489034",
+      "_from_note": "APG Twilio NJ — voice-only today. SMS provisioning happens at resume.",
+      "variants": {
+        "A": {
+          "weight": 33,
+          "template": "Hi {first_name} — Blake with APG. I pulled a written cash-offer range for {address1} this morning. Want me to send it over? No commitment, no follow-up calls unless you ask. Reply STOP to opt out."
+        },
+        "B": {
+          "weight": 33,
+          "template": "Hey {first_name}, Blake here. I had APG run a 24-hr cash-offer range on {address1} — looks like it'd land somewhere between {offer_low} and {offer_high}. Want the actual number? Reply STOP to opt out."
+        },
+        "C": {
+          "weight": 34,
+          "template": "Hi {first_name} — Blake with APG. Saw {address1} is a {noticing} — those are the kind we put written offers on within 24 hours. Want me to send one? Reply STOP to opt out."
+        }
+      },
+      "started_at": null,
+      "_started_at_note": "Stamped automatically on first send."
+    }
+  }
+}

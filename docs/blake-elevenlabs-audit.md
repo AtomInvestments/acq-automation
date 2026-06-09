@@ -10,7 +10,7 @@ Workstream 4a from the May 26 brief. Goal: identify why Blake sounds artificial 
 >
 > After this PR merges, run:
 > ```bash
-> curl -s https://acq-automation.mithchell.workers.dev/admin/blake/agent-config | python -m json.tool
+> curl -s https://apg-dashboard.mithchell.workers.dev/admin/blake/agent-config | python -m json.tool
 > ```
 > The `/admin/blake/agent-config` endpoint added in this PR proxies through to ElevenLabs `GET /v1/convai/agents/{agent_id}`. Use its output to fill in the Current column verbatim, then make a follow-up PR that `PATCH /v1/convai/agents/{agent_id}` applies the approved Recommended values.
 

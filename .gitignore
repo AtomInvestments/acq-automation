@@ -11,3 +11,8 @@ cleanup_*.log.json
 triage_*.py
 triage_*.json
 sms_state.bak.*.json
+
+# Local secrets — never commit
+.env
+.env.*
+!.env.example
