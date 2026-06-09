@@ -845,5 +845,38 @@
     "match_cid": "xoZDOExwlJK4ofP9TItR",
     "match_confidence": "high",
     "summary": "Darren confirmed interest in selling his fully renovated property at 92 Union Ave for $700-800k within a few months due to retirement/moving."
+  },
+  "C06MM4DQZ28:1781030373.229019": {
+    "field_updates": {
+      "asking_price": 650000,
+      "motivation": "House too big, wants to move near hometown and eliminate mortgage",
+      "reason_for_selling": "Wants to downsize to area where he's from and received ERMA COVID bailout that requires staying 1.5 more years unless he gets asking price",
+      "timeline": "6+ months"
+    },
+    "match_cid": "ZcFvTuaDT9hUquFWNrCW",
+    "match_confidence": "high",
+    "summary": "Michael Perry is interested in selling his 3-4 bedroom Verona home for around $650k to buy a house in Boonton, but needs to wait 1.5 years to avoid repaying ERMA COVID assistance unless he gets his asking price."
+  },
+  "C06MM4DQZ28:1781032014.983369": {
+    "field_updates": {
+      "asking_price": 520000,
+      "motivation": "Sooner than later",
+      "reason_for_selling": "Moving",
+      "timeline": "ASAP"
+    },
+    "match_cid": "8Z1G9NtLwOkETimV9JmC",
+    "match_confidence": "high",
+    "summary": "Raymond confirmed he's considering selling, wants $520k, property in great condition with only two windows needing glass replacement, timeline is sooner than later, and reason for selling is moving."
+  },
+  "C06MM4DQZ28:1781035026.725369": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": "Tenant moving out, will entertain offers after vacancy",
+      "reason_for_selling": "Tenant scheduled to move out this week and owner wants to sell the property after vacancy",
+      "timeline": "ASAP"
+    },
+    "match_cid": "3tmSWWdKWa1QMmxmF28q",
+    "match_confidence": "high",
+    "summary": "Tenant moving out this week, then Anthony will entertain offers; property has updates in past 5 years; available for call Thursday 10am-3pm."
   }
 }
