@@ -1,0 +1,47 @@
+name = "airbnb-pricing-agent"
+main = "src/index.ts"
+compatibility_date = "2026-05-20"
+
+# Daily pricing run at 07:00 UTC = 03:00 EDT.
+# Runs before guests start booking in the morning. Pull PriceLabs recs,
+# apply Adam's floor + weekend rules, push back to PriceLabs overrides,
+# notify Slack.
+[triggers]
+crons = ["0 7 * * *"]
+
+# KV: pricing decision log (90-day retention enforced in code).
+# One-time setup (by Mido):
+#   CLOUDFLARE_API_TOKEN=cfut_... ./node_modules/.bin/wrangler kv:namespace create PRICING_LOG
+# Then paste the id below.
+[[kv_namespaces]]
+binding = "PRICING_LOG"
+id = "REPLACE_AFTER_CREATE"
+
+# Non-secret config — overridable by `wrangler secret put` if Adam ever
+# wants per-listing customization, but defaults work for the inline ask.
+[vars]
+BASE_FLOOR = "200"
+WEEKEND_ADJUSTMENT_PCT = "4"
+SLACK_CHANNEL = "#airbnb-pricing-log"
+DRY_RUN = "true"
+PRICE_HORIZON_DAYS = "30"
+
+# Secrets — set via `wrangler secret put NAME`:
+#   PRICELABS_API_KEY        from pricelabs.co dashboard → Account → API
+#   SLACK_BOT_TOKEN          reuse the apg-dashboard bot token
+#   ANTHROPIC_API_KEY        reuse from apg-dashboard (used for Haiku reasoning)
+#   RUN_NOW_SECRET           shared secret for /run-now manual trigger
+#   AIRBNB_API_TOKEN         OPTIONAL — only if PriceLabs→Airbnb sync isn't enabled
+#
+# Worker URL (once deployed):
+#   https://airbnb-pricing-agent.mithchell.workers.dev
+#
+# Deploy:
+#   cd workers/airbnb-pricing-agent
+#   CLOUDFLARE_API_TOKEN=cfut_... ./node_modules/.bin/wrangler deploy
+#
+# Local dev:
+#   wrangler dev
+#
+# Tail logs:
+#   wrangler tail airbnb-pricing-agent --format pretty

@@ -1,0 +1,16 @@
+{
+  "name": "airbnb-pricing-agent",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Cloudflare Worker — daily Airbnb pricing agent. Pulls PriceLabs recs, applies APG rules (base floor, weekend adj), pushes overrides back, posts Slack digest.",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "tail": "wrangler tail airbnb-pricing-agent --format pretty"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20240821.0",
+    "typescript": "^5.4.5",
+    "wrangler": "^3.78.0"
+  }
+}
