@@ -76,6 +76,17 @@
     "match_confidence": "high",
     "summary": "Paul stated he's been thinking about selling but not right now, agreed to follow up in 6-8 months."
   },
+  "C05M7E1TJP7:1781109954.513959": {
+    "field_updates": {
+      "asking_price": 7500000,
+      "motivation": "Open to selling investment property but skeptical of buyers without funds",
+      "reason_for_selling": "Willing to sell this property from portfolio while keeping other residential and commercial holdings, currently rents to students for cash flow",
+      "timeline": "No rush"
+    },
+    "match_cid": "QWt7tBJjuKzUazKpPABK",
+    "match_confidence": "high",
+    "summary": "Manny owns 6 one-bedroom units at this address, asking $7.5M with no mortgage, property in great condition and cash-flowing but wants proof of funds before proceeding."
+  },
   "C05MP6K9RNV:1779136440.549199": {
     "field_updates": {
       "asking_price": null,
@@ -878,5 +889,16 @@
     "match_cid": "3tmSWWdKWa1QMmxmF28q",
     "match_confidence": "high",
     "summary": "Tenant moving out this week, then Anthony will entertain offers; property has updates in past 5 years; available for call Thursday 10am-3pm."
+  },
+  "C06MM4DQZ28:1781113296.433999": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": "Relocating to Florida, needs to move family members first",
+      "reason_for_selling": "Owner relocated to Florida and needs to sell both properties once he can relocate his mother and sister who currently live in one of the homes",
+      "timeline": "90 days"
+    },
+    "match_cid": "GhA3FwiozcWEBp8diC7M",
+    "match_confidence": "high",
+    "summary": "Irvin Scott owns two adjacent properties (1131 and 1133 Louis St) in Camden NJ and wants to sell both but needs 2-3 months to relocate his mother and sister who currently live in 1133."
   }
 }
