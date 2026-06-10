@@ -65,6 +65,7 @@ export interface Permissions {
   insights: boolean;     // GET /insights     (Website snapshots + Clarity)
   websites: boolean;     // GET /websites
   dashboard: boolean;    // GET /dashboard    (v2 ops dashboard)
+  messages: boolean;     // GET /messages     (Airbnb host inbox analytics)
 
   // Sensitive surfaces (role-gated even if true)
   can_view_credentials: boolean;
@@ -79,7 +80,7 @@ export interface Permissions {
 
 export const PERM_KEYS: Array<keyof Permissions> = [
   "hub", "blake", "progress", "roadmap", "followups", "deals",
-  "weekly", "priorities", "markets", "insights", "websites", "dashboard",
+  "weekly", "priorities", "markets", "insights", "websites", "dashboard", "messages",
   "can_view_credentials", "can_view_costs", "can_view_blake_calls",
   "can_export_data", "can_add_users", "can_remove_users",
 ];

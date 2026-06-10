@@ -1,0 +1,7 @@
+.venv/
+.chrome-profile/
+scrape-state.json
+airbnb-messages-*.json
+airbnb-quickreplies-proposed-*.md
+__pycache__/
+*.pyc

@@ -49,6 +49,12 @@ import {
   buildRoadmapDataJson,
 } from "./roadmap-tab";
 import {
+  saveAirbnbSnapshot,
+  loadAirbnbSnapshot,
+  buildAnalytics as buildMessagesAnalytics,
+  renderMessagesPageHtml,
+} from "./messages-tab";
+import {
   bootstrapIfNeeded,
   requireAuthV2,
   hasPermission,
@@ -1101,6 +1107,84 @@ export default {
           status: 500, headers: { "content-type": "application/json" },
         });
       }
+    }
+
+    // ---- /messages — Airbnb host inbox analytics ----
+    //
+    // Data source: a JSON snapshot uploaded via POST /admin/upload-airbnb-data
+    // by the local Playwright scraper at tools/airbnb-message-scraper/.
+    // Stored in KV (DIAL_STATE, prefix `airbnb:messages:`). Read-only —
+    // auto-send replies require a channel manager (Hospitable / Hostaway).
+    //
+    // Routes:
+    //   GET  /messages                 — analytics dashboard HTML
+    //   GET  /messages-data            — JSON payload
+    //   POST /admin/upload-airbnb-data — accept scraped JSON, persist to KV
+    if (req.method === "GET" && url.pathname === "/messages") {
+      const authV2Msg = await requireAuthV2(req, env);
+      if (!authV2Msg.ok) {
+        return new Response(null, {
+          status: 302,
+          headers: { Location: `/login?next=${encodeURIComponent("/messages")}` },
+        });
+      }
+      const snap = await loadAirbnbSnapshot(env);
+      const metaRaw = await env.DIAL_STATE.get("airbnb:messages:meta");
+      let uploadedAt: string | undefined;
+      try { uploadedAt = metaRaw ? JSON.parse(metaRaw).uploaded_at : undefined; } catch {}
+      const analytics = buildMessagesAnalytics(snap, uploadedAt);
+      const html = renderMessagesPageHtml(JSON.stringify(analytics));
+      const wrapped = applyApgShell(html, "messages", authV2Msg.user);
+      return new Response(wrapped, {
+        status: 200,
+        headers: { "content-type": "text/html; charset=utf-8", "cache-control": "no-store" },
+      });
+    }
+
+    if (req.method === "GET" && url.pathname === "/messages-data") {
+      const authV2Md = await requireAuthV2(req, env);
+      if (!authV2Md.ok) return new Response(JSON.stringify({ error: "unauthorized" }), {
+        status: 401, headers: { "content-type": "application/json" },
+      });
+      const snap = await loadAirbnbSnapshot(env);
+      const metaRaw = await env.DIAL_STATE.get("airbnb:messages:meta");
+      let uploadedAt: string | undefined;
+      try { uploadedAt = metaRaw ? JSON.parse(metaRaw).uploaded_at : undefined; } catch {}
+      const analytics = buildMessagesAnalytics(snap, uploadedAt);
+      return new Response(JSON.stringify(analytics, null, 2), {
+        status: 200, headers: { "content-type": "application/json", "cache-control": "no-store" },
+      });
+    }
+
+    if (req.method === "POST" && url.pathname === "/admin/upload-airbnb-data") {
+      const authV2Up = await requireAuthV2(req, env);
+      if (!authV2Up.ok) return new Response(JSON.stringify({ error: "unauthorized" }), {
+        status: 401, headers: { "content-type": "application/json" },
+      });
+      // Permission check — only users with messages access can upload.
+      if (!hasPermission(authV2Up.user!, "messages")) {
+        return new Response(JSON.stringify({ error: "forbidden" }), {
+          status: 403, headers: { "content-type": "application/json" },
+        });
+      }
+      let raw: string;
+      try { raw = await req.text(); } catch {
+        return new Response(JSON.stringify({ error: "could not read body" }), {
+          status: 400, headers: { "content-type": "application/json" },
+        });
+      }
+      if (!raw || raw.length > 25 * 1024 * 1024) {
+        return new Response(JSON.stringify({ error: "empty or too large (25 MB max)" }), {
+          status: 413, headers: { "content-type": "application/json" },
+        });
+      }
+      const r = await saveAirbnbSnapshot(env, raw);
+      if (!r.ok) return new Response(JSON.stringify(r), {
+        status: 400, headers: { "content-type": "application/json" },
+      });
+      return new Response(JSON.stringify(r, null, 2), {
+        status: 200, headers: { "content-type": "application/json" },
+      });
     }
 
     // /admin/blake/burn-dedupe — wipe all `last_attempt:*` keys to unblock the
@@ -7388,6 +7472,7 @@ function apgTopNav(activeTab: string = "", user?: User): string {
     { href: "/priorities", key: "priorities", label: "Priority",   permKey: "priorities" },
     { href: "/markets",   key: "markets",    label: "Markets",     permKey: "markets" },
     { href: "/insights",  key: "insights",   label: "Insights",    permKey: "insights" },
+    { href: "/messages",  key: "messages",   label: "Messages",    permKey: "messages" },
     { href: "/sms-test",  key: "sms-test",   label: "SMS Test" },
   ];
   // Filter tabs by user's per-tab permissions. If no user given (legacy call
