@@ -900,5 +900,49 @@
     "match_cid": "GhA3FwiozcWEBp8diC7M",
     "match_confidence": "high",
     "summary": "Irvin Scott owns two adjacent properties (1131 and 1133 Louis St) in Camden NJ and wants to sell both but needs 2-3 months to relocate his mother and sister who currently live in 1133."
+  },
+  "C06MM4DQZ28:1781199671.820199": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": "willing to sell if price is right",
+      "reason_for_selling": "Property is currently a long-term rental and owner is open to selling at the right price",
+      "timeline": null
+    },
+    "match_cid": "lhlI9JuYTrUlhziTE6jf",
+    "match_confidence": "high",
+    "summary": "Thomas Brihn confirmed 193 Main St is a long-term rental in good condition with newer roof, updated kitchen/bathroom, and new windows, and is willing to consider selling if the price is right."
+  },
+  "C06MM4DQZ28:1781200060.407089": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": "Wants to retire",
+      "reason_for_selling": "Looking to retire and sell the property as-is",
+      "timeline": "ASAP"
+    },
+    "match_cid": "SphpVBkL9PMsAlecBRfl",
+    "match_confidence": "high",
+    "summary": "James Simila confirmed interest in selling 329 Newport Rd as-is, wants to retire, timeline is ASAP, asking investor to make first offer."
+  },
+  "C06MM4DQZ28:1781201060.426229": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": "Age - seller is 77 years old",
+      "reason_for_selling": "Seller is 77 years old and looking to divest from the rental property",
+      "timeline": "No rush"
+    },
+    "match_cid": "uHqcaOCUDDCBvOn36bnC",
+    "match_confidence": "high",
+    "summary": "Thomas Walters confirmed property is a renovated 2BR/2BA third-floor condo rented for $2000/month to same tenants for 6 years, selling because he's 77 years old, timeline depends on offer."
+  },
+  "C06MM4DQZ28:1781204025.975979": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": "Willing to sell, wants to discuss terms",
+      "reason_for_selling": null,
+      "timeline": "ASAP"
+    },
+    "match_cid": "xYIpPJUGIKKY60dmbGb5",
+    "match_confidence": "high",
+    "summary": "Sean confirmed he'll sell the property, stated it needs no work, and requested a call immediately to discuss."
   }
 }
