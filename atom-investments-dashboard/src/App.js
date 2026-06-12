@@ -1,24 +1,71 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import './App.css';
 import LoginPage from './pages/LoginPage';
 import Dashboard from './pages/Dashboard';
 import ProfilePage from './pages/ProfilePage';
+import { supabase, signOut } from './supabaseConfig';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
   const [currentPage, setCurrentPage] = useState('dashboard');
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Check for existing Supabase session on mount
+  useEffect(() => {
+    if (supabase) {
+      supabase.auth.getSession().then(({ data: { session } }) => {
+        if (session?.user) {
+          setCurrentUser({
+            id: session.user.id,
+            name: session.user.user_metadata?.name || session.user.email,
+            email: session.user.email,
+            role: 'User',
+          });
+          setIsAuthenticated(true);
+        }
+        setIsLoading(false);
+      });
+
+      // Listen for auth changes
+      const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+        if (session?.user) {
+          setCurrentUser({
+            id: session.user.id,
+            name: session.user.user_metadata?.name || session.user.email,
+            email: session.user.email,
+            role: 'User',
+          });
+          setIsAuthenticated(true);
+        } else {
+          setIsAuthenticated(false);
+          setCurrentUser(null);
+        }
+      });
+
+      return () => subscription?.unsubscribe();
+    } else {
+      setIsLoading(false);
+    }
+  }, []);
 
   const handleLogin = (user) => {
     setCurrentUser(user);
     setIsAuthenticated(true);
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    if (supabase) {
+      await signOut();
+    }
     setIsAuthenticated(false);
     setCurrentUser(null);
     setCurrentPage('dashboard');
   };
+
+  if (isLoading) {
+    return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>Loading...</div>;
+  }
 
   if (!isAuthenticated) {
     return <LoginPage onLogin={handleLogin} />;
