@@ -68,7 +68,6 @@
       ],
       "links": [
         { "label": "Full Plan of Record",     "href": "por.html" },
-        { "label": "Dashboard suite — About", "href": "about.html" },
         { "label": "Priorities",              "href": "priorities.html" },
         { "label": "Weekly snapshot",         "href": "weekly.html" }
       ]
