@@ -1,0 +1,29 @@
+name: Deploy apg-dashboard Worker
+
+# Manual deploy of workers/blake-post-call (the apg-dashboard Cloudflare Worker).
+# Uses the repo's CLOUDFLARE_API_TOKEN + CLOUDFLARE_ACCOUNT_ID secrets so we can
+# ship without an interactive `wrangler login` on a dev machine.
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: workers/blake-post-call
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Deploy with Wrangler
+        run: npx wrangler deploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}

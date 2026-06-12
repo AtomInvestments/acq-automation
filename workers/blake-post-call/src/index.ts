@@ -1811,6 +1811,34 @@ export default {
               mode: "turn",
             },
           },
+          // OVERRIDE ALLOWLIST — the 424 fix (2026-06-12).
+          // ElevenLabs disables ALL per-conversation overrides by default and
+          // 424s any override path the agent hasn't explicitly allow-listed.
+          // /conversation-init sends BOTH agent.first_message AND tts.voice_id
+          // (the Eric/Chris/Bill A/B rotation, live since 2026-05-29). The
+          // agent had first_message: true but tts.voice_id: false — so every
+          // init webhook was rejected with 424 bad_request the moment the A/B
+          // voice override shipped. Enable tts.voice_id here so the override
+          // the worker actually sends is accepted. Mirror the rest of the live
+          // allowlist so this PATCH doesn't silently disable first_message/prompt.
+          platform_settings: {
+            overrides: {
+              conversation_config_override: {
+                tts: {
+                  voice_id: true,
+                },
+                agent: {
+                  first_message: true,
+                  language: true,
+                  prompt: {
+                    prompt: true,
+                  },
+                },
+              },
+              custom_llm_extra_body: true,
+              enable_conversation_initiation_client_data_from_webhook: true,
+            },
+          },
         };
         const r = await fetch(
           `https://api.elevenlabs.io/v1/convai/agents/${BLAKE_AGENT_ID}`,
@@ -1824,33 +1852,42 @@ export default {
           }
         );
         const respText = await r.text();
-        // Auto-publish so the changes go LIVE instead of sitting as a draft.
-        // ElevenLabs Conv AI keeps changes in draft state until publish is
-        // explicitly called — that's what bit us 2026-05-27 (Mido had to
-        // click Publish manually after the first apply).
+        // Go-live verification.
+        // HISTORY: we used to POST /v1/convai/agents/{id}/publish here to push
+        // the change live. That endpoint 404s — it never existed. The "had to
+        // click Publish in the UI" symptom (2026-05-27) was a UI-draft artifact,
+        // not an API requirement.
+        // CURRENT (ElevenLabs agent versioning, GA April 2026): a PATCH to
+        //   /v1/convai/agents/{id} AUTO-COMMITS a new version on the default
+        //   branch and discards any per-user draft. There is no separate publish
+        //   step. The PATCH IS the publish. (docs: eleven-agents/operate/versioning)
+        // So instead of a dead publish call, we read the agent back and surface
+        // the now-live version id as proof the change took.
         let publishStatus: any = null;
         if (r.ok) {
-          const pubRes = await fetch(
-            `https://api.elevenlabs.io/v1/convai/agents/${BLAKE_AGENT_ID}/publish`,
-            {
-              method: "POST",
-              headers: {
-                "xi-api-key": env.ELEVENLABS_API_KEY,
-                "content-type": "application/json",
-              },
-              body: JSON.stringify({}),
-            }
-          );
-          publishStatus = {
-            status: pubRes.status,
-            ok: pubRes.ok,
-            body: (await pubRes.text()).slice(0, 500),
-          };
+          try {
+            const verify = await fetch(
+              `https://api.elevenlabs.io/v1/convai/agents/${BLAKE_AGENT_ID}`,
+              { headers: { "xi-api-key": env.ELEVENLABS_API_KEY } }
+            );
+            const vj: any = verify.ok ? await verify.json() : null;
+            publishStatus = {
+              mechanism: "patch-auto-commits-version (no publish endpoint)",
+              verified: verify.ok,
+              live_version_id:
+                vj?.version_id ?? vj?.agent?.version_id ?? null,
+              live_llm: vj?.conversation_config?.agent?.prompt?.llm ?? null,
+              live_voice_id: vj?.conversation_config?.tts?.voice_id ?? null,
+            };
+          } catch (e) {
+            publishStatus = { verified: false, error: String(e) };
+          }
         }
         return new Response(JSON.stringify({
           ok: r.ok,
           status: r.status,
           applied_keys: Object.keys(body.conversation_config),
+          overrides_enabled: ["tts.voice_id", "agent.first_message", "agent.language", "agent.prompt.prompt"],
           prompt_updated: !!newPromptText,
           prompt_backup_kv_key: backupKey,
           response: respText.slice(0, 4000),
@@ -4848,11 +4885,14 @@ async function handleConversationInit(req: Request, env: Env): Promise<Response>
         const lastName = (contact.lastName || "").trim();
         const address = (contact.address1 || "").trim();
 
-        // SELLER FILE: compose a Markdown-flavored brief of everything we
-        // know about this seller, so Blake walks into the call already
-        // briefed instead of asking questions we already have answers to.
-        // Pulls structured fields + last APG Lead Summary note (the
-        // canonical record from prior Blake calls).
+        // SELLER FILE: compose a lightweight brief from ONLY the structured
+        // fields already present on the GHL contact object. The heavy
+        // enrichment (APG Lead Summary note, recent contact notes, SMS
+        // history, Slack mentions, ATTOM property pull) has been removed to
+        // bring init webhook latency under 500ms — those layers each fired
+        // their own network round-trip and dominated the response time.
+        // Everything below is derived from the single contact fetch above
+        // (lookupContactDetailByPhone), so no extra round-trips happen here.
         const fullAddress = [contact.address1, contact.city, contact.state, contact.postalCode]
           .filter(Boolean).join(", ");
         let sellerFileLines = [
@@ -4866,83 +4906,12 @@ async function handleConversationInit(req: Request, env: Env): Promise<Response>
           cfMap[CF_TIMELINE] ? `Timeline: ${cfMap[CF_TIMELINE]}` : null,
         ].filter(Boolean) as string[];
 
-        // Per-call prompt enrichment (per user direction 2026-05-24):
-        // Blake needs the FRESHEST context before every call. We refresh
-        // four layers in parallel:
-        //   (a) Latest APG Lead Summary note (Blake's own structured prior-call notes)
-        //   (b) Last 5 contact notes of any kind (manual notes from Adam/RJ, etc.)
-        //   (c) Last 10 SMS messages on the conversation (what's been texted recently)
-        //   (d) Top 5 Slack mentions across channels the bot is in (cross-channel chatter
-        //       about this seller — KV-cached, so latency is bounded)
-        // All four layers run in parallel to keep init webhook latency low
-        // (ElevenLabs times out ~5 sec). Each layer is best-effort — failures
-        // don't block the call from happening.
-        const [lastSummary, recentNotes, recentSms, slackMentions, attomEnrich] = await Promise.all([
-          getLatestApgLeadSummary(env.BLAKE_GHL_PIT, contact.id).catch(() => null),
-          getRecentNotes(env.BLAKE_GHL_PIT, contact.id, 5).catch(() => []),
-          getRecentSmsConversation(env.BLAKE_GHL_PIT, contact.id, 10).catch(() => []),
-          getSlackMentions(env, `${firstName} ${lastName}`.trim(), callerPhone, 5).catch(() => []),
-          // ATTOM enrichment — only attempt if we have an address on file
-          address
-            ? enrichPropertyViaAttom(env, address).catch(() => null)
-            : Promise.resolve(null),
-        ]);
-
-        if (lastSummary) {
-          sellerFileLines.push("");
-          sellerFileLines.push("=== Last APG call summary ===");
-          sellerFileLines.push(lastSummary);
-        }
-
-        // Filter recentNotes to NOT duplicate the APG Lead Summary already shown above
-        const otherNotes = recentNotes.filter((n) => !n.body.startsWith("APG Lead Summary"));
-        if (otherNotes.length > 0) {
-          sellerFileLines.push("");
-          sellerFileLines.push(`=== Other recent notes on this contact (${otherNotes.length}) ===`);
-          for (const n of otherNotes) {
-            const when = n.addedAt ? n.addedAt.slice(0, 10) : "?";
-            sellerFileLines.push(`[${when}] ${n.body}`);
-          }
-        }
-
-        if (recentSms.length > 0) {
-          sellerFileLines.push("");
-          sellerFileLines.push(`=== Recent SMS history (${recentSms.length} most recent) ===`);
-          for (const m of recentSms) {
-            const arrow = m.direction === "inbound" ? "← seller" : "→ APG";
-            const when = m.at ? m.at.slice(0, 10) : "?";
-            sellerFileLines.push(`[${when}] ${arrow}: ${m.body}`);
-          }
-        }
-
-        if (slackMentions.length > 0) {
-          sellerFileLines.push("");
-          sellerFileLines.push(`=== Slack mentions (${slackMentions.length}) ===`);
-          for (const sm of slackMentions) {
-            // Slack ts is unix epoch seconds — turn it into a date for context
-            const epoch = Number(sm.ts.split(".")[0]);
-            const when = Number.isFinite(epoch) ? new Date(epoch * 1000).toISOString().slice(0, 10) : "?";
-            sellerFileLines.push(`[${when}] #${sm.channel}: ${sm.text}`);
-          }
-        }
-
-        if (attomEnrich) {
-          const block = formatEnrichmentForSellerFile(attomEnrich);
-          if (block) {
-            sellerFileLines.push("");
-            sellerFileLines.push(block);
-          }
-        }
-
         // Cap the total seller_file size so it doesn't blow up the prompt.
-        // Sonnet+Opus can take huge prompts but Blake's first message latency
-        // matters more — keep it lean.
         let sellerFile = sellerFileLines.join("\n");
         if (sellerFile.length > 6000) {
           sellerFile = sellerFile.slice(0, 6000) + "\n... [truncated to keep call init fast]";
         }
-        const attomHit = attomEnrich && !attomEnrich.error && attomEnrich.attomId ? "yes" : "no";
-        console.log(`[init] seller_file enriched: ${sellerFile.length} chars (${otherNotes.length} notes + ${recentSms.length} SMS + ${slackMentions.length} slack + attom:${attomHit})`);
+        console.log(`[init] seller_file (GHL-only, no enrichment): ${sellerFile.length} chars`);
 
         // If the GHL contact match returned blank firstName (data quality
         // issue — contact exists by phone but no name on file), treat as
