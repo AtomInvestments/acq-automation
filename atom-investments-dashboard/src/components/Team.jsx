@@ -9,6 +9,7 @@ export default function Team() {
 
   return (
     <div>
+      <div style={{ padding: '1rem', backgroundColor: '#a7f3d0', borderRadius: '0.5rem', marginBottom: '1.5rem', color: '#065f46', fontWeight: 'bold' }}>👥 TEAM VIEW</div>
       <h2 style={{ fontSize: '1.875rem', fontWeight: 'bold', color: '#111', marginBottom: '2rem' }}>Team Organization</h2>
 
       {/* Top Level: ATOM Investments */}

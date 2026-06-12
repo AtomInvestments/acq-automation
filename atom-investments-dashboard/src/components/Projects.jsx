@@ -115,6 +115,7 @@ export default function Projects() {
 
   return (
     <div>
+      <div style={{ padding: '1rem', backgroundColor: '#fecaca', borderRadius: '0.5rem', marginBottom: '1.5rem', color: '#991b1b', fontWeight: 'bold' }}>🎯 PROJECTS VIEW</div>
       <h2 style={{ fontSize: '1.875rem', fontWeight: 'bold', color: '#111', marginBottom: '1.5rem' }}>Projects</h2>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '1.5rem' }}>

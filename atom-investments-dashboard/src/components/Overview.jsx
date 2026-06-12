@@ -21,6 +21,7 @@ export default function Overview() {
 
   return (
     <div>
+      <div style={{ padding: '1rem', backgroundColor: '#dbeafe', borderRadius: '0.5rem', marginBottom: '1.5rem', color: '#0c4a6e', fontWeight: 'bold' }}>📋 OVERVIEW VIEW</div>
       <h2 style={{ fontSize: '1.875rem', fontWeight: 'bold', color: '#111', marginBottom: '1.5rem' }}>All Tasks</h2>
 
       <div style={{

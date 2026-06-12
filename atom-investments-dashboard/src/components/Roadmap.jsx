@@ -45,6 +45,7 @@ export default function Roadmap() {
 
   return (
     <div>
+      <div style={{ padding: '1rem', backgroundColor: '#d1d5db', borderRadius: '0.5rem', marginBottom: '1.5rem', color: '#374151', fontWeight: 'bold' }}>🗓️ ROADMAP VIEW</div>
       <div style={{ marginBottom: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <h2 style={{ fontSize: '1.875rem', fontWeight: 'bold', color: '#111' }}>Roadmap</h2>
         <select
