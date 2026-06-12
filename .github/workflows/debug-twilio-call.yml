@@ -1,0 +1,26 @@
+name: Debug Twilio Call
+
+on:
+  workflow_dispatch:
+
+jobs:
+  fetch-call:
+    runs-on: ubuntu-latest
+    env:
+      TWILIO_ACCOUNT_SID: ${{ secrets.TWILIO_ACCOUNT_SID }}
+      TWILIO_AUTH_TOKEN: ${{ secrets.TWILIO_AUTH_TOKEN }}
+      CALL_SID: CA8e71cb8156ea006f25f0b5a446eb93a4
+    steps:
+      - name: Fetch Twilio call details
+        run: |
+          set -euo pipefail
+          # Query the Twilio REST API for this Call SID using Basic auth.
+          # -u sends the SID:TOKEN as the Authorization header; curl never echoes it.
+          response=$(curl -sS -u "$TWILIO_ACCOUNT_SID:$TWILIO_AUTH_TOKEN" \
+            "https://api.twilio.com/2010-04-01/Accounts/$TWILIO_ACCOUNT_SID/Calls/$CALL_SID.json")
+
+          # Parse with jq and print ONLY the three diagnostic fields.
+          # Never print the raw response (could contain account-identifying data) or the token.
+          echo "status=$(echo "$response" | jq -r '.status')"
+          echo "error_code=$(echo "$response" | jq -r '.error_code')"
+          echo "error_message=$(echo "$response" | jq -r '.error_message')"
