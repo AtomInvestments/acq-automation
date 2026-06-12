@@ -23,7 +23,7 @@ HTML_TEMPLATE = """<!doctype html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>APG ACQ — Project Tracker</title>
+<title>Atom Investments — Project Tracker (APG)</title>
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link rel="apple-touch-icon" href="favicon.svg">
 <meta name="theme-color" content="#1A2840">
@@ -225,7 +225,7 @@ h1 .accent { color: var(--gold); font-style: italic; }
 
   <header class="masthead">
     <div class="brandrow">
-      <img src="logo.svg" alt="Atom Property Group" style="height:32px;width:auto">
+      <img src="logo.svg" alt="Atom Investments" style="height:32px;width:auto">
       <span>Updated {updated_at}</span>
     </div>
     <h1>Project <span class="accent">Tracker.</span></h1>
@@ -253,7 +253,7 @@ h1 .accent { color: var(--gold); font-style: italic; }
   {pillars_html}
 
   <div class="footer">
-    <span>Auto-generated from progress_state.json · APG ACQ Operating Layer · click any task to toggle</span>
+    <span>Auto-generated from progress_state.json · Atom Investments · APG · click any task to toggle</span>
     <span class="gold-stamp">Tracker · Live</span>
   </div>
 

@@ -1,6 +1,8 @@
 """
 Generate a beautiful HTML dashboard from sms_state.json + GHL data.
-Output: site/index.html — pushed to gh-pages branch by the workflow.
+Output: site/followups.html — pushed to gh-pages branch by the workflow.
+The root site/index.html is now the new Atom Investments Overview (hand-built),
+not the cron-generated Follow-Ups dashboard. Cron writes followups.html only.
 """
 import json, os, time, requests
 from datetime import datetime, timezone
@@ -14,7 +16,7 @@ STATE_FILE     = 'sms_state.json'
 CONTACTS_CACHE = 'contacts_cache.json'
 SHEET_ID       = os.environ.get('DASHBOARD_SHEET_ID', '')
 OUT_DIR        = 'site'
-OUT_FILE       = os.path.join(OUT_DIR, 'index.html')
+OUT_FILE       = os.path.join(OUT_DIR, 'followups.html')
 
 ET = ZoneInfo('America/New_York')
 
@@ -257,7 +259,7 @@ HTML_TEMPLATE = """<!doctype html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>APG ACQ — Follow-Ups Dashboard</title>
+<title>Atom Investments — Follow-Ups (APG)</title>
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link rel="apple-touch-icon" href="favicon.svg">
 <meta name="theme-color" content="#1A2840">
@@ -642,7 +644,7 @@ section h2, h2 {
 
   <header class="masthead">
     <div class="brandrow">
-      <span class="brand">Atom Property Group · ACQ Operations</span>
+      <span class="brand">Atom Investments · APG Operations</span>
       <span>Last updated __TIMESTAMP__ ET</span>
     </div>
     <h1>SMS <span class="accent">Follow-Ups.</span></h1>
@@ -741,7 +743,7 @@ section h2, h2 {
     </details>
   </section>
 
-  <footer>Auto-refreshed every 30 minutes by the GitHub Actions cron · APG ACQ Operating Layer</footer>
+  <footer>Auto-refreshed every 30 minutes by the GitHub Actions cron · Atom Investments · APG</footer>
 </div>
 
 <script>

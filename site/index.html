@@ -1,0 +1,471 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Atom Investments — Overview</title>
+<meta property="og:site_name" content="Atom Investments">
+<meta property="og:title" content="Atom Investments — Overview">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="apple-touch-icon" href="favicon.svg">
+<meta name="theme-color" content="#0A1F44">
+<link rel="preconnect" href="https://rsms.me/">
+<link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap">
+<style>
+:root {
+  --ink:        #0A1F44;
+  --ink-2:      #1A2A4D;
+  --ink-3:      #34406B;
+  --text:       #0E1422;
+  --text-2:     #3F4759;
+  --text-3:     #6B7388;
+  --rule:       #E5E7EE;
+  --rule-2:     #EFF1F6;
+  --surface:    #FFFFFF;
+  --surface-2:  #F7F8FB;
+  --surface-3:  #F1F3F8;
+  --gold:       #F5C518;     /* APG project accent */
+  --violet:     #7C5CD1;     /* Kin project accent */
+  --violet-soft:#F1ECFB;
+  --gold-soft:  #FFF8DA;
+  --green:      #16A66B;
+  --red:        #D93B3B;
+  --amber:      #C68A0F;
+  --radius:     6px;
+  --radius-sm:  4px;
+  --shadow-1:   0 1px 2px rgba(15, 23, 42, 0.04), 0 1px 1px rgba(15, 23, 42, 0.02);
+  --shadow-2:   0 8px 24px -8px rgba(15, 23, 42, 0.12), 0 2px 6px -2px rgba(15, 23, 42, 0.06);
+}
+* { box-sizing: border-box; }
+html, body {
+  margin: 0; padding: 0; background: var(--surface-2); color: var(--text);
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  font-size: 14px; line-height: 1.55;
+  font-feature-settings: "cv11", "ss01", "ss03";
+  -webkit-font-smoothing: antialiased;
+}
+@supports (font-variation-settings: normal) {
+  html, body { font-family: "Inter var", "Inter", system-ui, sans-serif; }
+}
+.mono { font-family: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace; }
+a { color: inherit; text-decoration: none; }
+button { font-family: inherit; cursor: pointer; }
+
+/* --- top nav --------------------------------------------------------- */
+.nav {
+  position: sticky; top: 0; z-index: 50;
+  background: rgba(255, 255, 255, 0.86);
+  backdrop-filter: saturate(180%) blur(14px);
+  -webkit-backdrop-filter: saturate(180%) blur(14px);
+  border-bottom: 1px solid var(--rule);
+}
+.nav-inner {
+  max-width: 1320px; margin: 0 auto;
+  display: flex; align-items: center; gap: 28px;
+  height: 56px; padding: 0 28px;
+}
+.brand {
+  display: flex; align-items: center; gap: 10px; color: var(--ink);
+  font-weight: 600; letter-spacing: -0.01em; font-size: 14.5px;
+}
+.brand-mark {
+  width: 22px; height: 22px; border-radius: 5px;
+  background: var(--ink);
+  display: flex; align-items: center; justify-content: center;
+  position: relative; overflow: hidden;
+}
+.brand-mark::before, .brand-mark::after, .brand-mark span {
+  content: ""; position: absolute; inset: 4px;
+  border: 1px solid var(--gold); border-radius: 50%;
+  opacity: 0.85;
+}
+.brand-mark::after { transform: rotate(60deg); }
+.brand-mark span { transform: rotate(-60deg); }
+.brand-mark i {
+  position: absolute; width: 4px; height: 4px; border-radius: 50%;
+  background: var(--gold); left: calc(50% - 2px); top: calc(50% - 2px);
+}
+.brand-name { display: flex; flex-direction: column; line-height: 1.15; }
+.brand-name .top { font-weight: 600; font-size: 14px; }
+.brand-name .sub { font-size: 9.5px; color: var(--text-3); letter-spacing: 0.14em; text-transform: uppercase; font-weight: 500; }
+.tabs { display: flex; gap: 2px; flex: 1; }
+.tab {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 6px 12px; border-radius: var(--radius-sm);
+  color: var(--text-2); font-weight: 500; font-size: 13px;
+  transition: background 120ms, color 120ms;
+}
+.tab:hover { background: var(--surface-3); color: var(--text); }
+.tab.is-active {
+  background: var(--ink); color: #fff;
+}
+.tab.is-active::before {
+  content: ""; width: 5px; height: 5px; border-radius: 50%;
+  background: var(--gold);
+}
+.nav-actions { display: flex; align-items: center; gap: 8px; }
+.user-pill {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 4px 10px 4px 4px;
+  border: 1px solid var(--rule);
+  border-radius: 24px;
+  background: var(--surface);
+  font-size: 12.5px; font-weight: 500;
+  transition: border-color 120ms, box-shadow 120ms;
+}
+.user-pill:hover { border-color: var(--ink-3); box-shadow: var(--shadow-1); }
+.avatar {
+  width: 24px; height: 24px; border-radius: 50%;
+  background: var(--ink); color: #fff;
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 10px; font-weight: 600; letter-spacing: 0.02em;
+  font-family: "JetBrains Mono", monospace;
+}
+.avatar.adam { background: var(--gold); color: var(--ink); }
+.avatar.kabrina { background: var(--violet); }
+.avatar.mido { background: var(--ink); }
+.avatar.lg { width: 40px; height: 40px; font-size: 13px; }
+.avatar.xl { width: 56px; height: 56px; font-size: 16px; border-radius: var(--radius); }
+
+/* --- shell ----------------------------------------------------------- */
+.shell { max-width: 1320px; margin: 0 auto; padding: 32px 28px 96px; }
+.page-head {
+  display: flex; align-items: flex-end; justify-content: space-between;
+  margin-bottom: 24px; gap: 16px;
+}
+.page-title {
+  margin: 0; font-size: 26px; font-weight: 600;
+  letter-spacing: -0.02em; color: var(--text);
+}
+.page-sub {
+  margin: 4px 0 0; color: var(--text-3); font-size: 13.5px;
+}
+.eyebrow {
+  font-family: "JetBrains Mono", monospace; font-size: 10.5px;
+  text-transform: uppercase; letter-spacing: 0.14em;
+  color: var(--text-3); font-weight: 500; margin-bottom: 6px;
+}
+.btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 8px 14px; border-radius: var(--radius-sm);
+  font-size: 13px; font-weight: 500; border: 1px solid var(--rule);
+  background: var(--surface); color: var(--text);
+  transition: background 120ms, border-color 120ms, transform 120ms;
+}
+.btn:hover { background: var(--surface-3); border-color: var(--ink-3); }
+.btn:active { transform: translateY(1px); }
+.btn-primary { background: var(--ink); color: #fff; border-color: var(--ink); }
+.btn-primary:hover { background: #061331; border-color: #061331; }
+.btn-ghost { border-color: transparent; background: transparent; color: var(--text-2); }
+.btn-ghost:hover { background: var(--surface-3); }
+
+/* --- KPI strip ------------------------------------------------------- */
+.kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 24px; }
+.kpi {
+  background: var(--surface); border: 1px solid var(--rule);
+  border-radius: var(--radius); padding: 16px 18px;
+  transition: border-color 120ms, transform 120ms, box-shadow 120ms;
+}
+.kpi:hover { border-color: var(--ink-3); transform: translateY(-2px); box-shadow: var(--shadow-2); }
+.kpi-label { font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.14em; color: var(--text-3); font-family: "JetBrains Mono", monospace; }
+.kpi-value { font-size: 26px; font-weight: 600; letter-spacing: -0.02em; margin-top: 8px; color: var(--text); font-family: "JetBrains Mono", monospace; }
+.kpi-delta { font-size: 11.5px; color: var(--text-3); margin-top: 4px; }
+.kpi-delta.up { color: var(--green); }
+.kpi-delta.down { color: var(--red); }
+
+/* --- two-col grid (main + side) ------------------------------------- */
+.layout { display: grid; grid-template-columns: 1fr 320px; gap: 20px; }
+@media (max-width: 1080px) { .layout { grid-template-columns: 1fr; } }
+
+/* --- cards & sections ----------------------------------------------- */
+.card {
+  background: var(--surface); border: 1px solid var(--rule);
+  border-radius: var(--radius); overflow: hidden;
+}
+.card-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 18px; border-bottom: 1px solid var(--rule-2);
+}
+.card-title { font-size: 14px; font-weight: 600; letter-spacing: -0.005em; }
+.card-meta { font-size: 11.5px; color: var(--text-3); font-family: "JetBrains Mono", monospace; }
+.card-body { padding: 8px 0; }
+
+/* --- task row ------------------------------------------------------- */
+.task-row {
+  display: grid;
+  grid-template-columns: 14px 1fr 90px 84px 80px;
+  align-items: center; gap: 12px;
+  padding: 10px 18px;
+  border-bottom: 1px solid var(--rule-2);
+  transition: background 100ms;
+  cursor: pointer;
+}
+.task-row:last-child { border-bottom: none; }
+.task-row:hover { background: var(--surface-3); }
+.task-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--text-3); }
+.task-dot.apg { background: var(--gold); }
+.task-dot.kin { background: var(--violet); }
+.task-title { font-size: 13.5px; color: var(--text); font-weight: 500; }
+.task-project { font-size: 10.5px; color: var(--text-3); margin-left: 6px; font-family: "JetBrains Mono", monospace; text-transform: uppercase; letter-spacing: 0.12em; }
+.task-owner { font-size: 12px; color: var(--text-2); display: flex; align-items: center; gap: 6px; }
+.task-status { display: inline-flex; padding: 2px 8px; border-radius: var(--radius-sm); font-size: 10.5px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; font-family: "JetBrains Mono", monospace; }
+.task-status.inflight { background: #FFF8DA; color: #8C5F00; }
+.task-status.notstart { background: var(--surface-3); color: var(--text-3); }
+.task-status.blocked  { background: #FCE6E6; color: #8B1F1F; }
+.task-status.done     { background: #E5F6EE; color: #0E6B43; }
+.task-date { font-size: 11.5px; color: var(--text-3); font-family: "JetBrains Mono", monospace; text-align: right; }
+
+/* --- filter bar ----------------------------------------------------- */
+.filterbar { display: flex; gap: 8px; padding: 12px 18px; border-bottom: 1px solid var(--rule-2); flex-wrap: wrap; }
+.filter-chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 4px 10px; border-radius: var(--radius-sm);
+  border: 1px solid var(--rule); background: var(--surface);
+  font-size: 12px; color: var(--text-2); font-weight: 500;
+  transition: border-color 120ms, color 120ms, background 120ms;
+}
+.filter-chip:hover { border-color: var(--ink-3); color: var(--text); }
+.filter-chip.is-active { background: var(--ink); color: #fff; border-color: var(--ink); }
+.filter-chip .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--text-3); }
+.filter-chip.apg .dot { background: var(--gold); }
+.filter-chip.kin .dot { background: var(--violet); }
+
+/* --- side panel ----------------------------------------------------- */
+.side-card {
+  background: var(--surface); border: 1px solid var(--rule);
+  border-radius: var(--radius); padding: 16px 18px;
+}
+.side-card h4 { margin: 0 0 12px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.14em; color: var(--text-3); font-family: "JetBrains Mono", monospace; font-weight: 600; }
+.team-row { display: flex; align-items: center; gap: 10px; padding: 8px 0; }
+.team-row + .team-row { border-top: 1px solid var(--rule-2); }
+.team-info .name { font-size: 13px; font-weight: 600; color: var(--text); }
+.team-info .role { font-size: 11.5px; color: var(--text-3); }
+
+/* --- empty state ---------------------------------------------------- */
+.empty {
+  padding: 40px 24px; text-align: center; color: var(--text-3);
+}
+.empty-mark {
+  width: 44px; height: 44px; margin: 0 auto 12px;
+  border: 1px dashed var(--rule); border-radius: var(--radius);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--text-3);
+}
+
+/* --- live pip ------------------------------------------------------- */
+.live-pip {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--green); display: inline-block;
+  box-shadow: 0 0 0 3px rgba(22, 166, 107, 0.18);
+  animation: pulse 2.4s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%, 100% { box-shadow: 0 0 0 3px rgba(22, 166, 107, 0.18); }
+  50%      { box-shadow: 0 0 0 5px rgba(22, 166, 107, 0.05); }
+}
+
+/* --- footer -------------------------------------------------------- */
+.footer {
+  margin-top: 40px; padding-top: 18px;
+  border-top: 1px solid var(--rule);
+  display: flex; justify-content: space-between; align-items: center;
+  color: var(--text-3); font-size: 11.5px; font-family: "JetBrains Mono", monospace;
+}
+</style>
+</head>
+<body>
+
+<!-- =========== TOP NAV =========== -->
+<nav class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="/">
+      <span class="brand-mark"><span></span><i></i></span>
+      <span class="brand-name">
+        <span class="top">Atom Investments</span>
+        <span class="sub">Operations</span>
+      </span>
+    </a>
+    <div class="tabs">
+      <a class="tab is-active" href="index.html">Overview</a>
+      <a class="tab" href="projects.html">Projects</a>
+      <a class="tab" href="roadmap.html">Roadmap</a>
+      <a class="tab" href="team.html">Team</a>
+    </div>
+    <div class="nav-actions">
+      <a class="user-pill" href="team.html">
+        <span class="avatar mido">MY</span>
+        <span>Mido Yasser</span>
+      </a>
+    </div>
+  </div>
+</nav>
+
+<main class="shell">
+
+  <!-- =========== HEAD =========== -->
+  <div class="page-head">
+    <div>
+      <div class="eyebrow">Overview · <span class="live-pip" title="live"></span> live</div>
+      <h1 class="page-title">What's on everyone's plate</h1>
+      <p class="page-sub">Every active task across every project. Filter by project, status, or who owns it.</p>
+    </div>
+    <div style="display:flex; gap:8px;">
+      <a class="btn" href="roadmap.html">Open roadmap →</a>
+      <a class="btn btn-primary" href="projects.html">View projects</a>
+    </div>
+  </div>
+
+  <!-- =========== KPIs =========== -->
+  <div class="kpis" id="kpis">
+    <div class="kpi"><div class="kpi-label">Projects</div><div class="kpi-value" id="kpi-projects">—</div><div class="kpi-delta">APG · Kin</div></div>
+    <div class="kpi"><div class="kpi-label">In flight</div><div class="kpi-value" id="kpi-inflight">—</div><div class="kpi-delta">across all projects</div></div>
+    <div class="kpi"><div class="kpi-label">Blocked</div><div class="kpi-value" id="kpi-blocked">—</div><div class="kpi-delta">needs unblock</div></div>
+    <div class="kpi"><div class="kpi-label">Team</div><div class="kpi-value" id="kpi-team">—</div><div class="kpi-delta">+ add member</div></div>
+  </div>
+
+  <!-- =========== MAIN + SIDE =========== -->
+  <div class="layout">
+    <div class="card">
+      <div class="card-head">
+        <div class="card-title">All tasks</div>
+        <div class="card-meta" id="taskmeta">— tasks</div>
+      </div>
+      <div class="filterbar" id="filterbar">
+        <button class="filter-chip is-active" data-filter="project" data-value="all">All projects</button>
+        <button class="filter-chip apg" data-filter="project" data-value="apg"><span class="dot"></span>APG</button>
+        <button class="filter-chip kin" data-filter="project" data-value="kin"><span class="dot"></span>Kin</button>
+        <span style="width:1px; background:var(--rule); margin:2px 8px;"></span>
+        <button class="filter-chip is-active" data-filter="status" data-value="all">All statuses</button>
+        <button class="filter-chip" data-filter="status" data-value="inflight">In flight</button>
+        <button class="filter-chip" data-filter="status" data-value="notstart">Not started</button>
+        <button class="filter-chip" data-filter="status" data-value="blocked">Blocked</button>
+      </div>
+      <div class="card-body" id="tasklist">
+        <div class="empty">
+          <div class="empty-mark">⏳</div>
+          <div>Loading tasks…</div>
+        </div>
+      </div>
+    </div>
+
+    <aside style="display:flex; flex-direction:column; gap:16px;">
+      <div class="side-card">
+        <h4>Team · Atom Investments</h4>
+        <div id="teamlist"></div>
+      </div>
+      <div class="side-card">
+        <h4>Projects</h4>
+        <div id="projlist"></div>
+      </div>
+    </aside>
+  </div>
+
+  <div class="footer">
+    <span>Atom Investments · Operations Console</span>
+    <span id="genstamp">—</span>
+  </div>
+</main>
+
+<script>
+const ME = { id: "mido", name: "Mido Yasser" };
+const STATE = { project: "all", status: "all", tasks: [], roster: [], projects: [] };
+
+async function load() {
+  const [t, r, p] = await Promise.all([
+    fetch("data/tasks.json").then(r => r.json()),
+    fetch("data/roster.json").then(r => r.json()),
+    fetch("data/projects.json").then(r => r.json()),
+  ]);
+  STATE.tasks = t.tasks;
+  STATE.roster = r.people;
+  STATE.projects = p.projects;
+  hydrateKPIs();
+  hydrateTeam();
+  hydrateProjects();
+  render();
+  document.getElementById("genstamp").textContent = "Generated " + (t._meta?.generated || "—");
+}
+
+function hydrateKPIs() {
+  document.getElementById("kpi-projects").textContent = STATE.projects.length;
+  document.getElementById("kpi-inflight").textContent = STATE.tasks.filter(t => t.status === "inflight").length;
+  document.getElementById("kpi-blocked").textContent = STATE.tasks.filter(t => t.status === "blocked").length;
+  document.getElementById("kpi-team").textContent = STATE.roster.length;
+}
+
+function hydrateTeam() {
+  const el = document.getElementById("teamlist");
+  el.innerHTML = STATE.roster.map(p => `
+    <div class="team-row">
+      <span class="avatar ${p.id}">${p.initials}</span>
+      <div class="team-info">
+        <div class="name">${p.name}</div>
+        <div class="role">${p.role} · ${p.projects.length} ${p.projects.length === 1 ? 'project' : 'projects'}</div>
+      </div>
+    </div>
+  `).join("");
+}
+
+function hydrateProjects() {
+  const el = document.getElementById("projlist");
+  el.innerHTML = STATE.projects.map(p => `
+    <div class="team-row" style="cursor:pointer" onclick="location.href='roadmap.html?p=${p.id}'">
+      <span class="avatar" style="background:${p.color};color:${p.id === 'apg' ? '#0A1F44' : '#fff'}">${p.name[0]}</span>
+      <div class="team-info">
+        <div class="name">${p.name}</div>
+        <div class="role">${(p.tasks || []).length} tasks · ${p.status}</div>
+      </div>
+    </div>
+  `).join("");
+}
+
+function render() {
+  const list = document.getElementById("tasklist");
+  let rows = STATE.tasks;
+  if (STATE.project !== "all") rows = rows.filter(t => t.project_id === STATE.project);
+  if (STATE.status !== "all")  rows = rows.filter(t => t.status === STATE.status);
+  document.getElementById("taskmeta").textContent = rows.length + " tasks";
+  if (!rows.length) {
+    list.innerHTML = `
+      <div class="empty">
+        <div class="empty-mark">∅</div>
+        <div><strong>Nothing here.</strong></div>
+        <div style="margin-top:4px">No tasks match your filter — try clearing it.</div>
+      </div>`;
+    return;
+  }
+  list.innerHTML = rows.map(t => {
+    const owner = STATE.roster.find(p => p.id === t.owner);
+    const ownerHtml = owner
+      ? `<span class="avatar ${owner.id}" style="width:18px;height:18px;font-size:8.5px">${owner.initials}</span><span>${owner.name.split(' ')[0]}</span>`
+      : `<span style="color:var(--text-3)">${t.owner_label || '—'}</span>`;
+    return `
+      <div class="task-row" onclick="location.href='roadmap.html?p=${t.project_id}'">
+        <span class="task-dot ${t.project_id}"></span>
+        <div>
+          <span class="task-title">${t.title}</span>
+          <span class="task-project">${t.project_id}</span>
+        </div>
+        <div class="task-owner">${ownerHtml}</div>
+        <span class="task-status ${t.status}">${t.status}</span>
+        <span class="task-date">${t.end || '—'}</span>
+      </div>`;
+  }).join("");
+}
+
+document.getElementById("filterbar").addEventListener("click", (e) => {
+  const btn = e.target.closest(".filter-chip");
+  if (!btn) return;
+  const f = btn.dataset.filter, v = btn.dataset.value;
+  STATE[f] = v;
+  document.querySelectorAll(`.filter-chip[data-filter="${f}"]`).forEach(c => c.classList.toggle("is-active", c.dataset.value === v));
+  render();
+});
+
+load().catch(err => {
+  document.getElementById("tasklist").innerHTML = `<div class="empty">Failed to load: ${err.message}</div>`;
+});
+</script>
+</body>
+</html>

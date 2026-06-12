@@ -279,7 +279,7 @@ HTML = """<!doctype html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>APG ACQ — Deals Dashboard</title>
+<title>Atom Investments — Deals (APG)</title>
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link rel="apple-touch-icon" href="favicon.svg">
 <meta name="theme-color" content="#1A2840">
@@ -686,7 +686,7 @@ section h2, h2 {
 
   <header class="masthead">
     <div class="brandrow">
-      <span class="brand">Atom Property Group · ACQ Operations</span>
+      <span class="brand">Atom Investments · APG Operations</span>
       <span>Last updated __TIMESTAMP__</span>
     </div>
     <h1>Active <span class="accent">Deals.</span></h1>
@@ -739,7 +739,7 @@ section h2, h2 {
 
   __SECTIONS__
 
-  <footer>Auto-refreshed every 30 minutes by the GitHub Actions cron · APG ACQ Operating Layer</footer>
+  <footer>Auto-refreshed every 30 minutes by the GitHub Actions cron · Atom Investments · APG</footer>
 </div>
 
 <script>

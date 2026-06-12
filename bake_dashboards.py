@@ -25,18 +25,24 @@ OUT = Path("workers/blake-post-call/src/dashboards.ts")
 # Filenames we expose to the Worker. Keep in sync with the `gated` route map
 # in index.ts. (Order doesn't matter; the const is a lookup table.)
 DASHBOARDS = [
+    # New Atom Investments IA (Overview / Projects / Roadmap / Team)
+    "index.html",          # Atom Investments OVERVIEW (the new landing)
+    "projects.html",       # Atom Investments PROJECTS (rebuilt grid)
+    "roadmap.html",        # Atom Investments ROADMAP (drill-down)
+    "team.html",           # Atom Investments TEAM (roster)
+    # Legacy APG operational pages — kept, accessed from within APG project
     "blake.html",
     "progress.html",
     "weekly.html",
     "priorities.html",
     "markets.html",
     "deals.html",
-    "index.html",          # the follow-ups dashboard (served at /followups)
+    "followups.html",      # the cron-generated SMS follow-ups dashboard (was index.html)
     "about.html",
     "setup.html",
     "ai-agents-plan.html",
     "sms-test.html",       # O2 entry-offer A/B/C test results
-    "projects.html",       # Multi-project PoR canvas (new Roadmap landing)
+    "projects-legacy.html",# preserved old Multi-PoR canvas (for fallback)
     "por.html",            # Single-doc editorial APG Plan-of-Record
 ]
 

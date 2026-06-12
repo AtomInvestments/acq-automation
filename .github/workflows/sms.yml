@@ -92,6 +92,12 @@ jobs:
           DASHBOARD_SHEET_ID: ${{ secrets.DASHBOARD_SHEET_ID }}
         run: python dashboard.py
 
+      - name: Regenerate dashboard data (projects.json, roster.json, tasks.json)
+        # Vault is local-only; CI emits stub-friendly versions from the legacy
+        # projects.json fallback so the new Atom Investments pages (Overview /
+        # Projects / Roadmap / Team) render correctly on every deploy.
+        run: python vault_to_dashboard.py
+
       - name: Generate HTML dashboard
         env:
           GHL_TOKEN: ${{ secrets.GHL_TOKEN }}

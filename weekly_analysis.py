@@ -529,7 +529,7 @@ WEEKLY_HTML = """<!doctype html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Atom Property Group — Weekly Docket</title>
+<title>Atom Investments — Weekly Docket</title>
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link rel="apple-touch-icon" href="favicon.svg">
 <meta name="theme-color" content="#1A2840">
@@ -1003,7 +1003,7 @@ a:hover { color: var(--ink); }
 
   <header class="masthead">
     <div class="brandrow">
-      <span class="brand">Atom Property Group · ACQ Operations</span>
+      <span class="brand">Atom Investments · APG Operations</span>
       <span id="metaWeek">Loading…</span>
     </div>
     <h1>The Weekly <span class="accent">Docket.</span></h1>

@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Atom Investments — Team</title>
+<meta property="og:site_name" content="Atom Investments">
+<meta property="og:title" content="Atom Investments — Team">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="apple-touch-icon" href="favicon.svg">
+<meta name="theme-color" content="#0A1F44">
+<link rel="preconnect" href="https://rsms.me/">
+<link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap">
+<style>
+:root {
+  --ink: #0A1F44; --ink-2: #1A2A4D; --ink-3: #34406B;
+  --text: #0E1422; --text-2: #3F4759; --text-3: #6B7388;
+  --rule: #E5E7EE; --rule-2: #EFF1F6;
+  --surface: #FFFFFF; --surface-2: #F7F8FB; --surface-3: #F1F3F8;
+  --gold: #F5C518; --violet: #7C5CD1;
+  --violet-soft:#F1ECFB; --gold-soft:#FFF8DA;
+  --green: #16A66B; --red: #D93B3B;
+  --radius: 6px; --radius-sm: 4px;
+  --shadow-1: 0 1px 2px rgba(15,23,42,0.04);
+  --shadow-2: 0 8px 24px -8px rgba(15,23,42,0.14), 0 2px 6px -2px rgba(15,23,42,0.06);
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; background: var(--surface-2); color: var(--text); font-family: "Inter", system-ui, sans-serif; font-size: 14px; line-height: 1.55; font-feature-settings: "cv11", "ss01"; -webkit-font-smoothing: antialiased; }
+@supports (font-variation-settings: normal) { html, body { font-family: "Inter var", "Inter", system-ui, sans-serif; } }
+.mono { font-family: "JetBrains Mono", monospace; }
+a { color: inherit; text-decoration: none; }
+button { font-family: inherit; cursor: pointer; }
+
+.nav { position: sticky; top: 0; z-index: 50; background: rgba(255,255,255,0.86); backdrop-filter: saturate(180%) blur(14px); border-bottom: 1px solid var(--rule); }
+.nav-inner { max-width: 1320px; margin: 0 auto; display: flex; align-items: center; gap: 28px; height: 56px; padding: 0 28px; }
+.brand { display:flex; align-items:center; gap:10px; color:var(--ink); font-weight:600; letter-spacing:-0.01em; font-size:14.5px; }
+.brand-mark { width:22px; height:22px; border-radius:5px; background:var(--ink); display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden; }
+.brand-mark::before, .brand-mark::after, .brand-mark span { content:""; position:absolute; inset:4px; border:1px solid var(--gold); border-radius:50%; opacity:0.85; }
+.brand-mark::after { transform: rotate(60deg); } .brand-mark span { transform: rotate(-60deg); }
+.brand-mark i { position:absolute; width:4px; height:4px; border-radius:50%; background:var(--gold); left:calc(50% - 2px); top:calc(50% - 2px); }
+.brand-name { display:flex; flex-direction:column; line-height:1.15; }
+.brand-name .top { font-weight:600; font-size:14px; }
+.brand-name .sub { font-size:9.5px; color:var(--text-3); letter-spacing:0.14em; text-transform:uppercase; font-weight:500; }
+.tabs { display:flex; gap:2px; flex:1; }
+.tab { display:inline-flex; align-items:center; gap:6px; padding:6px 12px; border-radius:var(--radius-sm); color:var(--text-2); font-weight:500; font-size:13px; transition: background 120ms, color 120ms; }
+.tab:hover { background:var(--surface-3); color:var(--text); }
+.tab.is-active { background: var(--ink); color:#fff; }
+.tab.is-active::before { content:""; width:5px; height:5px; border-radius:50%; background:var(--gold); }
+.nav-actions { display:flex; align-items:center; gap:8px; }
+.user-pill { display:inline-flex; align-items:center; gap:8px; padding:4px 10px 4px 4px; border:1px solid var(--rule); border-radius:24px; background:var(--surface); font-size:12.5px; font-weight:500; }
+.avatar { width:24px; height:24px; border-radius:50%; background:var(--ink); color:#fff; display:inline-flex; align-items:center; justify-content:center; font-size:10px; font-weight:600; font-family:"JetBrains Mono", monospace; }
+.avatar.adam { background:var(--gold); color:var(--ink); }
+.avatar.kabrina { background:var(--violet); }
+.avatar.mido { background:var(--ink); }
+.avatar.xl { width:64px; height:64px; font-size:20px; border-radius: var(--radius); }
+
+.shell { max-width: 1320px; margin: 0 auto; padding: 32px 28px 96px; }
+.page-head { display:flex; align-items:flex-end; justify-content:space-between; margin-bottom:24px; gap:16px; }
+.page-title { margin: 0; font-size: 26px; font-weight: 600; letter-spacing: -0.02em; }
+.page-sub { margin: 4px 0 0; color: var(--text-3); font-size: 13.5px; }
+.eyebrow { font-family:"JetBrains Mono", monospace; font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.14em; color: var(--text-3); font-weight: 500; margin-bottom: 6px; }
+.btn { display:inline-flex; align-items:center; gap:6px; padding:8px 14px; border-radius:var(--radius-sm); font-size:13px; font-weight:500; border:1px solid var(--rule); background:var(--surface); color:var(--text); transition: background 120ms, border-color 120ms; }
+.btn:hover { background:var(--surface-3); border-color:var(--ink-3); }
+.btn-primary { background:var(--ink); color:#fff; border-color:var(--ink); }
+.btn-primary:hover { background:#061331; border-color:#061331; }
+
+.team-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+@media (max-width: 760px) { .team-grid { grid-template-columns: 1fr; } }
+
+.member-card {
+  background: var(--surface); border: 1px solid var(--rule);
+  border-radius: var(--radius); padding: 22px;
+  display: flex; gap: 18px; align-items: flex-start;
+  transition: border-color 140ms, transform 140ms, box-shadow 140ms;
+  position: relative; overflow: hidden;
+}
+.member-card:hover { transform: translateY(-2px); border-color: var(--ink-3); box-shadow: var(--shadow-2); }
+.member-card::before {
+  content: ""; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  background: var(--accent);
+}
+.member-card.mido { --accent: var(--ink); }
+.member-card.adam { --accent: var(--gold); }
+.member-card.kabrina { --accent: var(--violet); }
+.member-card.add { border-style: dashed; align-items: center; justify-content: center; text-align: center; cursor: pointer; color: var(--text-3); }
+.member-card.add:hover { border-color: var(--ink); color: var(--text); }
+.member-body { flex: 1; min-width: 0; }
+.member-name { font-size: 17px; font-weight: 600; letter-spacing: -0.015em; }
+.member-role { font-size: 12.5px; color: var(--text-3); margin-top: 2px; }
+.member-meta { display: flex; gap: 16px; margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--rule-2); font-size: 12px; color: var(--text-3); font-family: "JetBrains Mono", monospace; flex-wrap: wrap; }
+.member-meta .k { color: var(--text-3); text-transform: uppercase; letter-spacing: 0.1em; font-size: 10.5px; }
+.member-meta .v { color: var(--text); }
+.member-projects { display: flex; gap: 6px; margin-top: 12px; flex-wrap: wrap; }
+.proj-chip { display: inline-flex; align-items: center; gap: 6px; padding: 3px 9px; font-size: 11.5px; border-radius: var(--radius-sm); border: 1px solid var(--rule); background: var(--surface); font-weight: 500; }
+.proj-chip .dot { width: 6px; height: 6px; border-radius: 50%; }
+.proj-chip.apg .dot { background: var(--gold); }
+.proj-chip.kin .dot { background: var(--violet); }
+
+.add-plus { width: 44px; height: 44px; border-radius: 50%; border: 1px dashed var(--rule); display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 300; color: var(--text-3); margin-bottom: 6px; }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="/">
+      <span class="brand-mark"><span></span><i></i></span>
+      <span class="brand-name">
+        <span class="top">Atom Investments</span>
+        <span class="sub">Operations</span>
+      </span>
+    </a>
+    <div class="tabs">
+      <a class="tab" href="index.html">Overview</a>
+      <a class="tab" href="projects.html">Projects</a>
+      <a class="tab" href="roadmap.html">Roadmap</a>
+      <a class="tab is-active" href="team.html">Team</a>
+    </div>
+    <div class="nav-actions">
+      <a class="user-pill" href="team.html">
+        <span class="avatar mido">MY</span>
+        <span>Mido Yasser</span>
+      </a>
+    </div>
+  </div>
+</nav>
+
+<main class="shell">
+
+  <div class="page-head">
+    <div>
+      <div class="eyebrow">Team · 3 members</div>
+      <h1 class="page-title">Team</h1>
+      <p class="page-sub">Who's building what. Permissions and project access are managed here.</p>
+    </div>
+    <div style="display:flex; gap:8px;">
+      <button class="btn btn-primary" onclick="addMember()">+ Add Member</button>
+    </div>
+  </div>
+
+  <div class="team-grid" id="grid"></div>
+
+</main>
+
+<script>
+let ROSTER = [], PROJECTS = [];
+
+async function load() {
+  const [r, p] = await Promise.all([
+    fetch("data/roster.json").then(r => r.json()),
+    fetch("data/projects.json").then(r => r.json()),
+  ]);
+  ROSTER = r.people;
+  PROJECTS = p.projects;
+  render();
+}
+
+function render() {
+  const grid = document.getElementById("grid");
+  const cards = ROSTER.map(m => {
+    const projs = (m.projects || []).map(pid => PROJECTS.find(x => x.id === pid)).filter(Boolean);
+    const chips = projs.map(p => `<span class="proj-chip ${p.id}"><span class="dot"></span>${p.name}</span>`).join("");
+    return `
+      <div class="member-card ${m.id}">
+        <span class="avatar xl ${m.id}">${m.initials}</span>
+        <div class="member-body">
+          <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:12px">
+            <div>
+              <div class="member-name">${m.name}</div>
+              <div class="member-role">${m.role} · ${m.title}</div>
+            </div>
+          </div>
+          <div class="member-projects">${chips}</div>
+          <div class="member-meta">
+            <div><span class="k">Email</span><br><span class="v">${m.email}</span></div>
+            <div><span class="k">Last active</span><br><span class="v">${m.last_active.slice(0,10)}</span></div>
+          </div>
+        </div>
+      </div>`;
+  }).join("");
+  const add = `
+    <div class="member-card add" onclick="addMember()">
+      <div style="text-align:center">
+        <div class="add-plus">+</div>
+        <div style="font-weight:600; color:var(--text)">Invite a teammate</div>
+        <div style="font-size:12.5px; margin-top:4px">Send a magic link to add them to Atom Investments</div>
+      </div>
+    </div>`;
+  grid.innerHTML = cards + add;
+}
+
+function addMember() {
+  alert("Member invites ship in the next session — wires through add_member.yml workflow_dispatch (Mido + Adam + Kabrina only). For now the roster is locked at three.");
+}
+
+load().catch(e => {
+  document.getElementById("grid").innerHTML = `<div style="padding:40px; color:var(--text-3)">Failed to load: ${e.message}</div>`;
+});
+</script>
+</body>
+</html>

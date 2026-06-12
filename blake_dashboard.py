@@ -26,7 +26,7 @@ SHELL_HTML = """<!doctype html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>APG ACQ — Blake Live</title>
+<title>Atom Investments — Blake Live (APG)</title>
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link rel="apple-touch-icon" href="favicon.svg">
 <meta name="theme-color" content="#1A2840">
@@ -252,7 +252,7 @@ h2 .sec-count { margin-left: auto; font-size: 11px; letter-spacing: 0.18em; text
 
   <header class="masthead">
     <div class="brandrow">
-      <img src="logo.svg" alt="Atom Property Group" style="height:32px;width:auto;display:inline-block;vertical-align:middle">
+      <img src="logo.svg" alt="Atom Investments" style="height:32px;width:auto;display:inline-block;vertical-align:middle">
       <span><span id="updated-at">Loading…</span> <span class="live-pill" id="live-pill"><span class="dot"></span>Live</span></span>
     </div>
     <h1>Blake <span class="accent">Live.</span></h1>

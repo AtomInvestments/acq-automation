@@ -623,9 +623,15 @@ export default {
       "/markets.html": "markets.html",
       "/deals": "deals.html",
       "/deals.html": "deals.html",
-      "/followups": "index.html",   // dashboard_html.py outputs site/index.html
-      "/followups.html": "index.html",
-      "/index.html": "index.html",
+      "/followups": "followups.html",   // dashboard_html.py now outputs site/followups.html
+      "/followups.html": "followups.html",
+      "/index.html": "index.html",      // Atom Investments Overview (new IA landing)
+      "/overview": "index.html",
+      "/overview.html": "index.html",
+      "/roadmap": "roadmap.html",
+      "/roadmap.html": "roadmap.html",
+      "/team": "team.html",
+      "/team.html": "team.html",
       "/about": "about.html",
       "/about.html": "about.html",
       "/setup": "setup.html",
@@ -659,19 +665,25 @@ export default {
       if (inline) {
         // Detect activeTab from filename for the unified top nav
         const tabMap: Record<string, string> = {
-          "blake.html": "blake",
-          "progress.html": "progress",
-          "weekly.html": "weekly",
-          "priorities.html": "priorities",
-          "markets.html": "markets",
-          "deals.html": "deals",
-          "index.html": "followups",
+          // New Atom Investments IA — 4 tabs
+          "index.html": "overview",
+          "projects.html": "projects",
+          "roadmap.html": "roadmap",
+          "team.html": "team",
+          // Legacy APG operational pages — render inside Projects tab context
+          "blake.html": "projects",
+          "progress.html": "projects",
+          "weekly.html": "projects",
+          "priorities.html": "projects",
+          "markets.html": "projects",
+          "deals.html": "projects",
+          "followups.html": "projects",
           "about.html": "",
           "setup.html": "",
           "ai-agents-plan.html": "",
-          "sms-test.html": "sms-test",
-          "projects.html": "roadmap",
-          "por.html": "roadmap",
+          "sms-test.html": "projects",
+          "projects-legacy.html": "projects",
+          "por.html": "projects",
         };
         const wrapped = applyApgShell(inline, tabMap[filename] || "", authV2.user);
         return new Response(wrapped, {
@@ -7461,30 +7473,20 @@ function applyApgShell(html: string, activeTab: string, user?: User): string {
 }
 
 function apgTopNav(activeTab: string = "", user?: User): string {
+  // New Atom Investments IA (2026-06-12): 4 fixed top-level tabs.
+  // Per-project surfaces (Blake, Deals, Weekly, Priorities, Markets, Follow-ups,
+  // Insights, Messages) live INSIDE the Projects tab — accessed by drilling
+  // into APG or Kin from /projects, not via the global nav.
   const tabs: Array<{ href: string; key: string; label: string; permKey?: keyof Permissions }> = [
-    { href: "/",          key: "hub",        label: "Desk",        permKey: "hub" },
-    { href: "/blake",     key: "blake",      label: "Blake",       permKey: "blake" },
-    { href: "/progress",  key: "progress",   label: "Tracker",     permKey: "progress" },
-    { href: "/roadmap",   key: "roadmap",    label: "Roadmap",     permKey: "roadmap" },
-    { href: "/followups", key: "followups",  label: "Follow-ups",  permKey: "followups" },
-    { href: "/deals",     key: "deals",      label: "Deals",       permKey: "deals" },
-    { href: "/weekly",    key: "weekly",     label: "Docket",      permKey: "weekly" },
-    { href: "/priorities", key: "priorities", label: "Priority",   permKey: "priorities" },
-    { href: "/markets",   key: "markets",    label: "Markets",     permKey: "markets" },
-    { href: "/insights",  key: "insights",   label: "Insights",    permKey: "insights" },
-    { href: "/messages",  key: "messages",   label: "Messages",    permKey: "messages" },
-    { href: "/sms-test",  key: "sms-test",   label: "SMS Test" },
+    { href: "/",          key: "overview",   label: "Overview"  },
+    { href: "/projects",  key: "projects",   label: "Projects"  },
+    { href: "/roadmap",   key: "roadmap",    label: "Roadmap"   },
+    { href: "/team",      key: "team",       label: "Team"      },
   ];
-  // Filter tabs by user's per-tab permissions. If no user given (legacy call
-  // sites that haven't been migrated yet), show all tabs — the route handler
-  // will gate access regardless.
-  const visibleTabs = user
-    ? tabs.filter((t) => !t.permKey || hasPermission(user, t.permKey))
-    : tabs;
-  // Append a "Team" tab if the user can manage other users (managers + CEO).
-  if (user && hasPermission(user, "can_add_users")) {
-    visibleTabs.push({ href: "/admin/users", key: "admin", label: "Team" });
-  }
+  // No filtering — the new IA is universal for all 3 Atom Investments users
+  // (Mido Yasser + Adam Chodes + Kabrina). Per-project access is enforced
+  // inside each project's surface, not at the top-nav level.
+  const visibleTabs = tabs;
   const tabHtml = visibleTabs.map((t) => {
     const active = t.key === activeTab ? " apg-nav-tab--active" : "";
     return `<a class="apg-nav-tab${active}" href="${t.href}">${t.label}</a>`;
@@ -7629,7 +7631,7 @@ function apgTopNav(activeTab: string = "", user?: User): string {
     }
     @media (max-width: 980px) {
       .apg-nav-brand-text { font-size: 0; }
-      .apg-nav-brand-text::after { content: "APG"; font-size: 16px; }
+      .apg-nav-brand-text::after { content: "Atom"; font-size: 16px; }
       .apg-nav-tab { padding: 0 8px; font-size: 9.5px; letter-spacing: 0.12em; }
     }
     @media (max-width: 720px) {
@@ -7641,7 +7643,7 @@ function apgTopNav(activeTab: string = "", user?: User): string {
     <div class="apg-nav-inner">
       <a class="apg-nav-brand" href="/">
         <img src="/favicon.svg" alt="">
-        <span class="apg-nav-brand-text">At<span class="accent">o</span>m Property Group</span>
+        <span class="apg-nav-brand-text">At<span class="accent">o</span>m Investments</span>
       </a>
       <div class="apg-nav-tabs">${tabHtml}</div>
       <div class="apg-nav-actions">
@@ -7662,7 +7664,7 @@ function apgLayout(opts: { title: string; activeTab: string; content: string }):
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>APG — ${opts.title}</title>
+<title>Atom Investments — ${opts.title}</title>
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="apple-touch-icon" href="/favicon.svg">
 <meta name="theme-color" content="#1A2840">
@@ -7716,7 +7718,7 @@ function landingHubHtml(user?: User): string {
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>APG — Operations Console</title>
+<title>Atom Investments — Operations Console</title>
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="apple-touch-icon" href="/favicon.svg">
 <meta name="theme-color" content="#0A1F44">
@@ -7933,7 +7935,7 @@ ${apgTopNav("hub", user)}
   <header class="masthead">
     <div class="brandrow">
       <span class="brand">The Operations Console</span>
-      <span>Updated continuously · Atom Property Group</span>
+      <span>Updated continuously · Atom Investments</span>
     </div>
     <h1>Today, at the <span class="accent">desk</span>.</h1>
     <p class="dek">Seven boards, one inbox. Pick the one that needs you right now — the green pip means it's live, not cron.</p>
@@ -8025,7 +8027,7 @@ function loginPageHtml(opts: { error?: string; next?: string } = {}): string {
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>APG — Sign in</title>
+<title>Atom Investments — Sign in</title>
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="apple-touch-icon" href="/favicon.svg">
 <meta name="theme-color" content="#0A1F44">
@@ -8294,7 +8296,7 @@ async function proxyGithubRawJson(repoPath: string): Promise<Response> {
 // Favicon SVG inlined directly so the login page works even if github.io
 // Pages hasn't published the latest assets yet (Pages can lag the Worker
 // by 1-2 min after a commit). Identical content to site/favicon.svg.
-const INLINE_FAVICON_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" aria-label="Atom Property Group">
+const INLINE_FAVICON_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" aria-label="Atom Investments">
   <defs>
     <style>
       .ink   { fill: #1A2840; }
@@ -8314,10 +8316,10 @@ const INLINE_FAVICON_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0
   </g>
 </svg>`;
 
-// Horizontal logo (with "ATOM PROPERTY GROUP" wordmark) — inlined so the
+// Horizontal logo (with "ATOM INVESTMENTS" wordmark) — inlined so the
 // dashboards' in-page <img src="logo.svg"> mastheads stop showing a broken
 // image after gh-pages was retired. Same content as site/logo.svg.
-const INLINE_LOGO_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 220" preserveAspectRatio="xMidYMid meet" aria-label="Atom Property Group">
+const INLINE_LOGO_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 220" preserveAspectRatio="xMidYMid meet" aria-label="Atom Investments">
   <defs>
     <style>
       .ink   { fill: #0A1F44; }
@@ -8339,7 +8341,7 @@ const INLINE_LOGO_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 72
   <text x="416" y="130" font-family="Arial Black, Helvetica, sans-serif"
         font-weight="900" font-size="120" class="ink" letter-spacing="-3">M</text>
   <text x="40" y="195" font-family="Arial, Helvetica, sans-serif"
-        font-weight="700" font-size="26" class="ink" letter-spacing="11">PROPERTY GROUP</text>
+        font-weight="700" font-size="26" class="ink" letter-spacing="11">INVESTMENTS</text>
 </svg>`;
 
 // ============================================================================
@@ -8958,7 +8960,7 @@ async function renderInsightsDashboardServerSide(env: Env): Promise<string> {
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Insights · APG</title>
+<title>Insights · Atom Investments</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">

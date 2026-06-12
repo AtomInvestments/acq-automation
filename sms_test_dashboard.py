@@ -280,7 +280,7 @@ def render_html() -> str:
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Atom Property Group — SMS A/B/C Test</title>
+<title>Atom Investments — SMS A/B/C Test</title>
 <style>
 :root {{
   --ink: #0A1F44; --ink-soft: #1A3A7A; --gold: #F5C518; --gold-soft: #FFE58A;
@@ -366,7 +366,7 @@ h2 .num {{ display: inline-block; min-width: 34px; padding: 4px 10px;
 <body>
 <div class="shell">
   <div class="masthead">
-    <div class="brandrow"><span class="brand">Atom Property Group</span><span>SMS A/B/C Test</span></div>
+    <div class="brandrow"><span class="brand">Atom Investments</span><span>SMS A/B/C Test</span></div>
     <h1>O2 entry-offer <span class="accent">variants</span></h1>
     <p class="dek">Three first-touch SMS variants compete on the fresh inbound pool. Reply / qualify / contract tracked per variant. Bayesian decisive-rule indicator below.</p>
   </div>
