@@ -5,25 +5,20 @@ The Atom Investments Dashboard uses Supabase for real authentication. This repla
 
 ## Setup Steps
 
-### 1. Create a Supabase Project
-1. Go to [supabase.com](https://supabase.com) and sign up
-2. Create a new project (free tier available)
-3. Wait for the project to initialize (~2 minutes)
+### 1. ✅ Supabase Project Created
+Your project is ready at: https://supabase.com/dashboard/project/fsmvvbyrdrkbyqjloupp
 
-### 2. Get Your Credentials
-1. In Supabase dashboard, go to **Settings → API**
-2. Copy your **Project URL** (should look like `https://xxxxxx.supabase.co`)
-3. Copy your **anon public** key (under `anon key`)
+### 2. ✅ Credentials Configured
+Environment variables are set in `.env.local` with your Supabase URL and anon key
 
-### 3. Configure Environment Variables
-1. In the `atom-investments-dashboard/` directory, create a `.env.local` file
-2. Add these lines:
-```
-REACT_APP_SUPABASE_URL=https://your-project-url.supabase.co
-REACT_APP_SUPABASE_ANON_KEY=your-anon-key-here
-```
+### 3. ✅ Initialize Database Schema
+1. In Supabase dashboard, go to **SQL Editor**
+2. Click **New Query**
+3. Copy all content from `supabase-setup.sql` file
+4. Paste into the SQL editor and run
+5. This creates tables for: projects, tasks, team_members, users
 
-### 4. Configure GitHub OAuth (Optional but Recommended)
+### 4. Configure GitHub OAuth (Recommended)
 1. In Supabase, go to **Authentication → Providers → GitHub**
 2. Enable GitHub
 3. Follow the prompts to create a GitHub OAuth app:
@@ -33,7 +28,14 @@ REACT_APP_SUPABASE_ANON_KEY=your-anon-key-here
    - Authorization callback URL: (Supabase will provide this)
 4. Copy the GitHub Client ID and Secret back into Supabase
 
-### 5. Add Users (if using email/password auth)
+### 5. Add GitHub Secrets (for GitHub Pages deployment)
+1. Go to your GitHub repo → Settings → Secrets and variables → Actions
+2. Add two new secrets:
+   - `REACT_APP_SUPABASE_URL`: Your Supabase project URL
+   - `REACT_APP_SUPABASE_ANON_KEY`: Your anon key
+3. The GitHub Actions workflow will use these during build
+
+### 6. Add Users (if using email/password auth)
 1. In Supabase, go to **Authentication → Users**
 2. Click "Invite user" and add team members' emails
 3. They'll receive an invite link to set their password
