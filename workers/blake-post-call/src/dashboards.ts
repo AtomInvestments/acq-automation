@@ -437,540 +437,7 @@ setInterval(refresh, POLL_INTERVAL_MS);
 </body>
 </html>
 `,
-  'progress.html': `<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>APG ACQ — Project Tracker</title>
-<link rel="icon" type="image/svg+xml" href="favicon.svg">
-<link rel="apple-touch-icon" href="favicon.svg">
-<meta name="theme-color" content="#1A2840">
-<script>
-  if (location.hostname === "atominvestments.github.io") {
-    location.replace("https://apg-dashboard.mithchell.workers.dev/login?next=/progress");
-  }
-</script>
-<style>
-:root {
-  --ink: #0A1F44;
-  --ink-deep: #061331;
-  --ink-soft: #1A3A7A;
-  --gold: #F5C518;
-  --gold-soft: #FFE58A;
-  --gold-wash: #FFF6D0;
-  --cream: #FAF7EC;
-  --cream-deep: #F3EED8;
-  --paper: #FFFFFF;
-  --rule: #C9C2A8;
-  --muted: #5A6786;
-  --muted-soft: #8A93AA;
-  --text: #101827;
-  --s-uc:   #B91C1C;
-  --s-live: #10B981;
-  --s-warm: #EA580C;
-  --s-hold: #EAB308;
-  --s-dead: #6B625A;
-}
-* { box-sizing: border-box; }
-html, body {
-  margin: 0; padding: 0; background: var(--cream); color: var(--text);
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 16px; line-height: 1.6;
-}
-.shell {
-  max-width: 1240px; margin: 0 auto;
-  padding: 40px 64px 120px;
-  background: var(--paper); min-height: 100vh;
-}
-@media (max-width: 820px) { .shell { padding: 32px 24px 80px; } }
-
-.masthead {
-  border-top: 5px solid var(--ink);
-  border-bottom: 1px solid var(--rule);
-  padding: 28px 0 24px; margin-bottom: 24px; position: relative;
-}
-.masthead::before {
-  content: ""; position: absolute; left: 0; top: 0;
-  width: 160px; height: 5px; background: var(--gold);
-}
-.brandrow {
-  display: flex; justify-content: space-between; align-items: center;
-  font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase;
-  color: var(--muted); margin-bottom: 16px; flex-wrap: wrap; gap: 8px;
-}
-h1 {
-  font-family: Georgia, "Times New Roman", serif;
-  font-size: 54px; line-height: 1.04; letter-spacing: -0.015em;
-  margin: 0 0 14px; color: var(--ink); font-weight: 700;
-}
-h1 .accent { color: var(--gold); font-style: italic; }
-.dek {
-  font-family: Georgia, serif; font-style: italic; font-size: 18px;
-  line-height: 1.5; color: var(--ink-soft); max-width: 780px; margin: 10px 0 0;
-}
-
-.topnav {
-  position: sticky; top: 0; z-index: 50;
-  background: rgba(250, 247, 236, 0.96); backdrop-filter: blur(6px);
-  border-bottom: 1px solid var(--rule);
-  margin: 0 -64px 28px; padding: 10px 64px;
-  font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
-  color: var(--muted);
-  display: flex; gap: 18px; overflow-x: auto; white-space: nowrap;
-}
-@media (max-width: 820px) { .topnav { margin: 0 -24px 24px; padding: 10px 24px; } }
-.topnav a { color: var(--ink-soft); text-decoration: none; font-weight: 700; padding: 4px 0; border-bottom: 2px solid transparent; }
-.topnav a:hover, .topnav a.active { color: var(--ink); border-bottom: 2px solid var(--gold); }
-
-.summary-row {
-  display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin: 18px 0 32px;
-}
-@media (max-width: 1100px) { .summary-row { grid-template-columns: repeat(3, 1fr); } }
-@media (max-width: 600px)  { .summary-row { grid-template-columns: repeat(2, 1fr); } }
-.summary-kpi {
-  background: var(--cream); border-top: 4px solid var(--gold);
-  border-bottom: 1px solid var(--rule); padding: 14px 16px 16px;
-}
-.summary-kpi .label {
-  font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase;
-  color: var(--muted); margin-bottom: 6px; font-weight: 700;
-}
-.summary-kpi .v {
-  font-family: Georgia, serif; font-size: 28px; font-weight: 700;
-  color: var(--ink); line-height: 1; margin: 0;
-}
-.summary-kpi .v small { font-size: 14px; color: var(--muted); margin-left: 6px; }
-.summary-kpi.live { border-top-color: var(--s-live); } .summary-kpi.live .v { color: var(--s-live); }
-.summary-kpi.warm { border-top-color: var(--s-warm); } .summary-kpi.warm .v { color: var(--s-warm); }
-
-.pillar {
-  border-top: 1px solid var(--rule);
-  padding: 32px 0;
-}
-.pillar:first-of-type { border-top: 0; padding-top: 0; }
-
-.pillar-header {
-  display: flex; justify-content: space-between; align-items: flex-end;
-  margin-bottom: 14px; gap: 18px; flex-wrap: wrap;
-}
-.pillar h2 {
-  font-family: Georgia, serif; font-size: 24px; color: var(--ink);
-  margin: 0; padding: 0; border: 0; letter-spacing: -0.01em;
-  display: flex; align-items: center; gap: 12px;
-}
-.status-pill {
-  font-family: Helvetica, Arial, sans-serif;
-  font-size: 10px; font-weight: 800; letter-spacing: 0.12em;
-  text-transform: uppercase; padding: 3px 10px; border-radius: 3px;
-}
-.status-pill.active     { background: var(--s-live); color: white; }
-.status-pill.in-progress{ background: var(--gold); color: var(--ink); }
-.status-pill.planned    { background: var(--cream-deep); color: var(--muted); border: 1px solid var(--rule); }
-
-.progress-bar {
-  flex: 0 0 200px; height: 8px; background: var(--cream-deep);
-  border-radius: 4px; overflow: hidden; position: relative; margin-top: 8px;
-}
-.progress-bar .fill {
-  height: 100%; background: var(--gold); border-radius: 4px;
-  transition: width 0.4s;
-}
-.progress-bar.complete .fill { background: var(--s-live); }
-.progress-label {
-  font-size: 11px; font-weight: 700; letter-spacing: 0.10em; text-transform: uppercase;
-  color: var(--muted); margin-top: 4px;
-}
-
-.pillar .summary {
-  font-family: Georgia, serif; font-style: italic; font-size: 14.5px;
-  color: var(--ink-soft); padding: 8px 0 4px 16px;
-  border-left: 3px solid var(--gold); margin-bottom: 18px;
-  max-width: 880px;
-}
-
-.tasks {
-  list-style: none; padding: 0; margin: 0;
-  display: grid; grid-template-columns: 1fr 1fr; gap: 6px 24px;
-}
-@media (max-width: 820px) { .tasks { grid-template-columns: 1fr; } }
-.task {
-  display: flex; align-items: flex-start; gap: 10px;
-  padding: 8px 0; border-bottom: 1px dashed var(--rule);
-  font-size: 14px; line-height: 1.45;
-}
-.task .checkbox {
-  flex-shrink: 0; width: 18px; height: 18px; border-radius: 3px;
-  border: 1.5px solid var(--muted-soft); margin-top: 2px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 12px; font-weight: 800; color: white;
-}
-.task.done .checkbox {
-  background: var(--s-live); border-color: var(--s-live);
-}
-.task.done .checkbox::after { content: "✓"; }
-.task.done .label { color: var(--muted); text-decoration: line-through; }
-
-/* Interactive checkboxes — click anywhere on the task row to toggle. */
-.task { cursor: pointer; transition: background 120ms; border-radius: 4px; padding: 2px 6px; margin-left: -6px; }
-.task:hover { background: rgba(26, 40, 64, 0.04); }
-.task:focus-visible { outline: 2px solid var(--gold, #FFC72C); outline-offset: 2px; background: rgba(26, 40, 64, 0.04); }
-.task .checkbox { transition: background 140ms, border-color 140ms, transform 140ms; }
-.task:active .checkbox { transform: scale(0.92); }
-.task[aria-busy="true"] { opacity: 0.55; cursor: progress; }
-.task[aria-busy="true"] .checkbox::after { content: "…"; color: var(--muted); }
-.task.error .checkbox { border-color: #c0392b; background: #fdecea; color: #c0392b; }
-
-.footer {
-  margin-top: 56px; padding-top: 20px;
-  border-top: 3px double var(--ink);
-  display: flex; justify-content: space-between;
-  font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase;
-  color: var(--muted); font-weight: 700; flex-wrap: wrap; gap: 12px;
-}
-.footer .gold-stamp { display: inline-block; padding: 4px 10px; background: var(--gold); color: var(--ink); letter-spacing: 0.14em; }
-</style>
-<!-- Microsoft Clarity (heatmaps + session recordings) -->
-<script type="text/javascript">
-(function(c,l,a,r,i,t,y){
-  c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-  t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-  y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
-})(window,document,"clarity","script","wwbe84z9my"); // TODO: replace wwbe84z9my with real project id from clarity.microsoft.com
-</script>
-</head>
-<body>
-<div class="shell">
-
-  <header class="masthead">
-    <div class="brandrow">
-      <img src="logo.svg" alt="Atom Property Group" style="height:32px;width:auto">
-      <span>Updated Jun 12, 2026 · 11:04 AM ET</span>
-    </div>
-    <h1>Project <span class="accent">Tracker.</span></h1>
-    <p class="dek">Every active plan APG is shipping right now, with live checkbox state. Source of truth is <code>progress_state.json</code> in the repo — edit, commit, push, and this page re-renders on the next cron tick.</p>
-  </header>
-
-  <nav class="topnav">
-    <a href="/">Desk</a>
-    <a href="blake.html">Blake</a>
-    <a href="progress.html" class="active">Tracker</a>
-    <a href="projects.html">Roadmap</a>
-    <a href="index.html">Follow-ups</a>
-    <a href="deals.html">Deals</a>
-    <a href="weekly.html">Docket</a>
-    <a href="priorities.html">Priority</a>
-    <a href="markets.html">Markets</a>
-    <a href="/insights">Insights</a>
-    <a href="sms-test.html">SMS Test</a>
-  </nav>
-
-  <div class="summary-row">
-    
-      <div class="summary-kpi live"><div class="label">Overall Completion</div><p class="v">58<small>%</small></p></div>
-      <div class="summary-kpi"><div class="label">Tasks Done</div><p class="v">66<small> / 113</small></p></div>
-      <div class="summary-kpi live"><div class="label">Active Pillars</div><p class="v">5</p></div>
-      <div class="summary-kpi warm"><div class="label">In Progress</div><p class="v">0</p></div>
-      <div class="summary-kpi"><div class="label">Planned</div><p class="v">0</p></div>
-    
-  </div>
-
-  
-    <section class="pillar">
-      <div class="pillar-header">
-        <h2>Pillar A — Blake the Voice Agent <span class="status-pill active">ACTIVE</span></h2>
-        <div>
-          <div class="progress-bar"><div class="fill" style="width:75%"></div></div>
-          <div class="progress-label">21 / 28 done · 75%</div>
-        </div>
-      </div>
-      <p class="summary">Single AI voice agent that qualifies sellers on phone calls + hands off warm leads to RJ. Runs on ElevenLabs + Twilio +1 (609) 944-9034 + Cloudflare Workers + GHL.</p>
-      <ul class="tasks">
-        <li class="task done" data-pillar-id="pillar-a-blake" data-task-label="ElevenLabs Conversational AI account on mithchell@atompropertygroup.org" tabindex="0" role="checkbox" aria-checked="true"><span class="checkbox"></span><span class="label">ElevenLabs Conversational AI account on mithchell@atompropertygroup.org</span></li>
-<li class="task done" data-pillar-id="pillar-a-blake" data-task-label="Twilio +1 (609) 944-9034 number provisioned + STIR/SHAKEN compliant" tabindex="0" role="checkbox" aria-checked="true"><span class="checkbox"></span><span class="label">Twilio +1 (609) 944-9034 number provisioned + STIR/SHAKEN compliant</span></li>
-<li class="task done" data-pillar-id="pillar-a-blake" data-task-label="Blake agent created in ElevenLabs" tabindex="0" role="checkbox" aria-checked="true"><span class="checkbox"></span><span class="label">Blake agent created in ElevenLabs</span></li>
-<li class="task done" data-pillar-id="pillar-a-blake" data-task-label="GHL Private Integration Token (BLAKE_GHL_PIT) for tool calls" tabindex="0" role="checkbox" aria-checked="true"><span class="checkbox"></span><span class="label">GHL Private Integration Token (BLAKE_GHL_PIT) for tool calls</span></li>
-<li class="task done" data-pillar-id="pillar-a-blake" data-task-label="8 in-call tools wired (lookup, save summary, set lead temp, RJ task, stage move, DND, etc.)" tabindex="0" role="checkbox" aria-checked="true"><span class="checkbox"></span><span class="label">8 in-call tools wired (lookup, save summary, set lead temp, RJ task, stage move, DND, etc.)</span></li>
-<li class="task done" data-pillar-id="pillar-a-blake" data-task-label="Built-in tools enabled (end_call, voicemail_detection, skip_turn)" tabindex="0" role="checkbox" aria-checked="true"><span class="checkbox"></span><span class="label">Built-in tools enabled (end_call, voicemail_detection, skip_turn)</span></li>
-<li class="task done" data-pillar-id="pillar-a-blake" data-task-label="Cloudflare Worker \`apg-dashboard\` deployed" tabindex="0" role="checkbox" aria-checked="true"><span class="checkbox"></span><span class="label">Cloudflare Worker \`apg-dashboard\` deployed</span></li>
-<li class="task done" data-pillar-id="pillar-a-blake" data-task-label="Post-call webhook → GHL backup note + recording URL + blake-called tag" tabindex="0" role="checkbox" aria-checked="true"><span class="checkbox"></span><span class="label">Post-call webhook → GHL backup note + recording URL + blake-called tag</span></li>
-<li class="task done" data-pillar-id="pillar-a-blake" data-task-label="/conversation-init webhook with Seller File pre-call briefing" tabindex="0" role="checkbox" aria-checked="true"><span class="checkbox"></span><span class="label">/conversation-init webhook with Seller File pre-call briefing</span></li>
-<li class="task done" data-pillar-id="pillar-a-blake" data-task-label="Post-call structured extractor (Claude Sonnet 4.6) → auto-writes address / lead temp / RJ task / opp stage" tabindex="0" role="checkbox" aria-checked="true"><span class="checkbox"></span><span class="label">Post-call structured extractor (Claude Sonnet 4.6) → auto-writes address / lead temp / RJ task / opp stage</span></li>
-<li class="task done" data-pillar-id="pillar-a-blake" data-task-label="Auto-create opportunity in ACQ pipeline with name format NAME - ADDRESS - NUMBER (hyphens, 2026-05-27)" tabindex="0" role="checkbox" aria-checked="true"><span class="checkbox"></span><span class="label">Auto-create opportunity in ACQ pipeline with name format NAME - ADDRESS - NUMBER (hyphens, 2026-05-27)</span></li>
-<li class="task done" data-pillar-id="pillar-a-blake" data-task-label="Voice prompt v1.3 (no narration / read Seller File / end-call read-back)" tabindex="0" role="checkbox" aria-checked="true"><span class="checkbox"></span><span class="label">Voice prompt v1.3 (no narration / read Seller File / end-call read-back)</span></li>
-<li class="task done" data-pillar-id="pillar-a-blake" data-task-label="Outbound dialer Worker (warm-up curve, TCPA windows, ElevenLabs outbound API)" tabindex="0" role="checkbox" aria-checked="true"><span class="checkbox"></span><span class="label">Outbound dialer Worker (warm-up curve, TCPA windows, ElevenLabs outbound API)</span></li>
-<li class="task done" data-pillar-id="pillar-a-blake" data-task-label="Cron Trigger every 15 min — auto-dial unqualified contacts within quota" tabindex="0" role="checkbox" aria-checked="true"><span class="checkbox"></span><span class="label">Cron Trigger every 15 min — auto-dial unqualified contacts within quota</span></li>
-<li class="task done" data-pillar-id="pillar-a-blake" data-task-label="Dialer picker fix: drop permanent &#x27;blake-called&#x27; tag filter (30-day last_attempt KV is the cadence control)" tabindex="0" role="checkbox" aria-checked="true"><span class="checkbox"></span><span class="label">Dialer picker fix: drop permanent &#x27;blake-called&#x27; tag filter (30-day last_attempt KV is the cadence control)</span></li>
-<li class="task done" data-pillar-id="pillar-a-blake" data-task-label="Live dashboard at /blake.html (Worker /dashboard-data cache)" tabindex="0" role="checkbox" aria-checked="true"><span class="checkbox"></span><span class="label">Live dashboard at /blake.html (Worker /dashboard-data cache)</span></li>
-<li class="task" data-pillar-id="pillar-a-blake" data-task-label="Adam records 30-min voice clone session (hard gate before scaling beyond pilot)" tabindex="0" role="checkbox" aria-checked="false"><span class="checkbox"></span><span class="label">Adam records 30-min voice clone session (hard gate before scaling beyond pilot)</span></li>
-<li class="task done" data-pillar-id="pillar-a-blake" data-task-label="RJ&#x27;s GHL user ID provisioned (replaces Mike fallback on callback tasks)" tabindex="0" role="checkbox" aria-checked="true"><span class="checkbox"></span><span class="label">RJ&#x27;s GHL user ID provisioned (replaces Mike fallback on callback tasks)</span></li>
-<li class="task" data-pillar-id="pillar-a-blake" data-task-label="TCPA consent triage on the 398 unqualified (Adam review)" tabindex="0" role="checkbox" aria-checked="false"><span class="checkbox"></span><span class="label">TCPA consent triage on the 398 unqualified (Adam review)</span></li>
-<li class="task" data-pillar-id="pillar-a-blake" data-task-label="Pilot 10 real outbound dials + transcript review" tabindex="0" role="checkbox" aria-checked="false"><span class="checkbox"></span><span class="label">Pilot 10 real outbound dials + transcript review</span></li>
-<li class="task done" data-pillar-id="pillar-a-blake" data-task-label="ElevenLabs agent config applied 2026-05-27: voice=Brian (A/B w/ Roger), TTS=eleven_turbo_v2, LLM=gemini-2.5-flash, ASR=26 keywords, turn_timeout=6s, max_tokens=-1" tabindex="0" role="checkbox" aria-checked="true"><span class="checkbox"></span><span class="label">ElevenLabs agent config applied 2026-05-27: voice=Brian (A/B w/ Roger), TTS=eleven_turbo_v2, LLM=gemini-2.5-flash, ASR=26 keywords, turn_timeout=6s, max_tokens=-1</span></li>
-<li class="task done" data-pillar-id="pillar-a-blake" data-task-label="Cold-inbound contact auto-create on /webhook — Blake calls from unknown numbers now land in GHL (was silently dropped)" tabindex="0" role="checkbox" aria-checked="true"><span class="checkbox"></span><span class="label">Cold-inbound contact auto-create on /webhook — Blake calls from unknown numbers now land in GHL (was silently dropped)</span></li>
-<li class="task done" data-pillar-id="pillar-a-blake" data-task-label="condition_notes from extraction written to CF_VA_NOTES" tabindex="0" role="checkbox" aria-checked="true"><span class="checkbox"></span><span class="label">condition_notes from extraction written to CF_VA_NOTES</span></li>
-<li class="task done" data-pillar-id="pillar-a-blake" data-task-label="Mentioned-contact referrals: extraction schema captures {name, phone, relationship, context}; auto-creates contact + opp + RJ task (4h) + Mike follow-up (28h)" tabindex="0" role="checkbox" aria-checked="true"><span class="checkbox"></span><span class="label">Mentioned-contact referrals: extraction schema captures {name, phone, relationship, context}; auto-creates contact + opp + RJ task (4h) + Mike follow-up (28h)</span></li>
-<li class="task" data-pillar-id="pillar-a-blake" data-task-label="Lead spam-number / VOIP detection (Twilio Lookup or NumVerify, $0.005/lookup)" tabindex="0" role="checkbox" aria-checked="false"><span class="checkbox"></span><span class="label">Lead spam-number / VOIP detection (Twilio Lookup or NumVerify, $0.005/lookup)</span></li>
-<li class="task" data-pillar-id="pillar-a-blake" data-task-label="Time-since-qualified flag + auto-escalation (Mon/Wed/Fri cron, tag escalate-rj-stale-24h / 48h-urgent)" tabindex="0" role="checkbox" aria-checked="false"><span class="checkbox"></span><span class="label">Time-since-qualified flag + auto-escalation (Mon/Wed/Fri cron, tag escalate-rj-stale-24h / 48h-urgent)</span></li>
-<li class="task" data-pillar-id="pillar-a-blake" data-task-label="Real funnel handoff instrumentation — events for dial → connect → qualified → rj_first_touch → appointment_set → contract_sent → contract_signed" tabindex="0" role="checkbox" aria-checked="false"><span class="checkbox"></span><span class="label">Real funnel handoff instrumentation — events for dial → connect → qualified → rj_first_touch → appointment_set → contract_sent → contract_signed</span></li>
-<li class="task" data-pillar-id="pillar-a-blake" data-task-label="ATTOM enrichment on every new lead (extend from listings-only to /landing-lead + /webhook leads)" tabindex="0" role="checkbox" aria-checked="false"><span class="checkbox"></span><span class="label">ATTOM enrichment on every new lead (extend from listings-only to /landing-lead + /webhook leads)</span></li>
-      </ul>
-    </section>
-    
-
-    <section class="pillar">
-      <div class="pillar-header">
-        <h2>Pillar B — Listing Pipeline (Zillow / Redfin) <span class="status-pill active">ACTIVE</span></h2>
-        <div>
-          <div class="progress-bar"><div class="fill" style="width:80%"></div></div>
-          <div class="progress-label">16 / 20 done · 80%</div>
-        </div>
-      </div>
-      <p class="summary">Email-driven realtor outreach. Zillow/Redfin listing arrives → n8n forwards to Worker → parse + filter → Claude web_fetch finds the agent → MAO calc → opp in Realtor Listings pipeline → SMS from APG to agent → Slack alert in #listed-leads.</p>
-      <ul class="tasks">
-        <li class="task done" data-pillar-id="pillar-b-listing-pipeline" data-task-label="Create &#x27;D. 🏠 Realtor Listings&#x27; pipeline in GHL" tabindex="0" role="checkbox" aria-checked="true"><span class="checkbox"></span><span class="label">Create &#x27;D. 🏠 Realtor Listings&#x27; pipeline in GHL</span></li>
-<li class="task done" data-pillar-id="pillar-b-listing-pipeline" data-task-label="Scaffold listing-pipeline Worker endpoint (POST /listing-email)" tabindex="0" role="checkbox" aria-checked="true"><span class="checkbox"></span><span class="label">Scaffold listing-pipeline Worker endpoint (POST /listing-email)</span></li>
-<li class="task done" data-pillar-id="pillar-b-listing-pipeline" data-task-label="MAO calculator: asking × 0.7 − sqft × $30 − $10k" tabindex="0" role="checkbox" aria-checked="true"><span class="checkbox"></span><span class="label">MAO calculator: asking × 0.7 − sqft × $30 − $10k</span></li>
-<li class="task done" data-pillar-id="pillar-b-listing-pipeline" data-task-label="Upsert realtor contact in GHL (search by phone; create if missing)" tabindex="0" role="checkbox" aria-checked="true"><span class="checkbox"></span><span class="label">Upsert realtor contact in GHL (search by phone; create if missing)</span></li>
-<li class="task done" data-pillar-id="pillar-b-listing-pipeline" data-task-label="Create opportunity in Realtor Listings @ &#x27;1. New Listing&#x27; (dedup by address)" tabindex="0" role="checkbox" aria-checked="true"><span class="checkbox"></span><span class="label">Create opportunity in Realtor Listings @ &#x27;1. New Listing&#x27; (dedup by address)</span></li>
-<li class="task done" data-pillar-id="pillar-b-listing-pipeline" data-task-label="Email parser: pull address / asking / sqft / beds / baths / listing URL from Zillow/Redfin HTML" tabindex="0" role="checkbox" aria-checked="true"><span class="checkbox"></span><span class="label">Email parser: pull address / asking / sqft / beds / baths / listing URL from Zillow/Redfin HTML</span></li>
-<li class="task done" data-pillar-id="pillar-b-listing-pipeline" data-task-label="SMS realtor via GHL Conversations API (+1 609-699-8437)" tabindex="0" role="checkbox" aria-checked="true"><span class="checkbox"></span><span class="label">SMS realtor via GHL Conversations API (+1 609-699-8437)</span></li>
-<li class="task done" data-pillar-id="pillar-b-listing-pipeline" data-task-label="Slack notify #listed-leads on every accepted listing" tabindex="0" role="checkbox" aria-checked="true"><span class="checkbox"></span><span class="label">Slack notify #listed-leads on every accepted listing</span></li>
-<li class="task done" data-pillar-id="pillar-b-listing-pipeline" data-task-label="Gmail → Worker bridge (n8n Cloud workflow)" tabindex="0" role="checkbox" aria-checked="true"><span class="checkbox"></span><span class="label">Gmail → Worker bridge (n8n Cloud workflow)</span></li>
-<li class="task" data-pillar-id="pillar-b-listing-pipeline" data-task-label="Listing-agent lookup via Claude web_fetch" tabindex="0" role="checkbox" aria-checked="false"><span class="checkbox"></span><span class="label">Listing-agent lookup via Claude web_fetch</span></li>
-<li class="task done" data-pillar-id="pillar-b-listing-pipeline" data-task-label="Property-type filter (SFR + multi + townhouse allowed; condo/co-op/apartment/mobile blocked)" tabindex="0" role="checkbox" aria-checked="true"><span class="checkbox"></span><span class="label">Property-type filter (SFR + multi + townhouse allowed; condo/co-op/apartment/mobile blocked)</span></li>
-<li class="task done" data-pillar-id="pillar-b-listing-pipeline" data-task-label="SMS message template (Mike-with-APG B2B copy)" tabindex="0" role="checkbox" aria-checked="true"><span class="checkbox"></span><span class="label">SMS message template (Mike-with-APG B2B copy)</span></li>
-<li class="task done" data-pillar-id="pillar-b-listing-pipeline" data-task-label="Title-case realtor name" tabindex="0" role="checkbox" aria-checked="true"><span class="checkbox"></span><span class="label">Title-case realtor name</span></li>
-<li class="task done" data-pillar-id="pillar-b-listing-pipeline" data-task-label="Strip &#x27;Sq Ft&#x27; / &#x27;bd&#x27; metadata prefix from parsed address" tabindex="0" role="checkbox" aria-checked="true"><span class="checkbox"></span><span class="label">Strip &#x27;Sq Ft&#x27; / &#x27;bd&#x27; metadata prefix from parsed address</span></li>
-<li class="task done" data-pillar-id="pillar-b-listing-pipeline" data-task-label="Skip SMS when realtor phone is missing (no more 422 spam)" tabindex="0" role="checkbox" aria-checked="true"><span class="checkbox"></span><span class="label">Skip SMS when realtor phone is missing (no more 422 spam)</span></li>
-<li class="task done" data-pillar-id="pillar-b-listing-pipeline" data-task-label="Listing opp assignedTo=RJ by default (2026-05-27)" tabindex="0" role="checkbox" aria-checked="true"><span class="checkbox"></span><span class="label">Listing opp assignedTo=RJ by default (2026-05-27)</span></li>
-<li class="task done" data-pillar-id="pillar-b-listing-pipeline" data-task-label="ATTOM enrichment for listings (AVM as ARV + motivated-seller scoring)" tabindex="0" role="checkbox" aria-checked="true"><span class="checkbox"></span><span class="label">ATTOM enrichment for listings (AVM as ARV + motivated-seller scoring)</span></li>
-<li class="task" data-pillar-id="pillar-b-listing-pipeline" data-task-label="Realtor SMS reply handler: realtor reply → thread to #listed-leads + bump opp stage" tabindex="0" role="checkbox" aria-checked="false"><span class="checkbox"></span><span class="label">Realtor SMS reply handler: realtor reply → thread to #listed-leads + bump opp stage</span></li>
-<li class="task" data-pillar-id="pillar-b-listing-pipeline" data-task-label="Apify / RentCast ARV integration (replace flat $30/sqft assumption)" tabindex="0" role="checkbox" aria-checked="false"><span class="checkbox"></span><span class="label">Apify / RentCast ARV integration (replace flat $30/sqft assumption)</span></li>
-<li class="task" data-pillar-id="pillar-b-listing-pipeline" data-task-label="ATTOM paid tier (Property Pro + Foreclosure)" tabindex="0" role="checkbox" aria-checked="false"><span class="checkbox"></span><span class="label">ATTOM paid tier (Property Pro + Foreclosure)</span></li>
-      </ul>
-    </section>
-    
-
-    <section class="pillar">
-      <div class="pillar-header">
-        <h2>Pillar C — Vault + Self-Improvement <span class="status-pill active">ACTIVE</span></h2>
-        <div>
-          <div class="progress-bar"><div class="fill" style="width:60%"></div></div>
-          <div class="progress-label">6 / 10 done · 60%</div>
-        </div>
-      </div>
-      <p class="summary">Every conversation live-syncs to APG-Vault as markdown via Worker → KV queue → local Python daemon. Manual self-improvement loop: Claude Opus reviews recent transcripts on demand, writes proposed prompt edits into vault.</p>
-      <ul class="tasks">
-        <li class="task done" data-pillar-id="pillar-c-vault-self-improvement" data-task-label="Vault sync: Blake calls + landing leads + listings + GHL messages → APG-Vault markdown" tabindex="0" role="checkbox" aria-checked="true"><span class="checkbox"></span><span class="label">Vault sync: Blake calls + landing leads + listings + GHL messages → APG-Vault markdown</span></li>
-<li class="task" data-pillar-id="pillar-c-vault-self-improvement" data-task-label="Vault sync: SmarterContact thread → vault (will use webhook ingestion — SC has no REST API)" tabindex="0" role="checkbox" aria-checked="false"><span class="checkbox"></span><span class="label">Vault sync: SmarterContact thread → vault (will use webhook ingestion — SC has no REST API)</span></li>
-<li class="task" data-pillar-id="pillar-c-vault-self-improvement" data-task-label="Vault sync: #base1-sms-leadgen Slack message → vault" tabindex="0" role="checkbox" aria-checked="false"><span class="checkbox"></span><span class="label">Vault sync: #base1-sms-leadgen Slack message → vault</span></li>
-<li class="task done" data-pillar-id="pillar-c-vault-self-improvement" data-task-label="Self-improvement trigger: POST /admin/blake/self-improve?sample=N (Adam: manual only, no auto)" tabindex="0" role="checkbox" aria-checked="true"><span class="checkbox"></span><span class="label">Self-improvement trigger: POST /admin/blake/self-improve?sample=N (Adam: manual only, no auto)</span></li>
-<li class="task done" data-pillar-id="pillar-c-vault-self-improvement" data-task-label="Claude Opus 4.7 prompt-iteration loop → writes proposed edits to _system/Blake/iterations/" tabindex="0" role="checkbox" aria-checked="true"><span class="checkbox"></span><span class="label">Claude Opus 4.7 prompt-iteration loop → writes proposed edits to _system/Blake/iterations/</span></li>
-<li class="task done" data-pillar-id="pillar-c-vault-self-improvement" data-task-label="blake:iteration:latest KV pointer (feeds &#x27;What Blake can improve on&#x27; dashboard cards)" tabindex="0" role="checkbox" aria-checked="true"><span class="checkbox"></span><span class="label">blake:iteration:latest KV pointer (feeds &#x27;What Blake can improve on&#x27; dashboard cards)</span></li>
-<li class="task" data-pillar-id="pillar-c-vault-self-improvement" data-task-label="A/B test infrastructure: 20-30% of calls on new prompt version" tabindex="0" role="checkbox" aria-checked="false"><span class="checkbox"></span><span class="label">A/B test infrastructure: 20-30% of calls on new prompt version</span></li>
-<li class="task" data-pillar-id="pillar-c-vault-self-improvement" data-task-label="Auto-promote winning prompt version" tabindex="0" role="checkbox" aria-checked="false"><span class="checkbox"></span><span class="label">Auto-promote winning prompt version</span></li>
-<li class="task done" data-pillar-id="pillar-c-vault-self-improvement" data-task-label="Daily Slack summary of Blake calls + GHL conversations → #listed-leads (cron 0 4 * * *)" tabindex="0" role="checkbox" aria-checked="true"><span class="checkbox"></span><span class="label">Daily Slack summary of Blake calls + GHL conversations → #listed-leads (cron 0 4 * * *)</span></li>
-<li class="task done" data-pillar-id="pillar-c-vault-self-improvement" data-task-label="Local vault-sync daemon as Windows scheduled task (APGVaultSync, restart-on-failure)" tabindex="0" role="checkbox" aria-checked="true"><span class="checkbox"></span><span class="label">Local vault-sync daemon as Windows scheduled task (APGVaultSync, restart-on-failure)</span></li>
-      </ul>
-    </section>
-    
-
-    <section class="pillar">
-      <div class="pillar-header">
-        <h2>Workstreams — May 26-27 brief <span class="status-pill active">ACTIVE</span></h2>
-        <div>
-          <div class="progress-bar"><div class="fill" style="width:42%"></div></div>
-          <div class="progress-label">14 / 33 done · 42%</div>
-        </div>
-      </div>
-      <p class="summary">Adam&#x27;s May 26 meeting brief + Mido&#x27;s May 27 dashboard rebuild + the v4 brief items (RJ attribution, SmarterContact webhook, Figma-as-SOT, blog audit).</p>
-      <ul class="tasks">
-        <li class="task done" data-pillar-id="workstreams-may-26-27" data-task-label="WS1a Personas doc (5 personas → friendly/professional/traditional)" tabindex="0" role="checkbox" aria-checked="true"><span class="checkbox"></span><span class="label">WS1a Personas doc (5 personas → friendly/professional/traditional)</span></li>
-<li class="task" data-pillar-id="workstreams-may-26-27" data-task-label="WS1b Variant briefs (1-paragraph positioning + hero + CTA per variant)" tabindex="0" role="checkbox" aria-checked="false"><span class="checkbox"></span><span class="label">WS1b Variant briefs (1-paragraph positioning + hero + CTA per variant)</span></li>
-<li class="task" data-pillar-id="workstreams-may-26-27" data-task-label="WS1c Edge routing (cookie-based 33/33/33 split at Worker edge + Clarity tag)" tabindex="0" role="checkbox" aria-checked="false"><span class="checkbox"></span><span class="label">WS1c Edge routing (cookie-based 33/33/33 split at Worker edge + Clarity tag)</span></li>
-<li class="task" data-pillar-id="workstreams-may-26-27" data-task-label="WS1d Variant copy live on home + landing pages" tabindex="0" role="checkbox" aria-checked="false"><span class="checkbox"></span><span class="label">WS1d Variant copy live on home + landing pages</span></li>
-<li class="task" data-pillar-id="workstreams-may-26-27" data-task-label="WS1e Conversion tracking per variant (unique visitors only)" tabindex="0" role="checkbox" aria-checked="false"><span class="checkbox"></span><span class="label">WS1e Conversion tracking per variant (unique visitors only)</span></li>
-<li class="task" data-pillar-id="workstreams-may-26-27" data-task-label="WS1f Internal-IP filter (Egypt/India/Taiwan excluded from variant metrics)" tabindex="0" role="checkbox" aria-checked="false"><span class="checkbox"></span><span class="label">WS1f Internal-IP filter (Egypt/India/Taiwan excluded from variant metrics)</span></li>
-<li class="task" data-pillar-id="workstreams-may-26-27" data-task-label="WS1 Figma-as-source-of-truth for variant copy (named frames → JSON → push_zip_pages.py reads JSON)" tabindex="0" role="checkbox" aria-checked="false"><span class="checkbox"></span><span class="label">WS1 Figma-as-source-of-truth for variant copy (named frames → JSON → push_zip_pages.py reads JSON)</span></li>
-<li class="task done" data-pillar-id="workstreams-may-26-27" data-task-label="WS2 Google Places autofill + 3-variant SMS + RJ task + re-submit dedupe on /landing-lead" tabindex="0" role="checkbox" aria-checked="true"><span class="checkbox"></span><span class="label">WS2 Google Places autofill + 3-variant SMS + RJ task + re-submit dedupe on /landing-lead</span></li>
-<li class="task" data-pillar-id="workstreams-may-26-27" data-task-label="WS2 Google Places API key provisioned + restricted to atompropertygroup.com referrer" tabindex="0" role="checkbox" aria-checked="false"><span class="checkbox"></span><span class="label">WS2 Google Places API key provisioned + restricted to atompropertygroup.com referrer</span></li>
-<li class="task" data-pillar-id="workstreams-may-26-27" data-task-label="WS2 Re-push 30 zip landing pages with autofill JS (python push_zip_pages.py)" tabindex="0" role="checkbox" aria-checked="false"><span class="checkbox"></span><span class="label">WS2 Re-push 30 zip landing pages with autofill JS (python push_zip_pages.py)</span></li>
-<li class="task done" data-pillar-id="workstreams-may-26-27" data-task-label="WS3 Mentioned-contact extraction → contact + opp + dual task chain (RJ 4h + Mike 28h)" tabindex="0" role="checkbox" aria-checked="true"><span class="checkbox"></span><span class="label">WS3 Mentioned-contact extraction → contact + opp + dual task chain (RJ 4h + Mike 28h)</span></li>
-<li class="task" data-pillar-id="workstreams-may-26-27" data-task-label="WS3 GHL provisioning — create &#x27;Mentioned Referral&#x27; stage + &#x27;referred_by_contact_id&#x27; custom field" tabindex="0" role="checkbox" aria-checked="false"><span class="checkbox"></span><span class="label">WS3 GHL provisioning — create &#x27;Mentioned Referral&#x27; stage + &#x27;referred_by_contact_id&#x27; custom field</span></li>
-<li class="task done" data-pillar-id="workstreams-may-26-27" data-task-label="WS4a ElevenLabs agent audit table (14 rows) + read-only /admin/blake/agent-config endpoint" tabindex="0" role="checkbox" aria-checked="true"><span class="checkbox"></span><span class="label">WS4a ElevenLabs agent audit table (14 rows) + read-only /admin/blake/agent-config endpoint</span></li>
-<li class="task done" data-pillar-id="workstreams-may-26-27" data-task-label="WS4a Apply audit recommendations (Brian + Turbo v2 + Gemini 2.5 + ASR + 6s turn + max_tokens=-1)" tabindex="0" role="checkbox" aria-checked="true"><span class="checkbox"></span><span class="label">WS4a Apply audit recommendations (Brian + Turbo v2 + Gemini 2.5 + ASR + 6s turn + max_tokens=-1)</span></li>
-<li class="task done" data-pillar-id="workstreams-may-26-27" data-task-label="WS4a Brian vs Roger A/B (50/50 via /conversation-init override + voice-X tag on contact)" tabindex="0" role="checkbox" aria-checked="true"><span class="checkbox"></span><span class="label">WS4a Brian vs Roger A/B (50/50 via /conversation-init override + voice-X tag on contact)</span></li>
-<li class="task done" data-pillar-id="workstreams-may-26-27" data-task-label="WS4b Vault-driven prompt iteration (Slack + GHL + calls aggregator → Opus 4.7 review w/ diff)" tabindex="0" role="checkbox" aria-checked="true"><span class="checkbox"></span><span class="label">WS4b Vault-driven prompt iteration (Slack + GHL + calls aggregator → Opus 4.7 review w/ diff)</span></li>
-<li class="task" data-pillar-id="workstreams-may-26-27" data-task-label="WS4b Per-prompt-version conversion tracking" tabindex="0" role="checkbox" aria-checked="false"><span class="checkbox"></span><span class="label">WS4b Per-prompt-version conversion tracking</span></li>
-<li class="task done" data-pillar-id="workstreams-may-26-27" data-task-label="WS5a docs/attom-capabilities.md" tabindex="0" role="checkbox" aria-checked="true"><span class="checkbox"></span><span class="label">WS5a docs/attom-capabilities.md</span></li>
-<li class="task done" data-pillar-id="workstreams-may-26-27" data-task-label="WS5b docs/listing-bot-workflow.md" tabindex="0" role="checkbox" aria-checked="true"><span class="checkbox"></span><span class="label">WS5b docs/listing-bot-workflow.md</span></li>
-<li class="task done" data-pillar-id="workstreams-may-26-27" data-task-label="WS5c Repo docs sync (GitHub docs/*.md → APG-Vault/Docs/ via APGRepoDocsSync, 15-min cadence)" tabindex="0" role="checkbox" aria-checked="true"><span class="checkbox"></span><span class="label">WS5c Repo docs sync (GitHub docs/*.md → APG-Vault/Docs/ via APGRepoDocsSync, 15-min cadence)</span></li>
-<li class="task done" data-pillar-id="workstreams-may-26-27" data-task-label="WS6 Dashboard rebuild with tabs (Overview / Blake Calls / GHL / Websites / Figma / Team / Voice A/B / Costs / Tracker / Variants)" tabindex="0" role="checkbox" aria-checked="true"><span class="checkbox"></span><span class="label">WS6 Dashboard rebuild with tabs (Overview / Blake Calls / GHL / Websites / Figma / Team / Voice A/B / Costs / Tracker / Variants)</span></li>
-<li class="task done" data-pillar-id="workstreams-may-26-27" data-task-label="WS6 APG brand recolor (cream + ink navy + gold)" tabindex="0" role="checkbox" aria-checked="true"><span class="checkbox"></span><span class="label">WS6 APG brand recolor (cream + ink navy + gold)</span></li>
-<li class="task done" data-pillar-id="workstreams-may-26-27" data-task-label="WS6 Per-agent activity aggregator + Opus AI review (RJ + Mike + Adam)" tabindex="0" role="checkbox" aria-checked="true"><span class="checkbox"></span><span class="label">WS6 Per-agent activity aggregator + Opus AI review (RJ + Mike + Adam)</span></li>
-<li class="task done" data-pillar-id="workstreams-may-26-27" data-task-label="WS6 Dashboard auto-refresh every 60s + interactive tracker checkboxes" tabindex="0" role="checkbox" aria-checked="true"><span class="checkbox"></span><span class="label">WS6 Dashboard auto-refresh every 60s + interactive tracker checkboxes</span></li>
-<li class="task" data-pillar-id="workstreams-may-26-27" data-task-label="WS6 Justus + Brady GHL user_ids — add to APG_AGENT_ROSTER when known" tabindex="0" role="checkbox" aria-checked="false"><span class="checkbox"></span><span class="label">WS6 Justus + Brady GHL user_ids — add to APG_AGENT_ROSTER when known</span></li>
-<li class="task" data-pillar-id="workstreams-may-26-27" data-task-label="WS6 RJ deep-view: per-period drill-down on opps moved + realtors connected + $ values" tabindex="0" role="checkbox" aria-checked="false"><span class="checkbox"></span><span class="label">WS6 RJ deep-view: per-period drill-down on opps moved + realtors connected + $ values</span></li>
-<li class="task" data-pillar-id="workstreams-may-26-27" data-task-label="RJ activity attribution from Calltools + GHL (Audit 1.3 deliverable)" tabindex="0" role="checkbox" aria-checked="false"><span class="checkbox"></span><span class="label">RJ activity attribution from Calltools + GHL (Audit 1.3 deliverable)</span></li>
-<li class="task" data-pillar-id="workstreams-may-26-27" data-task-label="SmarterContact webhook ingestion (POST /webhooks/smartercontact; SC has no REST API)" tabindex="0" role="checkbox" aria-checked="false"><span class="checkbox"></span><span class="label">SmarterContact webhook ingestion (POST /webhooks/smartercontact; SC has no REST API)</span></li>
-<li class="task" data-pillar-id="workstreams-may-26-27" data-task-label="Website blog system audit (does atompropertygroup.com/blog exist? Track conversions?)" tabindex="0" role="checkbox" aria-checked="false"><span class="checkbox"></span><span class="label">Website blog system audit (does atompropertygroup.com/blog exist? Track conversions?)</span></li>
-<li class="task" data-pillar-id="workstreams-may-26-27" data-task-label="Phase 1 audit reports (warm-up, listed leads, RJ activity, phone quality, blog, funnel handoff)" tabindex="0" role="checkbox" aria-checked="false"><span class="checkbox"></span><span class="label">Phase 1 audit reports (warm-up, listed leads, RJ activity, phone quality, blog, funnel handoff)</span></li>
-<li class="task" data-pillar-id="workstreams-may-26-27" data-task-label="Today tab (Phase 3): Opus reviews 4-hourly, severity-coded action cards with deep-links" tabindex="0" role="checkbox" aria-checked="false"><span class="checkbox"></span><span class="label">Today tab (Phase 3): Opus reviews 4-hourly, severity-coded action cards with deep-links</span></li>
-<li class="task" data-pillar-id="workstreams-may-26-27" data-task-label="Drip agent (Phase 3.2): ElevenLabs SMS-only agent works the Unqualified stage Mon/Wed/Fri, max 50/day" tabindex="0" role="checkbox" aria-checked="false"><span class="checkbox"></span><span class="label">Drip agent (Phase 3.2): ElevenLabs SMS-only agent works the Unqualified stage Mon/Wed/Fri, max 50/day</span></li>
-<li class="task" data-pillar-id="workstreams-may-26-27" data-task-label="Phase 4 hardening: real funnel events table + KV backups + status page + Monday digest email" tabindex="0" role="checkbox" aria-checked="false"><span class="checkbox"></span><span class="label">Phase 4 hardening: real funnel events table + KV backups + status page + Monday digest email</span></li>
-      </ul>
-    </section>
-    
-
-    <section class="pillar">
-      <div class="pillar-header">
-        <h2>Pillar D — Training Video Factory <span class="status-pill deferred">DEFERRED</span></h2>
-        <div>
-          <div class="progress-bar"><div class="fill" style="width:0%"></div></div>
-          <div class="progress-label">0 / 6 done · 0%</div>
-        </div>
-      </div>
-      <p class="summary">SOPs in vault tagged #video-ready → Claude script → ElevenLabs trainer voice → Fal.AI animations → ffmpeg composite → MP4 in vault. ~$10-35/video. Deferred 2026-05-27 per v4 brief — not now.</p>
-      <ul class="tasks">
-        <li class="task" data-pillar-id="pillar-d-training-videos" data-task-label="SOP indexing in vault (tag with #video-ready)" tabindex="0" role="checkbox" aria-checked="false"><span class="checkbox"></span><span class="label">SOP indexing in vault (tag with #video-ready)</span></li>
-<li class="task" data-pillar-id="pillar-d-training-videos" data-task-label="Claude script generator (hook → 3-5 points → summary)" tabindex="0" role="checkbox" aria-checked="false"><span class="checkbox"></span><span class="label">Claude script generator (hook → 3-5 points → summary)</span></li>
-<li class="task" data-pillar-id="pillar-d-training-videos" data-task-label="ElevenLabs trainer voice (separate from Blake)" tabindex="0" role="checkbox" aria-checked="false"><span class="checkbox"></span><span class="label">ElevenLabs trainer voice (separate from Blake)</span></li>
-<li class="task" data-pillar-id="pillar-d-training-videos" data-task-label="Fal.AI scene-by-scene animation generator" tabindex="0" role="checkbox" aria-checked="false"><span class="checkbox"></span><span class="label">Fal.AI scene-by-scene animation generator</span></li>
-<li class="task" data-pillar-id="pillar-d-training-videos" data-task-label="ffmpeg composite pipeline" tabindex="0" role="checkbox" aria-checked="false"><span class="checkbox"></span><span class="label">ffmpeg composite pipeline</span></li>
-<li class="task" data-pillar-id="pillar-d-training-videos" data-task-label="Vault output: per-video markdown wrapper" tabindex="0" role="checkbox" aria-checked="false"><span class="checkbox"></span><span class="label">Vault output: per-video markdown wrapper</span></li>
-      </ul>
-    </section>
-    
-
-    <section class="pillar">
-      <div class="pillar-header">
-        <h2>Infrastructure <span class="status-pill active">ACTIVE</span></h2>
-        <div>
-          <div class="progress-bar"><div class="fill" style="width:56%"></div></div>
-          <div class="progress-label">9 / 16 done · 56%</div>
-        </div>
-      </div>
-      <p class="summary">Repos, credentials, account chain, dashboards, CI.</p>
-      <ul class="tasks">
-        <li class="task done" data-pillar-id="infrastructure" data-task-label="AtomInvestments GitHub account + acq-automation repo (transferred from Mid0117)" tabindex="0" role="checkbox" aria-checked="true"><span class="checkbox"></span><span class="label">AtomInvestments GitHub account + acq-automation repo (transferred from Mid0117)</span></li>
-<li class="task done" data-pillar-id="infrastructure" data-task-label="Cloudflare account on mithchell@atompropertygroup.org" tabindex="0" role="checkbox" aria-checked="true"><span class="checkbox"></span><span class="label">Cloudflare account on mithchell@atompropertygroup.org</span></li>
-<li class="task done" data-pillar-id="infrastructure" data-task-label="CF Worker secrets bound (BLAKE_GHL_PIT, ELEVENLABS_*, ANTHROPIC_API_KEY, TWILIO_*, SLACK_BOT_TOKEN, WP_AUTH_HEADER, ATTOM_API_KEY, DASHBOARD_*, VAULT_SYNC_TOKEN, CALLTOOLS_API_KEY)" tabindex="0" role="checkbox" aria-checked="true"><span class="checkbox"></span><span class="label">CF Worker secrets bound (BLAKE_GHL_PIT, ELEVENLABS_*, ANTHROPIC_API_KEY, TWILIO_*, SLACK_BOT_TOKEN, WP_AUTH_HEADER, ATTOM_API_KEY, DASHBOARD_*, VAULT_SYNC_TOKEN, CALLTOOLS_API_KEY)</span></li>
-<li class="task done" data-pillar-id="infrastructure" data-task-label="DIAL_STATE KV namespace for warm-up + dedupe + dashboard caches" tabindex="0" role="checkbox" aria-checked="true"><span class="checkbox"></span><span class="label">DIAL_STATE KV namespace for warm-up + dedupe + dashboard caches</span></li>
-<li class="task done" data-pillar-id="infrastructure" data-task-label="GHL Private Integration Token + scopes" tabindex="0" role="checkbox" aria-checked="true"><span class="checkbox"></span><span class="label">GHL Private Integration Token + scopes</span></li>
-<li class="task done" data-pillar-id="infrastructure" data-task-label="Master credentials inventory in APG-Vault/_internal/credentials.md" tabindex="0" role="checkbox" aria-checked="true"><span class="checkbox"></span><span class="label">Master credentials inventory in APG-Vault/_internal/credentials.md</span></li>
-<li class="task done" data-pillar-id="infrastructure" data-task-label="Live dashboard at atominvestments.github.io/apg-dashboard/blake.html" tabindex="0" role="checkbox" aria-checked="true"><span class="checkbox"></span><span class="label">Live dashboard at atominvestments.github.io/apg-dashboard/blake.html</span></li>
-<li class="task done" data-pillar-id="infrastructure" data-task-label="All-time call history visible on Blake dashboard" tabindex="0" role="checkbox" aria-checked="true"><span class="checkbox"></span><span class="label">All-time call history visible on Blake dashboard</span></li>
-<li class="task done" data-pillar-id="infrastructure" data-task-label="APG logo wired into Blake dashboard" tabindex="0" role="checkbox" aria-checked="true"><span class="checkbox"></span><span class="label">APG logo wired into Blake dashboard</span></li>
-<li class="task" data-pillar-id="infrastructure" data-task-label="SmarterContact account email migration to mithchell@atompropertygroup.org" tabindex="0" role="checkbox" aria-checked="false"><span class="checkbox"></span><span class="label">SmarterContact account email migration to mithchell@atompropertygroup.org</span></li>
-<li class="task" data-pillar-id="infrastructure" data-task-label="Worker #3: slack-listener replaces slack.yml cron" tabindex="0" role="checkbox" aria-checked="false"><span class="checkbox"></span><span class="label">Worker #3: slack-listener replaces slack.yml cron</span></li>
-<li class="task" data-pillar-id="infrastructure" data-task-label="Worker #4: sms-reply-handler replaces sms.yml cron" tabindex="0" role="checkbox" aria-checked="false"><span class="checkbox"></span><span class="label">Worker #4: sms-reply-handler replaces sms.yml cron</span></li>
-<li class="task" data-pillar-id="infrastructure" data-task-label="Calltools API integration (key set, endpoint discovery pending)" tabindex="0" role="checkbox" aria-checked="false"><span class="checkbox"></span><span class="label">Calltools API integration (key set, endpoint discovery pending)</span></li>
-<li class="task" data-pillar-id="infrastructure" data-task-label="Google Places API key provisioning" tabindex="0" role="checkbox" aria-checked="false"><span class="checkbox"></span><span class="label">Google Places API key provisioning</span></li>
-<li class="task" data-pillar-id="infrastructure" data-task-label="KV daily backup + restore endpoint (Phase 4.4)" tabindex="0" role="checkbox" aria-checked="false"><span class="checkbox"></span><span class="label">KV daily backup + restore endpoint (Phase 4.4)</span></li>
-<li class="task" data-pillar-id="infrastructure" data-task-label="Public /status page (Phase 4.5)" tabindex="0" role="checkbox" aria-checked="false"><span class="checkbox"></span><span class="label">Public /status page (Phase 4.5)</span></li>
-      </ul>
-    </section>
-    
-
-  <div class="footer">
-    <span>Auto-generated from progress_state.json · APG ACQ Operating Layer · click any task to toggle</span>
-    <span class="gold-stamp">Tracker · Live</span>
-  </div>
-
-</div>
-<script>
-(function() {
-  // Interactive progress: click any .task li → POST /api/progress/toggle.
-  // On success the override persists in the Worker's KV. On failure the
-  // optimistic UI rollback restores the previous state and shows a brief
-  // error glyph on the checkbox.
-  function setTaskState(li, done) {
-    li.classList.toggle("done", done);
-    li.setAttribute("aria-checked", done ? "true" : "false");
-  }
-  async function toggle(li) {
-    if (li.getAttribute("aria-busy") === "true") return;
-    const pillarId = li.getAttribute("data-pillar-id");
-    const taskLabel = li.getAttribute("data-task-label");
-    if (!pillarId || !taskLabel) return;
-    const wasDone = li.classList.contains("done");
-    const target = !wasDone;
-    li.setAttribute("aria-busy", "true");
-    setTaskState(li, target);  // optimistic
-    li.classList.remove("error");
-    try {
-      const res = await fetch("/api/progress/toggle", {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        credentials: "same-origin",
-        body: JSON.stringify({
-          pillar_id: pillarId,
-          task_label: taskLabel,
-          done: target,
-        }),
-      });
-      const data = await res.json().catch(() => ({}));
-      if (!res.ok || !data.ok) {
-        // Roll back
-        setTaskState(li, wasDone);
-        li.classList.add("error");
-        console.warn("[progress toggle] failed", res.status, data);
-        setTimeout(function() { li.classList.remove("error"); }, 2200);
-      } else {
-        // Server confirmed — leave optimistic state. Update KPI counters.
-        updateKpis();
-      }
-    } catch (err) {
-      setTaskState(li, wasDone);
-      li.classList.add("error");
-      console.warn("[progress toggle] threw", err);
-      setTimeout(function() { li.classList.remove("error"); }, 2200);
-    } finally {
-      li.setAttribute("aria-busy", "false");
-    }
-  }
-  function updateKpis() {
-    // Recompute the per-pillar and overall counters from the DOM after a toggle.
-    document.querySelectorAll("section.pillar").forEach(function(p) {
-      const tasks = p.querySelectorAll("li.task");
-      const done = p.querySelectorAll("li.task.done").length;
-      const total = tasks.length;
-      const pct = total ? Math.round(done * 100 / total) : 0;
-      const fill = p.querySelector(".progress-bar .fill");
-      if (fill) fill.style.width = pct + "%";
-      const lbl = p.querySelector(".progress-label");
-      if (lbl) lbl.textContent = done + " / " + total + " done · " + pct + "%";
-      const bar = p.querySelector(".progress-bar");
-      if (bar) bar.classList.toggle("complete", pct === 100);
-    });
-    // Top-level KPIs
-    const allTasks = document.querySelectorAll("li.task");
-    const allDone = document.querySelectorAll("li.task.done").length;
-    const total = allTasks.length;
-    const pct = total ? Math.round(allDone * 100 / total) : 0;
-    const overallEls = document.querySelectorAll(".summary-kpi");
-    if (overallEls.length >= 2) {
-      const pctEl = overallEls[0].querySelector(".v");
-      if (pctEl) pctEl.innerHTML = pct + "<small>%</small>";
-      const doneEl = overallEls[1].querySelector(".v");
-      if (doneEl) doneEl.innerHTML = allDone + "<small> / " + total + "</small>";
-    }
-  }
-  document.addEventListener("click", function(e) {
-    const li = e.target.closest("li.task");
-    if (li) { e.preventDefault(); toggle(li); }
-  });
-  document.addEventListener("keydown", function(e) {
-    if (e.key !== " " && e.key !== "Enter") return;
-    const li = document.activeElement && document.activeElement.closest("li.task");
-    if (li) { e.preventDefault(); toggle(li); }
-  });
-})();
-</script>
-</body>
-</html>
-`,
+  // progress.html — missing at bake time; route falls back to github.io proxy
   'weekly.html': `<!doctype html>
 <html lang="en">
 <head>
@@ -3631,7 +3098,7 @@ section h2, h2 {
   <header class="masthead">
     <div class="brandrow">
       <span class="brand">Atom Property Group · ACQ Operations</span>
-      <span>Last updated Jun 12, 2026 11:04 AM ET</span>
+      <span>Last updated Jun 12, 2026 11:08 AM ET</span>
     </div>
     <h1>Active <span class="accent">Deals.</span></h1>
     <p class="dek">Every property currently in stages 1-7 of the ACQ pipeline. Sorted by call rating within each stage so the strongest deals surface first.</p>
@@ -4192,7 +3659,7 @@ section h2, h2 {
   <header class="masthead">
     <div class="brandrow">
       <span class="brand">Atom Property Group · ACQ Operations</span>
-      <span>Last updated Jun 12, 2026 11:04 AM ET</span>
+      <span>Last updated Jun 12, 2026 11:07 AM ET</span>
     </div>
     <h1>SMS <span class="accent">Follow-Ups.</span></h1>
     <p class="dek">Action queue for Jeff and Mike — replies to call back, leads gone dormant, and everything still cycling through the SMS sequence.</p>
@@ -4212,7 +3679,7 @@ section h2, h2 {
     <a href="sms-test.html">SMS Test</a>
   </nav>
 
-  <details class="run-grid-collapsed"><summary>All 5 cron jobs OK on last run — click for timestamps</summary><div class="run-grid"><div class="run-row"><span class="tag green">OK</span><span class="run-name">ACQ Call Recording Automation</span><span class="run-ts">Jun 12, 07:31 AM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">ACQ SMS Follow-Up + Dashboard</span><span class="run-ts">Jun 12, 07:52 AM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">APG Slack Scraper</span><span class="run-ts">Jun 12, 07:55 AM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">dashboard (script)</span><span class="run-ts">Jun 12, 11:04 AM</span><span class="run-detail">dashboard updated</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">sms (script)</span><span class="run-ts">Jun 12, 11:04 AM</span><span class="run-detail">{&quot;wait&quot;: 16, &quot;skipped-tag-prebail&quot;: 57, &quot;skipped&quot;: 5, &quot;no-phone&quot;: 1}</span></div></div></details><div class="status-banner on"><div class="status-text"><span class="pulse"></span>SMS Automation: <span style="color:var(--green);font-weight:800">ACTIVE</span></div><a class="btn btn-kill" href="https://docs.google.com/spreadsheets/d/1wc3Pt46ze-ejLaryL8WIRQf4OjEkirolc4-O8lsRQZY/edit#gid=0" target="_blank">EMERGENCY KILL SWITCH</a></div>
+  <details class="run-grid-collapsed"><summary>All 5 cron jobs OK on last run — click for timestamps</summary><div class="run-grid"><div class="run-row"><span class="tag green">OK</span><span class="run-name">ACQ Call Recording Automation</span><span class="run-ts">Jun 12, 07:31 AM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">ACQ SMS Follow-Up + Dashboard</span><span class="run-ts">Jun 12, 11:05 AM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">APG Slack Scraper</span><span class="run-ts">Jun 12, 07:55 AM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">dashboard (script)</span><span class="run-ts">Jun 12, 11:07 AM</span><span class="run-detail">dashboard updated</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">sms (script)</span><span class="run-ts">Jun 12, 11:07 AM</span><span class="run-detail">{&quot;wait&quot;: 16, &quot;skipped-tag-prebail&quot;: 57, &quot;skipped&quot;: 5, &quot;no-phone&quot;: 1}</span></div></div></details><div class="status-banner on"><div class="status-text"><span class="pulse"></span>SMS Automation: <span style="color:var(--green);font-weight:800">ACTIVE</span></div><a class="btn btn-kill" href="https://docs.google.com/spreadsheets/d/1wc3Pt46ze-ejLaryL8WIRQf4OjEkirolc4-O8lsRQZY/edit#gid=0" target="_blank">EMERGENCY KILL SWITCH</a></div>
 
   <section class="sec">
     <div class="tag-row"><span class="num">01</span><h2>At a Glance</h2></div>
@@ -4787,7 +4254,7 @@ h2 .num { display: inline-block; min-width: 34px; padding: 4px 10px;
         <span class="vletter">A</span>
         <span class="vrates">0.0% reply · 0.0% qual · 0.0% contract</span>
       </div>
-      <div class="vtemplate">Hi {first_name} — Blake with APG. I pulled a written cash-offer range for {address1} this morning. Want me to send it over? No commitment, no follow-up calls unless you ask. Reply STOP to opt out.</div>
+      <div class="vtemplate">Hi {first_name} â€” Blake with APG. I pulled a written cash-offer range for {address1} this morning. Want me to send it over? No commitment, no follow-up calls unless you ask. Reply STOP to opt out.</div>
       <div class="vfunnel">
         <div class="funbar"><div class="funbar-label">Sent <strong>0</strong> (0.0%)</div><div class="funbar-track"><div class="funbar-fill" style="width:0.0%;background:var(--ink)"></div></div></div>
         <div class="funbar"><div class="funbar-label">Replied <strong>0</strong> (0.0%)</div><div class="funbar-track"><div class="funbar-fill" style="width:0.0%;background:#3B82F6"></div></div></div>
@@ -4802,7 +4269,7 @@ h2 .num { display: inline-block; min-width: 34px; padding: 4px 10px;
         <span class="vletter">B</span>
         <span class="vrates">0.0% reply · 0.0% qual · 0.0% contract</span>
       </div>
-      <div class="vtemplate">Hey {first_name}, Blake here. I had APG run a 24-hr cash-offer range on {address1} — looks like it'd land somewhere between {offer_low} and {offer_high}. Want the actual number? Reply STOP to opt out.</div>
+      <div class="vtemplate">Hey {first_name}, Blake here. I had APG run a 24-hr cash-offer range on {address1} â€” looks like it'd land somewhere between {offer_low} and {offer_high}. Want the actual number? Reply STOP to opt out.</div>
       <div class="vfunnel">
         <div class="funbar"><div class="funbar-label">Sent <strong>0</strong> (0.0%)</div><div class="funbar-track"><div class="funbar-fill" style="width:0.0%;background:var(--ink)"></div></div></div>
         <div class="funbar"><div class="funbar-label">Replied <strong>0</strong> (0.0%)</div><div class="funbar-track"><div class="funbar-fill" style="width:0.0%;background:#3B82F6"></div></div></div>
@@ -4817,7 +4284,7 @@ h2 .num { display: inline-block; min-width: 34px; padding: 4px 10px;
         <span class="vletter">C</span>
         <span class="vrates">0.0% reply · 0.0% qual · 0.0% contract</span>
       </div>
-      <div class="vtemplate">Hi {first_name} — Blake with APG. Saw {address1} is a {noticing} — those are the kind we put written offers on within 24 hours. Want me to send one? Reply STOP to opt out.</div>
+      <div class="vtemplate">Hi {first_name} â€” Blake with APG. Saw {address1} is a {noticing} â€” those are the kind we put written offers on within 24 hours. Want me to send one? Reply STOP to opt out.</div>
       <div class="vfunnel">
         <div class="funbar"><div class="funbar-label">Sent <strong>0</strong> (0.0%)</div><div class="funbar-track"><div class="funbar-fill" style="width:0.0%;background:var(--ink)"></div></div></div>
         <div class="funbar"><div class="funbar-label">Replied <strong>0</strong> (0.0%)</div><div class="funbar-track"><div class="funbar-fill" style="width:0.0%;background:#3B82F6"></div></div></div>
@@ -4832,7 +4299,7 @@ h2 .num { display: inline-block; min-width: 34px; padding: 4px 10px;
       <div class="sig-head">Bayesian winner probability (Monte Carlo, n=5000)</div>
       <table class="sig-table">
         <thead><tr><th>Variant</th><th>P(best contract)</th><th>P(best qualify)</th></tr></thead>
-        <tbody><tr><td><strong>A</strong></td><td>32.7%</td><td>32.3%</td></tr><tr><td><strong>B</strong></td><td>33.0%</td><td>35.2%</td></tr><tr><td><strong>C</strong></td><td>34.4%</td><td>32.4%</td></tr></tbody>
+        <tbody><tr><td><strong>A</strong></td><td>33.8%</td><td>33.2%</td></tr><tr><td><strong>B</strong></td><td>32.7%</td><td>32.9%</td></tr><tr><td><strong>C</strong></td><td>33.5%</td><td>34.0%</td></tr></tbody>
       </table>
       <div class="sig-foot"><span class="pill pill-muted">Need 200 more sends to min sample (n=200)</span></div>
     </div>
@@ -4854,7 +4321,7 @@ h2 .num { display: inline-block; min-width: 34px; padding: 4px 10px;
     </div>
   </section>
 
-  <div class="foot">Generated 2026-06-12T15:04:50.758861+00:00 · sms_test_dashboard.py</div>
+  <div class="foot">Generated 2026-06-09T19:48:24.890099+00:00 · sms_test_dashboard.py</div>
 </div>
 </body>
 </html>`,
