@@ -75,7 +75,7 @@ export default function Team() {
             const members = getProjectMembers(project.name);
             return (
               <div key={project.id} style={{ borderTop: '1px solid #e5e7eb', paddingTop: '2rem' }}>
-                <h3 style={{ textAlign: 'center', fontWeight: 'bold', color: '#111', marginBottom: '1.5rem', color: project.color }}>
+                <h3 style={{ textAlign: 'center', fontWeight: 'bold', marginBottom: '1.5rem', color: project.color }}>
                   {project.name}
                 </h3>
 

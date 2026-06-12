@@ -7,7 +7,6 @@ export default function LoginPage({ onLogin }) {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [useMock, setUseMock] = useState(!supabase);
 
   // Check for existing session
   useEffect(() => {
@@ -29,7 +28,7 @@ export default function LoginPage({ onLogin }) {
     setIsLoading(true);
     setError('');
     try {
-      const { data, error: authError } = await signInWithGitHub();
+      const { error: authError } = await signInWithGitHub();
       if (authError) throw authError;
     } catch (err) {
       setError(err.message || 'GitHub login failed');
@@ -125,16 +124,16 @@ export default function LoginPage({ onLogin }) {
             </div>
           )}
 
-          <form onSubmit={useMock ? handleMockLogin : handleEmailLogin} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          <form onSubmit={!supabase ? handleMockLogin : handleEmailLogin} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             <div>
               <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 500, color: '#374151', marginBottom: '0.5rem' }}>
-                {useMock ? 'Username' : 'Email'}
+                {!supabase ? 'Username' : 'Email'}
               </label>
               <input
-                type={useMock ? 'text' : 'email'}
+                type={!supabase ? 'text' : 'email'}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder={useMock ? 'midom, adam, or kabrina' : 'you@example.com'}
+                placeholder={!supabase ? 'midom, adam, or kabrina' : 'you@example.com'}
                 disabled={isLoading}
                 style={{
                   width: '100%',
@@ -156,7 +155,7 @@ export default function LoginPage({ onLogin }) {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder={useMock ? 'demo' : '••••••••'}
+                placeholder={!supabase ? 'demo' : '••••••••'}
                 disabled={isLoading}
                 style={{
                   width: '100%',
