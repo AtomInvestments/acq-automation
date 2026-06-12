@@ -944,5 +944,16 @@
     "match_cid": "xYIpPJUGIKKY60dmbGb5",
     "match_confidence": "high",
     "summary": "Sean confirmed he'll sell the property, stated it needs no work, and requested a call immediately to discuss."
+  },
+  "C06MM4DQZ28:1781284684.936709": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": "Would sell if price allows cash purchase of comparable lakefront property in Arizona",
+      "reason_for_selling": "Resides in Arizona and would consider selling lakefront rental to buy similar property there, but loves NJ house and not motivated unless price is right",
+      "timeline": "No rush"
+    },
+    "match_cid": "qF9wS8XQEehwLRQyO3ud",
+    "match_confidence": "high",
+    "summary": "Marian owns a lakefront rental property in NJ but lives in Arizona; not motivated to sell unless price is high enough to buy comparable property in Arizona."
   }
 }
