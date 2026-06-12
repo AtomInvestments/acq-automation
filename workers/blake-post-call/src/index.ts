@@ -780,6 +780,36 @@ export default {
       });
     }
 
+    // /debug/twilio-call/{CallSid} — read-only fetch of a single Twilio Call
+    // resource using the worker's bound creds. Diagnostic only (GET). Returns
+    // status, ErrorCode, direction, duration, etc. so we can see why a given
+    // call (e.g. a failed Twilio<->ElevenLabs handoff) ended the way it did.
+    if (req.method === "GET" && url.pathname.startsWith("/debug/twilio-call/")) {
+      const sid = url.pathname.slice("/debug/twilio-call/".length).trim();
+      if (!sid || !/^CA[0-9a-fA-F]{32}$/.test(sid)) {
+        return new Response(JSON.stringify({ error: "bad_call_sid", sid }), {
+          status: 400,
+          headers: { "content-type": "application/json" },
+        });
+      }
+      if (!env.TWILIO_ACCOUNT_SID || !env.TWILIO_AUTH_TOKEN) {
+        return new Response(JSON.stringify({ error: "twilio_creds_not_bound" }), {
+          status: 500,
+          headers: { "content-type": "application/json" },
+        });
+      }
+      const auth = btoa(`${env.TWILIO_ACCOUNT_SID}:${env.TWILIO_AUTH_TOKEN}`);
+      const tw = await fetch(
+        `https://api.twilio.com/2010-04-01/Accounts/${env.TWILIO_ACCOUNT_SID}/Calls/${sid}.json`,
+        { method: "GET", headers: { Authorization: `Basic ${auth}` } }
+      );
+      const body = await tw.text();
+      return new Response(body, {
+        status: tw.status,
+        headers: { "content-type": "application/json" },
+      });
+    }
+
     // /twiml-bridge — TwiML endpoint for the GHL-whisper-bypass intermediary
     // Twilio number. GHL forwards inbound calls to the intermediary number.
     // Twilio hits this URL on call connect; we return TwiML that:
