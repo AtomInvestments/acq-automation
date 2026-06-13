@@ -955,5 +955,16 @@
     "match_cid": "qF9wS8XQEehwLRQyO3ud",
     "match_confidence": "high",
     "summary": "Marian owns a lakefront rental property in NJ but lives in Arizona; not motivated to sell unless price is high enough to buy comparable property in Arizona."
+  },
+  "C06MM4DQZ28:1781299159.431889": {
+    "field_updates": {
+      "asking_price": 375000,
+      "motivation": "Moving to Florida",
+      "reason_for_selling": "Planning to relocate to Florida and wants to sell before year end",
+      "timeline": "90 days"
+    },
+    "match_cid": "fn2QJW7x7Zb7K2KaSQI7",
+    "match_confidence": "high",
+    "summary": "Osvaldo plans to list his property at $375k in October/November, wants to close before year-end, property is in good condition with new updates, he's moving to Florida, and requested a call tomorrow at 10am."
   }
 }
