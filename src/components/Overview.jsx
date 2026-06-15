@@ -8,7 +8,7 @@ const containerVariants = {
   visible: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.1,
+      staggerChildren: 0.12,
       delayChildren: 0.2,
     },
   },
@@ -16,13 +16,63 @@ const containerVariants = {
 
 const itemVariants = {
   hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.5, ease: 'easeOut' }
+  },
+};
+
+const statCardVariants = {
+  hidden: { opacity: 0, scale: 0.95, y: 20 },
+  visible: {
+    opacity: 1,
+    scale: 1,
+    y: 0,
+    transition: { duration: 0.5, ease: 'easeOut' }
+  },
+  hover: {
+    scale: 1.02,
+    boxShadow: 'var(--shadow-lg)',
+    transition: { duration: 0.2 },
+  },
+};
+
+const rowVariants = {
+  hidden: { opacity: 0, x: -20 },
+  visible: (i) => ({
+    opacity: 1,
+    x: 0,
+    transition: {
+      delay: 0.4 + i * 0.05,
+      duration: 0.4,
+      ease: 'easeOut',
+    },
+  }),
+  hover: {
+    backgroundColor: 'var(--color-neutral-100)',
+    paddingLeft: 'var(--space-1)',
+    transition: { duration: 0.2 },
+  },
+};
+
+const statValueVariants = {
+  hidden: { opacity: 0, scale: 0.5 },
+  visible: (i) => ({
+    opacity: 1,
+    scale: 1,
+    transition: {
+      delay: 0.5 + i * 0.1,
+      duration: 0.4,
+      ease: 'easeOut',
+    },
+  }),
 };
 
 export default function Overview() {
   const getProjectColor = (projectId) => {
     const project = mockProjects.find(p => p.id === projectId);
-    return project ? project.color : '#6b7280';
+    return project ? project.color : 'var(--color-neutral-500)';
   };
 
   const getProjectName = (projectId) => {
@@ -32,47 +82,62 @@ export default function Overview() {
 
   const completedCount = mockTasks.filter(t => t.status === 'completed').length;
   const inProgressCount = mockTasks.filter(t => t.status === 'in-progress').length;
+  const pendingCount = mockTasks.filter(t => t.status === 'pending').length;
 
   const heroStyle = {
-    marginBottom: 'var(--space-8, 2rem)',
+    marginBottom: 'var(--space-12)',
   };
 
   const greetingStyle = {
-    fontSize: 'var(--font-size-3xl, 1.875rem)',
-    fontWeight: 'var(--font-weight-bold, 700)',
-    fontFamily: 'var(--font-sans, -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif)',
-    color: 'var(--color-neutral-900, #111)',
-    margin: '0 0 var(--space-2, 0.5rem)',
+    fontSize: 'var(--font-size-4xl)',
+    fontWeight: 'var(--font-weight-bold)',
+    fontFamily: 'var(--font-sans)',
+    color: 'var(--color-neutral-900)',
+    margin: '0 0 var(--space-3)',
+    letterSpacing: '-0.02em',
   };
 
   const subtitleStyle = {
-    fontSize: 'var(--font-size-sm, 0.875rem)',
-    color: 'var(--color-neutral-500, #4b5563)',
+    fontSize: 'var(--font-size-lg)',
+    color: 'var(--color-neutral-500)',
     margin: 0,
-    fontFamily: 'var(--font-serif, Georgia, serif)',
+    fontFamily: 'var(--font-sans)',
   };
 
   const statsGridStyle = {
     display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-    gap: 'var(--space-6, 1.5rem)',
-    marginBottom: 'var(--space-8, 2rem)',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+    gap: 'var(--space-6)',
+    marginBottom: 'var(--space-12)',
+  };
+
+  const statCardInnerStyle = {
+    textAlign: 'center',
   };
 
   const statLabelStyle = {
-    fontSize: 'var(--font-size-xs, 0.75rem)',
-    color: 'var(--color-neutral-500, #4b5563)',
-    margin: '0 0 var(--space-2, 0.5rem)',
-    fontFamily: 'var(--font-sans, -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif)',
-    fontWeight: 'var(--font-weight-semibold, 600)',
+    fontSize: 'var(--font-size-sm)',
+    color: 'var(--color-neutral-500)',
+    margin: '0 0 var(--space-3)',
+    fontFamily: 'var(--font-sans)',
+    fontWeight: 'var(--font-weight-semibold)',
+    textTransform: 'uppercase',
+    letterSpacing: '0.05em',
   };
 
   const statValueStyle = {
-    fontSize: 'var(--font-size-3xl, 1.875rem)',
-    fontWeight: 'var(--font-weight-bold, 700)',
-    color: 'var(--color-primary, #2563eb)',
+    fontSize: 'var(--font-size-4xl)',
+    fontWeight: 'var(--font-weight-bold)',
+    color: 'var(--color-primary)',
     margin: 0,
-    fontFamily: 'var(--font-sans, -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif)',
+    fontFamily: 'var(--font-sans)',
+    lineHeight: 1,
+  };
+
+  const tableWrapperStyle = {
+    overflowX: 'auto',
+    borderRadius: 'var(--radius-md)',
+    boxShadow: 'var(--shadow-sm)',
   };
 
   const tableStyle = {
@@ -81,41 +146,51 @@ export default function Overview() {
   };
 
   const theadStyle = {
-    backgroundColor: 'var(--color-neutral-100, #f9fafb)',
-    borderBottom: '1px solid var(--color-neutral-200, #e5e7eb)',
+    backgroundColor: 'var(--color-neutral-100)',
+    borderBottom: '1px solid var(--color-neutral-200)',
   };
 
   const thStyle = {
-    padding: 'var(--space-4, 1rem)',
+    padding: 'var(--space-4)',
     textAlign: 'left',
-    fontSize: 'var(--font-size-xs, 0.75rem)',
-    fontWeight: 'var(--font-weight-semibold, 600)',
-    fontFamily: 'var(--font-sans, -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif)',
-    color: 'var(--color-neutral-900, #374151)',
+    fontSize: 'var(--font-size-xs)',
+    fontWeight: 'var(--font-weight-semibold)',
+    fontFamily: 'var(--font-sans)',
+    color: 'var(--color-neutral-600)',
     textTransform: 'uppercase',
+    letterSpacing: '0.05em',
   };
 
   const tbodyTrStyle = {
-    borderBottom: '1px solid var(--color-neutral-200, #e5e7eb)',
-    transition: 'background-color var(--transition-fast, 0.2s)',
+    borderBottom: '1px solid var(--color-neutral-200)',
+    transition: 'background-color var(--transition-base), padding-left var(--transition-base)',
   };
 
   const tdStyle = {
-    padding: 'var(--space-4, 1rem)',
-    fontSize: 'var(--font-size-sm, 0.875rem)',
-    color: 'var(--color-neutral-900, #111)',
+    padding: 'var(--space-4)',
+    fontSize: 'var(--font-size-sm)',
+    color: 'var(--color-neutral-900)',
+    fontFamily: 'var(--font-sans)',
   };
 
   const badgeStyle = (color) => ({
     display: 'inline-block',
-    padding: 'var(--space-1, 0.25rem) var(--space-4, 1rem)',
-    borderRadius: 'var(--radius-full, 9999px)',
-    fontSize: 'var(--font-size-xs, 0.75rem)',
-    fontWeight: 'var(--font-weight-semibold, 600)',
-    fontFamily: 'var(--font-sans, -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif)',
-    color: '#fff',
+    padding: 'var(--space-1) var(--space-4)',
+    borderRadius: 'var(--radius-full)',
+    fontSize: 'var(--font-size-xs)',
+    fontWeight: 'var(--font-weight-semibold)',
+    fontFamily: 'var(--font-sans)',
+    color: 'var(--color-white)',
     backgroundColor: color,
   });
+
+  const tableHeadingStyle = {
+    fontSize: 'var(--font-size-xl)',
+    fontWeight: 'var(--font-weight-bold)',
+    fontFamily: 'var(--font-sans)',
+    color: 'var(--color-neutral-900)',
+    margin: '0 0 var(--space-6)',
+  };
 
   return (
     <motion.div
@@ -130,21 +205,30 @@ export default function Overview() {
 
       <motion.div style={statsGridStyle} variants={containerVariants} initial="hidden" animate="visible">
         {[
-          { label: 'Total Tasks', value: mockTasks.length },
-          { label: 'In Progress', value: inProgressCount },
-          { label: 'Completed', value: completedCount },
+          { label: 'Total Tasks', value: mockTasks.length, color: 'var(--color-primary)' },
+          { label: 'In Progress', value: inProgressCount, color: 'var(--color-info)' },
+          { label: 'Completed', value: completedCount, color: 'var(--color-success)' },
+          { label: 'Pending', value: pendingCount, color: 'var(--color-warning)' },
         ].map((stat, i) => (
-          <motion.div key={i} variants={itemVariants}>
+          <motion.div
+            key={i}
+            variants={statCardVariants}
+            whileHover="hover"
+            custom={i}
+          >
             <Card>
-              <p style={statLabelStyle}>{stat.label}</p>
-              <motion.p
-                style={statValueStyle}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.3 + i * 0.1, duration: 0.5 }}
-              >
-                {stat.value}
-              </motion.p>
+              <div style={statCardInnerStyle}>
+                <p style={statLabelStyle}>{stat.label}</p>
+                <motion.p
+                  style={{ ...statValueStyle, color: stat.color }}
+                  variants={statValueVariants}
+                  custom={i}
+                  initial="hidden"
+                  animate="visible"
+                >
+                  {stat.value}
+                </motion.p>
+              </div>
             </Card>
           </motion.div>
         ))}
@@ -152,8 +236,8 @@ export default function Overview() {
 
       <motion.div variants={itemVariants}>
         <Card>
-          <h2 style={{ fontSize: 'var(--font-size-xl, 1.25rem)', fontWeight: 'var(--font-weight-bold, 700)', fontFamily: 'var(--font-sans, -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif)', color: 'var(--color-neutral-900, #111)', margin: '0 0 var(--space-4, 1rem)' }}>All Tasks</h2>
-          <div style={{ overflowX: 'auto' }}>
+          <h2 style={tableHeadingStyle}>All Tasks</h2>
+          <motion.div style={tableWrapperStyle}>
             <table style={tableStyle}>
               <thead style={theadStyle}>
                 <tr>
@@ -169,11 +253,11 @@ export default function Overview() {
                   <motion.tr
                     key={task.id}
                     style={tbodyTrStyle}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 0.4 + i * 0.05 }}
-                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--color-neutral-100, #f9fafb)'}
-                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                    variants={rowVariants}
+                    custom={i}
+                    initial="hidden"
+                    animate="visible"
+                    whileHover="hover"
                   >
                     <td style={tdStyle}>{task.title}</td>
                     <td style={tdStyle}>
@@ -190,7 +274,7 @@ export default function Overview() {
                 ))}
               </tbody>
             </table>
-          </div>
+          </motion.div>
         </Card>
       </motion.div>
     </motion.div>
