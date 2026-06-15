@@ -193,6 +193,14 @@ jobs:
           echo "ERROR: failed to push baked dashboards after 3 attempts." >&2
           exit 1
 
+      # P0 security: inject noindex meta + robots.txt + JS redirect-to-Worker
+      # guard into every site/*.html BEFORE publishing to gh-pages. The
+      # Cloudflare Worker (apg-dashboard.mithchell.workers.dev) is canonical;
+      # this guard prevents the gh-pages mirror from being usable by anon
+      # visitors. See inject_gh_pages_guard.py for full rationale.
+      - name: Inject gh-pages security guard
+        run: python3 inject_gh_pages_guard.py site
+
       - name: Deploy HTML dashboard to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
@@ -200,7 +208,7 @@ jobs:
           publish_dir: ./site
           publish_branch: gh-pages
           force_orphan: true
-          commit_message: 'Auto: dashboard refresh'
+          commit_message: 'Auto: dashboard refresh + gh-pages guard'
 
       # Belt-and-suspenders failure notifications:
       #   1. Open a GitHub Issue (works TODAY using the built-in GITHUB_TOKEN

@@ -12,121 +12,13 @@
 <link rel="preconnect" href="https://rsms.me/">
 <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="css/atom.css">
+<script src="js/atom.js" defer></script>
 <style>
-:root {
-  --ink:        #0A1F44;
-  --ink-2:      #1A2A4D;
-  --ink-3:      #34406B;
-  --text:       #0E1422;
-  --text-2:     #3F4759;
-  --text-3:     #6B7388;
-  --rule:       #E5E7EE;
-  --rule-2:     #EFF1F6;
-  --surface:    #FFFFFF;
-  --surface-2:  #F7F8FB;
-  --surface-3:  #F1F3F8;
-  --gold:       #F5C518;     /* APG project accent */
-  --violet:     #7C5CD1;     /* Kin project accent */
-  --violet-soft:#F1ECFB;
-  --gold-soft:  #FFF8DA;
-  --green:      #16A66B;
-  --red:        #D93B3B;
-  --amber:      #C68A0F;
-  --radius:     6px;
-  --radius-sm:  4px;
-  --shadow-1:   0 1px 2px rgba(15, 23, 42, 0.04), 0 1px 1px rgba(15, 23, 42, 0.02);
-  --shadow-2:   0 8px 24px -8px rgba(15, 23, 42, 0.12), 0 2px 6px -2px rgba(15, 23, 42, 0.06);
-}
-* { box-sizing: border-box; }
-html, body {
-  margin: 0; padding: 0; background: var(--surface-2); color: var(--text);
-  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
-  font-size: 14px; line-height: 1.55;
-  font-feature-settings: "cv11", "ss01", "ss03";
-  -webkit-font-smoothing: antialiased;
-}
-@supports (font-variation-settings: normal) {
-  html, body { font-family: "Inter var", "Inter", system-ui, sans-serif; }
-}
-.mono { font-family: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace; }
-a { color: inherit; text-decoration: none; }
-button { font-family: inherit; cursor: pointer; }
+/* Tokens + base reset + nav + avatars + buttons + modal + profile-dd
+   come from css/atom.css. Page-specific styles only below. */
 
-/* --- top nav --------------------------------------------------------- */
-.nav {
-  position: sticky; top: 0; z-index: 50;
-  background: rgba(255, 255, 255, 0.86);
-  backdrop-filter: saturate(180%) blur(14px);
-  -webkit-backdrop-filter: saturate(180%) blur(14px);
-  border-bottom: 1px solid var(--rule);
-}
-.nav-inner {
-  max-width: 1320px; margin: 0 auto;
-  display: flex; align-items: center; gap: 28px;
-  height: 56px; padding: 0 28px;
-}
-.brand {
-  display: flex; align-items: center; gap: 10px; color: var(--ink);
-  font-weight: 600; letter-spacing: -0.01em; font-size: 14.5px;
-}
-.brand-mark {
-  width: 22px; height: 22px; border-radius: 5px;
-  background: var(--ink);
-  display: flex; align-items: center; justify-content: center;
-  position: relative; overflow: hidden;
-}
-.brand-mark::before, .brand-mark::after, .brand-mark span {
-  content: ""; position: absolute; inset: 4px;
-  border: 1px solid var(--gold); border-radius: 50%;
-  opacity: 0.85;
-}
-.brand-mark::after { transform: rotate(60deg); }
-.brand-mark span { transform: rotate(-60deg); }
-.brand-mark i {
-  position: absolute; width: 4px; height: 4px; border-radius: 50%;
-  background: var(--gold); left: calc(50% - 2px); top: calc(50% - 2px);
-}
-.brand-name { display: flex; flex-direction: column; line-height: 1.15; }
-.brand-name .top { font-weight: 600; font-size: 14px; }
-.brand-name .sub { font-size: 9.5px; color: var(--text-3); letter-spacing: 0.14em; text-transform: uppercase; font-weight: 500; }
-.tabs { display: flex; gap: 2px; flex: 1; }
-.tab {
-  display: inline-flex; align-items: center; gap: 6px;
-  padding: 6px 12px; border-radius: var(--radius-sm);
-  color: var(--text-2); font-weight: 500; font-size: 13px;
-  transition: background 120ms, color 120ms;
-}
-.tab:hover { background: var(--surface-3); color: var(--text); }
-.tab.is-active {
-  background: var(--ink); color: #fff;
-}
-.tab.is-active::before {
-  content: ""; width: 5px; height: 5px; border-radius: 50%;
-  background: var(--gold);
-}
-.nav-actions { display: flex; align-items: center; gap: 8px; }
-.user-pill {
-  display: inline-flex; align-items: center; gap: 8px;
-  padding: 4px 10px 4px 4px;
-  border: 1px solid var(--rule);
-  border-radius: 24px;
-  background: var(--surface);
-  font-size: 12.5px; font-weight: 500;
-  transition: border-color 120ms, box-shadow 120ms;
-}
-.user-pill:hover { border-color: var(--ink-3); box-shadow: var(--shadow-1); }
-.avatar {
-  width: 24px; height: 24px; border-radius: 50%;
-  background: var(--ink); color: #fff;
-  display: inline-flex; align-items: center; justify-content: center;
-  font-size: 10px; font-weight: 600; letter-spacing: 0.02em;
-  font-family: "JetBrains Mono", monospace;
-}
-.avatar.adam { background: var(--gold); color: var(--ink); }
-.avatar.kabrina { background: var(--violet); }
-.avatar.mido { background: var(--ink); }
-.avatar.lg { width: 40px; height: 40px; font-size: 13px; }
-.avatar.xl { width: 56px; height: 56px; font-size: 16px; border-radius: var(--radius); }
+/* Nav, brand-mark, tabs, avatars, profile-pill all in css/atom.css. */
 
 /* --- shell ----------------------------------------------------------- */
 .shell { max-width: 1320px; margin: 0 auto; padding: 32px 28px 96px; }
@@ -279,7 +171,7 @@ button { font-family: inherit; cursor: pointer; }
 <!-- =========== TOP NAV =========== -->
 <nav class="nav">
   <div class="nav-inner">
-    <a class="brand" href="/">
+    <a class="brand" href="index.html">
       <span class="brand-mark"><span></span><i></i></span>
       <span class="brand-name">
         <span class="top">Atom Investments</span>
@@ -293,10 +185,10 @@ button { font-family: inherit; cursor: pointer; }
       <a class="tab" href="team.html">Team</a>
     </div>
     <div class="nav-actions">
-      <a class="user-pill" href="team.html">
+      <button class="profile-pill" type="button" data-profile-trigger aria-label="Open profile menu">
         <span class="avatar mido">MY</span>
         <span>Mido Yasser</span>
-      </a>
+      </button>
     </div>
   </div>
 </nav>

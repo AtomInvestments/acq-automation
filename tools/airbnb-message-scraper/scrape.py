@@ -51,7 +51,7 @@ DEFAULT_PROFILE_DIR = Path(os.environ.get(
     "AIRBNB_PROFILE_DIR",
     str(HERE / ".chrome-profile"),
 ))
-INBOX_URL = "https://www.airbnb.com/hosting/messaging"
+INBOX_URL = "https://www.airbnb.com/hosting/messages"
 STATE_FILE = HERE / "scrape-state.json"
 
 THREAD_LIST_SELECTORS = [
@@ -467,6 +467,13 @@ def main() -> int:
                     help="Skip threads already in scrape-state.json.")
     ap.add_argument("--profile-dir", type=str, default=str(DEFAULT_PROFILE_DIR),
                     help="Path to Chrome user-data-dir for the logged-in session.")
+    ap.add_argument("--profile-name", type=str, default=None,
+                    help="Profile sub-directory inside --profile-dir (e.g. 'Profile 36'). "
+                         "Use this to reuse an existing Chrome login.")
+    ap.add_argument("--use-real-chrome", action="store_true",
+                    help="Use the installed Chrome binary instead of Playwright's bundled "
+                         "Chromium. Required when --profile-name targets a real Chrome "
+                         "profile (DPAPI / app-bound encryption only decrypts in real Chrome).")
     ap.add_argument("--headless", action="store_true",
                     help="Headless. NOT recommended for first run (Airbnb may 2FA).")
     args = ap.parse_args()
@@ -482,18 +489,28 @@ def main() -> int:
 
     default_year = datetime.now().year
 
+    chromium_args = []
+    if args.profile_name:
+        chromium_args.append(f"--profile-directory={args.profile_name}")
+        print(f"[airbnb] profile name = {args.profile_name}")
+
+    launch_kwargs = dict(
+        user_data_dir=str(profile_dir),
+        headless=args.headless,
+        viewport={"width": 1440, "height": 900},
+        args=chromium_args,
+        user_agent=(
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+            "AppleWebKit/537.36 (KHTML, like Gecko) "
+            "Chrome/123.0.0.0 Safari/537.36"
+        ),
+    )
+    if args.use_real_chrome or args.profile_name:
+        launch_kwargs["channel"] = "chrome"
+        print("[airbnb] using installed Chrome binary (channel=chrome) for DPAPI compatibility")
+
     with sync_playwright() as p:
-        context: BrowserContext = p.chromium.launch_persistent_context(
-            user_data_dir=str(profile_dir),
-            headless=args.headless,
-            viewport={"width": 1440, "height": 900},
-            # Use a real-looking UA to dodge cursory bot heuristics.
-            user_agent=(
-                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-                "AppleWebKit/537.36 (KHTML, like Gecko) "
-                "Chrome/123.0.0.0 Safari/537.36"
-            ),
-        )
+        context: BrowserContext = p.chromium.launch_persistent_context(**launch_kwargs)
         page = context.pages[0] if context.pages else context.new_page()
         print(f"[airbnb] opening {INBOX_URL}")
         page.goto(INBOX_URL, wait_until="domcontentloaded")

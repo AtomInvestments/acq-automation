@@ -1,3 +1,4 @@
+import { motion } from 'framer-motion';
 import { mockProjects, mockTeamMembers } from '../mockData';
 
 export default function Team() {
@@ -7,164 +8,418 @@ export default function Team() {
     );
   };
 
-  return (
-    <div>
-      <div style={{ padding: '1rem', backgroundColor: '#a7f3d0', borderRadius: '0.5rem', marginBottom: '1.5rem', color: '#065f46', fontWeight: 'bold' }}>👥 TEAM VIEW</div>
-      <h2 style={{ fontSize: '1.875rem', fontWeight: 'bold', color: '#111', marginBottom: '2rem' }}>Team Organization</h2>
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: { staggerChildren: 0.1, delayChildren: 0.3 }
+    }
+  };
 
-      {/* Top Level: ATOM Investments */}
-      <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '3rem' }}>
-        <div style={{
-          background: 'linear-gradient(to bottom right, #2563eb, #1e40af)',
-          color: '#fff',
-          borderRadius: '9999px',
-          width: '8rem',
-          height: '8rem',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          cursor: 'pointer',
-          boxShadow: '0 10px 25px rgba(0,0,0,0.1)',
-          transition: 'transform 0.2s',
+  const itemVariants = {
+    hidden: { opacity: 0, scale: 0.8 },
+    visible: {
+      opacity: 1,
+      scale: 1,
+      transition: { duration: 0.4, ease: 'easeOut' }
+    }
+  };
+
+  return (
+    <div style={{ paddingTop: 'var(--space-8)', paddingBottom: 'var(--space-8)' }}>
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, ease: 'easeOut' }}
+        style={{ marginBottom: 'var(--space-8)' }}
+      >
+        <h1 style={{
+          fontSize: 'var(--font-size-3xl)',
+          fontWeight: 'var(--font-weight-bold)',
+          color: 'var(--color-primary)',
+          fontFamily: 'var(--font-sans)',
+          marginBottom: 'var(--space-2)',
+          letterSpacing: '-0.5px'
+        }}>
+          Team
+        </h1>
+        <p style={{
+          fontSize: 'var(--font-size-sm)',
+          color: 'var(--color-secondary-text)',
+          fontFamily: 'var(--font-serif)'
+        }}>
+          Who's building what. Permissions and project access are managed here.
+        </p>
+      </motion.div>
+
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.1, duration: 0.4 }}
+        style={{
+          textAlign: 'center',
+          marginBottom: 'var(--space-12)'
         }}
-        onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
-        onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
+      >
+        <motion.div
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            width: '7.5rem',
+            height: '7.5rem',
+            borderRadius: '9999px',
+            background: `linear-gradient(to bottom right, var(--color-primary), #374151)`,
+            color: 'white',
+            boxShadow: `0 12px 24px rgba(31, 41, 55, 0.15)`,
+            cursor: 'pointer'
+          }}
+          whileHover={{ scale: 1.08 }}
+          transition={{ duration: 0.3 }}
         >
           <div style={{ textAlign: 'center' }}>
-            <p style={{ fontWeight: 'bold', fontSize: '1.125rem' }}>ATOM</p>
-            <p style={{ fontSize: '0.875rem' }}>Investments</p>
+            <p style={{
+              fontWeight: 'var(--font-weight-bold)',
+              fontSize: 'var(--font-size-lg)',
+              fontFamily: 'var(--font-sans)',
+              marginBottom: '0.25rem'
+            }}>
+              ATOM
+            </p>
+            <p style={{
+              fontSize: 'var(--font-size-sm)',
+              fontFamily: 'var(--font-serif)',
+              opacity: 0.9
+            }}>
+              Investments
+            </p>
           </div>
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
 
-      {/* Second Level: Projects */}
-      <div style={{ marginBottom: '3rem' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '1.5rem', marginBottom: '3rem', justifyItems: 'center' }}>
-          {mockProjects.map((project) => (
-            <div key={project.id} style={{ textAlign: 'center', width: '100%' }}>
-              <div
-                style={{
-                  borderRadius: '9999px',
-                  width: '7rem',
-                  height: '7rem',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  cursor: 'pointer',
-                  boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-                  color: '#fff',
-                  fontWeight: 'bold',
-                  textAlign: 'center',
-                  backgroundColor: project.color,
-                  transition: 'transform 0.2s',
-                  padding: '0.5rem',
-                  fontSize: '0.875rem',
-                }}
-                onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
-                onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
-              >
+      <motion.div
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))',
+          gap: 'var(--space-6)',
+          marginBottom: 'var(--space-12)',
+          justifyItems: 'center'
+        }}
+      >
+        {mockProjects.map((project) => (
+          <motion.div
+            key={project.id}
+            variants={itemVariants}
+            style={{ width: '100%', textAlign: 'center' }}
+          >
+            <motion.div
+              style={{
+                borderRadius: '9999px',
+                width: '6rem',
+                height: '6rem',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer',
+                color: 'white',
+                fontWeight: 'var(--font-weight-bold)',
+                textAlign: 'center',
+                backgroundColor: project.color,
+                boxShadow: `0 8px 16px ${project.color}40`,
+                fontFamily: 'var(--font-sans)',
+                fontSize: 'var(--font-size-sm)',
+                padding: 'var(--space-2)',
+                margin: '0 auto'
+              }}
+              whileHover={{
+                scale: 1.1,
+                boxShadow: `0 12px 24px ${project.color}60`
+              }}
+              transition={{ duration: 0.3 }}
+            >
+              {project.name}
+            </motion.div>
+          </motion.div>
+        ))}
+      </motion.div>
+
+      <motion.div
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+        style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-8)' }}
+      >
+        {mockProjects.map((project, projectIdx) => {
+          const members = getProjectMembers(project.name);
+          return (
+            <motion.div
+              key={project.id}
+              variants={{
+                hidden: { opacity: 0, y: 20 },
+                visible: {
+                  opacity: 1,
+                  y: 0,
+                  transition: { delay: 0.3 + projectIdx * 0.1, duration: 0.4 }
+                }
+              }}
+              style={{
+                paddingTop: 'var(--space-8)',
+                borderTop: `2px solid ${project.color}40`
+              }}
+            >
+              <h2 style={{
+                textAlign: 'center',
+                fontWeight: 'var(--font-weight-bold)',
+                marginBottom: 'var(--space-6)',
+                color: project.color,
+                fontSize: 'var(--font-size-lg)',
+                fontFamily: 'var(--font-sans)'
+              }}>
                 {project.name}
-              </div>
-            </div>
-          ))}
-        </div>
+              </h2>
 
-        {/* Lines connecting projects to team members */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-          {mockProjects.map((project) => {
-            const members = getProjectMembers(project.name);
-            return (
-              <div key={project.id} style={{ borderTop: '1px solid #e5e7eb', paddingTop: '2rem' }}>
-                <h3 style={{ textAlign: 'center', fontWeight: 'bold', marginBottom: '1.5rem', color: project.color }}>
-                  {project.name}
-                </h3>
-
-                {members.length > 0 ? (
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1rem' }}>
-                    {members.map((member) => (
+              {members.length > 0 ? (
+                <motion.div
+                  variants={{
+                    hidden: { opacity: 0 },
+                    visible: {
+                      opacity: 1,
+                      transition: { staggerChildren: 0.08, delayChildren: 0.05 }
+                    }
+                  }}
+                  initial="hidden"
+                  animate="visible"
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+                    gap: 'var(--space-4)'
+                  }}
+                >
+                  {members.map((member, memberIdx) => (
+                    <motion.div
+                      key={member.id}
+                      variants={{
+                        hidden: { opacity: 0, y: 16 },
+                        visible: {
+                          opacity: 1,
+                          y: 0,
+                          transition: { duration: 0.3 }
+                        }
+                      }}
+                      style={{
+                        backgroundColor: 'white',
+                        border: '1px solid var(--color-border)',
+                        borderRadius: 'var(--radius-md)',
+                        padding: 'var(--space-5)',
+                        boxShadow: 'var(--shadow-sm)',
+                        borderLeft: `4px solid ${project.color}`,
+                        transition: 'all var(--transition-base)'
+                      }}
+                      whileHover={{
+                        y: -2,
+                        boxShadow: 'var(--shadow-lg)'
+                      }}
+                    >
                       <div
-                        key={member.id}
                         style={{
-                          backgroundColor: '#fff',
-                          borderRadius: '0.5rem',
-                          boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
-                          padding: '1rem',
-                          transition: 'box-shadow 0.2s',
-                          borderLeft: `4px solid ${project.color}`,
-                        }}
-                        onMouseEnter={(e) => e.currentTarget.style.boxShadow = '0 10px 15px rgba(0,0,0,0.1)'}
-                        onMouseLeave={(e) => e.currentTarget.style.boxShadow = '0 1px 3px rgba(0,0,0,0.1)'}
-                      >
-                        <div style={{
                           width: '3rem',
                           height: '3rem',
                           borderRadius: '9999px',
-                          backgroundColor: '#d1d5db',
+                          backgroundColor: project.color,
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
-                          color: '#fff',
-                          fontWeight: 'bold',
-                          margin: '0 auto 0.75rem',
-                          fontSize: '0.875rem',
-                        }}>
-                          {member.name.charAt(0)}
-                        </div>
-                        <p style={{ fontWeight: 'bold', color: '#111', textAlign: 'center', fontSize: '0.875rem' }}>{member.name}</p>
-                        <p style={{ color: '#4b5563', fontSize: '0.75rem', textAlign: 'center', marginTop: '0.25rem' }}>{member.role}</p>
-                        <div style={{ marginTop: '0.75rem', paddingTop: '0.75rem', borderTop: '1px solid #e5e7eb' }}>
-                          <p style={{ fontSize: '0.75rem', color: '#4b5563', textAlign: 'center' }}>
-                            {member.projects.length} project{member.projects.length !== 1 ? 's' : ''}
-                          </p>
-                        </div>
+                          color: 'white',
+                          fontWeight: 'var(--font-weight-bold)',
+                          margin: '0 auto var(--space-3)',
+                          fontSize: 'var(--font-size-lg)',
+                          fontFamily: 'var(--font-sans)',
+                          boxShadow: `0 4px 12px ${project.color}40`
+                        }}
+                      >
+                        {member.name.split(' ').map(n => n[0]).join('')}
                       </div>
-                    ))}
-                  </div>
-                ) : (
-                  <p style={{ color: '#4b5563', textAlign: 'center', fontSize: '0.875rem' }}>No members assigned</p>
-                )}
-              </div>
-            );
-          })}
-        </div>
-      </div>
+                      <p style={{
+                        fontWeight: 'var(--font-weight-semibold)',
+                        color: 'var(--color-primary)',
+                        textAlign: 'center',
+                        fontSize: 'var(--font-size-sm)',
+                        marginBottom: 'var(--space-1)',
+                        fontFamily: 'var(--font-sans)'
+                      }}>
+                        {member.name}
+                      </p>
+                      <p style={{
+                        color: 'var(--color-secondary-text)',
+                        fontSize: 'var(--font-size-xs)',
+                        textAlign: 'center',
+                        marginBottom: 'var(--space-3)',
+                        fontFamily: 'var(--font-serif)'
+                      }}>
+                        {member.role}
+                      </p>
+                      <div style={{
+                        paddingTop: 'var(--space-3)',
+                        borderTop: '1px solid var(--color-border)'
+                      }}>
+                        <p style={{
+                          fontSize: 'var(--font-size-xs)',
+                          color: 'var(--color-secondary-text)',
+                          textAlign: 'center',
+                          fontFamily: 'var(--font-sans)'
+                        }}>
+                          {member.projects.length} project{member.projects.length !== 1 ? 's' : ''}
+                        </p>
+                      </div>
+                    </motion.div>
+                  ))}
+                </motion.div>
+              ) : (
+                <p style={{
+                  color: 'var(--color-secondary-text)',
+                  textAlign: 'center',
+                  fontSize: 'var(--font-size-sm)',
+                  fontFamily: 'var(--font-serif)'
+                }}>
+                  No members assigned
+                </p>
+              )}
+            </motion.div>
+          );
+        })}
+      </motion.div>
 
-      {/* Summary */}
-      <div style={{
-        marginTop: '3rem',
-        backgroundColor: '#fff',
-        borderRadius: '0.5rem',
-        boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
-        padding: '1.5rem',
-      }}>
-        <h3 style={{ fontSize: '1.125rem', fontWeight: 'bold', color: '#111', marginBottom: '1rem' }}>Team Summary</h3>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.5rem', marginBottom: '1.5rem' }}>
-          <div>
-            <p style={{ color: '#4b5563', fontSize: '0.875rem' }}>Total Members</p>
-            <p style={{ fontSize: '2rem', fontWeight: 'bold', color: '#2563eb', marginTop: '0.25rem' }}>{mockTeamMembers.length}</p>
-          </div>
-          <div>
-            <p style={{ color: '#4b5563', fontSize: '0.875rem' }}>Total Projects</p>
-            <p style={{ fontSize: '2rem', fontWeight: 'bold', color: '#2563eb', marginTop: '0.25rem' }}>{mockProjects.length}</p>
-          </div>
-        </div>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.6, duration: 0.4 }}
+        style={{
+          marginTop: 'var(--space-12)',
+          backgroundColor: 'white',
+          border: '1px solid var(--color-border)',
+          borderRadius: 'var(--radius-md)',
+          padding: 'var(--space-6)',
+          boxShadow: 'var(--shadow-sm)'
+        }}
+      >
+        <h3 style={{
+          fontSize: 'var(--font-size-lg)',
+          fontWeight: 'var(--font-weight-bold)',
+          color: 'var(--color-primary)',
+          fontFamily: 'var(--font-sans)',
+          marginBottom: 'var(--space-6)'
+        }}>
+          Team Summary
+        </h3>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
-          {mockProjects.map((project) => (
-            <div key={project.id} style={{
-              padding: '1rem',
-              backgroundColor: '#f9fafb',
-              borderRadius: '0.375rem',
-              borderLeft: `3px solid ${project.color}`,
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+          gap: 'var(--space-6)',
+          marginBottom: 'var(--space-6)'
+        }}>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.7, duration: 0.4 }}
+          >
+            <p style={{
+              color: 'var(--color-secondary-text)',
+              fontSize: 'var(--font-size-sm)',
+              fontFamily: 'var(--font-serif)',
+              marginBottom: 'var(--space-2)'
             }}>
-              <p style={{ fontWeight: 500, color: '#111' }}>{project.name}</p>
-              <p style={{ fontSize: '0.875rem', color: '#4b5563', marginTop: '0.25rem' }}>
+              Total Members
+            </p>
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.8, duration: 0.4 }}
+              style={{
+                fontSize: '2.25rem',
+                fontWeight: 'var(--font-weight-bold)',
+                color: 'var(--color-primary)',
+                fontFamily: 'var(--font-sans)'
+              }}
+            >
+              {mockTeamMembers.length}
+            </motion.p>
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.75, duration: 0.4 }}
+          >
+            <p style={{
+              color: 'var(--color-secondary-text)',
+              fontSize: 'var(--font-size-sm)',
+              fontFamily: 'var(--font-serif)',
+              marginBottom: 'var(--space-2)'
+            }}>
+              Total Projects
+            </p>
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.85, duration: 0.4 }}
+              style={{
+                fontSize: '2.25rem',
+                fontWeight: 'var(--font-weight-bold)',
+                color: 'var(--color-primary)',
+                fontFamily: 'var(--font-sans)'
+              }}
+            >
+              {mockProjects.length}
+            </motion.p>
+          </motion.div>
+        </div>
+
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+            gap: 'var(--space-4)'
+          }}
+        >
+          {mockProjects.map((project) => (
+            <motion.div
+              key={project.id}
+              variants={{
+                hidden: { opacity: 0, y: 10 },
+                visible: { opacity: 1, y: 0, transition: { duration: 0.3 } }
+              }}
+              style={{
+                padding: 'var(--space-4)',
+                backgroundColor: '#f9fafb',
+                borderRadius: 'var(--radius-sm)',
+                borderLeft: `3px solid ${project.color}`
+              }}
+            >
+              <p style={{
+                fontWeight: 'var(--font-weight-semibold)',
+                color: 'var(--color-primary)',
+                fontFamily: 'var(--font-sans)',
+                marginBottom: 'var(--space-1)'
+              }}>
+                {project.name}
+              </p>
+              <p style={{
+                fontSize: 'var(--font-size-sm)',
+                color: 'var(--color-secondary-text)',
+                fontFamily: 'var(--font-serif)'
+              }}>
                 {getProjectMembers(project.name).length} member{getProjectMembers(project.name).length !== 1 ? 's' : ''}
               </p>
-            </div>
+            </motion.div>
           ))}
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
     </div>
   );
 }

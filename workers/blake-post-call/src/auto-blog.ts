@@ -2,12 +2,17 @@
 //
 // Every 3 days the Worker cron picks an unused topic from BLOG_TOPIC_POOL,
 // calls the Anthropic API to write a 700-word value-driven post, attaches a
-// curated Unsplash photo, and publishes to WP REST (DRAFT status by default
-// so Adam reviews before going live).
+// curated Unsplash photo, and publishes to WP REST.
 //
-// Once you trust the quality, flip BLOG_DEFAULT_STATUS to "publish".
-
-export const BLOG_DEFAULT_STATUS: "draft" | "publish" = "draft";
+// 2026-06-12 — flipped to "publish" so the blog runs on itself. Previously
+// "draft" meant every auto-generated post sat in wp-admin waiting for a manual
+// review click that never happened — which is the root cause Audit 1.5
+// (2026-05-27) found for the "/blog/ shows No posts yet + empty RSS" symptom:
+// the cron's posts were drafts and drafts never render on the public index or
+// feed. Self-running content was the explicit ask. Quality guard now lives
+// upstream (curated BLOG_TOPIC_POOL briefs + Claude Sonnet) rather than in a
+// manual gate. To pause autonomous publishing, flip this back to "draft".
+export const BLOG_DEFAULT_STATUS: "draft" | "publish" = "publish";
 
 // WP author for blog posts. uxamx11 has display name "adamchodes" — we don't
 // need a separate user. WP will use that user's display name as the byline.
