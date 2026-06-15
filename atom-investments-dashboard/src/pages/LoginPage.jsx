@@ -38,8 +38,7 @@ export default function LoginPage({ onLogin }) {
     }
   };
 
-  const handleEmailLogin = async (e) => {
-    e.preventDefault();
+  const handleLogin = async () => {
     setIsLoading(true);
     setError('');
 
@@ -63,8 +62,8 @@ export default function LoginPage({ onLogin }) {
 
       // If mock user found and password is 'demo', log in immediately
       if (mockUser && password === 'demo') {
+        console.log('Mock login successful:', mockUser);
         onLogin(mockUser);
-        setIsLoading(false);
         return;
       }
 
@@ -89,6 +88,7 @@ export default function LoginPage({ onLogin }) {
         setError('No valid credentials. Try: midom, adam, or kabrina (password: demo)');
       }
     } catch (err) {
+      console.error('Login error:', err);
       setError(err.message || 'Login failed. Try: midom, adam, or kabrina (password: demo)');
     } finally {
       setIsLoading(false);
@@ -234,55 +234,64 @@ export default function LoginPage({ onLogin }) {
           </motion.div>
         )}
 
-        <motion.form
-          onSubmit={!supabase ? handleMockLogin : handleEmailLogin}
-          style={formStyle}
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
-        >
-          <motion.div style={inputWrapperStyle} variants={itemVariants}>
-            <label style={labelStyle}>
-              {!supabase ? 'Username' : 'Email'}
-            </label>
+        <div style={formStyle}>
+          <motion.div style={inputWrapperStyle} variants={itemVariants} initial="hidden" animate="visible">
+            <label style={labelStyle}>Email</label>
             <input
-              type={!supabase ? 'text' : 'email'}
+              type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder={!supabase ? 'midom, adam, or kabrina' : 'you@example.com'}
+              onKeyPress={(e) => e.key === 'Enter' && handleLogin()}
+              placeholder="mido@atominvestments.com"
               disabled={isLoading}
               style={{ ...inputStyle, opacity: isLoading ? 0.7 : 1 }}
             />
           </motion.div>
 
-          <motion.div style={inputWrapperStyle} variants={itemVariants}>
+          <motion.div style={inputWrapperStyle} variants={itemVariants} initial="hidden" animate="visible">
             <label style={labelStyle}>Password</label>
             <input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder={!supabase ? 'demo' : '••••••••'}
+              onKeyPress={(e) => e.key === 'Enter' && handleLogin()}
+              placeholder="demo"
               disabled={isLoading}
               style={{ ...inputStyle, opacity: isLoading ? 0.7 : 1 }}
             />
           </motion.div>
 
           {error && (
-            <motion.div style={errorStyle} variants={itemVariants}>
+            <motion.div style={errorStyle} variants={itemVariants} initial="hidden" animate="visible">
               {error}
             </motion.div>
           )}
 
-          <motion.div variants={itemVariants}>
-            <Button
-              type="submit"
+          <motion.div variants={itemVariants} initial="hidden" animate="visible">
+            <button
+              type="button"
+              onClick={handleLogin}
               disabled={isLoading}
-              style={{ width: '100%' }}
+              style={{
+                width: '100%',
+                padding: 'var(--space-3) var(--space-6)',
+                backgroundColor: 'var(--color-primary)',
+                color: 'white',
+                border: 'none',
+                borderRadius: 'var(--radius-sm)',
+                fontSize: 'var(--font-size-sm)',
+                fontWeight: 'var(--font-weight-semibold)',
+                cursor: isLoading ? 'not-allowed' : 'pointer',
+                opacity: isLoading ? 0.6 : 1,
+                transition: 'all 0.2s'
+              }}
+              onMouseEnter={(e) => !isLoading && (e.target.style.opacity = '0.9')}
+              onMouseLeave={(e) => !isLoading && (e.target.style.opacity = '1')}
             >
               {isLoading ? 'Signing in...' : 'Sign In'}
-            </Button>
+            </button>
           </motion.div>
-        </motion.form>
+        </div>
 
         {!supabase && (
           <motion.div
