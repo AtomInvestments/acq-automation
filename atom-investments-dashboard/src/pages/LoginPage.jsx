@@ -1,6 +1,9 @@
+// src/pages/LoginPage.jsx
 import { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import { supabase, signInWithGitHub } from '../supabaseConfig';
 import { mockUsers } from '../mockData';
+import Button from '../components/common/Button';
 
 export default function LoginPage({ onLogin }) {
   const [email, setEmail] = useState('');
@@ -8,7 +11,6 @@ export default function LoginPage({ onLogin }) {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  // Check for existing session
   useEffect(() => {
     if (supabase) {
       supabase.auth.getSession().then(({ data: { session } }) => {
@@ -75,147 +77,206 @@ export default function LoginPage({ onLogin }) {
     }
   };
 
+  const containerStyle = {
+    minHeight: '100vh',
+    background: 'linear-gradient(135deg, #1f2937 0%, #374151 100%)',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 'var(--space-4)',
+  };
+
+  const cardStyle = {
+    width: '100%',
+    maxWidth: '420px',
+    backgroundColor: 'var(--color-white)',
+    borderRadius: 'var(--radius-md)',
+    padding: 'var(--space-8)',
+    boxShadow: 'var(--shadow-xl)',
+  };
+
+  const logoStyle = {
+    textAlign: 'center',
+    marginBottom: 'var(--space-8)',
+  };
+
+  const logoTextStyle = {
+    fontSize: 'var(--font-size-2xl)',
+    fontWeight: 'var(--font-weight-bold)',
+    fontFamily: 'var(--font-sans)',
+    color: 'var(--color-primary)',
+    margin: '0 0 var(--space-2) 0',
+  };
+
+  const subtitleStyle = {
+    fontSize: 'var(--font-size-sm)',
+    color: 'var(--color-neutral-500)',
+    margin: 0,
+    fontFamily: 'var(--font-serif)',
+  };
+
+  const dividerStyle = {
+    height: '1px',
+    backgroundColor: 'var(--color-neutral-200)',
+    margin: 'var(--space-6) 0',
+  };
+
+  const formStyle = {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 'var(--space-4)',
+  };
+
+  const inputWrapperStyle = {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 'var(--space-2)',
+  };
+
+  const labelStyle = {
+    fontSize: 'var(--font-size-xs)',
+    fontWeight: 'var(--font-weight-semibold)',
+    fontFamily: 'var(--font-sans)',
+    color: 'var(--color-neutral-900)',
+  };
+
+  const inputStyle = {
+    border: '1px solid var(--color-neutral-200)',
+    borderRadius: 'var(--radius-sm)',
+    padding: 'var(--space-2) var(--space-4)',
+    fontSize: 'var(--font-size-sm)',
+    fontFamily: 'var(--font-serif)',
+    transition: 'border-color var(--transition-fast)',
+  };
+
+  const errorStyle = {
+    padding: 'var(--space-3)',
+    backgroundColor: 'var(--color-status-pending-bg)',
+    border: '1px solid var(--color-status-pending-text)',
+    borderRadius: 'var(--radius-sm)',
+    fontSize: 'var(--font-size-xs)',
+    color: 'var(--color-status-pending-text)',
+    fontFamily: 'var(--font-sans)',
+  };
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+        delayChildren: 0.2,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 10 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.4 } },
+  };
+
   return (
-    <div style={{
-      minHeight: '100vh',
-      background: 'linear-gradient(to bottom right, #2563eb, #1e40af)',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-    }}>
-      <div style={{ width: '100%', maxWidth: '28rem' }}>
-        <div style={{
-          backgroundColor: '#fff',
-          borderRadius: '0.5rem',
-          boxShadow: '0 20px 25px rgba(0,0,0,0.15)',
-          padding: '2rem',
-        }}>
-          <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
-            <h1 style={{ fontSize: '2.25rem', fontWeight: 'bold', color: '#111', marginBottom: '0.5rem' }}>ATOM</h1>
-            <p style={{ color: '#4b5563' }}>Investments Dashboard</p>
-          </div>
+    <div style={containerStyle}>
+      <motion.div
+        style={cardStyle}
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.4 }}
+      >
+        <motion.div style={logoStyle} variants={containerVariants} initial="hidden" animate="visible">
+          <motion.h1 style={logoTextStyle} variants={itemVariants}>
+            ATOM
+          </motion.h1>
+          <motion.p style={subtitleStyle} variants={itemVariants}>
+            Investments Dashboard
+          </motion.p>
+        </motion.div>
 
-          {supabase && (
-            <div style={{ marginBottom: '1.5rem' }}>
-              <button
-                onClick={handleGitHubLogin}
-                disabled={isLoading}
-                style={{
-                  width: '100%',
-                  backgroundColor: '#1f2937',
-                  color: '#fff',
-                  padding: '0.75rem',
-                  borderRadius: '0.375rem',
-                  fontWeight: 500,
-                  border: 'none',
-                  cursor: 'pointer',
-                  fontSize: '1rem',
-                  opacity: isLoading ? 0.7 : 1,
-                }}
-              >
-                {isLoading ? 'Signing in...' : 'Sign in with GitHub'}
-              </button>
+        {supabase && (
+          <motion.div variants={itemVariants} initial="hidden" animate="visible">
+            <Button
+              onClick={handleGitHubLogin}
+              disabled={isLoading}
+              style={{ width: '100%' }}
+            >
+              {isLoading ? 'Signing in...' : 'Sign in with GitHub'}
+            </Button>
+            <div style={dividerStyle} />
+          </motion.div>
+        )}
 
-              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', margin: '1rem 0' }}>
-                <div style={{ flex: 1, height: '1px', backgroundColor: '#e5e7eb' }}></div>
-                <span style={{ color: '#9ca3af', fontSize: '0.875rem' }}>or</span>
-                <div style={{ flex: 1, height: '1px', backgroundColor: '#e5e7eb' }}></div>
-              </div>
-            </div>
+        <motion.form
+          onSubmit={!supabase ? handleMockLogin : handleEmailLogin}
+          style={formStyle}
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+        >
+          <motion.div style={inputWrapperStyle} variants={itemVariants}>
+            <label style={labelStyle}>
+              {!supabase ? 'Username' : 'Email'}
+            </label>
+            <input
+              type={!supabase ? 'text' : 'email'}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder={!supabase ? 'midom, adam, or kabrina' : 'you@example.com'}
+              disabled={isLoading}
+              style={{ ...inputStyle, opacity: isLoading ? 0.7 : 1 }}
+            />
+          </motion.div>
+
+          <motion.div style={inputWrapperStyle} variants={itemVariants}>
+            <label style={labelStyle}>Password</label>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder={!supabase ? 'demo' : '••••••••'}
+              disabled={isLoading}
+              style={{ ...inputStyle, opacity: isLoading ? 0.7 : 1 }}
+            />
+          </motion.div>
+
+          {error && (
+            <motion.div style={errorStyle} variants={itemVariants}>
+              {error}
+            </motion.div>
           )}
 
-          <form onSubmit={!supabase ? handleMockLogin : handleEmailLogin} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-            <div>
-              <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 500, color: '#374151', marginBottom: '0.5rem' }}>
-                {!supabase ? 'Username' : 'Email'}
-              </label>
-              <input
-                type={!supabase ? 'text' : 'email'}
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder={!supabase ? 'midom, adam, or kabrina' : 'you@example.com'}
-                disabled={isLoading}
-                style={{
-                  width: '100%',
-                  padding: '0.5rem 1rem',
-                  border: '1px solid #d1d5db',
-                  borderRadius: '0.375rem',
-                  fontSize: '1rem',
-                  outline: 'none',
-                  opacity: isLoading ? 0.7 : 1,
-                }}
-              />
-            </div>
-
-            <div>
-              <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 500, color: '#374151', marginBottom: '0.5rem' }}>
-                Password
-              </label>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder={!supabase ? 'demo' : '••••••••'}
-                disabled={isLoading}
-                style={{
-                  width: '100%',
-                  padding: '0.5rem 1rem',
-                  border: '1px solid #d1d5db',
-                  borderRadius: '0.375rem',
-                  fontSize: '1rem',
-                  outline: 'none',
-                  opacity: isLoading ? 0.7 : 1,
-                }}
-              />
-            </div>
-
-            {error && (
-              <div style={{
-                padding: '0.75rem',
-                backgroundColor: '#fee2e2',
-                border: '1px solid #fecaca',
-                borderRadius: '0.375rem',
-                fontSize: '0.875rem',
-                color: '#b91c1c',
-              }}>
-                {error}
-              </div>
-            )}
-
-            <button
+          <motion.div variants={itemVariants}>
+            <Button
               type="submit"
               disabled={isLoading}
-              style={{
-                width: '100%',
-                backgroundColor: isLoading ? '#9ca3af' : '#2563eb',
-                color: '#fff',
-                padding: '0.5rem',
-                borderRadius: '0.375rem',
-                fontWeight: 500,
-                border: 'none',
-                cursor: isLoading ? 'not-allowed' : 'pointer',
-                fontSize: '1rem',
-              }}
+              style={{ width: '100%' }}
             >
               {isLoading ? 'Signing in...' : 'Sign In'}
-            </button>
-          </form>
+            </Button>
+          </motion.div>
+        </motion.form>
 
-          {!supabase && (
-            <div style={{ marginTop: '1.5rem', paddingTop: '1.5rem', borderTop: '1px solid #e5e7eb' }}>
-              <p style={{ fontSize: '0.75rem', color: '#6b7280', textAlign: 'center', marginBottom: '0.5rem' }}>
-                ⚠️ Mock Demo Mode (Supabase not configured)
-              </p>
-              <p style={{ fontSize: '0.75rem', color: '#6b7280', textAlign: 'center' }}>
-                Username: midom, adam, or kabrina<br />
-                Password: demo<br />
-                <br />
-                For real authentication, see SUPABASE_SETUP.md
-              </p>
-            </div>
-          )}
-        </div>
-      </div>
+        {!supabase && (
+          <motion.div
+            style={{
+              marginTop: 'var(--space-6)',
+              paddingTop: 'var(--space-6)',
+              borderTop: '1px solid var(--color-neutral-200)',
+              textAlign: 'center',
+            }}
+            variants={itemVariants}
+            initial="hidden"
+            animate="visible"
+          >
+            <p style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-neutral-500)', margin: 'var(--space-2) 0' }}>
+              ⚠️ Mock Demo Mode (Supabase not configured)
+            </p>
+            <p style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-neutral-500)', margin: 0 }}>
+              Username: midom, adam, or kabrina<br />
+              Password: demo
+            </p>
+          </motion.div>
+        )}
+      </motion.div>
     </div>
   );
 }
