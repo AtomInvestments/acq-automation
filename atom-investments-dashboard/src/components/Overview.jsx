@@ -43,12 +43,19 @@ export default function Overview() {
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, ease: 'easeOut' }}
-        style={{ marginBottom: 'var(--space-6)' }}
+        style={{
+          marginBottom: 'var(--space-8)',
+          background: `linear-gradient(135deg, var(--color-primary) 0%, #374151 100%)`,
+          borderRadius: 'var(--radius-md)',
+          padding: 'var(--space-8)',
+          color: 'white',
+          boxShadow: '0 12px 24px rgba(31, 41, 55, 0.15)'
+        }}
       >
         <h1 style={{
           fontSize: 'var(--font-size-3xl)',
           fontWeight: 'var(--font-weight-bold)',
-          color: 'var(--color-primary)',
+          color: 'white',
           fontFamily: 'var(--font-sans)',
           marginBottom: 'var(--space-2)',
           letterSpacing: '-0.5px'
@@ -57,10 +64,10 @@ export default function Overview() {
         </h1>
         <p style={{
           fontSize: 'var(--font-size-sm)',
-          color: 'var(--color-secondary-text)',
+          color: 'rgba(255, 255, 255, 0.9)',
           fontFamily: 'var(--font-serif)'
         }}>
-          Sunday, June 15, 2026
+          Sunday, June 15, 2026 • All systems operational
         </p>
       </motion.div>
 

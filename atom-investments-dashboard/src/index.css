@@ -13,9 +13,10 @@ body {
   font-size: var(--font-size-base);
   line-height: var(--line-height-normal);
   color: var(--color-neutral-900);
-  background-color: var(--color-neutral-50);
+  background: linear-gradient(135deg, var(--color-neutral-50) 0%, #fafbfc 100%);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  min-height: 100vh;
 }
 
 h1, h2, h3, h4, h5, h6 {

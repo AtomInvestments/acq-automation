@@ -300,8 +300,9 @@ export default function Projects() {
                 top: 0,
                 left: 0,
                 right: 0,
-                height: '8px',
-                backgroundColor: project.color
+                height: '4px',
+                background: `linear-gradient(90deg, ${project.color}, ${project.color}dd)`,
+                borderRadius: 'var(--radius-md) var(--radius-md) 0 0'
               }} />
 
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 'var(--space-4)' }}>
