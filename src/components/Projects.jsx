@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
+import { useScrollAnimation } from '../hooks/useScrollAnimation';
 import { mockProjects, mockTasks } from '../mockData';
 import Card from './common/Card';
 import StatusBadge from './common/StatusBadge';
@@ -54,6 +55,7 @@ const detailRowVariants = {
 
 export default function Projects() {
   const [selectedProject, setSelectedProject] = useState(null);
+  const { ref: cardsRef, animate: cardsAnimate } = useScrollAnimation({ threshold: 0.15 });
 
   const getProjectTasks = (projectId) => {
     return mockTasks.filter(t => t.projectId === projectId);
@@ -291,7 +293,7 @@ export default function Projects() {
     >
       <h2 style={titleStyle}>Projects</h2>
 
-      <motion.div style={gridsCardStyle} variants={containerVariants} initial="hidden" animate="visible">
+      <motion.div ref={cardsRef} style={gridsCardStyle} variants={containerVariants} initial="hidden" animate={cardsAnimate}>
         {mockProjects.map((project) => {
           const tasks = getProjectTasks(project.id);
           const completed = tasks.filter(t => t.status === 'completed').length;

@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import { useScrollAnimation } from '../hooks/useScrollAnimation';
 import { mockTasks, mockProjects } from '../mockData';
 import Card from './common/Card';
 import StatusBadge from './common/StatusBadge';
@@ -70,6 +71,9 @@ const statValueVariants = {
 };
 
 export default function Overview() {
+  // Scroll animation hook for stat cards
+  const { ref: statsRef, animate: statsAnimate } = useScrollAnimation({ threshold: 0.2 });
+
   const getProjectColor = (projectId) => {
     const project = mockProjects.find(p => p.id === projectId);
     return project ? project.color : 'var(--color-neutral-500)';
@@ -203,7 +207,13 @@ export default function Overview() {
         <p style={subtitleStyle}>Monitor your projects, tasks, and team activity</p>
       </motion.div>
 
-      <motion.div style={statsGridStyle} variants={containerVariants} initial="hidden" animate="visible">
+      <motion.div
+        ref={statsRef}
+        style={statsGridStyle}
+        variants={containerVariants}
+        initial="hidden"
+        animate={statsAnimate}
+      >
         {[
           { label: 'Total Tasks', value: mockTasks.length, color: 'var(--color-primary)' },
           { label: 'In Progress', value: inProgressCount, color: 'var(--color-info)' },
@@ -224,7 +234,7 @@ export default function Overview() {
                   variants={statValueVariants}
                   custom={i}
                   initial="hidden"
-                  animate="visible"
+                  animate={statsAnimate}
                 >
                   {stat.value}
                 </motion.p>

@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import { useScrollAnimation } from '../hooks/useScrollAnimation';
 import { mockProjects, mockTeamMembers } from '../mockData';
 
 // Animation variants
@@ -61,6 +62,8 @@ const statVariants = {
 };
 
 export default function Team() {
+  const { ref: summaryRef, animate: summaryAnimate } = useScrollAnimation({ threshold: 0.15 });
+
   const getProjectMembers = (projectName) => {
     return mockTeamMembers.filter(member =>
       member.projects.includes(projectName)
@@ -389,7 +392,7 @@ export default function Team() {
       </motion.div>
 
       {/* Summary Stats */}
-      <motion.div style={summaryContainerStyle} variants={{ visible: { opacity: 1 }, hidden: { opacity: 0 } }}>
+      <motion.div ref={summaryRef} style={summaryContainerStyle} variants={{ visible: { opacity: 1 }, hidden: { opacity: 0 } }} initial="hidden" animate={summaryAnimate}>
         <h3 style={summaryTitleStyle}>Team Summary</h3>
 
         <motion.div

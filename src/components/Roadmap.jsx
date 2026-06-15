@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
+import { useScrollAnimation } from '../hooks/useScrollAnimation';
 import { mockTasks, mockProjects } from '../mockData';
 import StatusBadge from './common/StatusBadge';
 
@@ -49,6 +50,7 @@ const taskVariants = {
 
 export default function Roadmap() {
   const [selectedProject, setSelectedProject] = useState(null);
+  const { ref: tasksRef, animate: tasksAnimate } = useScrollAnimation({ threshold: 0.15 });
 
   const getTasksByDate = () => {
     const tasksByDate = {};
@@ -223,7 +225,7 @@ export default function Roadmap() {
         </motion.select>
       </motion.div>
 
-      <motion.div style={containerStyle} variants={containerVariants} initial="hidden" animate="visible">
+      <motion.div ref={tasksRef} style={containerStyle} variants={containerVariants} initial="hidden" animate={tasksAnimate}>
         {sortedDates.length > 0 ? (
           sortedDates.map((date, dateIdx) => {
             const dateObj = new Date(date);
