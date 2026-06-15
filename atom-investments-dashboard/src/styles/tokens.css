@@ -1,0 +1,84 @@
+/* src/styles/tokens.css */
+/* Design system tokens for ATOM Investments Dashboard */
+
+:root {
+  /* Colors - Primary */
+  --color-primary: #1f2937;          /* Deep charcoal */
+  --color-primary-light: #374151;    /* Lighter charcoal for hover */
+
+  /* Colors - Neutral */
+  --color-neutral-50: #f9fafb;       /* Off-white background */
+  --color-neutral-100: #f3f4f6;      /* Light gray */
+  --color-neutral-200: #e5e7eb;      /* Border gray */
+  --color-neutral-500: #6b7280;      /* Secondary text */
+  --color-neutral-900: #111111;      /* Primary text */
+  --color-white: #ffffff;
+
+  /* Colors - Project Status */
+  --color-project-apg: #3b82f6;      /* Blue */
+  --color-project-kin: #8b5cf6;      /* Purple */
+  --color-project-endatcourt: #ec4899; /* Pink */
+  --color-project-float: #f59e0b;    /* Amber */
+  --color-project-mitm: #10b981;     /* Green */
+
+  /* Colors - Status Indicators */
+  --color-status-completed-bg: #dcfce7;
+  --color-status-completed-text: #15803d;
+  --color-status-progress-bg: #dbeafe;
+  --color-status-progress-text: #0c4a6e;
+  --color-status-pending-bg: #fef3c7;
+  --color-status-pending-text: #92400e;
+
+  /* Colors - Semantic */
+  --color-error: #dc2626;
+
+  /* Typography - Font Families */
+  --font-sans: 'Poppins', 'DM Sans', 'Avenir Next', sans-serif;
+  --font-serif: 'Merriweather', 'Lora', 'Crimson Text', serif;
+
+  /* Typography - Font Sizes */
+  --font-size-xs: 12px;
+  --font-size-sm: 14px;
+  --font-size-base: 16px;
+  --font-size-lg: 20px;
+  --font-size-xl: 24px;
+  --font-size-2xl: 28px;
+  --font-size-3xl: 32px;
+
+  /* Typography - Font Weights */
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  /* Typography - Line Heights */
+  --line-height-tight: 1.4;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.6;
+
+  /* Spacing (8px base grid) */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-12: 48px;
+
+  /* Border Radius */
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-full: 9999px;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+  --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.15);
+
+  /* Transitions */
+  --transition-fast: 0.2s ease-out;
+  --transition-base: 0.3s ease-out;
+  --transition-slow: 0.4s ease-out;
+}
