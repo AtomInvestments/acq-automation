@@ -966,5 +966,38 @@
     "match_cid": "fn2QJW7x7Zb7K2KaSQI7",
     "match_confidence": "high",
     "summary": "Osvaldo plans to list his property at $375k in October/November, wants to close before year-end, property is in good condition with new updates, he's moving to Florida, and requested a call tomorrow at 10am."
+  },
+  "C06MM4DQZ28:1781557043.735199": {
+    "field_updates": {
+      "asking_price": 383700,
+      "motivation": null,
+      "reason_for_selling": "No specific reason stated",
+      "timeline": "6+ months"
+    },
+    "match_cid": "7mhUzWzwxdVwpE4069Tn",
+    "match_confidence": "high",
+    "summary": "Gary Rogan owns 30 Taylor Rd, asking $383,700, currently installing new roof and skylights, wants to sell sometime in the future (2+ months timeline)."
+  },
+  "C06MM4DQZ28:1781557134.248669": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": "Money",
+      "reason_for_selling": "Needs money from the sale",
+      "timeline": "ASAP"
+    },
+    "match_cid": "RYk6WUjap0bbQvk7rvcZ",
+    "match_confidence": "high",
+    "summary": "John Stein wants to sell 809 Morris St ASAP if the price is right, says the property is occupied, and is selling for money."
+  },
+  "C06MM4DQZ28:1781557884.083019": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": "Family property, not primary residence",
+      "reason_for_selling": "It's a family property that is not his primary residence",
+      "timeline": "No rush"
+    },
+    "match_cid": "a2UwQYURzT016lvOBup9",
+    "match_confidence": "high",
+    "summary": "Nicholas confirmed the property is vacant, needs 80-100k in updates (floors, kitchen, bathrooms), has received many offers, is not in a rush to sell, and suggests buyer should renovate rather than wholesale."
   }
 }
