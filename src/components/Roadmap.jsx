@@ -9,64 +9,41 @@ const containerVariants = {
   visible: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.1,
+      staggerChildren: 0.12,
       delayChildren: 0.2,
     },
   },
 };
 
 const dateHeaderVariants = {
-  hidden: { opacity: 0, y: -10 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: 'easeOut' } },
+  hidden: { opacity: 0, y: -10, scale: 0.95 },
+  visible: (i) => ({
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: {
+      delay: 0.2 + i * 0.1,
+      duration: 0.5,
+      ease: 'easeOut'
+    }
+  }),
 };
 
 const taskVariants = {
   hidden: { opacity: 0, x: -20 },
-  visible: { opacity: 1, x: 0, transition: { duration: 0.4, ease: 'easeOut' } },
-};
-
-// Design tokens
-const tokens = {
-  space: {
-    1: '0.25rem',
-    2: '0.5rem',
-    4: '1rem',
-    6: '1.5rem',
-    8: '2rem',
-  },
-  fontSize: {
-    xs: '0.75rem',
-    sm: '0.875rem',
-    md: '1rem',
-    lg: '1.125rem',
-    xl: '1.25rem',
-    '2xl': '1.5rem',
-    '3xl': '1.875rem',
-  },
-  fontWeight: {
-    normal: 400,
-    semibold: 600,
-    bold: 700,
-  },
-  color: {
-    neutral: {
-      50: '#f9fafb',
-      100: '#f3f4f6',
-      200: '#e5e7eb',
-      500: '#4b5563',
-      900: '#111',
-    },
-    primary: '#2563eb',
-    white: '#fff',
-  },
-  radius: {
-    sm: '0.25rem',
-    md: '0.5rem',
-    full: '9999px',
-  },
-  shadow: {
-    sm: '0 1px 3px rgba(0,0,0,0.1)',
-    md: '0 4px 6px rgba(0,0,0,0.1)',
+  visible: (i) => ({
+    opacity: 1,
+    x: 0,
+    transition: {
+      delay: i * 0.05,
+      duration: 0.4,
+      ease: 'easeOut'
+    }
+  }),
+  hover: {
+    boxShadow: 'var(--shadow-md)',
+    x: 4,
+    transition: { duration: 0.2 },
   },
 };
 
@@ -89,19 +66,19 @@ export default function Roadmap() {
   const getStatusColor = (status) => {
     switch (status) {
       case 'completed':
-        return { bg: '#dcfce7', text: '#15803d', border: '#86efac' };
+        return { bg: 'var(--color-success-light)', text: 'var(--color-success-dark)', border: 'var(--color-success)' };
       case 'in-progress':
-        return { bg: '#dbeafe', text: '#0c4a6e', border: '#7dd3fc' };
+        return { bg: 'var(--color-info-light)', text: 'var(--color-info-dark)', border: 'var(--color-info)' };
       case 'pending':
-        return { bg: '#fef3c7', text: '#92400e', border: '#fcd34d' };
+        return { bg: 'var(--color-warning-light)', text: 'var(--color-warning-dark)', border: 'var(--color-warning)' };
       default:
-        return { bg: '#f3f4f6', text: '#374151', border: '#d1d5db' };
+        return { bg: 'var(--color-neutral-100)', text: 'var(--color-neutral-600)', border: 'var(--color-neutral-300)' };
     }
   };
 
   const getProjectColor = (projectId) => {
     const project = mockProjects.find(p => p.id === projectId);
-    return project ? project.color : tokens.color.neutral[500];
+    return project ? project.color : 'var(--color-neutral-500)';
   };
 
   const getProjectName = (projectId) => {
@@ -114,112 +91,115 @@ export default function Roadmap() {
 
   // Styles using design tokens
   const headerContainerStyle = {
-    marginBottom: tokens.space[6],
+    marginBottom: 'var(--space-8)',
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
   };
 
   const titleStyle = {
-    fontSize: tokens.fontSize['3xl'],
-    fontWeight: tokens.fontWeight.bold,
-    color: tokens.color.neutral[900],
+    fontSize: 'var(--font-size-3xl)',
+    fontWeight: 'var(--font-weight-bold)',
+    color: 'var(--color-neutral-900)',
     margin: 0,
   };
 
   const filterSelectStyle = {
-    padding: `${tokens.space[2]} ${tokens.space[4]}`,
-    border: `1px solid ${tokens.color.neutral[200]}`,
-    borderRadius: tokens.radius.md,
-    fontSize: tokens.fontSize.sm,
-    color: tokens.color.neutral[900],
-    backgroundColor: tokens.color.white,
+    padding: 'var(--space-2) var(--space-4)',
+    border: '1px solid var(--color-neutral-200)',
+    borderRadius: 'var(--radius-md)',
+    fontSize: 'var(--font-size-sm)',
+    color: 'var(--color-neutral-900)',
+    backgroundColor: 'var(--color-white)',
     cursor: 'pointer',
-    fontWeight: tokens.fontWeight.semibold,
-    transition: 'border-color 0.2s, box-shadow 0.2s',
+    fontWeight: 'var(--font-weight-semibold)',
+    fontFamily: 'var(--font-sans)',
+    transition: 'all var(--transition-base)',
     outline: 'none',
   };
 
   const containerStyle = {
     display: 'flex',
     flexDirection: 'column',
-    gap: tokens.space[6],
+    gap: 'var(--space-6)',
   };
 
   const dateGroupStyle = {
-    backgroundColor: tokens.color.white,
-    borderRadius: tokens.radius.md,
-    boxShadow: tokens.shadow.sm,
-    padding: tokens.space[6],
+    backgroundColor: 'var(--color-white)',
+    borderRadius: 'var(--radius-md)',
+    boxShadow: 'var(--shadow-sm)',
+    padding: 'var(--space-6)',
+    borderTop: '4px solid',
   };
 
   const dateHeaderStyle = {
-    fontSize: tokens.fontSize.lg,
-    fontWeight: tokens.fontWeight.bold,
-    color: tokens.color.neutral[900],
-    marginBottom: tokens.space[4],
+    fontSize: 'var(--font-size-xl)',
+    fontWeight: 'var(--font-weight-bold)',
+    color: 'var(--color-neutral-900)',
+    marginBottom: 'var(--space-4)',
     margin: 0,
   };
 
   const tasksListStyle = {
     display: 'flex',
     flexDirection: 'column',
-    gap: tokens.space[2],
+    gap: 'var(--space-3)',
   };
 
   const taskCardStyle = (projectColor, statusBg) => ({
-    padding: tokens.space[4],
-    borderRadius: tokens.radius.sm,
-    borderLeft: `4px solid ${projectColor}`,
+    padding: 'var(--space-4)',
+    borderRadius: 'var(--radius-md)',
+    borderLeft: `3px solid ${projectColor}`,
     backgroundColor: statusBg,
-    transition: 'all 0.2s',
+    transition: 'all var(--transition-base)',
   });
 
   const taskHeaderStyle = {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
-    gap: tokens.space[4],
+    gap: 'var(--space-4)',
   };
 
   const taskTitleStyle = {
-    fontWeight: tokens.fontWeight.semibold,
-    color: tokens.color.neutral[900],
+    fontWeight: 'var(--font-weight-semibold)',
+    color: 'var(--color-neutral-900)',
     margin: 0,
-    fontSize: tokens.fontSize.md,
+    fontSize: 'var(--font-size-base)',
   };
 
   const taskMetaStyle = {
     display: 'flex',
     alignItems: 'center',
-    gap: tokens.space[2],
-    marginTop: tokens.space[2],
-    fontSize: tokens.fontSize.sm,
+    gap: 'var(--space-3)',
+    marginTop: 'var(--space-2)',
+    fontSize: 'var(--font-size-sm)',
     flexWrap: 'wrap',
   };
 
   const projectBadgeStyle = (projectColor) => ({
-    padding: `${tokens.space[1]} ${tokens.space[2]}`,
-    borderRadius: tokens.radius.sm,
-    color: tokens.color.white,
-    fontSize: tokens.fontSize.xs,
-    fontWeight: tokens.fontWeight.semibold,
+    padding: 'var(--space-1) var(--space-3)',
+    borderRadius: 'var(--radius-sm)',
+    color: 'var(--color-white)',
+    fontSize: 'var(--font-size-xs)',
+    fontWeight: 'var(--font-weight-semibold)',
     backgroundColor: projectColor,
     display: 'inline-block',
   });
 
   const assigneeStyle = {
-    color: tokens.color.neutral[500],
-    fontSize: tokens.fontSize.sm,
+    color: 'var(--color-neutral-500)',
+    fontSize: 'var(--font-size-sm)',
   };
 
   const emptyStateStyle = {
-    backgroundColor: tokens.color.white,
-    borderRadius: tokens.radius.md,
-    boxShadow: tokens.shadow.sm,
-    padding: tokens.space[6],
+    backgroundColor: 'var(--color-white)',
+    borderRadius: 'var(--radius-md)',
+    boxShadow: 'var(--shadow-sm)',
+    padding: 'var(--space-8)',
     textAlign: 'center',
-    color: tokens.color.neutral[500],
+    color: 'var(--color-neutral-500)',
+    fontSize: 'var(--font-size-base)',
   };
 
   return (
@@ -234,7 +214,7 @@ export default function Roadmap() {
           value={selectedProject || ''}
           onChange={(e) => setSelectedProject(e.target.value ? parseInt(e.target.value) : null)}
           style={filterSelectStyle}
-          whileFocus={{ boxShadow: `0 0 0 3px ${tokens.color.primary}33` }}
+          whileFocus={{ boxShadow: 'var(--shadow-md), 0 0 0 3px var(--color-primary-light)' }}
         >
           <option value="">All Projects</option>
           {mockProjects.map(project => (
@@ -245,68 +225,73 @@ export default function Roadmap() {
 
       <motion.div style={containerStyle} variants={containerVariants} initial="hidden" animate="visible">
         {sortedDates.length > 0 ? (
-          sortedDates.map((date, dateIdx) => (
-            <motion.div
-              key={date}
-              style={dateGroupStyle}
-              variants={dateHeaderVariants}
-              custom={dateIdx}
-            >
-              <motion.h3
-                style={dateHeaderStyle}
-                variants={dateHeaderVariants}
-              >
-                {new Date(date).toLocaleDateString('en-US', {
-                  weekday: 'long',
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric',
-                })}
-              </motion.h3>
+          sortedDates.map((date, dateIdx) => {
+            const dateObj = new Date(date);
+            const formattedDate = dateObj.toLocaleDateString('en-US', {
+              weekday: 'long',
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric',
+            });
+            const dateColor = dateObj.getTime() < new Date().getTime() ? 'var(--color-neutral-300)' : 'var(--color-primary)';
 
+            return (
               <motion.div
-                style={tasksListStyle}
-                variants={containerVariants}
-                initial="hidden"
-                animate="visible"
+                key={date}
+                style={{ ...dateGroupStyle, borderTopColor: dateColor }}
+                variants={dateHeaderVariants}
+                custom={dateIdx}
               >
-                {tasksByDate[date].map((task, taskIdx) => {
-                  const statusColor = getStatusColor(task.status);
-                  const projectColor = getProjectColor(task.projectId);
+                <motion.h3
+                  style={dateHeaderStyle}
+                  variants={dateHeaderVariants}
+                  custom={dateIdx}
+                >
+                  {formattedDate}
+                </motion.h3>
 
-                  return (
-                    <motion.div
-                      key={task.id}
-                      style={taskCardStyle(projectColor, statusColor.bg)}
-                      variants={taskVariants}
-                      custom={taskIdx}
-                      whileHover={{
-                        boxShadow: tokens.shadow.md,
-                        transform: 'translateX(4px)',
-                      }}
-                    >
-                      <div style={taskHeaderStyle}>
-                        <div style={{ flex: 1 }}>
-                          <p style={taskTitleStyle}>{task.title}</p>
-                          <div style={taskMetaStyle}>
-                            <span style={projectBadgeStyle(projectColor)}>
-                              {getProjectName(task.projectId)}
-                            </span>
-                            <span style={assigneeStyle}>{task.assignee}</span>
+                <motion.div
+                  style={tasksListStyle}
+                  variants={containerVariants}
+                  initial="hidden"
+                  animate="visible"
+                >
+                  {tasksByDate[date].map((task, taskIdx) => {
+                    const statusColor = getStatusColor(task.status);
+                    const projectColor = getProjectColor(task.projectId);
+
+                    return (
+                      <motion.div
+                        key={task.id}
+                        style={taskCardStyle(projectColor, statusColor.bg)}
+                        variants={taskVariants}
+                        custom={taskIdx}
+                        whileHover="hover"
+                      >
+                        <div style={taskHeaderStyle}>
+                          <div style={{ flex: 1 }}>
+                            <p style={taskTitleStyle}>{task.title}</p>
+                            <div style={taskMetaStyle}>
+                              <span style={projectBadgeStyle(projectColor)}>
+                                {getProjectName(task.projectId)}
+                              </span>
+                              <span style={assigneeStyle}>{task.assignee}</span>
+                            </div>
                           </div>
+                          <StatusBadge status={task.status} />
                         </div>
-                        <StatusBadge status={task.status} />
-                      </div>
-                    </motion.div>
-                  );
-                })}
+                      </motion.div>
+                    );
+                  })}
+                </motion.div>
               </motion.div>
-            </motion.div>
-          ))
+            );
+          })
         ) : (
           <motion.div
             style={emptyStateStyle}
             variants={dateHeaderVariants}
+            custom={0}
           >
             No tasks scheduled
           </motion.div>
