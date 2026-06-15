@@ -102,3 +102,81 @@ body {
 code {
   font-family: var(--font-mono);
 }
+
+/* Mobile Responsive Breakpoints */
+
+/* Tablet breakpoint (768px) */
+@media (max-width: 768px) {
+  :root {
+    /* Reduce some spacing on mobile */
+    --space-6: 1rem;
+    --font-size-2xl: 1.25rem;
+  }
+
+  body {
+    font-size: var(--font-size-sm);
+  }
+
+  h1 {
+    font-size: var(--font-size-2xl);
+  }
+
+  h2 {
+    font-size: var(--font-size-xl);
+  }
+}
+
+/* Small mobile breakpoint (375px and below) */
+@media (max-width: 375px) {
+  :root {
+    /* Very tight spacing on small phones */
+    --space-4: 0.75rem;
+    --space-6: 0.75rem;
+    --font-size-base: 0.875rem;
+    --font-size-sm: 0.75rem;
+  }
+
+  body {
+    font-size: var(--font-size-sm);
+  }
+
+  h1 {
+    font-size: var(--font-size-lg);
+  }
+
+  h2 {
+    font-size: var(--font-size-base);
+  }
+}
+
+/* Utility classes for responsive display */
+.hide-mobile {
+  display: none;
+}
+
+.show-mobile {
+  display: block;
+}
+
+@media (min-width: 769px) {
+  .hide-mobile {
+    display: block;
+  }
+
+  .show-mobile {
+    display: none;
+  }
+}
+
+/* Dashboard responsive layout */
+@media (max-width: 768px) {
+  [style*="maxWidth"] {
+    padding: 1rem 0.75rem !important;
+  }
+}
+
+@media (max-width: 375px) {
+  [style*="maxWidth"] {
+    padding: 0.75rem 0.5rem !important;
+  }
+}
