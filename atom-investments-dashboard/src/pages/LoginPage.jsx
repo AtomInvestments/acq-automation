@@ -49,7 +49,16 @@ export default function LoginPage({ onLogin }) {
         password,
       });
 
-      if (authError) throw authError;
+      if (authError) {
+        // Fall back to mock auth if Supabase fails
+        const mockUser = mockUsers[email.toLowerCase()];
+        if (mockUser && password === 'demo') {
+          onLogin(mockUser);
+          setIsLoading(false);
+          return;
+        }
+        throw authError;
+      }
 
       if (data?.user) {
         onLogin({
@@ -60,7 +69,7 @@ export default function LoginPage({ onLogin }) {
         });
       }
     } catch (err) {
-      setError(err.message || 'Login failed');
+      setError(err.message || 'Login failed. Try: midom/adam/kabrina with password: demo');
     } finally {
       setIsLoading(false);
     }
