@@ -51,7 +51,22 @@ export default function LoginPage({ onLogin }) {
 
       if (authError) {
         // Fall back to mock auth if Supabase fails
-        const mockUser = mockUsers[email.toLowerCase()];
+        let mockUser = null;
+
+        // Try exact username match first
+        mockUser = mockUsers[email.toLowerCase()];
+
+        // Try by email address
+        if (!mockUser) {
+          mockUser = Object.values(mockUsers).find(u => u.email.toLowerCase() === email.toLowerCase());
+        }
+
+        // Try extracting username from email
+        if (!mockUser && email.includes('@')) {
+          const username = email.split('@')[0].toLowerCase();
+          mockUser = mockUsers[username];
+        }
+
         if (mockUser && password === 'demo') {
           onLogin(mockUser);
           setIsLoading(false);
