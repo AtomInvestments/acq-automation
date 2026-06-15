@@ -7,7 +7,7 @@ const containerVariants = {
   visible: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.08,
+      staggerChildren: 0.1,
       delayChildren: 0.2,
     },
   },
@@ -15,74 +15,49 @@ const containerVariants = {
 
 const bubbleVariants = {
   hidden: { opacity: 0, scale: 0.8 },
-  visible: {
+  visible: (i) => ({
     opacity: 1,
     scale: 1,
     transition: {
+      delay: 0.2 + i * 0.08,
       duration: 0.5,
       ease: 'easeOut',
     },
-  },
+  }),
   hover: {
-    scale: 1.05,
-    boxShadow: '0 10px 25px rgba(0,0,0,0.15)',
+    scale: 1.08,
+    boxShadow: 'var(--shadow-xl)',
+    transition: { duration: 0.2 },
   },
 };
 
 const memberCardVariants = {
   hidden: { opacity: 0, y: 10 },
-  visible: {
+  visible: (i) => ({
     opacity: 1,
     y: 0,
-    transition: { duration: 0.4 },
+    transition: {
+      delay: i * 0.05,
+      duration: 0.4,
+    },
+  }),
+  hover: {
+    boxShadow: 'var(--shadow-lg)',
+    y: -4,
+    transition: { duration: 0.2 },
   },
 };
 
-// Design tokens
-const tokens = {
-  space: {
-    1: '0.25rem',
-    2: '0.5rem',
-    4: '1rem',
-    6: '1.5rem',
-    8: '2rem',
-  },
-  fontSize: {
-    xs: '0.75rem',
-    sm: '0.875rem',
-    md: '1rem',
-    lg: '1.125rem',
-    xl: '1.25rem',
-    '2xl': '1.5rem',
-    '3xl': '1.875rem',
-  },
-  fontWeight: {
-    normal: 400,
-    semibold: 600,
-    bold: 700,
-  },
-  color: {
-    neutral: {
-      50: '#f9fafb',
-      100: '#f3f4f6',
-      200: '#e5e7eb',
-      500: '#4b5563',
-      900: '#111',
+const statVariants = {
+  hidden: { opacity: 0, scale: 0.8 },
+  visible: (i) => ({
+    opacity: 1,
+    scale: 1,
+    transition: {
+      delay: 0.3 + i * 0.1,
+      duration: 0.4,
     },
-    primary: '#2563eb',
-    charcoal: '#374151',
-    white: '#fff',
-  },
-  radius: {
-    sm: '0.25rem',
-    md: '0.5rem',
-    full: '9999px',
-  },
-  shadow: {
-    sm: '0 1px 3px rgba(0,0,0,0.1)',
-    md: '0 4px 6px rgba(0,0,0,0.1)',
-    lg: '0 10px 25px rgba(0,0,0,0.1)',
-  },
+  }),
 };
 
 export default function Team() {
@@ -99,221 +74,227 @@ export default function Team() {
   const pageContainerStyle = {
     display: 'flex',
     flexDirection: 'column',
-    gap: tokens.space[8],
+    gap: 'var(--space-12)',
   };
 
   const titleStyle = {
-    fontSize: tokens.fontSize['3xl'],
-    fontWeight: tokens.fontWeight.bold,
-    color: tokens.color.neutral[900],
-    marginBottom: tokens.space[8],
+    fontSize: 'var(--font-size-3xl)',
+    fontWeight: 'var(--font-weight-bold)',
+    color: 'var(--color-neutral-900)',
+    marginBottom: 'var(--space-8)',
     textAlign: 'center',
+    letterSpacing: '-0.02em',
   };
 
   // Level 1: ATOM Investments
   const level1ContainerStyle = {
     display: 'flex',
     justifyContent: 'center',
-    marginBottom: tokens.space[8],
+    marginBottom: 'var(--space-12)',
   };
 
   const atomBubbleStyle = {
-    width: '120px',
-    height: '120px',
-    background: `linear-gradient(135deg, ${tokens.color.charcoal} 0%, #1f2937 100%)`,
-    color: tokens.color.white,
-    borderRadius: tokens.radius.full,
+    width: '140px',
+    height: '140px',
+    background: 'linear-gradient(135deg, var(--color-neutral-700) 0%, var(--color-neutral-900) 100%)',
+    color: 'var(--color-white)',
+    borderRadius: 'var(--radius-full)',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
     cursor: 'pointer',
-    boxShadow: tokens.shadow.lg,
+    boxShadow: 'var(--shadow-lg)',
     textAlign: 'center',
   };
 
   const atomTitleStyle = {
-    fontWeight: tokens.fontWeight.bold,
-    fontSize: tokens.fontSize.xl,
+    fontWeight: 'var(--font-weight-bold)',
+    fontSize: 'var(--font-size-2xl)',
     margin: 0,
   };
 
   const atomSubtitleStyle = {
-    fontSize: tokens.fontSize.sm,
-    margin: `${tokens.space[1]} 0 0 0`,
-    opacity: 0.9,
+    fontSize: 'var(--font-size-base)',
+    margin: 'var(--space-2) 0 0 0',
+    opacity: 0.85,
   };
 
   // Level 2: Projects
   const level2ContainerStyle = {
     display: 'grid',
     gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))',
-    gap: tokens.space[6],
-    marginBottom: tokens.space[8],
+    gap: 'var(--space-6)',
+    marginBottom: 'var(--space-12)',
     justifyItems: 'center',
-    maxWidth: '900px',
-    margin: `0 auto ${tokens.space[8]} auto`,
+    maxWidth: '1000px',
+    margin: '0 auto var(--space-12) auto',
   };
 
   const projectBubbleStyle = (projectColor) => ({
-    width: '100px',
-    height: '100px',
-    borderRadius: tokens.radius.full,
+    width: '110px',
+    height: '110px',
+    borderRadius: 'var(--radius-full)',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
     cursor: 'pointer',
-    boxShadow: tokens.shadow.md,
-    color: tokens.color.white,
-    fontWeight: tokens.fontWeight.bold,
+    boxShadow: 'var(--shadow-md)',
+    color: 'var(--color-white)',
+    fontWeight: 'var(--font-weight-bold)',
     textAlign: 'center',
     backgroundColor: projectColor,
-    padding: tokens.space[2],
-    fontSize: tokens.fontSize.sm,
-    lineHeight: 1.2,
+    padding: 'var(--space-2)',
+    fontSize: 'var(--font-size-sm)',
+    lineHeight: 1.3,
+    transition: 'all var(--transition-base)',
   });
 
   // Level 3: Team Members
   const projectSectionStyle = {
-    marginBottom: tokens.space[8],
-    borderTop: `1px solid ${tokens.color.neutral[200]}`,
-    paddingTop: tokens.space[8],
+    marginBottom: 'var(--space-10)',
+    borderTop: '1px solid var(--color-neutral-200)',
+    paddingTop: 'var(--space-8)',
   };
 
   const projectSectionTitleStyle = (projectColor) => ({
     textAlign: 'center',
-    fontWeight: tokens.fontWeight.bold,
+    fontWeight: 'var(--font-weight-bold)',
     color: projectColor,
-    marginBottom: tokens.space[6],
-    fontSize: tokens.fontSize.lg,
+    marginBottom: 'var(--space-6)',
+    fontSize: 'var(--font-size-lg)',
   });
 
   const memberCardsGridStyle = {
     display: 'grid',
     gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-    gap: tokens.space[4],
+    gap: 'var(--space-4)',
   };
 
   const memberCardStyle = (projectColor) => ({
-    backgroundColor: tokens.color.white,
-    borderRadius: tokens.radius.md,
-    boxShadow: tokens.shadow.sm,
-    padding: tokens.space[4],
-    borderLeft: `4px solid ${projectColor}`,
-    transition: 'all 0.2s',
+    backgroundColor: 'var(--color-white)',
+    borderRadius: 'var(--radius-md)',
+    boxShadow: 'var(--shadow-sm)',
+    padding: 'var(--space-4)',
+    borderLeft: '4px solid ' + projectColor,
+    transition: 'all var(--transition-base)',
   });
 
   const avatarStyle = {
-    width: '3rem',
-    height: '3rem',
-    borderRadius: tokens.radius.full,
-    backgroundColor: tokens.color.neutral[200],
+    width: '3.5rem',
+    height: '3.5rem',
+    borderRadius: 'var(--radius-full)',
+    backgroundColor: 'var(--color-neutral-200)',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    color: tokens.color.white,
-    fontWeight: tokens.fontWeight.bold,
-    margin: `0 auto ${tokens.space[2]} auto`,
-    fontSize: tokens.fontSize.sm,
+    color: 'var(--color-white)',
+    fontWeight: 'var(--font-weight-bold)',
+    margin: '0 auto var(--space-2) auto',
+    fontSize: 'var(--font-size-lg)',
   };
 
   const memberNameStyle = {
-    fontWeight: tokens.fontWeight.bold,
-    color: tokens.color.neutral[900],
+    fontWeight: 'var(--font-weight-bold)',
+    color: 'var(--color-neutral-900)',
     textAlign: 'center',
-    fontSize: tokens.fontSize.sm,
+    fontSize: 'var(--font-size-base)',
     margin: 0,
   };
 
   const memberRoleStyle = {
-    color: tokens.color.neutral[500],
-    fontSize: tokens.fontSize.xs,
+    color: 'var(--color-neutral-500)',
+    fontSize: 'var(--font-size-xs)',
     textAlign: 'center',
-    marginTop: tokens.space[1],
-    margin: tokens.space[1] + ' 0 0 0',
+    marginTop: 'var(--space-1)',
+    margin: 'var(--space-1) 0 0 0',
   };
 
   const memberProjectsStyle = {
-    marginTop: tokens.space[4],
-    paddingTop: tokens.space[4],
-    borderTop: `1px solid ${tokens.color.neutral[200]}`,
+    marginTop: 'var(--space-4)',
+    paddingTop: 'var(--space-4)',
+    borderTop: '1px solid var(--color-neutral-200)',
   };
 
   const memberProjectCountStyle = {
-    fontSize: tokens.fontSize.xs,
-    color: tokens.color.neutral[500],
+    fontSize: 'var(--font-size-xs)',
+    color: 'var(--color-neutral-500)',
     textAlign: 'center',
     margin: 0,
   };
 
   // Summary section
   const summaryContainerStyle = {
-    marginTop: tokens.space[8],
-    backgroundColor: tokens.color.white,
-    borderRadius: tokens.radius.md,
-    boxShadow: tokens.shadow.sm,
-    padding: tokens.space[6],
+    marginTop: 'var(--space-12)',
+    backgroundColor: 'var(--color-white)',
+    borderRadius: 'var(--radius-md)',
+    boxShadow: 'var(--shadow-sm)',
+    padding: 'var(--space-8)',
   };
 
   const summaryTitleStyle = {
-    fontSize: tokens.fontSize.lg,
-    fontWeight: tokens.fontWeight.bold,
-    color: tokens.color.neutral[900],
-    marginBottom: tokens.space[6],
+    fontSize: 'var(--font-size-xl)',
+    fontWeight: 'var(--font-weight-bold)',
+    color: 'var(--color-neutral-900)',
+    marginBottom: 'var(--space-6)',
     margin: 0,
   };
 
   const statsGridStyle = {
     display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-    gap: tokens.space[6],
-    marginBottom: tokens.space[6],
+    gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+    gap: 'var(--space-6)',
+    marginBottom: 'var(--space-8)',
   };
 
   const statLabelStyle = {
-    color: tokens.color.neutral[500],
-    fontSize: tokens.fontSize.sm,
+    color: 'var(--color-neutral-500)',
+    fontSize: 'var(--font-size-sm)',
     margin: 0,
+    textTransform: 'uppercase',
+    letterSpacing: '0.05em',
+    fontWeight: 'var(--font-weight-semibold)',
   };
 
   const statValueStyle = {
-    fontSize: tokens.fontSize['3xl'],
-    fontWeight: tokens.fontWeight.bold,
-    color: tokens.color.primary,
-    marginTop: tokens.space[1],
-    margin: tokens.space[1] + ' 0 0 0',
+    fontSize: 'var(--font-size-4xl)',
+    fontWeight: 'var(--font-weight-bold)',
+    color: 'var(--color-primary)',
+    marginTop: 'var(--space-2)',
+    margin: 'var(--space-2) 0 0 0',
+    lineHeight: 1,
   };
 
   const projectStatsGridStyle = {
     display: 'grid',
     gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-    gap: tokens.space[4],
+    gap: 'var(--space-4)',
   };
 
   const projectStatCardStyle = (projectColor) => ({
-    padding: tokens.space[4],
-    backgroundColor: tokens.color.neutral[50],
-    borderRadius: tokens.radius.sm,
-    borderLeft: `3px solid ${projectColor}`,
+    padding: 'var(--space-4)',
+    backgroundColor: 'var(--color-neutral-50)',
+    borderRadius: 'var(--radius-md)',
+    borderLeft: '3px solid ' + projectColor,
   });
 
   const projectStatNameStyle = {
-    fontWeight: tokens.fontWeight.semibold,
-    color: tokens.color.neutral[900],
+    fontWeight: 'var(--font-weight-semibold)',
+    color: 'var(--color-neutral-900)',
     margin: 0,
   };
 
   const projectStatCountStyle = {
-    fontSize: tokens.fontSize.sm,
-    color: tokens.color.neutral[500],
-    marginTop: tokens.space[1],
-    margin: tokens.space[1] + ' 0 0 0',
+    fontSize: 'var(--font-size-sm)',
+    color: 'var(--color-neutral-500)',
+    marginTop: 'var(--space-1)',
+    margin: 'var(--space-1) 0 0 0',
   };
 
   const noMembersStyle = {
-    color: tokens.color.neutral[500],
+    color: 'var(--color-neutral-500)',
     textAlign: 'center',
-    fontSize: tokens.fontSize.sm,
+    fontSize: 'var(--font-size-base)',
   };
 
   return (
@@ -323,16 +304,23 @@ export default function Team() {
       initial="hidden"
       animate="visible"
     >
-      <motion.h2 style={titleStyle} variants={{ visible: { opacity: 1, y: 0 }, hidden: { opacity: 0, y: -20 } }}>
+      <motion.h2
+        style={titleStyle}
+        variants={{
+          visible: { opacity: 1, y: 0 },
+          hidden: { opacity: 0, y: -20 }
+        }}
+      >
         Team Organization
       </motion.h2>
 
       {/* Level 1: ATOM Investments */}
-      <motion.div style={level1ContainerStyle} variants={bubbleVariants}>
+      <motion.div style={level1ContainerStyle}>
         <motion.div
           style={atomBubbleStyle}
-          whileHover="hover"
           variants={bubbleVariants}
+          custom={0}
+          whileHover="hover"
         >
           <p style={atomTitleStyle}>ATOM</p>
           <p style={atomSubtitleStyle}>Investments</p>
@@ -375,10 +363,7 @@ export default function Team() {
                       style={memberCardStyle(project.color)}
                       variants={memberCardVariants}
                       custom={memberIdx}
-                      whileHover={{
-                        boxShadow: tokens.shadow.lg,
-                        y: -2,
-                      }}
+                      whileHover="hover"
                     >
                       <div style={avatarStyle}>
                         {member.name.charAt(0).toUpperCase()}
@@ -413,37 +398,37 @@ export default function Team() {
           initial="hidden"
           animate="visible"
         >
-          <motion.div variants={memberCardVariants}>
+          <motion.div variants={statVariants} custom={0}>
             <p style={statLabelStyle}>Total Members</p>
             <motion.p
               style={statValueStyle}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.3, duration: 0.5 }}
+              initial={{ opacity: 0, scale: 0.5 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.4, duration: 0.5 }}
             >
               {totalMembers}
             </motion.p>
           </motion.div>
 
-          <motion.div variants={memberCardVariants}>
+          <motion.div variants={statVariants} custom={1}>
             <p style={statLabelStyle}>Total Projects</p>
             <motion.p
               style={statValueStyle}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.4, duration: 0.5 }}
+              initial={{ opacity: 0, scale: 0.5 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.5, duration: 0.5 }}
             >
               {totalProjects}
             </motion.p>
           </motion.div>
 
-          <motion.div variants={memberCardVariants}>
-            <p style={statLabelStyle}>Members per Project (Avg)</p>
+          <motion.div variants={statVariants} custom={2}>
+            <p style={statLabelStyle}>Avg Members/Project</p>
             <motion.p
               style={statValueStyle}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.5, duration: 0.5 }}
+              initial={{ opacity: 0, scale: 0.5 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.6, duration: 0.5 }}
             >
               {(totalMembers / totalProjects).toFixed(1)}
             </motion.p>
@@ -454,7 +439,12 @@ export default function Team() {
           {mockProjects.map((project, idx) => {
             const projectMemberCount = getProjectMembers(project.name).length;
             return (
-              <motion.div key={project.id} style={projectStatCardStyle(project.color)} variants={memberCardVariants} custom={idx}>
+              <motion.div
+                key={project.id}
+                style={projectStatCardStyle(project.color)}
+                variants={memberCardVariants}
+                custom={idx}
+              >
                 <p style={projectStatNameStyle}>{project.name}</p>
                 <p style={projectStatCountStyle}>
                   {projectMemberCount} member{projectMemberCount !== 1 ? 's' : ''}
