@@ -44,47 +44,52 @@ export default function LoginPage({ onLogin }) {
     setError('');
 
     try {
-      const { data, error: authError } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
+      // Check mock auth first (always works as fallback)
+      let mockUser = null;
 
-      if (authError) {
-        // Fall back to mock auth if Supabase fails
-        let mockUser = null;
+      // Try exact username match
+      mockUser = mockUsers[email.toLowerCase()];
 
-        // Try exact username match first
-        mockUser = mockUsers[email.toLowerCase()];
-
-        // Try by email address
-        if (!mockUser) {
-          mockUser = Object.values(mockUsers).find(u => u.email.toLowerCase() === email.toLowerCase());
-        }
-
-        // Try extracting username from email
-        if (!mockUser && email.includes('@')) {
-          const username = email.split('@')[0].toLowerCase();
-          mockUser = mockUsers[username];
-        }
-
-        if (mockUser && password === 'demo') {
-          onLogin(mockUser);
-          setIsLoading(false);
-          return;
-        }
-        throw authError;
+      // Try by email address
+      if (!mockUser) {
+        mockUser = Object.values(mockUsers).find(u => u.email.toLowerCase() === email.toLowerCase());
       }
 
-      if (data?.user) {
-        onLogin({
-          id: data.user.id,
-          name: data.user.user_metadata?.name || email,
-          email: data.user.email,
-          role: 'User',
+      // Try extracting username from email (mido from mido@...)
+      if (!mockUser && email.includes('@')) {
+        const username = email.split('@')[0].toLowerCase();
+        mockUser = mockUsers[username];
+      }
+
+      // If mock user found and password is 'demo', log in immediately
+      if (mockUser && password === 'demo') {
+        onLogin(mockUser);
+        setIsLoading(false);
+        return;
+      }
+
+      // Otherwise try Supabase
+      if (supabase) {
+        const { data, error: authError } = await supabase.auth.signInWithPassword({
+          email,
+          password,
         });
+
+        if (authError) throw authError;
+
+        if (data?.user) {
+          onLogin({
+            id: data.user.id,
+            name: data.user.user_metadata?.name || email,
+            email: data.user.email,
+            role: 'User',
+          });
+        }
+      } else {
+        setError('No valid credentials. Try: midom, adam, or kabrina (password: demo)');
       }
     } catch (err) {
-      setError(err.message || 'Login failed. Try: midom/adam/kabrina with password: demo');
+      setError(err.message || 'Login failed. Try: midom, adam, or kabrina (password: demo)');
     } finally {
       setIsLoading(false);
     }
