@@ -3,15 +3,18 @@ import './App.css';
 import LoginPage from './pages/LoginPage';
 import Dashboard from './pages/Dashboard';
 import ProfilePage from './pages/ProfilePage';
+import TopNav from './components/layout/TopNav';
+import RightSidebar from './components/layout/RightSidebar';
 import { supabase, signOut } from './supabaseConfig';
+import { mockTasks } from './mockData';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
   const [currentPage, setCurrentPage] = useState('dashboard');
   const [isLoading, setIsLoading] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  // Check for existing Supabase session on mount
   useEffect(() => {
     if (supabase) {
       supabase.auth.getSession().then(({ data: { session } }) => {
@@ -27,7 +30,6 @@ function App() {
         setIsLoading(false);
       });
 
-      // Listen for auth changes
       const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
         if (session?.user) {
           setCurrentUser({
@@ -61,6 +63,19 @@ function App() {
     setIsAuthenticated(false);
     setCurrentUser(null);
     setCurrentPage('dashboard');
+    setSidebarOpen(false);
+  };
+
+  const handleProfileClick = () => {
+    setCurrentPage('profile');
+    setSidebarOpen(false);
+  };
+
+  // Calculate task stats
+  const taskStats = {
+    total: mockTasks.length,
+    inProgress: mockTasks.filter(t => t.status === 'in-progress').length,
+    completed: mockTasks.filter(t => t.status === 'completed').length,
   };
 
   if (isLoading) {
@@ -71,128 +86,54 @@ function App() {
     return <LoginPage onLogin={handleLogin} />;
   }
 
-  const navStyle = {
-    backgroundColor: '#fff',
-    boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
-    padding: '0.75rem 1rem',
+  const appStyle = {
+    minHeight: '100vh',
+    backgroundColor: 'var(--color-neutral-50)',
   };
 
-  const navContainerStyle = {
-    maxWidth: '80rem',
+  const mainContentStyle = {
+    display: 'flex',
+    minHeight: 'calc(100vh - 64px)',
+  };
+
+  const contentAreaStyle = {
+    flex: 1,
+    padding: 'var(--space-8) var(--space-6)',
+    maxWidth: '1280px',
     margin: '0 auto',
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  };
-
-  const navItemsStyle = {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '2rem',
-  };
-
-  const navLinkStyle = (isActive) => ({
-    padding: '0.5rem 0.75rem',
-    fontSize: '0.875rem',
-    fontWeight: 500,
-    color: isActive ? '#2563eb' : '#4b5563',
-    borderBottom: isActive ? '2px solid #2563eb' : 'none',
-    background: 'none',
-    border: 'none',
-    cursor: 'pointer',
-    transition: 'color 0.2s',
-  });
-
-  const userButtonStyle = {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '0.5rem',
-    padding: '0.5rem 0.75rem',
-    borderRadius: '0.375rem',
-    background: 'none',
-    border: 'none',
-    cursor: 'pointer',
-  };
-
-  const avatarStyle = {
-    width: '2rem',
-    height: '2rem',
-    backgroundColor: '#3b82f6',
-    borderRadius: '9999px',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    color: '#fff',
-    fontSize: '0.875rem',
-    fontWeight: 'bold',
+    width: '100%',
   };
 
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: '#f3f4f6' }}>
-      <nav style={navStyle}>
-        <div style={navContainerStyle}>
-          <div style={navItemsStyle}>
-            <h1 style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#111' }}>ATOM Investments</h1>
-            <div style={{ display: 'flex', gap: '1.5rem' }}>
-              <button
-                onClick={() => setCurrentPage('dashboard')}
-                style={navLinkStyle(currentPage === 'dashboard')}
-              >
-                Overview
-              </button>
-              <button
-                onClick={() => setCurrentPage('projects')}
-                style={navLinkStyle(currentPage === 'projects')}
-              >
-                Projects
-              </button>
-              <button
-                onClick={() => setCurrentPage('roadmap')}
-                style={navLinkStyle(currentPage === 'roadmap')}
-              >
-                Roadmap
-              </button>
-              <button
-                onClick={() => setCurrentPage('team')}
-                style={navLinkStyle(currentPage === 'team')}
-              >
-                Team
-              </button>
-            </div>
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-            <button
-              onClick={() => setCurrentPage('profile')}
-              style={userButtonStyle}
-            >
-              <div style={avatarStyle}>
-                {currentUser.name.charAt(0)}
-              </div>
-              <span style={{ fontSize: '0.875rem', color: '#374151' }}>{currentUser.name}</span>
-            </button>
-            <button
-              onClick={handleLogout}
-              style={{
-                padding: '0.5rem 1rem',
-                fontSize: '0.875rem',
-                fontWeight: 500,
-                color: '#dc2626',
-                background: 'none',
-                border: 'none',
-                cursor: 'pointer',
-              }}
-            >
-              Logout
-            </button>
-          </div>
-        </div>
-      </nav>
+    <div style={appStyle}>
+      <TopNav
+        currentPage={currentPage}
+        onTabChange={(page) => {
+          setCurrentPage(page);
+          setSidebarOpen(false);
+        }}
+        user={currentUser}
+        onProfileClick={handleProfileClick}
+        onSidebarToggle={() => setSidebarOpen(!sidebarOpen)}
+      />
 
-      {currentPage === 'profile' ? (
-        <ProfilePage user={currentUser} />
-      ) : (
-        <Dashboard page={currentPage} />
-      )}
+      <RightSidebar
+        isOpen={sidebarOpen}
+        onClose={() => setSidebarOpen(false)}
+        user={currentUser}
+        onLogout={handleLogout}
+        taskStats={taskStats}
+      />
+
+      <div style={mainContentStyle}>
+        <div style={contentAreaStyle}>
+          {currentPage === 'profile' ? (
+            <ProfilePage user={currentUser} />
+          ) : (
+            <Dashboard page={currentPage} />
+          )}
+        </div>
+      </div>
     </div>
   );
 }
