@@ -1,77 +1,241 @@
-export default function ProfilePage({ user }) {
-  return (
-    <div style={{ maxWidth: '56rem', margin: '0 auto', padding: '2rem 1rem' }}>
-      <div style={{
-        backgroundColor: '#fff',
-        borderRadius: '0.5rem',
-        boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
-        padding: '2rem',
-      }}>
-        <div style={{ display: 'flex', alignItems: 'flex-start', gap: '1.5rem' }}>
-          <div style={{
-            width: '6rem',
-            height: '6rem',
-            backgroundColor: '#3b82f6',
-            borderRadius: '9999px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            color: '#fff',
-            fontSize: '3rem',
-            fontWeight: 'bold',
-            flexShrink: 0,
-          }}>
-            {user.name.charAt(0)}
-          </div>
-          <div style={{ flex: 1 }}>
-            <h1 style={{ fontSize: '1.875rem', fontWeight: 'bold', color: '#111' }}>{user.name}</h1>
-            <p style={{ fontSize: '1.125rem', color: '#4b5563', marginTop: '0.25rem' }}>{user.role}</p>
-            <div style={{ marginTop: '1rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-              <div>
-                <span style={{ color: '#4b5563' }}>Email:</span>
-                <p style={{ color: '#111', fontWeight: 500 }}>{user.email}</p>
-              </div>
-              <div>
-                <span style={{ color: '#4b5563' }}>Access Level:</span>
-                <p style={{ color: '#111', fontWeight: 500 }}>Full Access (Admin)</p>
-              </div>
-            </div>
-          </div>
-        </div>
+import { useState } from 'react';
+import { motion } from 'framer-motion';
 
-        <div style={{ marginTop: '2rem', paddingTop: '2rem', borderTop: '1px solid #e5e7eb' }}>
-          <h2 style={{ fontSize: '1.25rem', fontWeight: 'bold', color: '#111', marginBottom: '1rem' }}>Account Settings</h2>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-            <div style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              padding: '1rem',
-              border: '1px solid #e5e7eb',
-              borderRadius: '0.375rem',
-            }}>
-              <div>
-                <p style={{ fontWeight: 500, color: '#111' }}>Notifications</p>
-                <p style={{ fontSize: '0.875rem', color: '#4b5563' }}>Receive task updates and project alerts</p>
-              </div>
-              <input type="checkbox" defaultChecked style={{ width: '1.25rem', height: '1.25rem' }} />
+export default function ProfilePage({ user }) {
+  const [isEditing, setIsEditing] = useState(false);
+  const [formData, setFormData] = useState({
+    name: user.name,
+    email: user.email,
+    role: 'Partner'
+  });
+
+  const handleSave = () => {
+    setIsEditing(false);
+    console.log('Profile saved:', formData);
+  };
+
+  const handleChange = (field, value) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const premiumButtonStyle = (variant = 'primary') => ({
+    padding: 'var(--space-3) var(--space-6)',
+    borderRadius: '0.5rem',
+    border: variant === 'primary' ? '1px solid var(--color-primary)' : '1px solid #d1d5db',
+    backgroundColor: variant === 'primary' ? 'var(--color-primary)' : 'transparent',
+    color: variant === 'primary' ? 'white' : 'var(--color-primary)',
+    fontFamily: 'var(--font-serif)',
+    fontSize: 'var(--font-size-sm)',
+    fontWeight: 'var(--font-weight-semibold)',
+    cursor: 'pointer',
+    transition: 'all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)',
+    boxShadow: variant === 'primary' ? '0 4px 12px rgba(31, 41, 55, 0.15)' : 'none'
+  });
+
+  const inputStyle = {
+    width: '100%',
+    padding: 'var(--space-3) var(--space-4)',
+    border: '1px solid #d1d5db',
+    borderRadius: 'var(--radius-sm)',
+    fontFamily: 'var(--font-serif)',
+    fontSize: 'var(--font-size-sm)',
+    transition: 'border-color 0.2s',
+    backgroundColor: 'white'
+  };
+
+  return (
+    <div style={{ paddingTop: 'var(--space-8)', paddingBottom: 'var(--space-8)' }}>
+      <div style={{ maxWidth: '56rem', margin: '0 auto' }}>
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+          style={{
+            backgroundColor: 'white',
+            border: '1px solid var(--color-border)',
+            borderRadius: 'var(--radius-md)',
+            padding: 'var(--space-8)',
+            boxShadow: 'var(--shadow-sm)'
+          }}
+        >
+          {/* Header with Avatar & Info */}
+          <div style={{ display: 'flex', alignItems: 'flex-start', gap: 'var(--space-6)', marginBottom: 'var(--space-8)' }}>
+            <motion.div
+              style={{
+                width: '5.5rem',
+                height: '5.5rem',
+                background: 'linear-gradient(135deg, var(--color-primary) 0%, #374151 100%)',
+                borderRadius: '9999px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: 'white',
+                fontSize: '2rem',
+                fontWeight: 'var(--font-weight-bold)',
+                flexShrink: 0,
+                boxShadow: '0 8px 16px rgba(31, 41, 55, 0.2)'
+              }}
+              whileHover={{ scale: 1.05 }}
+            >
+              {formData.name.charAt(0)}
+            </motion.div>
+
+            <div style={{ flex: 1 }}>
+              {isEditing ? (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
+                  <div>
+                    <label style={{ display: 'block', fontSize: 'var(--font-size-xs)', fontWeight: 'var(--font-weight-semibold)', marginBottom: 'var(--space-2)', color: 'var(--color-secondary-text)' }}>
+                      Full Name
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.name}
+                      onChange={(e) => handleChange('name', e.target.value)}
+                      style={inputStyle}
+                    />
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', fontSize: 'var(--font-size-xs)', fontWeight: 'var(--font-weight-semibold)', marginBottom: 'var(--space-2)', color: 'var(--color-secondary-text)' }}>
+                      Role
+                    </label>
+                    <select
+                      value={formData.role}
+                      onChange={(e) => handleChange('role', e.target.value)}
+                      style={{...inputStyle, fontFamily: 'var(--font-serif)'}}
+                    >
+                      <option>Partner</option>
+                      <option>Executive</option>
+                      <option>Manager</option>
+                      <option>Analyst</option>
+                    </select>
+                  </div>
+                </div>
+              ) : (
+                <>
+                  <h1 style={{
+                    fontSize: 'var(--font-size-2xl)',
+                    fontWeight: 'var(--font-weight-bold)',
+                    color: 'var(--color-primary)',
+                    fontFamily: 'var(--font-sans)',
+                    marginBottom: 'var(--space-1)'
+                  }}>
+                    {formData.name}
+                  </h1>
+                  <p style={{
+                    fontSize: 'var(--font-size-lg)',
+                    color: 'var(--color-secondary-text)',
+                    fontFamily: 'var(--font-serif)',
+                    marginBottom: 'var(--space-4)'
+                  }}>
+                    {formData.role}
+                  </p>
+                </>
+              )}
             </div>
-            <div style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              padding: '1rem',
-              border: '1px solid #e5e7eb',
-              borderRadius: '0.375rem',
-            }}>
-              <div>
-                <p style={{ fontWeight: 500, color: '#111' }}>Email Digest</p>
-                <p style={{ fontSize: '0.875rem', color: '#4b5563' }}>Weekly summary of all projects</p>
-              </div>
-              <input type="checkbox" defaultChecked style={{ width: '1.25rem', height: '1.25rem' }} />
-            </div>
+
+            <button
+              onClick={() => setIsEditing(!isEditing)}
+              style={{...premiumButtonStyle('secondary'), padding: 'var(--space-2) var(--space-4)'}}
+              onMouseEnter={(e) => {
+                e.target.style.backgroundColor = '#f3f4f6';
+                e.target.style.transform = 'translateY(-2px)';
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.backgroundColor = 'transparent';
+                e.target.style.transform = 'translateY(0)';
+              }}
+            >
+              {isEditing ? 'Cancel' : 'Edit'}
+            </button>
           </div>
-        </div>
+
+          {/* Contact Info */}
+          <div style={{ paddingBottom: 'var(--space-6)', borderBottom: '1px solid var(--color-border)', marginBottom: 'var(--space-6)' }}>
+            <h3 style={{
+              fontSize: 'var(--font-size-sm)',
+              fontWeight: 'var(--font-weight-semibold)',
+              color: 'var(--color-secondary-text)',
+              fontFamily: 'var(--font-sans)',
+              textTransform: 'uppercase',
+              letterSpacing: '0.5px',
+              marginBottom: 'var(--space-4)'
+            }}>
+              Contact Information
+            </h3>
+            {isEditing ? (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
+                <div>
+                  <label style={{ display: 'block', fontSize: 'var(--font-size-xs)', fontWeight: 'var(--font-weight-semibold)', marginBottom: 'var(--space-2)', color: 'var(--color-secondary-text)' }}>
+                    Email Address
+                  </label>
+                  <input
+                    type="email"
+                    value={formData.email}
+                    onChange={(e) => handleChange('email', e.target.value)}
+                    style={inputStyle}
+                  />
+                </div>
+              </div>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-3)' }}>
+                <div>
+                  <p style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-secondary-text)', fontFamily: 'var(--font-sans)', marginBottom: 'var(--space-1)' }}>
+                    Email
+                  </p>
+                  <p style={{ fontSize: 'var(--font-size-sm)', color: 'var(--color-primary-text)', fontFamily: 'var(--font-serif)', fontWeight: 'var(--font-weight-medium)' }}>
+                    {formData.email}
+                  </p>
+                </div>
+                <div>
+                  <p style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-secondary-text)', fontFamily: 'var(--font-sans)', marginBottom: 'var(--space-1)' }}>
+                    Access Level
+                  </p>
+                  <p style={{ fontSize: 'var(--font-size-sm)', color: 'var(--color-primary-text)', fontFamily: 'var(--font-serif)', fontWeight: 'var(--font-weight-medium)' }}>
+                    Full Access (Admin)
+                  </p>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Action Buttons */}
+          {isEditing && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              style={{ display: 'flex', gap: 'var(--space-3)' }}
+            >
+              <button
+                onClick={handleSave}
+                style={premiumButtonStyle('primary')}
+                onMouseEnter={(e) => {
+                  e.target.style.boxShadow = '0 8px 20px rgba(31, 41, 55, 0.2)';
+                  e.target.style.transform = 'translateY(-2px)';
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.boxShadow = '0 4px 12px rgba(31, 41, 55, 0.15)';
+                  e.target.style.transform = 'translateY(0)';
+                }}
+              >
+                Save Changes
+              </button>
+              <button
+                onClick={() => setIsEditing(false)}
+                style={{...premiumButtonStyle('secondary')}}
+                onMouseEnter={(e) => {
+                  e.target.style.backgroundColor = '#f3f4f6';
+                  e.target.style.transform = 'translateY(-2px)';
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.backgroundColor = 'transparent';
+                  e.target.style.transform = 'translateY(0)';
+                }}
+              >
+                Cancel
+              </button>
+            </motion.div>
+          )}
+        </motion.div>
       </div>
     </div>
   );
