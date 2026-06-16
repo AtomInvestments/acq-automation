@@ -54,12 +54,14 @@ export default function ProfilePage({ user }) {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4 }}
           style={{
-            backgroundColor: 'rgba(255, 255, 255, 0.08)',
-            backdropFilter: 'blur(10px)',
-            border: '1px solid rgba(255, 255, 255, 0.15)',
-            borderRadius: 'var(--radius-lg)',
+            background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(255, 255, 255, 0.08) 100%)',
+            backdropFilter: 'blur(20px)',
+            border: '2px solid rgba(139, 92, 246, 0.3)',
+            borderRadius: '24px',
             padding: 'var(--space-8)',
-            boxShadow: '0 8px 32px rgba(31, 41, 55, 0.1)'
+            boxShadow: '0 16px 48px rgba(31, 41, 55, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 0 40px rgba(139, 92, 246, 0.15)',
+            position: 'relative',
+            overflow: 'hidden'
           }}
         >
           {/* Header with Avatar & Info */}

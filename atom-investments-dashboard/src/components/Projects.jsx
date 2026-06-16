@@ -280,22 +280,22 @@ export default function Projects() {
               variants={cardVariants}
               onClick={() => setSelectedProject(project.id)}
               style={{
-                backgroundColor: 'rgba(255, 255, 255, 0.08)',
-                backdropFilter: 'blur(10px)',
-                border: '1px solid rgba(255, 255, 255, 0.15)',
-                borderRadius: 'var(--radius-lg)',
+                backgroundColor: `linear-gradient(135deg, rgba(${parseInt(project.color.slice(1,3), 16)}, ${parseInt(project.color.slice(3,5), 16)}, ${parseInt(project.color.slice(5,7), 16)}, 0.08) 0%, rgba(255, 255, 255, 0.04) 100%)`,
+                backdropFilter: 'blur(12px)',
+                border: `2px solid ${project.color}40`,
+                borderRadius: '20px',
                 padding: 'var(--space-6)',
                 cursor: 'pointer',
                 overflow: 'hidden',
                 position: 'relative',
-                boxShadow: '0 8px 24px rgba(31, 41, 55, 0.08)'
+                boxShadow: `0 12px 32px rgba(31, 41, 55, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 0 20px ${project.color}20`
               }}
               whileHover={{
-                y: -4,
-                boxShadow: '0 16px 40px rgba(31, 41, 55, 0.15)',
-                scale: 1.02
+                y: -6,
+                boxShadow: `0 20px 48px rgba(31, 41, 55, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.15), 0 0 30px ${project.color}40`,
+                scale: 1.04
               }}
-              transition={{ duration: 0.2 }}
+              transition={{ duration: 0.3 }}
             >
               <div style={{
                 position: 'absolute',

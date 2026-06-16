@@ -86,42 +86,66 @@ export default function Overview() {
         }}
       >
         {[
-          { label: 'Total Tasks', count: totalTasks, color: '#6b7280' },
-          { label: 'In Progress', count: inProgress, color: '#0c4a6e' },
-          { label: 'Completed', count: completed, color: '#15803d' }
+          { label: 'Total Tasks', count: totalTasks, color: '#8B5CF6', bgGradient: 'linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(139, 92, 246, 0.05) 100%)', glowColor: 'rgba(139, 92, 246, 0.3)' },
+          { label: 'In Progress', count: inProgress, color: '#06B6D4', bgGradient: 'linear-gradient(135deg, rgba(6, 182, 212, 0.15) 0%, rgba(6, 182, 212, 0.05) 100%)', glowColor: 'rgba(6, 182, 212, 0.3)' },
+          { label: 'Completed', count: completed, color: '#10B981', bgGradient: 'linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(16, 185, 129, 0.05) 100%)', glowColor: 'rgba(16, 185, 129, 0.3)' }
         ].map((stat, idx) => (
           <motion.div
             key={idx}
             variants={itemVariants}
             style={{
-              backgroundColor: 'rgba(255, 255, 255, 0.08)',
-              backdropFilter: 'blur(10px)',
-              border: '1px solid rgba(255, 255, 255, 0.15)',
-              borderRadius: 'var(--radius-lg)',
+              background: stat.bgGradient,
+              backdropFilter: 'blur(12px)',
+              border: `2px solid ${stat.color}30`,
+              borderRadius: '20px',
               padding: 'var(--space-6)',
-              boxShadow: '0 8px 24px rgba(31, 41, 55, 0.08)',
+              boxShadow: `0 12px 32px ${stat.glowColor}, inset 0 1px 0 rgba(255, 255, 255, 0.1)`,
               transition: 'all var(--duration-normal) var(--easing-fluid)',
-              cursor: 'pointer'
+              cursor: 'pointer',
+              position: 'relative',
+              overflow: 'hidden'
             }}
-            whileHover={{ boxShadow: '0 16px 40px rgba(31, 41, 55, 0.15)', y: -4 }}
+            whileHover={{
+              boxShadow: `0 20px 48px ${stat.glowColor}, inset 0 1px 0 rgba(255, 255, 255, 0.15)`,
+              y: -6,
+              scale: 1.03
+            }}
           >
+            <div style={{
+              position: 'absolute',
+              top: '-50%',
+              right: '-50%',
+              width: '200px',
+              height: '200px',
+              background: `radial-gradient(circle, ${stat.glowColor}, transparent)`,
+              borderRadius: '50%',
+              pointerEvents: 'none',
+              opacity: 0.3
+            }} />
+
             <p style={{
               fontSize: 'var(--font-size-sm)',
-              color: 'var(--color-secondary-text)',
+              color: 'rgba(255, 255, 255, 0.8)',
               fontFamily: 'var(--font-serif)',
-              marginBottom: 'var(--space-2)'
+              marginBottom: 'var(--space-2)',
+              fontWeight: '500',
+              position: 'relative',
+              zIndex: 1
             }}>
               {stat.label}
             </p>
             <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.3 + idx * 0.1, duration: 0.6 }}
               style={{
-                fontSize: '2.5rem',
+                fontSize: '3rem',
                 fontWeight: 'var(--font-weight-bold)',
                 color: stat.color,
-                fontFamily: 'var(--font-sans)'
+                fontFamily: 'var(--font-sans)',
+                textShadow: `0 4px 12px ${stat.glowColor}`,
+                position: 'relative',
+                zIndex: 1
               }}
             >
               {stat.count}

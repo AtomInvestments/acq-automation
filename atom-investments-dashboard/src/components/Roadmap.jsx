@@ -233,21 +233,27 @@ export default function Roadmap() {
             return (
               <motion.div
                 key={idx}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: idx * 0.02 }}
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: idx * 0.02, duration: 0.3 }}
                 style={{
-                  minHeight: '120px',
-                  backgroundColor: day ? (isToday ? 'rgba(245, 158, 11, 0.15)' : 'rgba(255, 255, 255, 0.08)') : 'transparent',
-                  backdropFilter: 'blur(10px)',
-                  border: isToday ? '2px solid var(--color-gold-primary)' : '1px solid rgba(255, 255, 255, 0.15)',
-                  borderRadius: 'var(--radius-md)',
-                  padding: 'var(--space-2)',
+                  minHeight: '140px',
+                  backgroundColor: day ? (isToday ? 'linear-gradient(135deg, rgba(245, 158, 11, 0.25) 0%, rgba(139, 92, 246, 0.1) 100%)' : 'linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.04) 100%)') : 'transparent',
+                  backdropFilter: 'blur(14px)',
+                  border: isToday ? '3px solid var(--color-gold-primary)' : '2px solid rgba(255, 255, 255, 0.2)',
+                  borderRadius: '16px',
+                  padding: 'var(--space-3)',
                   cursor: day ? 'pointer' : 'default',
-                  transition: 'all var(--duration-normal) var(--easing-fluid)',
-                  boxShadow: isToday ? '0 0 12px rgba(245, 158, 11, 0.3)' : 'none'
+                  transition: 'all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)',
+                  boxShadow: isToday ? '0 0 24px rgba(245, 158, 11, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2)' : '0 8px 20px rgba(31, 41, 55, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
+                  position: 'relative',
+                  overflow: 'hidden'
                 }}
-                whileHover={day ? { boxShadow: '0 8px 20px rgba(31, 41, 55, 0.1)', y: -2 } : {}}
+                whileHover={day ? {
+                  boxShadow: isToday ? '0 0 32px rgba(245, 158, 11, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.3)' : '0 12px 32px rgba(31, 41, 55, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.15)',
+                  y: -4,
+                  scale: 1.05
+                } : {}}
               >
                 {day && (
                   <>
