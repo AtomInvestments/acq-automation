@@ -1,4 +1,3 @@
-// src/pages/LoginPage.jsx
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { supabase, signInWithGitHub } from '../supabaseConfig';
@@ -43,31 +42,25 @@ export default function LoginPage({ onLogin }) {
     setError('');
 
     try {
-      // Check mock auth first (always works as fallback)
       let mockUser = null;
 
-      // Try exact username match
       mockUser = mockUsers[email.toLowerCase()];
 
-      // Try by email address
       if (!mockUser) {
         mockUser = Object.values(mockUsers).find(u => u.email.toLowerCase() === email.toLowerCase());
       }
 
-      // Try extracting username from email (mido from mido@...)
       if (!mockUser && email.includes('@')) {
         const username = email.split('@')[0].toLowerCase();
         mockUser = mockUsers[username];
       }
 
-      // If mock user found and password is 'demo', log in immediately
       if (mockUser && password === 'demo') {
         console.log('Mock login successful:', mockUser);
         onLogin(mockUser);
         return;
       }
 
-      // Otherwise try Supabase
       if (supabase) {
         const { data, error: authError } = await supabase.auth.signInWithPassword({
           email,
@@ -95,222 +88,297 @@ export default function LoginPage({ onLogin }) {
     }
   };
 
-  const handleMockLogin = (e) => {
-    e.preventDefault();
-    const user = mockUsers[email.toLowerCase()];
-
-    if (user && password === 'demo') {
-      onLogin(user);
-    } else {
-      setError('Invalid credentials. Try: midom, adam, or kabrina (password: demo)');
-    }
-  };
-
-  const containerStyle = {
-    minHeight: '100vh',
-    background: 'linear-gradient(135deg, #1f2937 0%, #374151 100%)',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 'var(--space-4)',
-  };
-
-  const cardStyle = {
-    width: '100%',
-    maxWidth: '420px',
-    backgroundColor: 'var(--color-white)',
-    borderRadius: 'var(--radius-md)',
-    padding: 'var(--space-8)',
-    boxShadow: 'var(--shadow-xl)',
-  };
-
-  const logoStyle = {
-    textAlign: 'center',
-    marginBottom: 'var(--space-8)',
-  };
-
-  const logoTextStyle = {
-    fontSize: 'var(--font-size-2xl)',
-    fontWeight: 'var(--font-weight-bold)',
-    fontFamily: 'var(--font-sans)',
-    color: 'var(--color-primary)',
-    margin: '0 0 var(--space-2) 0',
-  };
-
-  const subtitleStyle = {
-    fontSize: 'var(--font-size-sm)',
-    color: 'var(--color-neutral-500)',
-    margin: 0,
-    fontFamily: 'var(--font-serif)',
-  };
-
-  const dividerStyle = {
-    height: '1px',
-    backgroundColor: 'var(--color-neutral-200)',
-    margin: 'var(--space-6) 0',
-  };
-
-  const formStyle = {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: 'var(--space-4)',
-  };
-
-  const inputWrapperStyle = {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: 'var(--space-2)',
-  };
-
-  const labelStyle = {
-    fontSize: 'var(--font-size-xs)',
-    fontWeight: 'var(--font-weight-semibold)',
-    fontFamily: 'var(--font-sans)',
-    color: 'var(--color-neutral-900)',
-  };
-
-  const inputStyle = {
-    border: '1px solid var(--color-neutral-200)',
-    borderRadius: 'var(--radius-sm)',
-    padding: 'var(--space-2) var(--space-4)',
-    fontSize: 'var(--font-size-sm)',
-    fontFamily: 'var(--font-serif)',
-    transition: 'border-color var(--transition-fast)',
-  };
-
-  const errorStyle = {
-    padding: 'var(--space-3)',
-    backgroundColor: 'var(--color-status-pending-bg)',
-    border: '1px solid var(--color-status-pending-text)',
-    borderRadius: 'var(--radius-sm)',
-    fontSize: 'var(--font-size-xs)',
-    color: 'var(--color-status-pending-text)',
-    fontFamily: 'var(--font-sans)',
-  };
-
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
       transition: {
         staggerChildren: 0.1,
-        delayChildren: 0.2,
+        delayChildren: 0.3,
       },
     },
   };
 
   const itemVariants = {
-    hidden: { opacity: 0, y: 10 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.4 } },
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: 'easeOut' } },
   };
 
   return (
-    <div style={containerStyle}>
+    <div style={{
+      minHeight: '100vh',
+      background: `linear-gradient(135deg, var(--color-gold-primary) 0%, var(--color-purple-primary) 100%)`,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: 'var(--space-4)',
+      position: 'relative',
+      overflow: 'hidden'
+    }}>
+      <div style={{
+        position: 'absolute',
+        width: '400px',
+        height: '400px',
+        background: `radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%)`,
+        borderRadius: '50%',
+        top: '-100px',
+        right: '-100px',
+        pointerEvents: 'none'
+      }} />
+
       <motion.div
-        style={cardStyle}
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.4 }}
+        style={{
+          width: '100%',
+          maxWidth: '480px',
+          backgroundColor: 'rgba(255, 255, 255, 0.1)',
+          backdropFilter: 'blur(20px)',
+          borderRadius: 'var(--radius-lg)',
+          padding: 'var(--space-8)',
+          boxShadow: '0 20px 60px rgba(31, 41, 55, 0.2)',
+          border: '1px solid rgba(255, 255, 255, 0.2)',
+          position: 'relative',
+          zIndex: 10
+        }}
+        initial={{ opacity: 0, scale: 0.9, y: 20 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        transition={{ duration: 0.6, ease: 'easeOut' }}
       >
-        <motion.div style={logoStyle} variants={containerVariants} initial="hidden" animate="visible">
-          <motion.h1 style={logoTextStyle} variants={itemVariants}>
+        <motion.div
+          style={{ textAlign: 'center', marginBottom: 'var(--space-8)' }}
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+        >
+          <motion.div variants={itemVariants} style={{ marginBottom: 'var(--space-4)' }}>
+            <div style={{
+              width: '64px',
+              height: '64px',
+              margin: '0 auto var(--space-4)',
+              background: `linear-gradient(135deg, white, rgba(255,255,255,0.8))`,
+              borderRadius: '12px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: '32px',
+              fontWeight: 'var(--font-weight-bold)',
+              color: 'var(--color-gold-primary)',
+              boxShadow: '0 12px 24px rgba(245, 158, 11, 0.2)'
+            }}>
+              ⚛
+            </div>
+          </motion.div>
+
+          <motion.h1 variants={itemVariants} style={{
+            fontSize: 'var(--font-size-3xl)',
+            fontWeight: 'var(--font-weight-bold)',
+            fontFamily: 'var(--font-sans)',
+            color: 'white',
+            margin: '0 0 var(--space-2) 0',
+            letterSpacing: 'var(--letter-spacing-tight)'
+          }}>
             ATOM
           </motion.h1>
-          <motion.p style={subtitleStyle} variants={itemVariants}>
+
+          <motion.p variants={itemVariants} style={{
+            fontSize: 'var(--font-size-sm)',
+            color: 'rgba(255, 255, 255, 0.9)',
+            margin: 0,
+            fontFamily: 'var(--font-serif)',
+            fontWeight: '500'
+          }}>
             Investments Dashboard
           </motion.p>
         </motion.div>
 
         {supabase && (
-          <motion.div variants={itemVariants} initial="hidden" animate="visible">
+          <motion.div variants={itemVariants} initial="hidden" animate="visible" style={{ marginBottom: 'var(--space-6)' }}>
             <Button
               onClick={handleGitHubLogin}
               disabled={isLoading}
+              variant="secondary"
               style={{ width: '100%' }}
             >
               {isLoading ? 'Signing in...' : 'Sign in with GitHub'}
             </Button>
-            <div style={dividerStyle} />
+
+            <div style={{
+              height: '1px',
+              background: 'rgba(255, 255, 255, 0.2)',
+              margin: 'var(--space-6) 0',
+              position: 'relative'
+            }}>
+              <span style={{
+                position: 'absolute',
+                top: '-10px',
+                left: '50%',
+                transform: 'translateX(-50%)',
+                background: `linear-gradient(135deg, var(--color-gold-primary) 0%, var(--color-purple-primary) 100%)`,
+                color: 'white',
+                fontSize: 'var(--font-size-xs)',
+                padding: '0 var(--space-2)',
+                fontFamily: 'var(--font-sans)',
+                fontWeight: 'var(--font-weight-semibold)'
+              }}>
+                OR
+              </span>
+            </div>
           </motion.div>
         )}
 
-        <div style={formStyle}>
-          <motion.div style={inputWrapperStyle} variants={itemVariants} initial="hidden" animate="visible">
-            <label style={labelStyle}>Email</label>
+        <motion.div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 'var(--space-4)',
+          }}
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+        >
+          <motion.div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }} variants={itemVariants}>
+            <label style={{
+              fontSize: 'var(--font-size-xs)',
+              fontWeight: 'var(--font-weight-semibold)',
+              fontFamily: 'var(--font-sans)',
+              color: 'rgba(255, 255, 255, 0.9)',
+              textTransform: 'uppercase',
+              letterSpacing: 'var(--letter-spacing-wide)'
+            }}>
+              Email or Username
+            </label>
             <input
-              type="email"
+              type="text"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               onKeyPress={(e) => e.key === 'Enter' && handleLogin()}
-              placeholder="mido@atominvestments.com"
+              placeholder="midom"
               disabled={isLoading}
-              style={{ ...inputStyle, opacity: isLoading ? 0.7 : 1 }}
+              style={{
+                backgroundColor: 'rgba(255, 255, 255, 0.15)',
+                border: '1px solid rgba(255, 255, 255, 0.3)',
+                borderRadius: 'var(--radius-md)',
+                padding: 'var(--space-3) var(--space-4)',
+                fontSize: 'var(--font-size-sm)',
+                fontFamily: 'var(--font-serif)',
+                color: 'white',
+                backdropFilter: 'blur(10px)',
+                transition: 'all var(--duration-normal) var(--easing-fluid)',
+                opacity: isLoading ? 0.6 : 1
+              }}
+              onFocus={(e) => {
+                e.target.style.backgroundColor = 'rgba(255, 255, 255, 0.2)';
+                e.target.style.borderColor = 'rgba(255, 255, 255, 0.5)';
+                e.target.style.boxShadow = '0 0 12px rgba(245, 158, 11, 0.2)';
+              }}
+              onBlur={(e) => {
+                e.target.style.backgroundColor = 'rgba(255, 255, 255, 0.15)';
+                e.target.style.borderColor = 'rgba(255, 255, 255, 0.3)';
+                e.target.style.boxShadow = 'none';
+              }}
             />
           </motion.div>
 
-          <motion.div style={inputWrapperStyle} variants={itemVariants} initial="hidden" animate="visible">
-            <label style={labelStyle}>Password</label>
+          <motion.div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }} variants={itemVariants}>
+            <label style={{
+              fontSize: 'var(--font-size-xs)',
+              fontWeight: 'var(--font-weight-semibold)',
+              fontFamily: 'var(--font-sans)',
+              color: 'rgba(255, 255, 255, 0.9)',
+              textTransform: 'uppercase',
+              letterSpacing: 'var(--letter-spacing-wide)'
+            }}>
+              Password
+            </label>
             <input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               onKeyPress={(e) => e.key === 'Enter' && handleLogin()}
-              placeholder="demo"
+              placeholder="••••••••"
               disabled={isLoading}
-              style={{ ...inputStyle, opacity: isLoading ? 0.7 : 1 }}
+              style={{
+                backgroundColor: 'rgba(255, 255, 255, 0.15)',
+                border: '1px solid rgba(255, 255, 255, 0.3)',
+                borderRadius: 'var(--radius-md)',
+                padding: 'var(--space-3) var(--space-4)',
+                fontSize: 'var(--font-size-sm)',
+                fontFamily: 'var(--font-serif)',
+                color: 'white',
+                backdropFilter: 'blur(10px)',
+                transition: 'all var(--duration-normal) var(--easing-fluid)',
+                opacity: isLoading ? 0.6 : 1
+              }}
+              onFocus={(e) => {
+                e.target.style.backgroundColor = 'rgba(255, 255, 255, 0.2)';
+                e.target.style.borderColor = 'rgba(255, 255, 255, 0.5)';
+                e.target.style.boxShadow = '0 0 12px rgba(245, 158, 11, 0.2)';
+              }}
+              onBlur={(e) => {
+                e.target.style.backgroundColor = 'rgba(255, 255, 255, 0.15)';
+                e.target.style.borderColor = 'rgba(255, 255, 255, 0.3)';
+                e.target.style.boxShadow = 'none';
+              }}
             />
           </motion.div>
 
           {error && (
-            <motion.div style={errorStyle} variants={itemVariants} initial="hidden" animate="visible">
-              {error}
+            <motion.div variants={itemVariants} style={{
+              padding: 'var(--space-3) var(--space-4)',
+              backgroundColor: 'rgba(220, 38, 38, 0.2)',
+              border: '1px solid rgba(220, 38, 38, 0.5)',
+              borderRadius: 'var(--radius-md)',
+              fontSize: 'var(--font-size-xs)',
+              color: '#fecaca',
+              fontFamily: 'var(--font-sans)',
+              backdropFilter: 'blur(10px)'
+            }}>
+              ⚠️ {error}
             </motion.div>
           )}
 
-          <motion.div variants={itemVariants} initial="hidden" animate="visible">
-            <button
-              type="button"
+          <motion.div variants={itemVariants}>
+            <Button
               onClick={handleLogin}
               disabled={isLoading}
-              style={{
-                width: '100%',
-                padding: 'var(--space-3) var(--space-6)',
-                backgroundColor: 'var(--color-primary)',
-                color: 'white',
-                border: 'none',
-                borderRadius: 'var(--radius-sm)',
-                fontSize: 'var(--font-size-sm)',
-                fontWeight: 'var(--font-weight-semibold)',
-                cursor: isLoading ? 'not-allowed' : 'pointer',
-                opacity: isLoading ? 0.6 : 1,
-                transition: 'all 0.2s'
-              }}
-              onMouseEnter={(e) => !isLoading && (e.target.style.opacity = '0.9')}
-              onMouseLeave={(e) => !isLoading && (e.target.style.opacity = '1')}
+              variant="primary"
+              size="large"
+              style={{ width: '100%' }}
             >
               {isLoading ? 'Signing in...' : 'Sign In'}
-            </button>
+            </Button>
           </motion.div>
-        </div>
+        </motion.div>
 
         {!supabase && (
           <motion.div
             style={{
               marginTop: 'var(--space-6)',
               paddingTop: 'var(--space-6)',
-              borderTop: '1px solid var(--color-neutral-200)',
+              borderTop: '1px solid rgba(255, 255, 255, 0.2)',
               textAlign: 'center',
             }}
             variants={itemVariants}
             initial="hidden"
             animate="visible"
           >
-            <p style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-neutral-500)', margin: 'var(--space-2) 0' }}>
-              ⚠️ Mock Demo Mode (Supabase not configured)
+            <p style={{
+              fontSize: 'var(--font-size-xs)',
+              color: 'rgba(255, 255, 255, 0.8)',
+              margin: 'var(--space-2) 0',
+              fontFamily: 'var(--font-sans)',
+              fontWeight: 'var(--font-weight-semibold)'
+            }}>
+              Demo Mode
             </p>
-            <p style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-neutral-500)', margin: 0 }}>
-              Username: midom, adam, or kabrina<br />
-              Password: demo
+            <p style={{
+              fontSize: 'var(--font-size-xs)',
+              color: 'rgba(255, 255, 255, 0.7)',
+              margin: 0,
+              fontFamily: 'var(--font-serif)',
+              lineHeight: '1.6'
+            }}>
+              Try: <strong>midom</strong>, <strong>adam</strong>, or <strong>kabrina</strong><br />
+              Password: <strong>demo</strong>
             </p>
           </motion.div>
         )}
