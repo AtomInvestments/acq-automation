@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
+import GlassCard from '../components/common/GlassCard';
 
 export default function ProfilePage({ user }) {
   const [isEditing, setIsEditing] = useState(false);
@@ -20,16 +21,18 @@ export default function ProfilePage({ user }) {
 
   const premiumButtonStyle = (variant = 'primary') => ({
     padding: 'var(--space-3) var(--space-6)',
-    borderRadius: '0.5rem',
-    border: variant === 'primary' ? '1px solid var(--color-primary)' : '1px solid #d1d5db',
-    backgroundColor: variant === 'primary' ? 'var(--color-primary)' : 'transparent',
+    borderRadius: '0.75rem',
+    border: 'none',
+    background: variant === 'primary' ? `linear-gradient(135deg, var(--color-gold-primary) 0%, var(--color-purple-primary) 100%)` : 'transparent',
     color: variant === 'primary' ? 'white' : 'var(--color-primary)',
-    fontFamily: 'var(--font-serif)',
+    fontFamily: 'var(--font-sans)',
     fontSize: 'var(--font-size-sm)',
     fontWeight: 'var(--font-weight-semibold)',
     cursor: 'pointer',
-    transition: 'all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)',
-    boxShadow: variant === 'primary' ? '0 4px 12px rgba(31, 41, 55, 0.15)' : 'none'
+    transition: 'all var(--duration-normal) var(--easing-fluid)',
+    boxShadow: variant === 'primary' ? '0 8px 24px rgba(245, 158, 11, 0.2)' : 'none',
+    backdropFilter: variant === 'primary' ? 'blur(10px)' : 'none',
+    borderColor: variant === 'primary' ? 'rgba(255, 255, 255, 0.2)' : '#d1d5db'
   });
 
   const inputStyle = {
@@ -51,11 +54,12 @@ export default function ProfilePage({ user }) {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4 }}
           style={{
-            backgroundColor: 'white',
-            border: '1px solid var(--color-border)',
-            borderRadius: 'var(--radius-md)',
+            backgroundColor: 'rgba(255, 255, 255, 0.08)',
+            backdropFilter: 'blur(10px)',
+            border: '1px solid rgba(255, 255, 255, 0.15)',
+            borderRadius: 'var(--radius-lg)',
             padding: 'var(--space-8)',
-            boxShadow: 'var(--shadow-sm)'
+            boxShadow: '0 8px 32px rgba(31, 41, 55, 0.1)'
           }}
         >
           {/* Header with Avatar & Info */}
@@ -64,7 +68,7 @@ export default function ProfilePage({ user }) {
               style={{
                 width: '5.5rem',
                 height: '5.5rem',
-                background: 'linear-gradient(135deg, var(--color-primary) 0%, #374151 100%)',
+                background: `linear-gradient(135deg, var(--color-gold-primary) 0%, var(--color-purple-primary) 100%)`,
                 borderRadius: '9999px',
                 display: 'flex',
                 alignItems: 'center',
@@ -73,7 +77,7 @@ export default function ProfilePage({ user }) {
                 fontSize: '2rem',
                 fontWeight: 'var(--font-weight-bold)',
                 flexShrink: 0,
-                boxShadow: '0 8px 16px rgba(31, 41, 55, 0.2)'
+                boxShadow: '0 12px 24px rgba(245, 158, 11, 0.2)'
               }}
               whileHover={{ scale: 1.05 }}
             >

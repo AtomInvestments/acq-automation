@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import { mockTasks, mockProjects } from '../mockData';
+import GlassCard from './common/GlassCard';
 
 export default function Overview() {
   const totalTasks = mockTasks.length;
@@ -45,11 +46,13 @@ export default function Overview() {
         transition={{ duration: 0.4, ease: 'easeOut' }}
         style={{
           marginBottom: 'var(--space-8)',
-          background: `linear-gradient(135deg, var(--color-primary) 0%, #374151 100%)`,
-          borderRadius: 'var(--radius-md)',
+          background: `linear-gradient(135deg, var(--color-gold-primary) 0%, var(--color-purple-primary) 100%)`,
+          borderRadius: 'var(--radius-lg)',
           padding: 'var(--space-8)',
           color: 'white',
-          boxShadow: '0 12px 24px rgba(31, 41, 55, 0.15)'
+          boxShadow: '0 16px 40px rgba(245, 158, 11, 0.2)',
+          position: 'relative',
+          overflow: 'hidden'
         }}
       >
         <h1 style={{
@@ -91,15 +94,16 @@ export default function Overview() {
             key={idx}
             variants={itemVariants}
             style={{
-              backgroundColor: 'white',
-              border: '1px solid var(--color-border)',
-              borderRadius: 'var(--radius-md)',
+              backgroundColor: 'rgba(255, 255, 255, 0.08)',
+              backdropFilter: 'blur(10px)',
+              border: '1px solid rgba(255, 255, 255, 0.15)',
+              borderRadius: 'var(--radius-lg)',
               padding: 'var(--space-6)',
-              boxShadow: 'var(--shadow-sm)',
-              transition: 'all var(--transition-base)',
+              boxShadow: '0 8px 24px rgba(31, 41, 55, 0.08)',
+              transition: 'all var(--duration-normal) var(--easing-fluid)',
               cursor: 'pointer'
             }}
-            whileHover={{ boxShadow: 'var(--shadow-lg)', y: -4 }}
+            whileHover={{ boxShadow: '0 16px 40px rgba(31, 41, 55, 0.15)', y: -4 }}
           >
             <p style={{
               fontSize: 'var(--font-size-sm)',
@@ -131,11 +135,12 @@ export default function Overview() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.4, duration: 0.4, ease: 'easeOut' }}
         style={{
-          backgroundColor: 'white',
-          border: '1px solid var(--color-border)',
-          borderRadius: 'var(--radius-md)',
+          backgroundColor: 'rgba(255, 255, 255, 0.08)',
+          backdropFilter: 'blur(10px)',
+          border: '1px solid rgba(255, 255, 255, 0.15)',
+          borderRadius: 'var(--radius-lg)',
           overflow: 'hidden',
-          boxShadow: 'var(--shadow-sm)'
+          boxShadow: '0 8px 24px rgba(31, 41, 55, 0.08)'
         }}
       >
         <div style={{ overflowX: 'auto' }}>
@@ -212,10 +217,11 @@ export default function Overview() {
                       }
                     }}
                     style={{
-                      borderBottom: '1px solid var(--color-border)',
-                      transition: 'background-color var(--transition-base)'
+                      backgroundColor: idx % 2 === 0 ? 'rgba(245, 158, 11, 0.03)' : 'transparent',
+                      borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+                      transition: 'background-color var(--duration-normal) var(--easing-fluid)'
                     }}
-                    whileHover={{ backgroundColor: '#f9fafb' }}
+                    whileHover={{ backgroundColor: 'rgba(245, 158, 11, 0.08)' }}
                   >
                     <td style={{
                       padding: 'var(--space-4)',

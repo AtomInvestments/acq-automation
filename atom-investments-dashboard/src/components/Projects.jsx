@@ -280,17 +280,19 @@ export default function Projects() {
               variants={cardVariants}
               onClick={() => setSelectedProject(project.id)}
               style={{
-                backgroundColor: 'white',
-                border: '1px solid var(--color-border)',
-                borderRadius: 'var(--radius-md)',
+                backgroundColor: 'rgba(255, 255, 255, 0.08)',
+                backdropFilter: 'blur(10px)',
+                border: '1px solid rgba(255, 255, 255, 0.15)',
+                borderRadius: 'var(--radius-lg)',
                 padding: 'var(--space-6)',
                 cursor: 'pointer',
                 overflow: 'hidden',
-                position: 'relative'
+                position: 'relative',
+                boxShadow: '0 8px 24px rgba(31, 41, 55, 0.08)'
               }}
               whileHover={{
                 y: -4,
-                boxShadow: 'var(--shadow-lg)',
+                boxShadow: '0 16px 40px rgba(31, 41, 55, 0.15)',
                 scale: 1.02
               }}
               transition={{ duration: 0.2 }}
@@ -300,9 +302,9 @@ export default function Projects() {
                 top: 0,
                 left: 0,
                 right: 0,
-                height: '4px',
-                background: `linear-gradient(90deg, ${project.color}, ${project.color}dd)`,
-                borderRadius: 'var(--radius-md) var(--radius-md) 0 0'
+                height: '6px',
+                background: `linear-gradient(90deg, var(--color-gold-primary), ${project.color}cc)`,
+                borderRadius: 'var(--radius-lg) var(--radius-lg) 0 0'
               }} />
 
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 'var(--space-4)' }}>
@@ -441,7 +443,7 @@ export default function Projects() {
                     transition={{ delay: 0.3, duration: 0.6, ease: 'easeOut' }}
                     style={{
                       height: '100%',
-                      backgroundColor: project.color,
+                      background: `linear-gradient(90deg, var(--color-gold-primary), ${project.color})`,
                       borderRadius: '9999px'
                     }}
                   />

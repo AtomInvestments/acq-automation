@@ -110,14 +110,16 @@ export default function Roadmap() {
           onChange={(e) => setSelectedProject(e.target.value ? parseInt(e.target.value) : null)}
           style={{
             padding: 'var(--space-2) var(--space-4)',
-            border: '1px solid var(--color-border)',
-            borderRadius: 'var(--radius-sm)',
+            border: '1px solid rgba(255, 255, 255, 0.2)',
+            borderRadius: 'var(--radius-md)',
             fontSize: 'var(--font-size-sm)',
             fontFamily: 'var(--font-sans)',
             outline: 'none',
             cursor: 'pointer',
-            backgroundColor: 'white',
-            color: 'var(--color-primary-text)'
+            backgroundColor: 'rgba(255, 255, 255, 0.1)',
+            color: 'var(--color-primary-text)',
+            backdropFilter: 'blur(10px)',
+            transition: 'all var(--duration-normal) var(--easing-fluid)'
           }}
         >
           <option value="">All Projects</option>
@@ -132,11 +134,12 @@ export default function Roadmap() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2, duration: 0.4 }}
         style={{
-          backgroundColor: 'white',
-          border: '1px solid var(--color-border)',
-          borderRadius: 'var(--radius-md)',
+          backgroundColor: 'rgba(255, 255, 255, 0.08)',
+          backdropFilter: 'blur(10px)',
+          border: '1px solid rgba(255, 255, 255, 0.15)',
+          borderRadius: 'var(--radius-lg)',
           padding: 'var(--space-6)',
-          boxShadow: 'var(--shadow-sm)'
+          boxShadow: '0 8px 32px rgba(31, 41, 55, 0.1)'
         }}
       >
         {/* Calendar Header */}
@@ -150,13 +153,16 @@ export default function Roadmap() {
             onClick={previousMonth}
             style={{
               padding: 'var(--space-2) var(--space-3)',
-              border: '1px solid var(--color-border)',
-              borderRadius: 'var(--radius-sm)',
-              background: 'white',
+              border: '1px solid rgba(255, 255, 255, 0.2)',
+              borderRadius: 'var(--radius-md)',
+              background: 'rgba(255, 255, 255, 0.08)',
+              backdropFilter: 'blur(10px)',
               cursor: 'pointer',
               fontSize: 'var(--font-size-sm)',
               fontFamily: 'var(--font-sans)',
-              fontWeight: 'var(--font-weight-semibold)'
+              fontWeight: 'var(--font-weight-semibold)',
+              color: 'var(--color-primary-text)',
+              transition: 'all var(--duration-normal) var(--easing-fluid)'
             }}
           >
             ← Prev
@@ -174,13 +180,16 @@ export default function Roadmap() {
             onClick={nextMonth}
             style={{
               padding: 'var(--space-2) var(--space-3)',
-              border: '1px solid var(--color-border)',
-              borderRadius: 'var(--radius-sm)',
-              background: 'white',
+              border: '1px solid rgba(255, 255, 255, 0.2)',
+              borderRadius: 'var(--radius-md)',
+              background: 'rgba(255, 255, 255, 0.08)',
+              backdropFilter: 'blur(10px)',
               cursor: 'pointer',
               fontSize: 'var(--font-size-sm)',
               fontFamily: 'var(--font-sans)',
-              fontWeight: 'var(--font-weight-semibold)'
+              fontWeight: 'var(--font-weight-semibold)',
+              color: 'var(--color-primary-text)',
+              transition: 'all var(--duration-normal) var(--easing-fluid)'
             }}
           >
             Next →
@@ -229,25 +238,26 @@ export default function Roadmap() {
                 transition={{ delay: idx * 0.02 }}
                 style={{
                   minHeight: '120px',
-                  border: '1px solid var(--color-border)',
-                  borderRadius: 'var(--radius-sm)',
+                  backgroundColor: day ? (isToday ? 'rgba(245, 158, 11, 0.15)' : 'rgba(255, 255, 255, 0.08)') : 'transparent',
+                  backdropFilter: 'blur(10px)',
+                  border: isToday ? '2px solid var(--color-gold-primary)' : '1px solid rgba(255, 255, 255, 0.15)',
+                  borderRadius: 'var(--radius-md)',
                   padding: 'var(--space-2)',
-                  backgroundColor: day ? (isToday ? '#f0f9ff' : 'white') : '#fafafa',
                   cursor: day ? 'pointer' : 'default',
-                  transition: 'all var(--transition-base)'
+                  transition: 'all var(--duration-normal) var(--easing-fluid)',
+                  boxShadow: isToday ? '0 0 12px rgba(245, 158, 11, 0.3)' : 'none'
                 }}
-                whileHover={day ? { boxShadow: 'var(--shadow-md)', y: -2 } : {}}
+                whileHover={day ? { boxShadow: '0 8px 20px rgba(31, 41, 55, 0.1)', y: -2 } : {}}
               >
                 {day && (
                   <>
                     <div style={{
                       fontWeight: 'var(--font-weight-semibold)',
-                      color: isToday ? 'var(--color-primary)' : 'var(--color-primary-text)',
                       fontSize: 'var(--font-size-sm)',
                       fontFamily: 'var(--font-sans)',
                       marginBottom: 'var(--space-2)',
-                      backgroundColor: isToday ? 'var(--color-primary)' : 'transparent',
-                      color: isToday ? 'white' : 'var(--color-primary)',
+                      backgroundColor: isToday ? 'var(--color-gold-primary)' : 'transparent',
+                      color: isToday ? 'white' : 'var(--color-primary-text)',
                       padding: isToday ? '0.25rem 0.5rem' : '0',
                       borderRadius: 'var(--radius-sm)',
                       display: 'inline-block'

@@ -1,4 +1,3 @@
-// src/components/common/Button.jsx
 import { motion } from 'framer-motion';
 
 export default function Button({
@@ -7,36 +6,51 @@ export default function Button({
   onClick = null,
   disabled = false,
   type = 'button',
+  size = 'medium',
   ...props
 }) {
-  const baseStyle = {
-    fontFamily: 'var(--font-serif)',
-    fontSize: 'var(--font-size-sm)',
-    fontWeight: 'var(--font-weight-semibold)',
-    padding: 'var(--space-3) var(--space-6)',
-    border: '1px solid transparent',
-    borderRadius: '0.5rem',
-    cursor: disabled ? 'not-allowed' : 'pointer',
-    transition: 'all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)',
-    opacity: disabled ? 0.6 : 1,
-    letterSpacing: '0.3px',
+  const sizeStyles = {
+    small: { padding: 'var(--space-2) var(--space-4)', fontSize: 'var(--font-size-xs)' },
+    medium: { padding: 'var(--space-3) var(--space-6)', fontSize: 'var(--font-size-sm)' },
+    large: { padding: 'var(--space-4) var(--space-8)', fontSize: 'var(--font-size-base)' }
   };
 
-  const variantStyle = variant === 'primary'
-    ? {
-        backgroundColor: 'var(--color-primary)',
-        color: 'white',
-        borderColor: 'var(--color-primary)',
-        boxShadow: '0 4px 12px rgba(31, 41, 55, 0.15)',
-      }
-    : {
-        backgroundColor: 'transparent',
-        color: 'var(--color-primary)',
-        borderColor: '#d1d5db',
-        boxShadow: 'none',
-      };
+  const baseStyle = {
+    fontFamily: 'var(--font-sans)',
+    fontWeight: 'var(--font-weight-semibold)',
+    border: 'none',
+    borderRadius: '0.75rem',
+    cursor: disabled ? 'not-allowed' : 'pointer',
+    transition: 'all var(--duration-normal) var(--easing-fluid)',
+    opacity: disabled ? 0.6 : 1,
+    letterSpacing: 'var(--letter-spacing-wide)',
+    ...sizeStyles[size]
+  };
 
-  const style = { ...baseStyle, ...variantStyle };
+  const variantStyle = {
+    primary: {
+      background: `linear-gradient(135deg, var(--color-gold-primary) 0%, var(--color-purple-primary) 100%)`,
+      color: 'white',
+      boxShadow: '0 8px 24px rgba(245, 158, 11, 0.2)',
+      backdropFilter: 'blur(10px)',
+      border: '1px solid rgba(255, 255, 255, 0.2)'
+    },
+    secondary: {
+      backgroundColor: 'rgba(255, 255, 255, 0.1)',
+      color: 'var(--color-primary)',
+      border: '1px solid rgba(255, 255, 255, 0.2)',
+      backdropFilter: 'blur(10px)',
+      boxShadow: 'none'
+    },
+    tertiary: {
+      backgroundColor: 'transparent',
+      color: 'var(--color-gold-primary)',
+      border: '2px solid var(--color-gold-primary)',
+      boxShadow: 'none'
+    }
+  };
+
+  const style = { ...baseStyle, ...variantStyle[variant] };
 
   const handleClick = (e) => {
     if (!disabled && onClick) {
@@ -50,19 +64,17 @@ export default function Button({
       style={style}
       onClick={handleClick}
       disabled={disabled}
-      whileTap={disabled ? {} : { scale: 0.98 }}
-      whileHover={disabled ? {} : variant === 'primary'
-        ? {
-            boxShadow: '0 8px 20px rgba(31, 41, 55, 0.2)',
-            y: -2
-          }
-        : {
-            backgroundColor: '#f3f4f6',
-            borderColor: 'var(--color-primary)',
-            y: -2
-          }
-      }
-      transition={{ duration: 0.2 }}
+      whileTap={disabled ? {} : { scale: 0.97 }}
+      whileHover={disabled ? {} : variant === 'primary' ? {
+        boxShadow: '0 12px 32px rgba(245, 158, 11, 0.3)',
+        y: -2,
+        filter: 'brightness(1.1)'
+      } : {
+        boxShadow: '0 8px 20px rgba(31, 41, 55, 0.15)',
+        y: -2,
+        backgroundColor: 'rgba(255, 255, 255, 0.2)'
+      }}
+      transition={{ duration: 0.2, ease: 'easeOut' }}
       {...props}
     >
       {children}
