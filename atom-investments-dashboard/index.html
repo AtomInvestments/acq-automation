@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ATOM Investments</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary: #001f3f;
+      --accent: #fbbf24;
+      --gray-50: #f9fafb;
+      --gray-100: #f3f4f6;
+      --gray-200: #e5e7eb;
+      --gray-300: #d1d5db;
+      --gray-600: #4b5563;
+      --gray-900: #111827;
+      --success: #10b981;
+      --danger: #ef4444;
+      --space-1: 4px;
+      --space-2: 8px;
+      --space-3: 12px;
+      --space-4: 16px;
+      --space-6: 24px;
+      --space-8: 32px;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+      background: linear-gradient(135deg, var(--gray-100) 0%, #ffffff 100%);
+      color: var(--gray-900);
+      line-height: 1.5;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: var(--space-6);
+    }
+
+    /* LAYOUT */
+    .login-page {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: var(--space-6);
+    }
+
+    .login-card {
+      width: 100%;
+      max-width: 440px;
+      background: white;
+      border-radius: 12px;
+      border: 1px solid var(--gray-200);
+      padding: var(--space-10);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+    }
+
+    .logo {
+      font-size: 48px;
+      font-weight: 800;
+      color: var(--primary);
+      margin-bottom: var(--space-4);
+      text-align: center;
+      letter-spacing: -2px;
+    }
+
+    .logo-subtitle {
+      font-size: 20px;
+      font-weight: 700;
+      text-align: center;
+      color: var(--primary);
+      margin-bottom: var(--space-1);
+    }
+
+    .logo-subtext {
+      font-size: 14px;
+      color: var(--gray-600);
+      text-align: center;
+      margin-bottom: var(--space-8);
+      font-weight: 500;
+    }
+
+    .tabs {
+      display: flex;
+      gap: var(--space-2);
+      margin-bottom: var(--space-8);
+      border-bottom: 1px solid var(--gray-200);
+    }
+
+    .tab {
+      flex: 1;
+      padding: var(--space-4) var(--space-2);
+      border: none;
+      background: transparent;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--gray-500);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: all 200ms ease-out;
+    }
+
+    .tab.active {
+      color: var(--primary);
+      border-bottom-color: var(--accent);
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+      margin-bottom: var(--space-4);
+    }
+
+    .label {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--gray-700);
+      text-transform: uppercase;
+      letter-spacing: 0.7px;
+    }
+
+    .input {
+      padding: 10px 12px;
+      font-size: 14px;
+      border: 1px solid var(--gray-200);
+      border-radius: 8px;
+      background: var(--gray-50);
+      color: var(--primary);
+      transition: all 200ms ease-out;
+    }
+
+    .input:focus {
+      outline: none;
+      border-color: var(--primary);
+      background: white;
+      box-shadow: 0 0 0 3px rgba(0, 31, 63, 0.1);
+    }
+
+    .btn {
+      padding: var(--space-3) var(--space-4);
+      font-size: 14px;
+      font-weight: 600;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 200ms ease-out;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: var(--primary);
+    }
+
+    .btn-primary:hover {
+      background: #f59e0b;
+    }
+
+    .btn-secondary {
+      background: var(--gray-100);
+      color: var(--primary);
+      border: 1px solid var(--gray-200);
+    }
+
+    .btn-secondary:hover {
+      background: var(--gray-200);
+    }
+
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .error {
+      padding: var(--space-3) var(--space-4);
+      background: #fee2e2;
+      border: 1px solid #fecaca;
+      border-radius: 6px;
+      font-size: 13px;
+      color: #991b1b;
+      margin-bottom: var(--space-4);
+    }
+
+    .success {
+      padding: var(--space-3) var(--space-4);
+      background: #ecfdf5;
+      border: 1px solid #a7f3d0;
+      border-radius: 6px;
+      font-size: 13px;
+      color: #065f46;
+      margin-bottom: var(--space-4);
+    }
+
+    .divider {
+      position: relative;
+      margin: var(--space-6) 0;
+    }
+
+    .divider-line {
+      height: 1px;
+      background: var(--gray-200);
+    }
+
+    .divider-text {
+      position: absolute;
+      top: -12px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: white;
+      padding: 0 var(--space-2);
+      font-size: 12px;
+      color: var(--gray-600);
+    }
+
+    .link {
+      font-size: 13px;
+      color: var(--primary);
+      cursor: pointer;
+      border: none;
+      background: transparent;
+      padding: 0;
+      margin: 0 auto;
+      display: block;
+      transition: color 200ms ease-out;
+    }
+
+    .link:hover {
+      color: #002d5c;
+    }
+
+    /* DASHBOARD */
+    .dashboard-page {
+      display: none;
+    }
+
+    .dashboard-page.active {
+      display: block;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: var(--space-8);
+      padding-bottom: var(--space-6);
+      border-bottom: 1px solid var(--gray-200);
+    }
+
+    .header h1 {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .user-menu {
+      display: flex;
+      gap: var(--space-4);
+      align-items: center;
+    }
+
+    .user-name {
+      font-size: 14px;
+      color: var(--gray-600);
+    }
+
+    .nav-tabs {
+      display: flex;
+      gap: var(--space-6);
+      margin-bottom: var(--space-8);
+      border-bottom: 2px solid var(--gray-200);
+    }
+
+    .nav-tab {
+      padding: var(--space-4) 0;
+      border: none;
+      background: transparent;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--gray-600);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: all 200ms ease-out;
+      margin-bottom: -2px;
+    }
+
+    .nav-tab.active {
+      color: var(--primary);
+      border-bottom-color: var(--accent);
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    /* GRID */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: var(--space-6);
+    }
+
+    .card {
+      background: white;
+      border: 1px solid var(--gray-200);
+      border-radius: 8px;
+      padding: var(--space-6);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--primary);
+      margin-bottom: var(--space-2);
+    }
+
+    .card-text {
+      font-size: 13px;
+      color: var(--gray-600);
+      margin-bottom: var(--space-3);
+    }
+
+    .progress-bar {
+      height: 6px;
+      background: var(--gray-200);
+      border-radius: 3px;
+      overflow: hidden;
+      margin-bottom: var(--space-4);
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: var(--accent);
+      transition: width 200ms ease-out;
+    }
+
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    .table th {
+      background: var(--gray-50);
+      border-bottom: 1px solid var(--gray-200);
+      padding: var(--space-3);
+      text-align: left;
+      font-weight: 600;
+      color: var(--gray-700);
+    }
+
+    .table td {
+      border-bottom: 1px solid var(--gray-200);
+      padding: var(--space-3);
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      background: var(--gray-100);
+      border-radius: 4px;
+      font-size: 12px;
+      color: var(--gray-700);
+    }
+
+    .badge-success {
+      background: #d1fae5;
+      color: #065f46;
+    }
+
+    /* CALENDAR */
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 4px;
+      margin-bottom: var(--space-6);
+    }
+
+    .day-header {
+      text-align: center;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--gray-600);
+      padding: var(--space-2);
+      text-transform: uppercase;
+    }
+
+    .day-cell {
+      aspect-ratio: 1;
+      padding: 4px;
+      font-size: 12px;
+      border: 1px solid var(--gray-200);
+      border-radius: 4px;
+      text-align: center;
+      cursor: pointer;
+      background: white;
+      transition: all 200ms ease-out;
+      position: relative;
+    }
+
+    .day-cell:hover {
+      background: var(--gray-50);
+      border-color: var(--primary);
+    }
+
+    .day-cell.selected {
+      background: rgba(0, 31, 63, 0.05);
+      border-color: var(--primary);
+    }
+
+    .day-cell.empty {
+      background: var(--gray-50);
+      cursor: default;
+    }
+
+    .day-indicator {
+      position: absolute;
+      bottom: 2px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 4px;
+      height: 4px;
+      background: var(--accent);
+      border-radius: 50%;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        padding: var(--space-4);
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .header {
+        flex-direction: column;
+        gap: var(--space-4);
+      }
+
+      .nav-tabs {
+        overflow-x: auto;
+        white-space: nowrap;
+        gap: var(--space-4);
+      }
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .loading {
+      text-align: center;
+      padding: var(--space-12);
+      color: var(--gray-600);
+    }
+  </style>
+</head>
+<body>
+  <div id="app"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    // CONFIG
+    const SUPABASE_URL = 'https://fsmvvbyrdrkbyqjloupp.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZzbXZ2YnlyZHJrYnlxamxvdXBwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjExMDAwMDAsImV4cCI6MTg3ODc2NjQwMH0.r4vYzM_RKA-j4LF4e5-KqS1pM1p5eK8nM0nL2p3q4r5';
+
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    const app = document.getElementById('app');
+
+    // STATE
+    let currentPage = 'login';
+    let currentUser = null;
+    let projects = [];
+    let tasks = [];
+    let teamMembers = [];
+
+    // PAGES
+    function showLoginPage() {
+      currentPage = 'login';
+      app.innerHTML = `
+        <div class="login-page">
+          <div class="login-card">
+            <div class="logo">ATOM</div>
+            <div class="logo-subtitle">Property Group</div>
+            <div class="logo-subtext">Investment Dashboard</div>
+
+            <div class="tabs">
+              <button class="tab active" onclick="switchTab('signin')">Sign In</button>
+              <button class="tab" onclick="switchTab('signup')">Sign Up</button>
+            </div>
+
+            <div id="signin" class="auth-form">
+              <div class="form-group">
+                <label class="label">Email</label>
+                <input type="email" id="signin-email" class="input" placeholder="you@example.com">
+              </div>
+              <div class="form-group">
+                <label class="label">Password</label>
+                <input type="password" id="signin-password" class="input" placeholder="••••••••">
+              </div>
+              <div id="signin-error" class="error hidden"></div>
+              <button class="btn btn-primary" style="width: 100%; margin-top: var(--space-4);" onclick="handleSignIn()">Sign In</button>
+              <button class="link" style="margin-top: var(--space-4);" onclick="switchTab('reset')">Forgot password?</button>
+
+              <div class="divider">
+                <div class="divider-line"></div>
+                <span class="divider-text">OR</span>
+              </div>
+
+              <button class="btn btn-secondary" style="width: 100%;" onclick="handleGoogleLogin()">Continue with Google</button>
+            </div>
+
+            <div id="signup" class="auth-form hidden">
+              <div class="form-group">
+                <label class="label">Full Name</label>
+                <input type="text" id="signup-name" class="input" placeholder="John Doe">
+              </div>
+              <div class="form-group">
+                <label class="label">Email</label>
+                <input type="email" id="signup-email" class="input" placeholder="you@example.com">
+              </div>
+              <div class="form-group">
+                <label class="label">Password</label>
+                <input type="password" id="signup-password" class="input" placeholder="At least 6 characters">
+              </div>
+              <div class="form-group">
+                <label class="label">Confirm Password</label>
+                <input type="password" id="signup-confirm" class="input" placeholder="••••••••">
+              </div>
+              <div id="signup-error" class="error hidden"></div>
+              <button class="btn btn-primary" style="width: 100%; margin-top: var(--space-4);" onclick="handleSignUp()">Create Account</button>
+            </div>
+
+            <div id="reset" class="auth-form hidden">
+              <p style="font-size: 13px; color: var(--gray-600); margin-bottom: var(--space-4);">
+                Enter your email and we'll send you a reset link.
+              </p>
+              <div class="form-group">
+                <label class="label">Email</label>
+                <input type="email" id="reset-email" class="input" placeholder="you@example.com">
+              </div>
+              <div id="reset-error" class="error hidden"></div>
+              <div id="reset-success" class="success hidden"></div>
+              <button class="btn btn-primary" style="width: 100%; margin-top: var(--space-4);" onclick="handlePasswordReset()">Send Reset Link</button>
+              <button class="link" style="margin-top: var(--space-4);" onclick="switchTab('signin')">Back to sign in</button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function showDashboard() {
+      currentPage = 'dashboard';
+      app.innerHTML = `
+        <div class="container">
+          <div class="header">
+            <h1>Dashboard</h1>
+            <div class="user-menu">
+              <span class="user-name">${currentUser.email}</span>
+              <button class="btn btn-secondary" onclick="handleLogout()">Sign Out</button>
+            </div>
+          </div>
+
+          <div class="nav-tabs">
+            <button class="nav-tab active" onclick="switchDashboardTab('overview')">Overview</button>
+            <button class="nav-tab" onclick="switchDashboardTab('projects')">Projects</button>
+            <button class="nav-tab" onclick="switchDashboardTab('calendar')">Calendar</button>
+            <button class="nav-tab" onclick="switchDashboardTab('team')">Team</button>
+            <button class="nav-tab" onclick="switchDashboardTab('profile')">Profile</button>
+          </div>
+
+          <div id="overview" class="tab-content active">
+            <h2 style="margin-bottom: var(--space-6);">Overview</h2>
+            <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
+              <div class="card">
+                <div class="card-title">Total Tasks</div>
+                <div style="font-size: 32px; font-weight: 700; color: var(--primary);">${tasks.length}</div>
+              </div>
+              <div class="card">
+                <div class="card-title">Completed</div>
+                <div style="font-size: 32px; font-weight: 700; color: var(--success);">${tasks.filter(t => t.is_done).length}</div>
+              </div>
+              <div class="card">
+                <div class="card-title">In Progress</div>
+                <div style="font-size: 32px; font-weight: 700; color: var(--primary);">${tasks.filter(t => !t.is_done).length}</div>
+              </div>
+            </div>
+
+            <h3 style="margin-top: var(--space-8); margin-bottom: var(--space-4);">Recent Tasks</h3>
+            <div style="overflow-x: auto;">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Task</th>
+                    <th>Project</th>
+                    <th>Due Date</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${tasks.slice(0, 8).map(t => {
+                    const project = projects.find(p => p.id === t.project_id);
+                    return `
+                      <tr>
+                        <td>${t.title}</td>
+                        <td>${project ? project.name : 'Unknown'}</td>
+                        <td>${t.due_date ? new Date(t.due_date).toLocaleDateString() : '-'}</td>
+                        <td><span class="badge ${t.is_done ? 'badge-success' : ''}">${t.is_done ? '✓ Done' : 'In Progress'}</span></td>
+                      </tr>
+                    `;
+                  }).join('')}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div id="projects" class="tab-content">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-6);">
+              <h2>Projects</h2>
+              <button class="btn btn-primary" onclick="showCreateProjectForm()">+ New Project</button>
+            </div>
+
+            <div id="create-project-form" class="hidden" style="margin-bottom: var(--space-6);">
+              <div class="card">
+                <div style="display: flex; flex-direction: column; gap: var(--space-4);">
+                  <div class="form-group">
+                    <label class="label">Project Name</label>
+                    <input type="text" id="project-name" class="input" placeholder="Project name">
+                  </div>
+                  <div class="form-group">
+                    <label class="label">Description</label>
+                    <input type="text" id="project-desc" class="input" placeholder="Description">
+                  </div>
+                  <div class="form-group">
+                    <label class="label">Progress (%)</label>
+                    <input type="number" id="project-progress" class="input" min="0" max="100" value="0">
+                  </div>
+                  <button class="btn btn-primary" onclick="handleCreateProject()">Create</button>
+                  <button class="btn btn-secondary" onclick="hideCreateProjectForm()">Cancel</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="grid">
+              ${projects.map(p => `
+                <div class="card">
+                  <div class="card-title">${p.name}</div>
+                  <div class="card-text">${p.description || 'No description'}</div>
+                  <div class="progress-bar">
+                    <div class="progress-fill" style="width: ${p.progress}%"></div>
+                  </div>
+                  <div style="font-size: 12px; color: var(--gray-600);">${p.progress}% complete</div>
+                  <button class="btn btn-secondary" style="width: 100%; margin-top: var(--space-4);" onclick="showProjectDetail('${p.id}')">View</button>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+
+          <div id="calendar" class="tab-content">
+            <h2 style="margin-bottom: var(--space-6);">Calendar</h2>
+            <p style="color: var(--gray-600);">Calendar view coming soon...</p>
+          </div>
+
+          <div id="team" class="tab-content">
+            <h2 style="margin-bottom: var(--space-6);">Team</h2>
+            <p style="color: var(--gray-600);">Team management coming soon...</p>
+          </div>
+
+          <div id="profile" class="tab-content">
+            <h2 style="margin-bottom: var(--space-6);">Profile</h2>
+            <p style="color: var(--gray-600);">Profile management coming soon...</p>
+          </div>
+        </div>
+      `;
+    }
+
+    // AUTH FUNCTIONS
+    async function handleSignIn() {
+      const email = document.getElementById('signin-email').value;
+      const password = document.getElementById('signin-password').value;
+      const errorEl = document.getElementById('signin-error');
+
+      if (!email || !password) {
+        errorEl.textContent = 'Please enter email and password';
+        errorEl.classList.remove('hidden');
+        return;
+      }
+
+      try {
+        const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+        if (error) throw error;
+
+        currentUser = data.user;
+        await loadDashboardData();
+        showDashboard();
+      } catch (err) {
+        errorEl.textContent = err.message || 'Sign in failed';
+        errorEl.classList.remove('hidden');
+      }
+    }
+
+    async function handleSignUp() {
+      const name = document.getElementById('signup-name').value;
+      const email = document.getElementById('signup-email').value;
+      const password = document.getElementById('signup-password').value;
+      const confirm = document.getElementById('signup-confirm').value;
+      const errorEl = document.getElementById('signup-error');
+
+      if (!email || !password || !name) {
+        errorEl.textContent = 'Please fill all fields';
+        errorEl.classList.remove('hidden');
+        return;
+      }
+
+      if (password !== confirm) {
+        errorEl.textContent = 'Passwords do not match';
+        errorEl.classList.remove('hidden');
+        return;
+      }
+
+      try {
+        const { data, error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: { data: { name } }
+        });
+        if (error) throw error;
+
+        errorEl.textContent = '';
+        document.getElementById('signup-name').value = '';
+        document.getElementById('signup-email').value = '';
+        document.getElementById('signup-password').value = '';
+        document.getElementById('signup-confirm').value = '';
+        alert('Sign up successful! You can now sign in.');
+        switchTab('signin');
+      } catch (err) {
+        errorEl.textContent = err.message || 'Sign up failed';
+        errorEl.classList.remove('hidden');
+      }
+    }
+
+    async function handleGoogleLogin() {
+      try {
+        const { data, error } = await supabase.auth.signInWithOAuth({
+          provider: 'google'
+        });
+        if (error) throw error;
+      } catch (err) {
+        console.error('Google login failed:', err);
+      }
+    }
+
+    async function handlePasswordReset() {
+      const email = document.getElementById('reset-email').value;
+      const errorEl = document.getElementById('reset-error');
+      const successEl = document.getElementById('reset-success');
+
+      if (!email) {
+        errorEl.textContent = 'Please enter your email';
+        errorEl.classList.remove('hidden');
+        return;
+      }
+
+      try {
+        const { error } = await supabase.auth.resetPasswordForEmail(email, {
+          redirectTo: `${window.location.origin}/reset-password`
+        });
+        if (error) throw error;
+
+        successEl.textContent = 'Reset link sent! Check your email.';
+        successEl.classList.remove('hidden');
+        errorEl.classList.add('hidden');
+      } catch (err) {
+        errorEl.textContent = err.message || 'Reset failed';
+        errorEl.classList.remove('hidden');
+      }
+    }
+
+    async function handleLogout() {
+      await supabase.auth.signOut();
+      currentUser = null;
+      showLoginPage();
+    }
+
+    // DASHBOARD FUNCTIONS
+    async function loadDashboardData() {
+      try {
+        const [projectsRes, tasksRes] = await Promise.all([
+          supabase.from('projects').select('*'),
+          supabase.from('tasks').select('*')
+        ]);
+
+        projects = projectsRes.data || [];
+        tasks = tasksRes.data || [];
+      } catch (err) {
+        console.error('Error loading data:', err);
+      }
+    }
+
+    async function handleCreateProject() {
+      const name = document.getElementById('project-name').value;
+      const description = document.getElementById('project-desc').value;
+      const progress = parseInt(document.getElementById('project-progress').value) || 0;
+
+      if (!name) {
+        alert('Please enter a project name');
+        return;
+      }
+
+      try {
+        const { data, error } = await supabase.from('projects').insert([{
+          name,
+          description,
+          progress,
+          created_by: currentUser.id
+        }]);
+
+        if (error) throw error;
+
+        document.getElementById('project-name').value = '';
+        document.getElementById('project-desc').value = '';
+        document.getElementById('project-progress').value = '0';
+
+        await loadDashboardData();
+        switchDashboardTab('projects');
+      } catch (err) {
+        alert('Error creating project: ' + err.message);
+      }
+    }
+
+    // UI FUNCTIONS
+    function switchTab(tab) {
+      document.querySelectorAll('.auth-form').forEach(f => f.classList.add('hidden'));
+      document.getElementById(tab).classList.remove('hidden');
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      event.target.classList.add('active');
+    }
+
+    function switchDashboardTab(tab) {
+      document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+      document.getElementById(tab).classList.add('active');
+      document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+      event.target.classList.add('active');
+    }
+
+    function showCreateProjectForm() {
+      document.getElementById('create-project-form').classList.remove('hidden');
+    }
+
+    function hideCreateProjectForm() {
+      document.getElementById('create-project-form').classList.add('hidden');
+    }
+
+    function showProjectDetail(projectId) {
+      alert('Project detail view coming soon!');
+    }
+
+    // INIT
+    async function init() {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.user) {
+        currentUser = session.user;
+        await loadDashboardData();
+        showDashboard();
+      } else {
+        showLoginPage();
+      }
+    }
+
+    init();
+  </script>
+</body>
+</html>
