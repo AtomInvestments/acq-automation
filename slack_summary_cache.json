@@ -999,5 +999,27 @@
     "match_cid": "a2UwQYURzT016lvOBup9",
     "match_confidence": "high",
     "summary": "Nicholas confirmed the property is vacant, needs 80-100k in updates (floors, kitchen, bathrooms), has received many offers, is not in a rush to sell, and suggests buyer should renovate rather than wholesale."
+  },
+  "C06MM4DQZ28:1781636510.887779": {
+    "field_updates": {
+      "asking_price": 400000,
+      "motivation": "Not motivated unless offered $400k asking price",
+      "reason_for_selling": "No specific reason to sell; only selling if offered the asking price of $400,000 for both properties",
+      "timeline": "No rush"
+    },
+    "match_cid": "3j5nlLrMEj4irHVqF2U0",
+    "match_confidence": "high",
+    "summary": "John Kemp would sell both 67 and 73 Juliustown Rd together for $400,000; 67 is rented at $1,650/month, 73 is vacant with paved parking; no hurry to sell unless offered asking price."
+  },
+  "C06MM4DQZ28:1781636653.388639": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": "Wants to sell while market is up and add proceeds to retirement fund",
+      "reason_for_selling": "Looking to retire and capitalize on current high market prices before they potentially drop, with property currently rented to nephew until August",
+      "timeline": "6+ months"
+    },
+    "match_cid": "AgkhkAAj2HYEhB9LKvxK",
+    "match_confidence": "high",
+    "summary": "Traci is actively considering offers for 31 Yorkshire Rd, has a renter's lease until August, and wants to sell in a few months to add to retirement fund while market is up."
   }
 }
