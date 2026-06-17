@@ -87,6 +87,17 @@
     "match_confidence": "high",
     "summary": "Manny owns 6 one-bedroom units at this address, asking $7.5M with no mortgage, property in great condition and cash-flowing but wants proof of funds before proceeding."
   },
+  "C05M7E1TJP7:1781731410.173499": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": "wants to sell to invest in something new",
+      "reason_for_selling": "Property brings good income but owner wants to sell to invest in something new",
+      "timeline": "No rush"
+    },
+    "match_cid": "E1xert5vwMKRARQoDk18",
+    "match_confidence": "high",
+    "summary": "Owner confirmed 6bed/2bath property generating $8,800/month with commercial downstairs and family rentals on 2nd/3rd floors, motivated by price but unsure of asking amount, wants to sell to invest in something new."
+  },
   "C05MP6K9RNV:1779136440.549199": {
     "field_updates": {
       "asking_price": null,
@@ -1021,5 +1032,38 @@
     "match_cid": "AgkhkAAj2HYEhB9LKvxK",
     "match_confidence": "high",
     "summary": "Traci is actively considering offers for 31 Yorkshire Rd, has a renter's lease until August, and wants to sell in a few months to add to retirement fund while market is up."
+  },
+  "C06MM4DQZ28:1781717690.147319": {
+    "field_updates": {
+      "asking_price": 14000,
+      "motivation": "Work injury 2 years ago, still in court, needs to wash hands of property",
+      "reason_for_selling": "Selling immediately due to ongoing court case from work injury 2 years ago and wants to be done with the property",
+      "timeline": "ASAP"
+    },
+    "match_cid": "cQf9AzXN1BcTtFqqdRWO",
+    "match_confidence": "high",
+    "summary": "Erik needs to sell immediately due to ongoing court case from work injury 2 years ago, property has $1,200 tax lien, asking $14k cash minimum ($10k absolute floor), selling as-is requiring total rehab."
+  },
+  "C06MM4DQZ28:1781719259.568469": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": "Leaving New Jersey",
+      "reason_for_selling": "Leaving New Jersey",
+      "timeline": "6+ months"
+    },
+    "match_cid": "piXBUYrRLecTHL0l2IQe",
+    "match_confidence": "high",
+    "summary": "Frank confirmed property is move-in ready, he's living in it, timeline is 6 months, and selling because he's leaving New Jersey."
+  },
+  "C06MM4DQZ28:1781719375.163639": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": null,
+      "reason_for_selling": null,
+      "timeline": null
+    },
+    "match_cid": "okfQ6CKhfmJtdiBfv9aA",
+    "match_confidence": "high",
+    "summary": "Tina Goins confirmed interest in selling and requested a phone call instead of texting to discuss her property."
   }
 }
