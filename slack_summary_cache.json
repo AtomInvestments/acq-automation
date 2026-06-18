@@ -1065,5 +1065,71 @@
     "match_cid": "okfQ6CKhfmJtdiBfv9aA",
     "match_confidence": "high",
     "summary": "Tina Goins confirmed interest in selling and requested a phone call instead of texting to discuss her property."
+  },
+  "C06MM4DQZ28:1781808427.070449": {
+    "field_updates": {
+      "asking_price": 275000,
+      "motivation": "Would sell now at asking price to buy and rehab 2 properties; otherwise planning to hold 10 more years",
+      "reason_for_selling": "Retired contractor age 68 with steady cash flow wants to leverage equity to buy and rehab 2 properties if he gets his asking price, otherwise content to wait 10 years",
+      "timeline": "ASAP"
+    },
+    "match_cid": "5mAPLORxWEZQIJK3VdTp",
+    "match_confidence": "high",
+    "summary": "Kenneth confirmed firm asking price of $275k (recently turned down $250k), property is 5br/1.5ba, can settle at any point, no urgent reason to sell but would consider selling now instead of waiting 10 years if price is met to buy and rehab 2 properties."
+  },
+  "C06MM4DQZ28:1781808511.402699": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": null,
+      "reason_for_selling": null,
+      "timeline": "ASAP"
+    },
+    "match_cid": "l7aYSV2nNrTIxHZqzjnV",
+    "match_confidence": "high",
+    "summary": "Sydell Nadel responded to SMS outreach, requested to be called immediately to discuss her property, and declined to answer condition questions via text."
+  },
+  "C06MM4DQZ28:1781808809.248619": {
+    "field_updates": {
+      "asking_price": 320000,
+      "motivation": "Willing to sell immediately if price meets his range of $310-330k",
+      "reason_for_selling": "Looking to relocate",
+      "timeline": "ASAP"
+    },
+    "match_cid": "QN81sMsICd9P9MZSaWgK",
+    "match_confidence": "high",
+    "summary": "Brett wants $310-330k for his property, willing to sell immediately if price is right, and is relocating with no urgency."
+  },
+  "C06MM4DQZ28:1781809096.679539": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": "Insistent on immediate phone call, showing urgency",
+      "reason_for_selling": null,
+      "timeline": "ASAP"
+    },
+    "match_cid": "Vtoxdg8nQ53QMwBMf3eN",
+    "match_confidence": "high",
+    "summary": "Ernest responded to outreach requesting a phone call to discuss selling 4 Johnson Dr, showing urgency but unwilling to provide details via text."
+  },
+  "C06MM4DQZ28:1781809615.831709": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": "Willing to sell but price-driven, flexible on timing",
+      "reason_for_selling": "Lead stated they are selling the house strictly in its current condition and wants to see offers, but did not disclose specific reason for selling.",
+      "timeline": "No rush"
+    },
+    "match_cid": "aXVfnmNOkqW4Kh5gfFhi",
+    "match_confidence": "high",
+    "summary": "Lead is open to selling, wants investor to make an offer, selling as-is with no conditions, and has flexible timeline depending on price."
+  },
+  "C06MM4DQZ28:1781812506.074759": {
+    "field_updates": {
+      "asking_price": 400000,
+      "motivation": "Did not initiate sale - responding to outbound campaign",
+      "reason_for_selling": "Property owner clarified they did not ask to sell it and was contacted by investor's outbound campaign",
+      "timeline": "ASAP"
+    },
+    "match_cid": "QADeGOcV8pkrMliTlB5X",
+    "match_confidence": "high",
+    "summary": "Kishan Ravani states firm asking price of $400K for property that is rented at $3,100/month through July 2027, no interior repairs needed, and clarifies he did not initiate the sale inquiry."
   }
 }
