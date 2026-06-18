@@ -471,11 +471,11 @@
   },
   "QWt7tBJjuKzUazKpPABK": {
     "dormant": false,
-    "last_from_number": null,
-    "last_sms_at": null,
+    "last_from_number": "+16094388996",
+    "last_sms_at": "2026-06-18T20:41:48.404837+00:00",
     "replied": false,
     "replied_at": null,
-    "sms_count": 0,
+    "sms_count": 1,
     "stage_entered_at": "2026-06-10T21:27:41.258322+00:00",
     "stage_name": "qualified"
   },
