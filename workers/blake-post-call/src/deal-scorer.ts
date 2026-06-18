@@ -28,9 +28,7 @@ import type { Env } from "./index";
 import { setContactCustomField, addNote } from "./index";
 import { enrichPropertyViaAttom, scoreMotivatedSignals, AttomEnrichment } from "./attom";
 
-// TODO(Mido): create this long-text custom field in GHL (APG sub-account) and
-// paste its id here. Until then the field-write is skipped and we only note.
-const CF_DEAL_SCORE = ""; // e.g. "abc123DealScoreFieldId"
+import { CF_DEAL_SCORE } from "./index";
 
 const QUEUE_PREFIX = "score:queue:";
 const CLAIM_PREFIX = "score:claim:";
