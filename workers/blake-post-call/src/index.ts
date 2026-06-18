@@ -123,15 +123,15 @@ export interface Env {
   WEBSITES_BUCKET?: R2Bucket;       // R2 bucket for /websites snapshot PNGs. Optional — KV fallback if unbound.
 }
 
-const APG_LOCATION_ID = "RCkiUmWqXX4BYQ39JXmm";
-const GHL_BASE = "https://services.leadconnectorhq.com";
+export const APG_LOCATION_ID = "RCkiUmWqXX4BYQ39JXmm";
+export const GHL_BASE = "https://services.leadconnectorhq.com";
 
 // Roster — corrected 2026-05-27 after Mido pasted GHL Settings → My Staff.
 // PREVIOUS bug: USER_ADAM was set to vDKOqPSkA8nLkia5skd0, which is actually
 // Jef De los Santos (NOT Adam). Real Adam is vCjuvuuQ7p7K5GUODujQ. Also fixed
 // RJ's user_id — visual collision between `l` and `I` in EvxJmnll1h_Jtzp...
 // Real ID has capital I (per GHL UI paste).
-const USER_RJ    = "EvxJmnll1hIJtzpW14BE";   // Rene Fonseca — Acquisitions Partner (capital I)
+export const USER_RJ    = "EvxJmnll1hIJtzpW14BE";   // Rene Fonseca — Acquisitions Partner (capital I)
 const USER_MIKE  = "Vj4WwH1ovxGN5Hv5Kq17";   // Mike Yasser — PM / Marketing Systems
 const USER_ADAM  = "vCjuvuuQ7p7K5GUODujQ";   // Adam Chodes — Owner, APG sub-account
 const USER_JEF   = "vDKOqPSkA8nLkia5skd0";   // Jef De los Santos — ACCOUNT-USER; owns 858 opps (was mis-labeled "Adam")
@@ -151,20 +151,20 @@ const APG_AGENT_ROSTER: Array<{ user_id: string; name: string; role: string }> =
 const SIGNATURE_MAX_AGE_S = 300;
 
 // GHL custom field IDs (APG sub-account). Match elevenlabs-tools-config.md.
-const CF_BEDS = "xXEm77wvbxEbiqsw3lAz";
-const CF_BATHS = "EtKof5yT7KAWmoaNQqJZ";
-const CF_SQFT = "8kqwjqtJyTTeQ8SIaLQz";
-const CF_ASKING = "6q7syt4puxfP7E03Xxhd";
-const CF_MOTIVATION = "rbYZAdhvuvX1NQgexhxy";
-const CF_TIMELINE = "v47I1Mi63RBpCD5N5RrH";
+export const CF_BEDS = "xXEm77wvbxEbiqsw3lAz";
+export const CF_BATHS = "EtKof5yT7KAWmoaNQqJZ";
+export const CF_SQFT = "8kqwjqtJyTTeQ8SIaLQz";
+export const CF_ASKING = "6q7syt4puxfP7E03Xxhd";
+export const CF_MOTIVATION = "rbYZAdhvuvX1NQgexhxy";
+export const CF_TIMELINE = "v47I1Mi63RBpCD5N5RrH";
 const CF_VA_NOTES = "ctNVXVw8VY1PD4B1oqXj";
 const CF_BLAKE_RECORDING = "hsHjLlOE8mb4O2DqxNY7";  // URL to /audio/{conv_id} proxy
 const CF_DAYS_ON_MARKET = "YRW9Zk8MtItZNO7bemRF";   // numerical — days the listing has been active
 const CF_LISTING_DATE   = "zFNZ4U7CmLB2ABUNrFNz";   // date — when the listing first appeared
 
 // GHL ACQ pipeline + stage IDs. Source of truth: tyler/project_ghl_acq.md.
-const ACQ_PIPELINE_ID = "O8wzIa6E3SgD8HLg6gh9";
-const STAGE_UNQUALIFIED      = "c1d23905-7096-439c-9a31-f8db5b2b53d0";
+export const ACQ_PIPELINE_ID = "O8wzIa6E3SgD8HLg6gh9";
+export const STAGE_UNQUALIFIED      = "c1d23905-7096-439c-9a31-f8db5b2b53d0";
 const STAGE_QUALIFIED        = "a17517be-8d1a-49fd-bd53-b9128a66e242";
 const STAGE_LAO              = "d43fddd8-3a17-46b2-a193-cf18619f654f";
 const STAGE_DUE_DILIGENCE    = "23a159ad-ba39-4c74-9d07-c1beb219d9f2";
@@ -3793,7 +3793,7 @@ async function sendGhlSms(
 
 // --- Slack chat.postMessage ---
 // channel can be a #channel-name (Slack resolves) or a channel ID.
-async function postSlackMessage(
+export async function postSlackMessage(
   env: Env,
   channel: string,
   text: string
@@ -4430,7 +4430,7 @@ async function maybeDebouncedDashboardRefresh(env: Env): Promise<void> {
   }
 }
 
-function constantTimeEqual(a: string, b: string): boolean {
+export function constantTimeEqual(a: string, b: string): boolean {
   if (a.length !== b.length) return false;
   let diff = 0;
   for (let i = 0; i < a.length; i++) diff |= a.charCodeAt(i) ^ b.charCodeAt(i);
@@ -5534,7 +5534,7 @@ async function handleWebhook(req: Request, env: Env, ctx: ExecutionContext): Pro
 
 // ---- GHL helpers ----------------------------------------------------------
 
-function ghlHeaders(pit: string): Record<string, string> {
+export function ghlHeaders(pit: string): Record<string, string> {
   return {
     Authorization: `Bearer ${pit}`,
     Version: "2021-07-28",
@@ -5562,7 +5562,7 @@ async function findContactByPhone(pit: string, phone: string): Promise<string | 
   return contact?.id ?? null;
 }
 
-async function addNote(
+export async function addNote(
   pit: string,
   contactId: string,
   body: string
@@ -5593,7 +5593,7 @@ async function addTag(
 // Write a single custom field value on a contact. Uses the direct REST endpoint
 // (mcp__ghl-mcp__contacts_update-contact is broken for custom fields per
 // tyler/feedback_ghl_api.md memory).
-async function setContactCustomField(
+export async function setContactCustomField(
   pit: string,
   contactId: string,
   fieldId: string,
