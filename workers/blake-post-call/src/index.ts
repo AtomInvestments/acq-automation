@@ -157,6 +157,7 @@ export const CF_SQFT = "8kqwjqtJyTTeQ8SIaLQz";
 export const CF_ASKING = "6q7syt4puxfP7E03Xxhd";
 export const CF_MOTIVATION = "rbYZAdhvuvX1NQgexhxy";
 export const CF_TIMELINE = "v47I1Mi63RBpCD5N5RrH";
+export const CF_DEAL_SCORE = "dPj8djqVm9qKJ868plnz";
 const CF_VA_NOTES = "ctNVXVw8VY1PD4B1oqXj";
 const CF_BLAKE_RECORDING = "hsHjLlOE8mb4O2DqxNY7";  // URL to /audio/{conv_id} proxy
 const CF_DAYS_ON_MARKET = "YRW9Zk8MtItZNO7bemRF";   // numerical — days the listing has been active
