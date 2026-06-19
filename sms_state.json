@@ -470,7 +470,8 @@
     "stage_name": "fu15mo"
   },
   "QWt7tBJjuKzUazKpPABK": {
-    "dormant": false,
+    "dnd": true,
+    "dormant": true,
     "last_from_number": "+16094388996",
     "last_sms_at": "2026-06-18T20:41:48.404837+00:00",
     "replied": false,
