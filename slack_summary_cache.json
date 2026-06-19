@@ -1131,5 +1131,27 @@
     "match_cid": "QADeGOcV8pkrMliTlB5X",
     "match_confidence": "high",
     "summary": "Kishan Ravani states firm asking price of $400K for property that is rented at $3,100/month through July 2027, no interior repairs needed, and clarifies he did not initiate the sale inquiry."
+  },
+  "C06MM4DQZ28:1781899066.350709": {
+    "field_updates": {
+      "asking_price": 335000,
+      "motivation": "Open to offers, flexible on timing",
+      "reason_for_selling": "No specific reason provided",
+      "timeline": "90 days"
+    },
+    "match_cid": "PCWRaSDlYFK0DBJskDmZ",
+    "match_confidence": "high",
+    "summary": "Raymond Flynn is open to selling 207 Stokes Ave for $330-340K, needs windows and kitchen updates, timeline is a few months by end of year, and is available for a call anytime."
+  },
+  "C06MM4DQZ28:1781899262.775319": {
+    "field_updates": {
+      "asking_price": 230000,
+      "motivation": "No need to sell - just responding to inquiry",
+      "reason_for_selling": "Property not on market; owner has no need to sell, was only responding to outreach about his rental property",
+      "timeline": "No rush"
+    },
+    "match_cid": "9znNfgJuh2tSf1eyx9y8",
+    "match_confidence": "high",
+    "summary": "Michael Alcaide quoted $230K asking price for his tenant-occupied rental at 363 Crosspointe Dr but stated he has no need to sell and the property isn't on the market."
   }
 }
