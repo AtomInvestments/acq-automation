@@ -1164,5 +1164,27 @@
     "match_cid": "j5qw0otV9a2QabqNJQCe",
     "match_confidence": "high",
     "summary": "Craig confirmed interest in selling 14 Kristin Way, property is move-in ready with minimal work needed, wants to sell sooner than later, asking for offers, and is available for immediate call."
+  },
+  "C06MM4DQZ28:1782161201.651819": {
+    "field_updates": {
+      "asking_price": 150000,
+      "motivation": null,
+      "reason_for_selling": null,
+      "timeline": null
+    },
+    "match_cid": "pnmAplVWPiOj5bbf9pKP",
+    "match_confidence": "high",
+    "summary": "Angela confirmed she's open to selling, indicated asking price of $150,000, but is unsure about the property condition and hasn't confirmed timeline yet."
+  },
+  "C06MM4DQZ28:1782161228.056419": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": null,
+      "reason_for_selling": "Not actively selling - responded to investor's outreach inquiry but stated 'I'm not offering to sell it. You're inquiring about selling it.'",
+      "timeline": null
+    },
+    "match_cid": "1eDJ1MNsANYTLGvJcTCM",
+    "match_confidence": "high",
+    "summary": "Lead responded to outreach saying 'make me an offer' but clarified he's not actively offering to sell; noted master bathroom needs updating but has new kitchen and appliances."
   }
 }
