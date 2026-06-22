@@ -1153,5 +1153,16 @@
     "match_cid": "9znNfgJuh2tSf1eyx9y8",
     "match_confidence": "high",
     "summary": "Michael Alcaide quoted $230K asking price for his tenant-occupied rental at 363 Crosspointe Dr but stated he has no need to sell and the property isn't on the market."
+  },
+  "C06MM4DQZ28:1782152604.938699": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": "Needs money",
+      "reason_for_selling": "Owner stated they need the money from the sale",
+      "timeline": "ASAP"
+    },
+    "match_cid": "j5qw0otV9a2QabqNJQCe",
+    "match_confidence": "high",
+    "summary": "Craig confirmed interest in selling 14 Kristin Way, property is move-in ready with minimal work needed, wants to sell sooner than later, asking for offers, and is available for immediate call."
   }
 }
