@@ -1208,5 +1208,38 @@
     "match_cid": "zijgosk9hjkoHKecXEIK",
     "match_confidence": "high",
     "summary": "Scott wants $300k for 42 Greens Way, says property is in very good condition with original owner for 33 years (no kids/pets), no liens, timeline uncertain."
+  },
+  "C06MM4DQZ28:1782242606.849039": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": null,
+      "reason_for_selling": null,
+      "timeline": "6+ months"
+    },
+    "match_cid": "wyu06XZxrdLztAG5tU0v",
+    "match_confidence": "high",
+    "summary": "Lead is interested in selling, property is in very good condition and owner-occupied, timeline is September if selling late spring/early summer next year definitely."
+  },
+  "C06MM4DQZ28:1782243107.939589": {
+    "field_updates": {
+      "asking_price": 180000,
+      "motivation": "Willing to seller finance with $70k down, hold mortgage month-to-month at 3-5% over 3 years",
+      "reason_for_selling": "Seeking liquidity while maintaining income stream through seller financing arrangement",
+      "timeline": "ASAP"
+    },
+    "match_cid": "oWgp2ttTetJ5ARZpIzJe",
+    "match_confidence": "high",
+    "summary": "Barbara Jean confirmed interest in selling, asking $180,000 but willing to accept $70,000 down with seller financing at 3-5% interest over 3 years; property has Section 8 tenant paying $1,300/month."
+  },
+  "C06MM4DQZ28:1782243750.358859": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": "Multiple buyers interested, willing to consider offers",
+      "reason_for_selling": "No specific reason stated, but notes that many buyers are interested in the property",
+      "timeline": "No rush"
+    },
+    "match_cid": "iFWAVtfdA58ek6ZL8Kqp",
+    "match_confidence": "high",
+    "summary": "Jeffrey confirmed his property at 156 Grant St needs major repairs (roof, kitchen, bathroom), is in below average condition, has a HELOC, no rush to sell, and is ready to receive offers."
   }
 }
