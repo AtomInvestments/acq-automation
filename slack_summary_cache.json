@@ -1186,5 +1186,27 @@
     "match_cid": "1eDJ1MNsANYTLGvJcTCM",
     "match_confidence": "high",
     "summary": "Lead responded to outreach saying 'make me an offer' but clarified he's not actively offering to sell; noted master bathroom needs updating but has new kitchen and appliances."
+  },
+  "C06MM4DQZ28:1782236330.803909": {
+    "field_updates": {
+      "asking_price": 165000,
+      "motivation": "Moving away from area, doesn't want mortgage at age 68, had previous buyer at $150k",
+      "reason_for_selling": "Planning to move away from the area and rent instead of carrying a mortgage at 68 years old",
+      "timeline": "90 days"
+    },
+    "match_cid": "GB3M32CIXFmDfwtuSv4m",
+    "match_confidence": "high",
+    "summary": "James Fuccello confirmed he will sell his property at 408 Elmer St after his son's wedding on 8/17, wants $150-180k, has $49k home equity loan, and plans to rent instead of carrying a mortgage at 68."
+  },
+  "C06MM4DQZ28:1782237572.896709": {
+    "field_updates": {
+      "asking_price": 300000,
+      "motivation": "uncertain - no specific reason given yet",
+      "reason_for_selling": null,
+      "timeline": "No rush"
+    },
+    "match_cid": "zijgosk9hjkoHKecXEIK",
+    "match_confidence": "high",
+    "summary": "Scott wants $300k for 42 Greens Way, says property is in very good condition with original owner for 33 years (no kids/pets), no liens, timeline uncertain."
   }
 }
