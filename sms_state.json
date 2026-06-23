@@ -845,7 +845,7 @@
     "stage_name": "mao"
   },
   "u5bThCERB26HstQfLQvT": {
-    "dormant": false,
+    "dormant": true,
     "last_from_number": "+12676197270",
     "last_sms_at": "2026-06-20T16:57:50.524133+00:00",
     "replied": false,
