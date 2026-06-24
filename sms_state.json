@@ -14,8 +14,11 @@
     "dormant": false,
     "last_from_number": null,
     "last_sms_at": null,
-    "replied": false,
-    "replied_at": null,
+    "replied": true,
+    "replied_at": "2026-06-24T20:34:12.017000+00:00",
+    "reply_attempts": 0,
+    "reply_class": "NEUTRAL",
+    "reply_text": "",
     "sms_count": 0,
     "stage_entered_at": "2026-06-24T18:14:39.097909+00:00",
     "stage_name": "qualified"
@@ -279,11 +282,11 @@
   },
   "E1xert5vwMKRARQoDk18": {
     "dormant": false,
-    "last_from_number": null,
-    "last_sms_at": null,
+    "last_from_number": "+16094388996",
+    "last_sms_at": "2026-06-24T21:51:29.608920+00:00",
     "replied": false,
     "replied_at": null,
-    "sms_count": 0,
+    "sms_count": 1,
     "stage_entered_at": "2026-06-17T21:24:20.384245+00:00",
     "stage_name": "qualified"
   },
@@ -550,6 +553,7 @@
     "reply_attempts": 0,
     "reply_class": "NEUTRAL",
     "reply_text": "Thank you for your interest",
+    "skip_reason": "tag-already-routed",
     "sms_count": 0,
     "stage_entered_at": "2026-06-24T20:15:20.698248+00:00",
     "stage_name": "qualified"
@@ -654,6 +658,7 @@
     "reply_attempts": 0,
     "reply_class": "POSITIVE",
     "reply_text": "\ud83d\udc4d",
+    "skip_reason": "tag-already-routed",
     "sms_count": 0,
     "stage_entered_at": "2026-06-24T20:15:14.160509+00:00",
     "stage_name": "qualified"
@@ -852,6 +857,7 @@
     "reply_attempts": 0,
     "reply_class": "WRONG",
     "reply_text": "DnD enabled by customer",
+    "skip_reason": "tag-already-routed",
     "sms_count": 0,
     "stage_entered_at": "2026-06-24T20:15:57.604376+00:00",
     "stage_name": "dead"
