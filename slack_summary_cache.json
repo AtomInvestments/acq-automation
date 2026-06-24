@@ -1263,5 +1263,27 @@
     "match_cid": null,
     "match_confidence": "none",
     "summary": "Team member is requesting someone to call three leads who have scheduled appointments for June 24, 2026."
+  },
+  "C06MM4DQZ28:1782331062.283189": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": null,
+      "reason_for_selling": "Investment property - currently a fully rented duplex with tenants paying $2,000 (1st floor) and $1,200 (2nd floor)",
+      "timeline": null
+    },
+    "match_cid": "ERbYnJp3T9WZi8Ee2Y6N",
+    "match_confidence": "high",
+    "summary": "Tibor confirmed the property at 2213 Lexington Ave is a fully rented duplex generating $3,200/month total rent and asked for an offer instead of providing his asking price."
+  },
+  "C06MM4DQZ28:1782331424.898889": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": null,
+      "reason_for_selling": null,
+      "timeline": null
+    },
+    "match_cid": "i77REqiz9XBtqtGD3f3A",
+    "match_confidence": "high",
+    "summary": "Team member requested to send offer numbers to Kevin at 136 Lamplighter Ct."
   }
 }
