@@ -1,4 +1,14 @@
 {
+  "1G6lf5kOjbl35QE37jsZ": {
+    "dormant": false,
+    "last_from_number": null,
+    "last_sms_at": null,
+    "replied": false,
+    "replied_at": null,
+    "sms_count": 0,
+    "stage_entered_at": "2026-06-25T18:29:35.167960+00:00",
+    "stage_name": "fu15mo"
+  },
   "2AhPd8UUQ8GirpYMXKTR": {
     "dormant": false,
     "last_from_number": "+16094388996",
@@ -98,6 +108,16 @@
     "sms_count": 0,
     "stage_entered_at": "2026-05-07T23:09:09.842315+00:00",
     "stage_name": "dead"
+  },
+  "5mAPLORxWEZQIJK3VdTp": {
+    "dormant": false,
+    "last_from_number": null,
+    "last_sms_at": null,
+    "replied": false,
+    "replied_at": null,
+    "sms_count": 0,
+    "stage_entered_at": "2026-06-25T18:29:28.571233+00:00",
+    "stage_name": "fu15mo"
   },
   "5uAvxtH6LI3vodD7WS6t": {
     "dormant": false,
@@ -429,6 +449,16 @@
     "stage_entered_at": "2026-05-07T23:09:45.508328+00:00",
     "stage_name": "dead"
   },
+  "KTRryqw3VANaaIr9tiaT": {
+    "dormant": false,
+    "last_from_number": null,
+    "last_sms_at": null,
+    "replied": false,
+    "replied_at": null,
+    "sms_count": 0,
+    "stage_entered_at": "2026-06-25T18:29:31.949511+00:00",
+    "stage_name": "fu15mo"
+  },
   "M6MrvW4KPONnpozrZFg7": {
     "dormant": false,
     "last_from_number": null,
@@ -649,6 +679,16 @@
     "stage_entered_at": "2026-05-07T23:08:20.211632+00:00",
     "stage_name": "mao"
   },
+  "ZarZCLmDwBnVGKVjUl6g": {
+    "dormant": false,
+    "last_from_number": null,
+    "last_sms_at": null,
+    "replied": false,
+    "replied_at": null,
+    "sms_count": 0,
+    "stage_entered_at": "2026-06-25T18:29:29.364446+00:00",
+    "stage_name": "fu15mo"
+  },
   "ZcFvTuaDT9hUquFWNrCW": {
     "dormant": false,
     "last_from_number": null,
@@ -794,8 +834,8 @@
     "replied_at": null,
     "skip_reason": "tag-already-routed",
     "sms_count": 0,
-    "stage_entered_at": "2026-06-24T20:15:32.637582+00:00",
-    "stage_name": "qualified"
+    "stage_entered_at": "2026-06-25T18:29:37.681842+00:00",
+    "stage_name": "fu15mo"
   },
   "eTzIi5tOxMam2J1RJuUV": {
     "dormant": false,
@@ -847,6 +887,16 @@
     "sms_count": 1,
     "stage_entered_at": "2026-05-07T23:05:17.012754+00:00",
     "stage_name": "qualified"
+  },
+  "h6QuNYrxkc1CiENCnNfg": {
+    "dormant": false,
+    "last_from_number": null,
+    "last_sms_at": null,
+    "replied": false,
+    "replied_at": null,
+    "sms_count": 0,
+    "stage_entered_at": "2026-06-25T18:29:36.180366+00:00",
+    "stage_name": "fu15mo"
   },
   "hRJlbcSMV8aL7Jo5kJll": {
     "dormant": false,
