@@ -923,8 +923,11 @@
     "dormant": false,
     "last_from_number": null,
     "last_sms_at": null,
-    "replied": false,
-    "replied_at": null,
+    "replied": true,
+    "replied_at": "2026-06-24T23:30:41.872000+00:00",
+    "reply_attempts": 0,
+    "reply_class": "WRONG",
+    "reply_text": "Because it's what dr evil wanted in Austin powers",
     "sms_count": 0,
     "stage_entered_at": "2026-06-24T20:15:54.371671+00:00",
     "stage_name": "fu3mo"
