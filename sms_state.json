@@ -983,6 +983,16 @@
     "stage_entered_at": "2026-06-24T20:15:54.371671+00:00",
     "stage_name": "fu3mo"
   },
+  "mR5QUmcx0nfKBoxn89cT": {
+    "dormant": false,
+    "last_from_number": null,
+    "last_sms_at": null,
+    "replied": false,
+    "replied_at": null,
+    "sms_count": 0,
+    "stage_entered_at": "2026-06-26T22:13:17.046389+00:00",
+    "stage_name": "qualified"
+  },
   "n6ITXxOmFpA4L6I7PhbV": {
     "dormant": false,
     "last_from_number": null,
