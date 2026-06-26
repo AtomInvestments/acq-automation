@@ -1307,5 +1307,27 @@
     "match_cid": "SqeeJkxAxkJ4850ARC5d",
     "match_confidence": "high",
     "summary": "Scott Bruder confirmed asking price of $453,000, property is currently rented, needs minor cosmetic work and paint inside, kitchen renovated 8 years ago, roof 15 years old, flexible timeline, no specific reason for selling."
+  },
+  "C06MM4DQZ28:1782498813.506439": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": "Wants to see offer, currently renting property",
+      "reason_for_selling": "Owner is renting out the property and actively seeking cash offers to potentially liquidate the investment",
+      "timeline": "ASAP"
+    },
+    "match_cid": "mR5QUmcx0nfKBoxn89cT",
+    "match_confidence": "high",
+    "summary": "Jennifer confirmed interest in selling, property is a rental at $1375/month with minor work needed, no liens, asked for offer and agreed to schedule a call."
+  },
+  "C06MM4DQZ28:1782499860.202719": {
+    "field_updates": {
+      "asking_price": 175000,
+      "motivation": "Currently renting it out, only interested if offer meets his price",
+      "reason_for_selling": "Not actively selling - will continue renting unless offer meets his $175k asking price which he believes is below market value",
+      "timeline": "No rush"
+    },
+    "match_cid": "2QVI2ReTLstSCLuM7nu8",
+    "match_confidence": "high",
+    "summary": "Philip states asking price is $175k, property is 3bed/1bath with recent updates, currently rented, and he's in no rush to sell."
   }
 }
