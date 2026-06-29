@@ -98,6 +98,17 @@
     "match_confidence": "high",
     "summary": "Owner confirmed 6bed/2bath property generating $8,800/month with commercial downstairs and family rentals on 2nd/3rd floors, motivated by price but unsure of asking amount, wants to sell to invest in something new."
   },
+  "C05M7E1TJP7:1782752689.681709": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": "Looking for an offer that makes sense",
+      "reason_for_selling": "Want to get close to work",
+      "timeline": "60 days"
+    },
+    "match_cid": "Gzku9tYtjeNGHHJFOfAU",
+    "match_confidence": "high",
+    "summary": "Lead has been thinking about selling for the past 2 months, wants to get closer to work, looking for an offer that makes sense, scheduled callback at 5pm."
+  },
   "C05MP6K9RNV:1779136440.549199": {
     "field_updates": {
       "asking_price": null,
@@ -1329,5 +1340,16 @@
     "match_cid": "2QVI2ReTLstSCLuM7nu8",
     "match_confidence": "high",
     "summary": "Philip states asking price is $175k, property is 3bed/1bath with recent updates, currently rented, and he's in no rush to sell."
+  },
+  "C06MM4DQZ28:1782756584.384409": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": "Opportunity to downsize",
+      "reason_for_selling": "Wants to downsize from current home",
+      "timeline": "No rush"
+    },
+    "match_cid": "56MpUb2V9jiSe2yJuV3S",
+    "match_confidence": "high",
+    "summary": "Harvey confirmed he's interested in selling, property is in good condition with recent upgrades, he lives there and wants to downsize with flexible timeline."
   }
 }
