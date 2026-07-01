@@ -1376,5 +1376,38 @@
     "match_cid": "0Nt8GxK5uzIEJnyLRoUq",
     "match_confidence": "high",
     "summary": "James confirmed interest in selling his rented property in excellent condition, targeting $300-310k net with a timeline of a few months."
+  },
+  "C06MM4DQZ28:1782934266.479239": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": "Has tenants, lease renewal in December",
+      "reason_for_selling": "Currently not willing to sell, has tenants with lease renewal in December 2025, wants to see offer first",
+      "timeline": "6+ months"
+    },
+    "match_cid": "qoOe1clmulLOtgqzS6iY",
+    "match_confidence": "high",
+    "summary": "Stephen has tenants with lease renewal in December, property updated 5 years ago in excellent condition, not willing to sell now but maybe in 6 months."
+  },
+  "C06MM4DQZ28:1782935726.349159": {
+    "field_updates": {
+      "asking_price": 548000,
+      "motivation": "No urgency - will stay if it doesn't sell",
+      "reason_for_selling": "No specific reason mentioned - opportunistic seller only if price is met",
+      "timeline": "No rush"
+    },
+    "match_cid": "lBXcnUTuqVwOIiZL8P0b",
+    "match_confidence": "high",
+    "summary": "David confirmed he's living in the property, previously listed at $568k, and is firm at $548k with no rush to sell."
+  },
+  "C06MM4DQZ28:1782935930.633609": {
+    "field_updates": {
+      "asking_price": 685000,
+      "motivation": "Looking to sell this month",
+      "reason_for_selling": null,
+      "timeline": "ASAP"
+    },
+    "match_cid": "i6jNbk2K4ElHdGfyeYgM",
+    "match_confidence": "high",
+    "summary": "Joseph confirmed he's selling 505 Halsey Rd this month for $685k, house is in good condition with updated bathrooms and kitchen, he's living there now, and is available for a call."
   }
 }
