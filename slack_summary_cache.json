@@ -1365,5 +1365,16 @@
   },
   "C06MM4DQZ28:1782841929.228149": {},
   "C06MM4DQZ28:1782843240.115219": {},
-  "C06MM4DQZ28:1782843639.584759": {}
+  "C06MM4DQZ28:1782843639.584759": {},
+  "C06MM4DQZ28:1782929567.052319": {
+    "field_updates": {
+      "asking_price": 310000,
+      "motivation": "No specific motivation stated",
+      "reason_for_selling": "No specific reason given by seller",
+      "timeline": "90 days"
+    },
+    "match_cid": "0Nt8GxK5uzIEJnyLRoUq",
+    "match_confidence": "high",
+    "summary": "James confirmed interest in selling his rented property in excellent condition, targeting $300-310k net with a timeline of a few months."
+  }
 }
