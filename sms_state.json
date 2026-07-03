@@ -1005,11 +1005,11 @@
   },
   "mR5QUmcx0nfKBoxn89cT": {
     "dormant": false,
-    "last_from_number": null,
-    "last_sms_at": null,
+    "last_from_number": "+16094388996",
+    "last_sms_at": "2026-07-03T22:50:19.714639+00:00",
     "replied": false,
     "replied_at": null,
-    "sms_count": 0,
+    "sms_count": 1,
     "stage_entered_at": "2026-06-26T22:13:17.046389+00:00",
     "stage_name": "qualified"
   },
