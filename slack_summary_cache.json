@@ -1415,5 +1415,27 @@
   "C06MM4DQZ28:1783020696.830129": {},
   "C06MM4DQZ28:1783102010.527409": {},
   "C06MM4DQZ28:1783103693.140979": {},
-  "C06MM4DQZ28:1783104245.879899": {}
+  "C06MM4DQZ28:1783104245.879899": {},
+  "C06MM4DQZ28:1783366798.273669": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": "Very interested, wants to move quickly",
+      "reason_for_selling": null,
+      "timeline": "ASAP"
+    },
+    "match_cid": "8ivvEc2Mmc0z0NoMUnJD",
+    "match_confidence": "high",
+    "summary": "Malcolm confirmed he's very interested in selling, property is vacant and in good condition, wants to sell very quickly (ASAP)."
+  },
+  "C06MM4DQZ28:1783371328.721629": {
+    "field_updates": {
+      "asking_price": 250000,
+      "motivation": "Has tenant month-to-month, needs 30 days notice to vacate",
+      "reason_for_selling": "No specific reason provided",
+      "timeline": "30 days"
+    },
+    "match_cid": "IzpVHXik9Bnu5OoLqxyP",
+    "match_confidence": "high",
+    "summary": "Robert wants $250k for his rental property at 1220 Tristram Cir, which only needs cosmetic work and flooring; tenant is month-to-month so needs 30 days notice."
+  }
 }
