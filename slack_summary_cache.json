@@ -1437,5 +1437,27 @@
     "match_cid": "IzpVHXik9Bnu5OoLqxyP",
     "match_confidence": "high",
     "summary": "Robert wants $250k for his rental property at 1220 Tristram Cir, which only needs cosmetic work and flooring; tenant is month-to-month so needs 30 days notice."
+  },
+  "C06MM4DQZ28:1783452588.217689": {
+    "field_updates": {
+      "asking_price": 525000,
+      "motivation": null,
+      "reason_for_selling": null,
+      "timeline": "60 days"
+    },
+    "match_cid": "GlaOksjH8xJdc5lhDMpi",
+    "match_confidence": "high",
+    "summary": "Janice Davis confirmed interest in selling 21 Toby Ln within a couple months, property is in good condition and owner-occupied, asking $525k."
+  },
+  "C06MM4DQZ28:1783453977.931389": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": "Open to selling both properties for the right price only",
+      "reason_for_selling": "Investment opportunity - willing to consider offers on rental properties if price is right",
+      "timeline": "No rush"
+    },
+    "match_cid": "ZdfmqkQohb0EqQNh0odU",
+    "match_confidence": "high",
+    "summary": "Peter owns both 509 and 511 7th Ave in excellent condition, both rented, willing to sell for the right price with no timeline urgency, and scheduled a call for after 6pm tomorrow."
   }
 }
