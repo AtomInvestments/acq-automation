@@ -1459,5 +1459,16 @@
     "match_cid": "ZdfmqkQohb0EqQNh0odU",
     "match_confidence": "high",
     "summary": "Peter owns both 509 and 511 7th Ave in excellent condition, both rented, willing to sell for the right price with no timeline urgency, and scheduled a call for after 6pm tomorrow."
+  },
+  "C06MM4DQZ28:1783460434.296559": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": null,
+      "reason_for_selling": null,
+      "timeline": null
+    },
+    "match_cid": null,
+    "match_confidence": "none",
+    "summary": "Lawrence Suggs at 108 Glen Mawr Dr wants to sell his half of the property for $120k, motivated to move to Florida, ready to close in 2 weeks."
   }
 }
