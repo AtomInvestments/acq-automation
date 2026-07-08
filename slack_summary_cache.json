@@ -1514,5 +1514,16 @@
     "match_cid": "pOTUx7OOzXpYCzeNT7Fs",
     "match_confidence": "high",
     "summary": "Andrew Dobson states the property at 253 Jefferson Rd needs extensive work, is rented for $400/month on yearly lease with 12 tenants, and he's asking $2 million."
+  },
+  "C06MM4DQZ28:1783539912.744139": {
+    "field_updates": {
+      "asking_price": 1500000,
+      "motivation": "No particular reason for selling",
+      "reason_for_selling": "No particular reason stated",
+      "timeline": "No rush"
+    },
+    "match_cid": "6HzYIteTwsZgDtTzqLOx",
+    "match_confidence": "high",
+    "summary": "Isac Jacob owns and lives in property at 1 Linden Ave in very good condition with no liens, asking $1.5M, timeline depends on offer, no particular reason for selling, not interested in listing."
   }
 }
