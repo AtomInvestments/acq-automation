@@ -1470,5 +1470,16 @@
     "match_cid": null,
     "match_confidence": "none",
     "summary": "Lawrence Suggs at 108 Glen Mawr Dr wants to sell his half of the property for $120k, motivated to move to Florida, ready to close in 2 weeks."
+  },
+  "C06MM4DQZ28:1783460645.245249": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": "Engaged in conversation and asking for offer",
+      "reason_for_selling": null,
+      "timeline": null
+    },
+    "match_cid": "fa1dnYpHlAeCSjBRaUuQ",
+    "match_confidence": "high",
+    "summary": "Lead confirmed property is vacant land with no structures but has utilities available nearby; seller is interested and asking for an offer."
   }
 }
