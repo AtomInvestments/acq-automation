@@ -1481,5 +1481,38 @@
     "match_cid": "fa1dnYpHlAeCSjBRaUuQ",
     "match_confidence": "high",
     "summary": "Lead confirmed property is vacant land with no structures but has utilities available nearby; seller is interested and asking for an offer."
+  },
+  "C06MM4DQZ28:1783533254.501299": {
+    "field_updates": {
+      "asking_price": 750000,
+      "motivation": "Opportunity - wants cash offer, prefers no text communication",
+      "reason_for_selling": "Selling due to opportunity, wants cash offer and no further text messages",
+      "timeline": "ASAP"
+    },
+    "match_cid": "ZMhVdcwFYupwfQBpswKc",
+    "match_confidence": "high",
+    "summary": "Lead wants $750k cash offer, property is vacant and in good condition, motivated to sell now due to opportunity, prefers email communication only."
+  },
+  "C06MM4DQZ28:1783534324.294829": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": "Exploring options, received multiple inquiries on their properties",
+      "reason_for_selling": "No specific reason - just thinking about it and got interested by the inquiry message",
+      "timeline": "No rush"
+    },
+    "match_cid": "LLn9M02ZzgvpWOX409FK",
+    "match_confidence": "high",
+    "summary": "Property owner (husband speaking) indicates no timeline to sell, home is well-maintained with new roof, vacant but furnished, no liens, considering both sale and rental options."
+  },
+  "C06MM4DQZ28:1783534383.547119": {
+    "field_updates": {
+      "asking_price": 2000000,
+      "motivation": "Likes money, demands payment today, aggressive timeline",
+      "reason_for_selling": "Hadn't considered selling until contacted but interested due to financial motivation",
+      "timeline": "ASAP"
+    },
+    "match_cid": "pOTUx7OOzXpYCzeNT7Fs",
+    "match_confidence": "high",
+    "summary": "Andrew Dobson states the property at 253 Jefferson Rd needs extensive work, is rented for $400/month on yearly lease with 12 tenants, and he's asking $2 million."
   }
 }
