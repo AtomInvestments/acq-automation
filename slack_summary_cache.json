@@ -1525,5 +1525,16 @@
     "match_cid": "6HzYIteTwsZgDtTzqLOx",
     "match_confidence": "high",
     "summary": "Isac Jacob owns and lives in property at 1 Linden Ave in very good condition with no liens, asking $1.5M, timeline depends on offer, no particular reason for selling, not interested in listing."
+  },
+  "C06MM4DQZ28:1783622336.806779": {
+    "field_updates": {
+      "asking_price": 350000,
+      "motivation": "Out of area, using proceeds for retirement",
+      "reason_for_selling": "Relocated out of the area and wants to use sale proceeds for retirement",
+      "timeline": "30 days"
+    },
+    "match_cid": "Mzr5BUYhE0PlpGDTtKlN",
+    "match_confidence": "high",
+    "summary": "Leonard wants $350K for his vacant half-acre property with residential and commercial zoning, needs 30 days to move his cars, kitchen needs minor work, and he's selling for retirement funds."
   }
 }
