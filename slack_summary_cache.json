@@ -1547,5 +1547,49 @@
     "match_cid": "Mzr5BUYhE0PlpGDTtKlN",
     "match_confidence": "high",
     "summary": "Leonard wants $350K for his vacant half-acre property with residential and commercial zoning, needs 30 days to move his cars, kitchen needs minor work, and he's selling for retirement funds."
+  },
+  "C06MM4DQZ28:1783711055.755319": {
+    "field_updates": {
+      "asking_price": 825000,
+      "motivation": "Not specified - declined to provide reason",
+      "reason_for_selling": "Lead declined to provide a specific reason for selling",
+      "timeline": "6+ months"
+    },
+    "match_cid": "ztXckTqkGqMuqpGTyHpO",
+    "match_confidence": "high",
+    "summary": "Gary Bowne confirmed owner-occupied property in good condition with recent updates, wants around $825k, timeline is 6 months, not interested in listing."
+  },
+  "C06MM4DQZ28:1783711638.687709": {
+    "field_updates": {
+      "asking_price": 965000,
+      "motivation": "Separation/divorce - owner moved to Newark, ex-husband in Florida",
+      "reason_for_selling": "Separated from spouse, now living in different cities",
+      "timeline": "ASAP"
+    },
+    "match_cid": "YqfwBZcHykw6J5iQQjNP",
+    "match_confidence": "high",
+    "summary": "Gary inquired about seller financing details; wants $950k-980k for the property after separation, mortgage balance is $680k, timeline is right away depending on price."
+  },
+  "C06MM4DQZ28:1783711821.675179": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": null,
+      "reason_for_selling": null,
+      "timeline": null
+    },
+    "match_cid": "Q3JZUSsThXjnUNt6iZ0J",
+    "match_confidence": "high",
+    "summary": "Raymond Chambers confirmed ownership of 87 Fawn Ct and agreed to send pictures tomorrow while engaging in conversation about selling the property."
+  },
+  "C06MM4DQZ28:1783712373.912099": {
+    "field_updates": {
+      "asking_price": 250000,
+      "motivation": "Would sell for right price ($250k), property currently generating rental income",
+      "reason_for_selling": "Not actively selling but open to offers at $250k; property is investment rental generating $1950/month",
+      "timeline": "No rush"
+    },
+    "match_cid": "IIQmKUxFAqNFoYWoDaIK",
+    "match_confidence": "high",
+    "summary": "Steven confirmed property is rented at $1950/month yearly, wants $250k cash, property is tenant-occupied with updated bathroom and stainless kitchen, has existing mortgage, no rush to sell."
   }
 }
