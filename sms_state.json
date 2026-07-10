@@ -400,6 +400,16 @@
     "stage_entered_at": "2026-05-07T23:10:08.225807+00:00",
     "stage_name": "dead"
   },
+  "HeQfjtkjAvVEBiKi6Jrn": {
+    "dormant": false,
+    "last_from_number": null,
+    "last_sms_at": null,
+    "replied": false,
+    "replied_at": null,
+    "sms_count": 0,
+    "stage_entered_at": "2026-07-10T16:11:10.981364+00:00",
+    "stage_name": "dead"
+  },
   "HwzVbJm77wIGukgzkcYK": {
     "dormant": false,
     "last_from_number": "+16094388996",
