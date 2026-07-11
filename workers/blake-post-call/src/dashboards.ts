@@ -4190,7 +4190,7 @@ section h2, h2 {
   <header class="masthead">
     <div class="brandrow">
       <span class="brand">Atom Investments · APG Operations</span>
-      <span>Last updated Jul 11, 2026 08:46 AM ET</span>
+      <span>Last updated Jul 11, 2026 10:17 AM ET</span>
     </div>
     <h1>Active <span class="accent">Deals.</span></h1>
     <p class="dek">Every property currently in stages 1-7 of the ACQ pipeline. Sorted by call rating within each stage so the strongest deals surface first.</p>
@@ -4751,7 +4751,7 @@ section h2, h2 {
   <header class="masthead">
     <div class="brandrow">
       <span class="brand">Atom Investments · APG Operations</span>
-      <span>Last updated Jul 11, 2026 08:45 AM ET</span>
+      <span>Last updated Jul 11, 2026 10:16 AM ET</span>
     </div>
     <h1>SMS <span class="accent">Follow-Ups.</span></h1>
     <p class="dek">Action queue for Jeff and Mike — replies to call back, leads gone dormant, and everything still cycling through the SMS sequence.</p>
@@ -4771,17 +4771,17 @@ section h2, h2 {
     <a href="sms-test.html">SMS Test</a>
   </nav>
 
-  <details class="run-grid-collapsed"><summary>All 5 cron jobs OK on last run — click for timestamps</summary><div class="run-grid"><div class="run-row"><span class="tag green">OK</span><span class="run-name">ACQ Call Recording Automation</span><span class="run-ts">Jul 11, 08:39 AM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">ACQ SMS Follow-Up + Dashboard</span><span class="run-ts">Jul 11, 07:41 AM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">APG Slack Scraper</span><span class="run-ts">Jul 11, 07:42 AM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">dashboard (script)</span><span class="run-ts">Jul 11, 08:44 AM</span><span class="run-detail">dashboard updated</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">sms (script)</span><span class="run-ts">Jul 11, 08:44 AM</span><span class="run-detail">outside business hours (hour=8 ET)</span></div></div></details><div class="status-banner on"><div class="status-text"><span class="pulse"></span>SMS Automation: <span style="color:var(--green);font-weight:800">ACTIVE</span></div><a class="btn btn-kill" href="https://docs.google.com/spreadsheets/d/1wc3Pt46ze-ejLaryL8WIRQf4OjEkirolc4-O8lsRQZY/edit#gid=0" target="_blank">EMERGENCY KILL SWITCH</a></div>
+  <details class="run-grid-collapsed"><summary>All 5 cron jobs OK on last run — click for timestamps</summary><div class="run-grid"><div class="run-row"><span class="tag green">OK</span><span class="run-name">ACQ Call Recording Automation</span><span class="run-ts">Jul 11, 10:08 AM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">ACQ SMS Follow-Up + Dashboard</span><span class="run-ts">Jul 11, 08:46 AM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">APG Slack Scraper</span><span class="run-ts">Jul 11, 08:46 AM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">dashboard (script)</span><span class="run-ts">Jul 11, 10:16 AM</span><span class="run-detail">dashboard updated</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">sms (script)</span><span class="run-ts">Jul 11, 10:16 AM</span><span class="run-detail">{&quot;wait&quot;: 30, &quot;replied-positive&quot;: 1, &quot;skipped-tag-prebail&quot;: 56, &quot;skipped&quot;: 7, &quot;no-phone&quot;: 1}</span></div></div></details><div class="status-banner on"><div class="status-text"><span class="pulse"></span>SMS Automation: <span style="color:var(--green);font-weight:800">ACTIVE</span></div><a class="btn btn-kill" href="https://docs.google.com/spreadsheets/d/1wc3Pt46ze-ejLaryL8WIRQf4OjEkirolc4-O8lsRQZY/edit#gid=0" target="_blank">EMERGENCY KILL SWITCH</a></div>
 
   <section class="sec">
     <div class="tag-row"><span class="num">01</span><h2>At a Glance</h2></div>
     <hr>
     <div class="stat-row">
       <div class="stat"><div class="lab">Total Leads</div><div class="v">95</div><div class="sub">across all stages</div></div>
-      <div class="stat"><div class="lab">In Sequence</div><div class="v">32</div><div class="sub">SMS scheduled</div></div>
-      <div class="stat hot"><div class="lab">Replied — Call Now</div><div class="v">56</div><div class="sub">Jeff has tasks</div></div>
+      <div class="stat"><div class="lab">In Sequence</div><div class="v">31</div><div class="sub">SMS scheduled</div></div>
+      <div class="stat hot"><div class="lab">Replied — Call Now</div><div class="v">57</div><div class="sub">Jeff has tasks</div></div>
       <div class="stat warm"><div class="lab">Dormant — Manual Call</div><div class="v">1</div><div class="sub">no reply after sequence</div></div>
-      <div class="stat green"><div class="lab">Reply Rate</div><div class="v">62.9%</div><div class="sub">replied / total touched</div></div>
+      <div class="stat green"><div class="lab">Reply Rate</div><div class="v">64.0%</div><div class="sub">replied / total touched</div></div>
     </div>
   </section>
 
@@ -4801,7 +4801,8 @@ section h2, h2 {
   <section class="sec">
     <div class="tag-row"><span class="num">03</span><h2><span class="dot hot"></span>Replied — Action Needed</h2></div>
     <hr>
-    <div class="lead-table"><table><thead><tr><th>Contact</th><th>Address</th><th>Stage</th><th>Replied</th><th>Last Number</th></tr></thead><tbody><tr><td><strong>Osvaldo Colon</strong></td><td>352 Colonial Rd</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot">Jun 24, 01:05 PM</span></td><td></td></tr>
+    <div class="lead-table"><table><thead><tr><th>Contact</th><th>Address</th><th>Stage</th><th>Replied</th><th>Last Number</th></tr></thead><tbody><tr><td><strong>Jennifer Torres</strong></td><td>1154 Jackson St</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot">Jul 10, 09:21 PM</span></td><td>Jeff (NJ)</td></tr>
+<tr><td><strong>Osvaldo Colon</strong></td><td>352 Colonial Rd</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot">Jun 24, 01:05 PM</span></td><td></td></tr>
 <tr><td><strong>James Southard</strong></td><td>9 Chelsea Pl</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot">Jun 24, 03:50 PM</span></td><td></td></tr>
 <tr><td><strong>Eleanor</strong></td><td>500 Jackson Road</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot">Jun 04, 08:01 PM</span></td><td>AL Market</td></tr>
 <tr><td><strong>Joseph Schili</strong></td><td>1370 Oriental Ave</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot"></span></td><td>Jeff (NJ)</td></tr>
@@ -4883,7 +4884,6 @@ section h2, h2 {
     <hr>
     <input type="text" class="search" id="searchActive" placeholder="Search by name, address, state...">
     <div class="lead-table"><table id="activeTable"><thead><tr><th>Contact</th><th>Address</th><th>State</th><th>Stage</th><th>SMS Sent</th><th>Last Sent</th><th>From Number</th></tr></thead><tbody><tr><td><strong>James Sammarco</strong></td><td>1513 Country Mill Dr</td><td>NJ</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">1</span></td><td>Jul 08, 02:51 PM</td><td>Jeff (NJ)</td></tr>
-<tr><td><strong>Jennifer Torres</strong></td><td>1154 Jackson St</td><td>NJ</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">2</span></td><td>Jul 10, 07:44 PM</td><td>Jeff (NJ)</td></tr>
 <tr><td><strong>James Zago</strong></td><td>919 Sunset Ave</td><td>NJ</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">2</span></td><td>Jul 08, 02:51 PM</td><td>Jeff (NJ)</td></tr>
 <tr><td><strong>4520 Lee Llc</strong></td><td>4520 BERGENLINE AVE</td><td>NJ</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">3</span></td><td>Jul 08, 06:52 PM</td><td>Jeff (NJ)</td></tr>
 <tr><td><strong>Denise Lannon</strong></td><td>412 South Coles Avenue</td><td>NJ</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">2</span></td><td>Jul 08, 02:51 PM</td><td>Jeff (NJ)</td></tr>
@@ -4919,7 +4919,9 @@ section h2, h2 {
   <section class="sec">
     <div class="tag-row"><span class="num">07</span><h2><span class="dot hot"></span>Open Tasks</h2></div>
     <hr>
-    <div class="lead-table"><table><thead><tr><th>Contact</th><th>Address</th><th>Task</th><th>Assignee</th><th>Due</th></tr></thead><tbody><tr><td><strong>James Zago</strong></td><td>919 Sunset Ave</td><td>Update Status - Construction - Can go anytime.</td><td><span class="tag">Jeff</span></td><td>Jan 16, 08:00 PM</td></tr>
+    <div class="lead-table"><table><thead><tr><th>Contact</th><th>Address</th><th>Task</th><th>Assignee</th><th>Due</th></tr></thead><tbody><tr><td><strong>Jennifer Torres</strong></td><td>1154 Jackson St</td><td>REVIEW: Did Jeff call Jennifer Torres back?</td><td><span class="tag">Mike</span></td><td>Jul 12, 10:15 AM</td></tr>
+<tr><td><strong>Jennifer Torres</strong></td><td>1154 Jackson St</td><td>Call back: Jennifer Torres (1154 Jackson St)</td><td><span class="tag">Jeff</span></td><td>Jul 11, 10:15 AM</td></tr>
+<tr><td><strong>James Zago</strong></td><td>919 Sunset Ave</td><td>Update Status - Construction - Can go anytime.</td><td><span class="tag">Jeff</span></td><td>Jan 16, 08:00 PM</td></tr>
 <tr><td><strong>Osvaldo Colon</strong></td><td>352 Colonial Rd</td><td>REVIEW: Did Jeff call Osvaldo Colon back?</td><td><span class="tag">Mike</span></td><td>Jun 25, 02:14 PM</td></tr>
 <tr><td><strong>Osvaldo Colon</strong></td><td>352 Colonial Rd</td><td>Call back: Osvaldo Colon (352 Colonial Rd)</td><td><span class="tag">Jeff</span></td><td>Jun 24, 02:14 PM</td></tr>
 <tr><td><strong>Mlm-Property Group Llc</strong></td><td>121 77TH ST</td><td>Call Mlm-Property Group Llc - 121 77TH ST, north bergen NJ  - (973) 674-7800</td><td><span class="tag">Jeff</span></td><td>Jun 10, 12:45 PM</td></tr>
