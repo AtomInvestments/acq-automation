@@ -1591,5 +1591,38 @@
     "match_cid": "IIQmKUxFAqNFoYWoDaIK",
     "match_confidence": "high",
     "summary": "Steven confirmed property is rented at $1950/month yearly, wants $250k cash, property is tenant-occupied with updated bathroom and stainless kitchen, has existing mortgage, no rush to sell."
+  },
+  "C06MM4DQZ28:1783966579.815199": {
+    "field_updates": {
+      "asking_price": 650000,
+      "motivation": "Retiring abroad",
+      "reason_for_selling": "Owner is retiring and moving abroad",
+      "timeline": "No rush"
+    },
+    "match_cid": "ENzyY54CvUCCVq30sNsZ",
+    "match_confidence": "high",
+    "summary": "Carlos wants $650k for his updated property, lives there now but retiring abroad soon, has ~$100k mortgage remaining, flexible timeline."
+  },
+  "C06MM4DQZ28:1783967307.244349": {
+    "field_updates": {
+      "asking_price": 550000,
+      "motivation": "Trying to get out ASAP, wants to sell right away",
+      "reason_for_selling": "Wants to get out ASAP and is ready to vacate the property within a month",
+      "timeline": "30 days"
+    },
+    "match_cid": "Gs9EioL4qts6L3bdttcF",
+    "match_confidence": "high",
+    "summary": "Raymond wants to sell 532 Halsey Rd ASAP for $550k, house is in good condition with new kitchen, needs eventual roof, currently occupied but can vacate in a month, has mortgage but no liens."
+  },
+  "C06MM4DQZ28:1783971716.738199": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": "Willing to listen to offers",
+      "reason_for_selling": "No specific reason stated - responded 'IDK' to timeline question and asked 'Why are you contacting me', suggesting no active intent to sell",
+      "timeline": "No rush"
+    },
+    "match_cid": "YiJxKygwD3gsfl7LBmWU",
+    "match_confidence": "high",
+    "summary": "Robert lives in the condo at 60 Herbert Ter which was gutted and rebuilt in 2014, is in good condition with no liens, and he's willing to listen to offers but unsure of timeline."
   }
 }
