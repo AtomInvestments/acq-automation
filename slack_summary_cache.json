@@ -1657,5 +1657,16 @@
     "match_cid": "rxkXJLEAKidQndnG2WhT",
     "match_confidence": "high",
     "summary": "Francine (wife) is interested in selling their 16-acre property at 218 Jackson Mills Rd before school starts; inside doesn't need work but outside does, currently owner-occupied with just a mortgage, and husband Scott needs to be contacted to discuss price."
+  },
+  "C06MM4DQZ28:1784058211.480449": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": "Interested for the right price, wants in-person viewing or written offer",
+      "reason_for_selling": "Not specified - considering selling but holding details close, needs to discuss timeline with wife",
+      "timeline": "60 days"
+    },
+    "match_cid": "q03q3JpRsq3tnOYELhfc",
+    "match_confidence": "high",
+    "summary": "Louis confirmed he's interested in selling for the right price, timeline is within next couple months (possibly sooner, needs to discuss with wife), basement needs work, property is owner-occupied, no liens, won't disclose asking price yet, and wants to schedule a call for Monday afternoon."
   }
 }
