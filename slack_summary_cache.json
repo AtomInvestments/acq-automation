@@ -1624,5 +1624,38 @@
     "match_cid": "YiJxKygwD3gsfl7LBmWU",
     "match_confidence": "high",
     "summary": "Robert lives in the condo at 60 Herbert Ter which was gutted and rebuilt in 2014, is in good condition with no liens, and he's willing to listen to offers but unsure of timeline."
+  },
+  "C06MM4DQZ28:1784052392.623569": {
+    "field_updates": {
+      "asking_price": 535000,
+      "motivation": "family downsize",
+      "reason_for_selling": "Family is downsizing and needs to relocate by end of September",
+      "timeline": "90 days"
+    },
+    "match_cid": "mPTaM059ruxFkuzkCq6f",
+    "match_confidence": "high",
+    "summary": "Julius confirmed asking price of $535k cash as-is with 30-day relocation, seeking to sell in August and move by end of September, property is owner-occupied with existing mortgage, selling to downsize family."
+  },
+  "C06MM4DQZ28:1784052446.234979": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": "Looking to see if can get enough to move out of state",
+      "reason_for_selling": "Wants to relocate out of state and is testing if sale proceeds would be sufficient to make the move",
+      "timeline": "No rush"
+    },
+    "match_cid": "p376Ju4At4KUYUt3aJDd",
+    "match_confidence": "high",
+    "summary": "Angela confirmed she's ready to sell her owner-occupied property, needs to assess if sale proceeds are sufficient to move out of state, property needs updating, has one mortgage, and is available for calls after 5:30 PM."
+  },
+  "C06MM4DQZ28:1784052963.049269": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": "Wants to sell before school starts",
+      "reason_for_selling": "No specific reason given - stated 'No' when asked",
+      "timeline": "ASAP"
+    },
+    "match_cid": "rxkXJLEAKidQndnG2WhT",
+    "match_confidence": "high",
+    "summary": "Francine (wife) is interested in selling their 16-acre property at 218 Jackson Mills Rd before school starts; inside doesn't need work but outside does, currently owner-occupied with just a mortgage, and husband Scott needs to be contacted to discuss price."
   }
 }
