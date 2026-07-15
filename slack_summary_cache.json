@@ -1668,5 +1668,27 @@
     "match_cid": "q03q3JpRsq3tnOYELhfc",
     "match_confidence": "high",
     "summary": "Louis confirmed he's interested in selling for the right price, timeline is within next couple months (possibly sooner, needs to discuss with wife), basement needs work, property is owner-occupied, no liens, won't disclose asking price yet, and wants to schedule a call for Monday afternoon."
+  },
+  "C06MM4DQZ28:1784140831.406479": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": "Would only sell for price they can't refuse - not motivated to move",
+      "reason_for_selling": "Not looking to sell unless presented with an offer they can't refuse; happy in current home",
+      "timeline": "No rush"
+    },
+    "match_cid": "nizDSE8IOvooZGPi6U6q",
+    "match_confidence": "high",
+    "summary": "Lead confirmed property is fully renovated (2017), they live in it and don't want to move unless they receive an exceptional offer with no specific timeline."
+  },
+  "C06MM4DQZ28:1784141320.055859": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": "Will keep forever unless receives exceptional offer",
+      "reason_for_selling": "Currently rented investment property with no urgency to sell, only interested if offer is compelling enough.",
+      "timeline": "No rush"
+    },
+    "match_cid": "ZmVzxGNa0xYqIpKj7wel",
+    "match_confidence": "high",
+    "summary": "Property is rented month-to-month, remodeled a year ago, no liens, owner has no timeline and will only sell for an offer they can't refuse."
   }
 }
