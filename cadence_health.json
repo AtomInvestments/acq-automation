@@ -1,11 +1,6 @@
 {
   "days": [
     {
-      "date": "2026-06-15",
-      "had_business_hour_run": true,
-      "sends": 0
-    },
-    {
       "date": "2026-06-16",
       "had_business_hour_run": true,
       "sends": 0
@@ -148,6 +143,11 @@
     {
       "date": "2026-07-14",
       "had_business_hour_run": true,
+      "sends": 0
+    },
+    {
+      "date": "2026-07-15",
+      "had_business_hour_run": false,
       "sends": 0
     }
   ],
