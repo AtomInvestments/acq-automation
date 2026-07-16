@@ -1690,5 +1690,16 @@
     "match_cid": "ZmVzxGNa0xYqIpKj7wel",
     "match_confidence": "high",
     "summary": "Property is rented month-to-month, remodeled a year ago, no liens, owner has no timeline and will only sell for an offer they can't refuse."
+  },
+  "C06MM4DQZ28:1784222693.101619": {
+    "field_updates": {
+      "asking_price": 480000,
+      "motivation": "Wants to sell as soon as possible",
+      "reason_for_selling": null,
+      "timeline": "ASAP"
+    },
+    "match_cid": "kwFc3qQZrP0hSUJ5VnJm",
+    "match_confidence": "high",
+    "summary": "Arvinder Singh wants $480k for 75 Leber Ave, recently renovated with minimal work needed, and wants to sell ASAP."
   }
 }
