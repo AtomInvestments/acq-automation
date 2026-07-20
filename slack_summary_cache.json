@@ -1746,6 +1746,17 @@
     "match_confidence": "high",
     "summary": "Uriah Shepherd clarified he's selling a condo at 2834 Atlantic Ave APT 1214 (not 440 Elm St) for $75,000 with a state-funded tenant paying $1,400/month, needs updating, no liens, and no specific timeline."
   },
+  "C06MM4DQZ28:1784572580.025779": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": null,
+      "reason_for_selling": null,
+      "timeline": null
+    },
+    "match_cid": "aq9OfjidZQj2b9ESKbL8",
+    "match_confidence": "high",
+    "summary": "Message mentions Timothy Farruggio with contact details at 565 Joline Ave, Long Branch, NJ."
+  },
   "C06MM4DQZ28:1784572781.221809": {
     "field_updates": {
       "asking_price": null,
