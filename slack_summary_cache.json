@@ -1712,5 +1712,49 @@
     "match_cid": "3qOmOx3V1iOGw1nyDVsD",
     "match_confidence": "high",
     "summary": "Carlos Lopez confirmed his property at 412 S Laurel Ave is in good condition with cosmetic touch-ups needed, currently occupied by him and his wife, no liens, selling due to relocation, and scheduled a call for tomorrow at 2pm."
+  },
+  "C06MM4DQZ28:1784566725.572529": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": null,
+      "reason_for_selling": null,
+      "timeline": null
+    },
+    "match_cid": "5FB5rUIR0VHBHqirlBH9",
+    "match_confidence": "high",
+    "summary": "Ilyan responded 'Yes' to initial outreach about selling 337 Harold Ave and was asked about property condition."
+  },
+  "C06MM4DQZ28:1784572143.722819": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": "Need money",
+      "reason_for_selling": "Need money",
+      "timeline": "ASAP"
+    },
+    "match_cid": "yxkQpXXlYodcF6HM4Xzi",
+    "match_confidence": "high",
+    "summary": "Igor confirmed property is vacant, in good condition (no work needed inside), wants to sell ASAP due to needing money, and has an outstanding loan on the property."
+  },
+  "C06MM4DQZ28:1784572390.391009": {
+    "field_updates": {
+      "asking_price": 75000,
+      "motivation": "Has state-funded tenant paying $1,400/month, property needs updating",
+      "reason_for_selling": null,
+      "timeline": "No rush"
+    },
+    "match_cid": "nQIT4DVEmdGIrHY0Pcof",
+    "match_confidence": "high",
+    "summary": "Uriah Shepherd clarified he's selling a condo at 2834 Atlantic Ave APT 1214 (not 440 Elm St) for $75,000 with a state-funded tenant paying $1,400/month, needs updating, no liens, and no specific timeline."
+  },
+  "C06MM4DQZ28:1784572781.221809": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": "wants to sell right away",
+      "reason_for_selling": null,
+      "timeline": "ASAP"
+    },
+    "match_cid": "abya5qQQv5VKDaFq8wfL",
+    "match_confidence": "high",
+    "summary": "Veronica Dixon wants to sell 7 Derby Ln right away; property is vacant and in good condition with no known liens."
   }
 }
