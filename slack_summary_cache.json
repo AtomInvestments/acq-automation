@@ -1756,5 +1756,27 @@
     "match_cid": "abya5qQQv5VKDaFq8wfL",
     "match_confidence": "high",
     "summary": "Veronica Dixon wants to sell 7 Derby Ln right away; property is vacant and in good condition with no known liens."
+  },
+  "C06MM4DQZ28:1784577108.240919": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": "wants offer, willing to sell as-is",
+      "reason_for_selling": null,
+      "timeline": null
+    },
+    "match_cid": "5yng6PKBQXq0kWHKo9lF",
+    "match_confidence": "high",
+    "summary": "Lionel wants an offer on his as-is property at 1580 Jarvis Rd where he currently lives, timeline not yet disclosed."
+  },
+  "C06MM4DQZ28:1784579332.392649": {
+    "field_updates": {
+      "asking_price": 175000,
+      "motivation": "Tenant recently vacated, ready to sell as-is for cash",
+      "reason_for_selling": "Tenant vacated the property on July 15th and seller wants to liquidate the two-family house in as-is condition",
+      "timeline": "30 days"
+    },
+    "match_cid": "4b1Cfm2w1ZYy1IjGiFLp",
+    "match_confidence": "high",
+    "summary": "Tenant vacated July 15th, seller will allow walkthroughs in 1-2 weeks, wants cash offers over $175K for as-is two-family property."
   }
 }
