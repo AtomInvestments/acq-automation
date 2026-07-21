@@ -379,6 +379,16 @@
     "stage_entered_at": "2026-05-07T23:07:04.027625+00:00",
     "stage_name": "lao"
   },
+  "GA6QVQOu1cZkofwvfwVG": {
+    "dormant": false,
+    "last_from_number": null,
+    "last_sms_at": null,
+    "replied": false,
+    "replied_at": null,
+    "sms_count": 0,
+    "stage_entered_at": "2026-07-21T13:08:09.966474+00:00",
+    "stage_name": "qualified"
+  },
   "GcAhpAkc81ODNr3vsfbT": {
     "dormant": false,
     "last_from_number": null,
