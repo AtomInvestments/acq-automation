@@ -1811,5 +1811,60 @@
     "match_cid": "eIUIrLdvXQdL6DgUuq0t",
     "match_confidence": "high",
     "summary": "Maceo is interested in selling and looking at a different house to move to, asking about offer range."
+  },
+  "C06MM4DQZ28:1784659354.679169": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": null,
+      "reason_for_selling": null,
+      "timeline": null
+    },
+    "match_cid": "8wsACVIpw6HeCZhCFSmG",
+    "match_confidence": "high",
+    "summary": "David responded positively to initial outreach about selling his property and is waiting to provide condition details."
+  },
+  "C06MM4DQZ28:1784660050.959399": {
+    "field_updates": {
+      "asking_price": 350000,
+      "motivation": null,
+      "reason_for_selling": null,
+      "timeline": "6+ months"
+    },
+    "match_cid": "NiETCre7KvfRzZ8WRAPE",
+    "match_confidence": "high",
+    "summary": "Luisa wants to sell for $350k, property needs work inside, she currently lives there, timeline is 5 months, no liens."
+  },
+  "C06MM4DQZ28:1784662211.942999": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": null,
+      "reason_for_selling": null,
+      "timeline": null
+    },
+    "match_cid": "yTKacaYWgkxHmHMQOOAE",
+    "match_confidence": "high",
+    "summary": "Thomas confirmed interest in discussing a proposal and stated the property is in perfect condition."
+  },
+  "C06MM4DQZ28:1784663122.260189": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": null,
+      "reason_for_selling": null,
+      "timeline": null
+    },
+    "match_cid": "U3zXpxmonS8TZjPQvvMw",
+    "match_confidence": "high",
+    "summary": "Nancy responded to initial outreach asking 'How much' and Emma is following up to gather property condition details."
+  },
+  "C06MM4DQZ28:1784663624.358749": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": null,
+      "reason_for_selling": null,
+      "timeline": null
+    },
+    "match_cid": "VFh8RfwQWslcwNxxQnP6",
+    "match_confidence": "high",
+    "summary": "Lead responded 'Yes' to discussing a proposal and was asked about the property's condition and repair needs."
   }
 }
