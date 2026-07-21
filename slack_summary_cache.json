@@ -1800,5 +1800,16 @@
     "match_cid": "4b1Cfm2w1ZYy1IjGiFLp",
     "match_confidence": "high",
     "summary": "Tenant vacated July 15th, seller will allow walkthroughs in 1-2 weeks, wants cash offers over $175K for as-is two-family property."
+  },
+  "C06MM4DQZ28:1784655052.499549": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": "Looking to move to a different house",
+      "reason_for_selling": "Wants to relocate to a different house",
+      "timeline": "ASAP"
+    },
+    "match_cid": "eIUIrLdvXQdL6DgUuq0t",
+    "match_confidence": "high",
+    "summary": "Maceo is interested in selling and looking at a different house to move to, asking about offer range."
   }
 }
