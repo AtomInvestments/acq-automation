@@ -1877,5 +1877,16 @@
     "match_cid": "VFh8RfwQWslcwNxxQnP6",
     "match_confidence": "high",
     "summary": "Lead responded 'Yes' to discussing a proposal and was asked about the property's condition and repair needs."
+  },
+  "C06MM4DQZ28:1784739979.228639": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": null,
+      "reason_for_selling": null,
+      "timeline": null
+    },
+    "match_cid": null,
+    "match_confidence": "none",
+    "summary": "Message discusses Robinson Rodriguez at 4121 Westfield Ave in Pennsauken, NJ who is open to discussing a sale offer around 5:30 PM."
   }
 }
