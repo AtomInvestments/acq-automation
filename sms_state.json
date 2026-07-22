@@ -66,6 +66,16 @@
     "stage_entered_at": "2026-05-07T23:08:49.932587+00:00",
     "stage_name": "fu3mo"
   },
+  "3zhIP5aA7Rc7l7TiAnhp": {
+    "dormant": false,
+    "last_from_number": null,
+    "last_sms_at": null,
+    "replied": false,
+    "replied_at": null,
+    "sms_count": 0,
+    "stage_entered_at": "2026-07-22T22:47:46.024458+00:00",
+    "stage_name": "qualified"
+  },
   "4CeD82EG3hcDDxmqVdlb": {
     "dormant": false,
     "last_from_number": "+12676197270",
