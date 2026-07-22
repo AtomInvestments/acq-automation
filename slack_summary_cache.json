@@ -1888,5 +1888,27 @@
     "match_cid": null,
     "match_confidence": "none",
     "summary": "Message discusses Robinson Rodriguez at 4121 Westfield Ave in Pennsauken, NJ who is open to discussing a sale offer around 5:30 PM."
+  },
+  "C06MM4DQZ28:1784748155.941359": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": null,
+      "reason_for_selling": null,
+      "timeline": "No rush"
+    },
+    "match_cid": "8594oAv98WumEuvLVFVh",
+    "match_confidence": "high",
+    "summary": "Robert Matteo's property at 1217 Grant Ave is tenant-occupied at $2275/mo with lease ending 3/27, will sell with tenant in place, no timeline pressure."
+  },
+  "C06MM4DQZ28:1784753092.331679": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": null,
+      "reason_for_selling": null,
+      "timeline": null
+    },
+    "match_cid": null,
+    "match_confidence": "none",
+    "summary": "Christopher Connery discussed selling 19 N Burlington St in Gloucester City, NJ for $165k, currently tenant-occupied at $1,350/month, motivated by wanting to exit real estate investing."
   }
 }
