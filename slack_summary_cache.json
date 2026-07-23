@@ -1910,5 +1910,16 @@
     "match_cid": null,
     "match_confidence": "none",
     "summary": "Christopher Connery discussed selling 19 N Burlington St in Gloucester City, NJ for $165k, currently tenant-occupied at $1,350/month, motivated by wanting to exit real estate investing."
+  },
+  "C06MM4DQZ28:1784828019.518309": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": "Getting older, doesn't want to leave property to children",
+      "reason_for_selling": "Owner is getting older and doesn't want to leave the property to her children, prefers to sell rather than manage it long-term",
+      "timeline": null
+    },
+    "match_cid": null,
+    "match_confidence": "none",
+    "summary": "Sandra Gidman at 128 Seabreeze Ave has a Section 8 tenant paying $1000/month, wants to sell without doing upgrades, and wants to keep the tenant in place."
   }
 }
