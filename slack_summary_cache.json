@@ -1911,6 +1911,17 @@
     "match_confidence": "none",
     "summary": "Christopher Connery discussed selling 19 N Burlington St in Gloucester City, NJ for $165k, currently tenant-occupied at $1,350/month, motivated by wanting to exit real estate investing."
   },
+  "C06MM4DQZ28:1784753593.339089": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": "Retiring in October",
+      "reason_for_selling": "Owner is retiring in October and plans to sell at that time",
+      "timeline": "6+ months"
+    },
+    "match_cid": "IdrrnwDAcIzlYhKYwbaY",
+    "match_confidence": "high",
+    "summary": "Juan Marin confirmed he's selling as-is with minor repairs needed, currently living in the property, retiring in October timeline, still making mortgage payments, and available for call tomorrow at 10am."
+  },
   "C06MM4DQZ28:1784828019.518309": {
     "field_updates": {
       "asking_price": null,
@@ -1921,5 +1932,16 @@
     "match_cid": null,
     "match_confidence": "none",
     "summary": "Sandra Gidman at 128 Seabreeze Ave has a Section 8 tenant paying $1000/month, wants to sell without doing upgrades, and wants to keep the tenant in place."
+  },
+  "C06MM4DQZ28:1784912851.765019": {
+    "field_updates": {
+      "asking_price": 185000,
+      "motivation": "relocating for work",
+      "reason_for_selling": "Relocating for work and needs to close within 60 days",
+      "timeline": "60 days"
+    },
+    "match_cid": "p6oqAEarL8xigyeKmJql",
+    "match_confidence": "high",
+    "summary": "Mido wants to sell their New York property for $185K, needs roof and kitchen work, wants to close within 60 days due to work relocation."
   }
 }
