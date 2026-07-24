@@ -312,11 +312,11 @@
   },
   "DVGs1FIk8mhDbxMe3NUH": {
     "dormant": false,
-    "last_from_number": null,
-    "last_sms_at": null,
+    "last_from_number": "+16094388996",
+    "last_sms_at": "2026-07-24T20:43:03.179194+00:00",
     "replied": false,
     "replied_at": null,
-    "sms_count": 0,
+    "sms_count": 1,
     "stage_entered_at": "2026-06-24T20:15:46.484964+00:00",
     "stage_name": "fu15mo"
   },
@@ -401,11 +401,11 @@
   },
   "GcAhpAkc81ODNr3vsfbT": {
     "dormant": false,
-    "last_from_number": null,
-    "last_sms_at": null,
+    "last_from_number": "+16094388996",
+    "last_sms_at": "2026-07-24T20:43:00.851768+00:00",
     "replied": false,
     "replied_at": null,
-    "sms_count": 0,
+    "sms_count": 1,
     "stage_entered_at": "2026-06-24T20:15:45.053325+00:00",
     "stage_name": "fu15mo"
   },
@@ -1059,11 +1059,11 @@
   },
   "n6ITXxOmFpA4L6I7PhbV": {
     "dormant": false,
-    "last_from_number": null,
-    "last_sms_at": null,
+    "last_from_number": "+16094388996",
+    "last_sms_at": "2026-07-24T20:43:08.035094+00:00",
     "replied": false,
     "replied_at": null,
-    "sms_count": 0,
+    "sms_count": 1,
     "stage_entered_at": "2026-06-24T20:15:48.328632+00:00",
     "stage_name": "fu15mo"
   },
