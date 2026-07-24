@@ -1943,5 +1943,16 @@
     "match_cid": "p6oqAEarL8xigyeKmJql",
     "match_confidence": "high",
     "summary": "Mido wants to sell their New York property for $185K, needs roof and kitchen work, wants to close within 60 days due to work relocation."
+  },
+  "C06MM4DQZ28:1784917732.825539": {
+    "field_updates": {
+      "asking_price": 185000,
+      "motivation": "relocating for work",
+      "reason_for_selling": "Relocating for work",
+      "timeline": "60 days"
+    },
+    "match_cid": "EBWHxjNP6kK0JVJUDZwM",
+    "match_confidence": "high",
+    "summary": "Owner willing to sell for $185K, property needs roof and kitchen work, wants to close within 60 days due to work relocation."
   }
 }
