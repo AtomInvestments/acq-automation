@@ -513,8 +513,11 @@
     "dormant": false,
     "last_from_number": "+16094388996",
     "last_sms_at": "2026-07-25T18:44:59.463725+00:00",
-    "replied": false,
-    "replied_at": null,
+    "replied": true,
+    "replied_at": "2026-07-25T20:57:15.971000+00:00",
+    "reply_attempts": 0,
+    "reply_class": "POSITIVE",
+    "reply_text": "Incorrect address it's 48-50 Church St. circa 1820 Historical Rush house. Add'lly it's on Zillow;.plan to  list with Realtor soon. If you're no bullshit and are truly interested. Please text your contact info and I'll reach out when i'm ready to show it.\u270c\ufe0f",
     "sms_count": 1,
     "stage_entered_at": "2026-06-25T18:29:31.949511+00:00",
     "stage_name": "fu15mo"
@@ -957,6 +960,7 @@
     "reply_attempts": 0,
     "reply_class": "NEUTRAL",
     "reply_text": "Jeff,\nIf you are not a scammer, call me and send me an offer",
+    "skip_reason": "tag-already-routed",
     "sms_count": 1,
     "stage_entered_at": "2026-06-25T18:29:36.180366+00:00",
     "stage_name": "fu15mo"
