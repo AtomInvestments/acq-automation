@@ -518,6 +518,7 @@
     "reply_attempts": 0,
     "reply_class": "POSITIVE",
     "reply_text": "Incorrect address it's 48-50 Church St. circa 1820 Historical Rush house. Add'lly it's on Zillow;.plan to  list with Realtor soon. If you're no bullshit and are truly interested. Please text your contact info and I'll reach out when i'm ready to show it.\u270c\ufe0f",
+    "skip_reason": "tag-already-routed",
     "sms_count": 1,
     "stage_entered_at": "2026-06-25T18:29:31.949511+00:00",
     "stage_name": "fu15mo"
