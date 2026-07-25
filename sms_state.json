@@ -952,8 +952,11 @@
     "dormant": false,
     "last_from_number": "+16094388996",
     "last_sms_at": "2026-07-25T18:45:06.122724+00:00",
-    "replied": false,
-    "replied_at": null,
+    "replied": true,
+    "replied_at": "2026-07-25T18:50:54.885000+00:00",
+    "reply_attempts": 0,
+    "reply_class": "NEUTRAL",
+    "reply_text": "Jeff,\nIf you are not a scammer, call me and send me an offer",
     "sms_count": 1,
     "stage_entered_at": "2026-06-25T18:29:36.180366+00:00",
     "stage_name": "fu15mo"
