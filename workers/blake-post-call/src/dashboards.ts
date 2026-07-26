@@ -4190,7 +4190,7 @@ section h2, h2 {
   <header class="masthead">
     <div class="brandrow">
       <span class="brand">Atom Investments · APG Operations</span>
-      <span>Last updated Jul 26, 2026 08:35 AM ET</span>
+      <span>Last updated Jul 26, 2026 10:23 AM ET</span>
     </div>
     <h1>Active <span class="accent">Deals.</span></h1>
     <p class="dek">Every property currently in stages 1-7 of the ACQ pipeline. Sorted by call rating within each stage so the strongest deals surface first.</p>
@@ -4751,7 +4751,7 @@ section h2, h2 {
   <header class="masthead">
     <div class="brandrow">
       <span class="brand">Atom Investments · APG Operations</span>
-      <span>Last updated Jul 26, 2026 08:34 AM ET</span>
+      <span>Last updated Jul 26, 2026 10:22 AM ET</span>
     </div>
     <h1>SMS <span class="accent">Follow-Ups.</span></h1>
     <p class="dek">Action queue for Jeff and Mike — replies to call back, leads gone dormant, and everything still cycling through the SMS sequence.</p>
@@ -4771,17 +4771,17 @@ section h2, h2 {
     <a href="sms-test.html">SMS Test</a>
   </nav>
 
-  <details class="run-grid-collapsed"><summary>All 6 cron jobs OK on last run — click for timestamps</summary><div class="run-grid"><div class="run-row"><span class="tag green">OK</span><span class="run-name">ACQ Call Recording Automation</span><span class="run-ts">Jul 26, 08:01 AM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">ACQ SMS Follow-Up + Dashboard</span><span class="run-ts">Jul 26, 07:12 AM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">APG Slack Scraper</span><span class="run-ts">Jul 26, 07:54 AM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">Market Analysis Refresh</span><span class="run-ts">Jul 26, 06:46 AM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">dashboard (script)</span><span class="run-ts">Jul 26, 08:34 AM</span><span class="run-detail">dashboard updated</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">sms (script)</span><span class="run-ts">Jul 26, 08:34 AM</span><span class="run-detail">outside business hours (hour=8 ET)</span></div></div></details><div class="status-banner on"><div class="status-text"><span class="pulse"></span>SMS Automation: <span style="color:var(--green);font-weight:800">ACTIVE</span></div><a class="btn btn-kill" href="https://docs.google.com/spreadsheets/d/1wc3Pt46ze-ejLaryL8WIRQf4OjEkirolc4-O8lsRQZY/edit#gid=0" target="_blank">EMERGENCY KILL SWITCH</a></div>
+  <details class="run-grid-collapsed"><summary>All 6 cron jobs OK on last run — click for timestamps</summary><div class="run-grid"><div class="run-row"><span class="tag green">OK</span><span class="run-name">ACQ Call Recording Automation</span><span class="run-ts">Jul 26, 09:52 AM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">ACQ SMS Follow-Up + Dashboard</span><span class="run-ts">Jul 26, 08:35 AM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">APG Slack Scraper</span><span class="run-ts">Jul 26, 08:52 AM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">Market Analysis Refresh</span><span class="run-ts">Jul 26, 06:46 AM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">dashboard (script)</span><span class="run-ts">Jul 26, 10:22 AM</span><span class="run-detail">dashboard updated</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">sms (script)</span><span class="run-ts">Jul 26, 10:22 AM</span><span class="run-detail">{&quot;wait&quot;: 29, &quot;no-phone&quot;: 2, &quot;skipped-tag-prebail&quot;: 59, &quot;skipped&quot;: 7, &quot;replied-neutral&quot;: 1}</span></div></div></details><div class="status-banner on"><div class="status-text"><span class="pulse"></span>SMS Automation: <span style="color:var(--green);font-weight:800">ACTIVE</span></div><a class="btn btn-kill" href="https://docs.google.com/spreadsheets/d/1wc3Pt46ze-ejLaryL8WIRQf4OjEkirolc4-O8lsRQZY/edit#gid=0" target="_blank">EMERGENCY KILL SWITCH</a></div>
 
   <section class="sec">
     <div class="tag-row"><span class="num">01</span><h2>At a Glance</h2></div>
     <hr>
     <div class="stat-row">
       <div class="stat"><div class="lab">Total Leads</div><div class="v">98</div><div class="sub">across all stages</div></div>
-      <div class="stat"><div class="lab">In Sequence</div><div class="v">32</div><div class="sub">SMS scheduled</div></div>
-      <div class="stat hot"><div class="lab">Replied — Call Now</div><div class="v">59</div><div class="sub">Jeff has tasks</div></div>
+      <div class="stat"><div class="lab">In Sequence</div><div class="v">31</div><div class="sub">SMS scheduled</div></div>
+      <div class="stat hot"><div class="lab">Replied — Call Now</div><div class="v">60</div><div class="sub">Jeff has tasks</div></div>
       <div class="stat warm"><div class="lab">Dormant — Manual Call</div><div class="v">1</div><div class="sub">no reply after sequence</div></div>
-      <div class="stat green"><div class="lab">Reply Rate</div><div class="v">64.1%</div><div class="sub">replied / total touched</div></div>
+      <div class="stat green"><div class="lab">Reply Rate</div><div class="v">65.2%</div><div class="sub">replied / total touched</div></div>
     </div>
   </section>
 
@@ -4840,6 +4840,7 @@ section h2, h2 {
 <tr><td><strong>Deborah Ides</strong></td><td>48-50 Church St</td><td><span class="tag">Follow Up 1.5mo</span></td><td><span class="tag hot">Jul 25, 04:57 PM</span></td><td>Jeff (NJ)</td></tr>
 <tr><td><strong>Tony</strong></td><td>223 Tyler St</td><td><span class="tag">Follow Up 1.5mo</span></td><td><span class="tag hot">May 07, 07:08 PM</span></td><td></td></tr>
 <tr><td><strong>Rafael Paragulla</strong></td><td>143 Harding Ave</td><td><span class="tag">Follow Up 1.5mo</span></td><td><span class="tag hot"></span></td><td></td></tr>
+<tr><td><strong>Vance Stephens</strong></td><td>32 Cavell St</td><td><span class="tag">Follow Up 1.5mo</span></td><td><span class="tag hot">Jul 25, 11:57 PM</span></td><td>Jeff (NJ)</td></tr>
 <tr><td><strong>Venkata Bandaru</strong></td><td>35 George Davison Rd</td><td><span class="tag">Follow Up 1.5mo</span></td><td><span class="tag hot">Jul 25, 02:50 PM</span></td><td>Jeff (NJ)</td></tr>
 <tr><td><strong>Jeanette Nazon</strong></td><td>203 W Hanover St</td><td><span class="tag">Follow Up 1.5mo</span></td><td><span class="tag hot"></span></td><td></td></tr>
 <tr><td><strong>Erica &amp; Stuart Smith</strong></td><td>4725 7th Ave</td><td><span class="tag">Follow Up 1.5mo</span></td><td><span class="tag hot"></span></td><td></td></tr>
@@ -4901,7 +4902,6 @@ section h2, h2 {
 <tr><td><strong>Joshua Ostrin</strong></td><td>33 S 1st Ave</td><td>NJ</td><td><span class="tag">Follow Up 1.5mo</span></td><td><span class="tag green">1</span></td><td>Jul 24, 04:43 PM</td><td>Jeff (NJ)</td></tr>
 <tr><td><strong>Donnie Johnson</strong></td><td>1484 Stuyvesant Ave</td><td>NJ</td><td><span class="tag">Follow Up 1.5mo</span></td><td><span class="tag green">2</span></td><td>Jul 07, 12:29 PM</td><td>Jeff (NJ)</td></tr>
 <tr><td><strong>David Williams</strong></td><td>435 KERRIGAN BLVD</td><td>NJ</td><td><span class="tag">Follow Up 1.5mo</span></td><td><span class="tag green">2</span></td><td>Jul 07, 12:29 PM</td><td>Jeff (NJ)</td></tr>
-<tr><td><strong>Vance Stephens</strong></td><td>32 Cavell St</td><td>NJ</td><td><span class="tag">Follow Up 1.5mo</span></td><td><span class="tag green">1</span></td><td>Jul 25, 02:45 PM</td><td>Jeff (NJ)</td></tr>
 <tr><td><strong>Chris Brindley</strong></td><td>41 JULIA AVE</td><td>NJ</td><td><span class="tag">Follow Up 1.5mo</span></td><td><span class="tag green">2</span></td><td>Jul 07, 12:29 PM</td><td>Jeff (NJ)</td></tr>
 <tr><td><strong>Ben Clay</strong></td><td>206 16TH AVE S</td><td>AL</td><td><span class="tag">Follow Up 3mo</span></td><td><span class="tag green">1</span></td><td>Jul 06, 07:55 PM</td><td>AL Market</td></tr>
 <tr><td><strong>Test Wholesaler</strong></td><td></td><td></td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
@@ -5017,6 +5017,8 @@ section h2, h2 {
 <tr><td><strong>Rafael Paragulla</strong></td><td>143 Harding Ave</td><td>Follow up with Rafael Paragulla </td><td><span class="tag">Jeff</span></td><td>Jul 03, 06:30 PM</td></tr>
 <tr><td><strong>Donnie Johnson</strong></td><td>1484 Stuyvesant Ave</td><td>Follow up with Donnie Johnson </td><td><span class="tag">Jeff</span></td><td>May 02, 05:16 PM</td></tr>
 <tr><td><strong>David Williams</strong></td><td>435 KERRIGAN BLVD</td><td>Follow up with David Williams </td><td><span class="tag">Jeff</span></td><td>May 14, 06:26 PM</td></tr>
+<tr><td><strong>Vance Stephens</strong></td><td>32 Cavell St</td><td>REVIEW: Did Jeff call Vance Stephens back?</td><td><span class="tag">Mike</span></td><td>Jul 27, 10:21 AM</td></tr>
+<tr><td><strong>Vance Stephens</strong></td><td>32 Cavell St</td><td>Call back: Vance Stephens (32 Cavell St)</td><td><span class="tag">Jeff</span></td><td>Jul 26, 10:21 AM</td></tr>
 <tr><td><strong>Venkata Bandaru</strong></td><td>35 George Davison Rd</td><td>REVIEW: Did Jeff call Venkata Bandaru back?</td><td><span class="tag">Mike</span></td><td>Jul 26, 04:03 PM</td></tr>
 <tr><td><strong>Venkata Bandaru</strong></td><td>35 George Davison Rd</td><td>Call back: Venkata Bandaru (35 George Davison Rd)</td><td><span class="tag">Jeff</span></td><td>Jul 25, 04:03 PM</td></tr>
 <tr><td><strong>Chris Brindley</strong></td><td>41 JULIA AVE</td><td>Follow up with Chris Brindley </td><td><span class="tag">Jeff</span></td><td>May 14, 06:22 PM</td></tr>
