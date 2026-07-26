@@ -4190,7 +4190,7 @@ section h2, h2 {
   <header class="masthead">
     <div class="brandrow">
       <span class="brand">Atom Investments · APG Operations</span>
-      <span>Last updated Jul 26, 2026 04:03 PM ET</span>
+      <span>Last updated Jul 26, 2026 05:17 PM ET</span>
     </div>
     <h1>Active <span class="accent">Deals.</span></h1>
     <p class="dek">Every property currently in stages 1-7 of the ACQ pipeline. Sorted by call rating within each stage so the strongest deals surface first.</p>
@@ -4751,7 +4751,7 @@ section h2, h2 {
   <header class="masthead">
     <div class="brandrow">
       <span class="brand">Atom Investments · APG Operations</span>
-      <span>Last updated Jul 26, 2026 04:03 PM ET</span>
+      <span>Last updated Jul 26, 2026 05:17 PM ET</span>
     </div>
     <h1>SMS <span class="accent">Follow-Ups.</span></h1>
     <p class="dek">Action queue for Jeff and Mike — replies to call back, leads gone dormant, and everything still cycling through the SMS sequence.</p>
@@ -4771,17 +4771,17 @@ section h2, h2 {
     <a href="sms-test.html">SMS Test</a>
   </nav>
 
-  <details class="run-grid-collapsed"><summary>All 5 cron jobs OK on last run — click for timestamps</summary><div class="run-grid"><div class="run-row"><span class="tag green">OK</span><span class="run-name">ACQ Call Recording Automation</span><span class="run-ts">Jul 26, 03:52 PM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">ACQ SMS Follow-Up + Dashboard</span><span class="run-ts">Jul 26, 02:51 PM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">APG Slack Scraper</span><span class="run-ts">Jul 26, 02:52 PM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">dashboard (script)</span><span class="run-ts">Jul 26, 04:02 PM</span><span class="run-detail">dashboard updated</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">sms (script)</span><span class="run-ts">Jul 26, 04:02 PM</span><span class="run-detail">{&quot;wait&quot;: 29, &quot;no-phone&quot;: 2, &quot;skipped-tag-prebail&quot;: 60, &quot;skipped&quot;: 7}</span></div></div></details><div class="status-banner on"><div class="status-text"><span class="pulse"></span>SMS Automation: <span style="color:var(--green);font-weight:800">ACTIVE</span></div><a class="btn btn-kill" href="https://docs.google.com/spreadsheets/d/1wc3Pt46ze-ejLaryL8WIRQf4OjEkirolc4-O8lsRQZY/edit#gid=0" target="_blank">EMERGENCY KILL SWITCH</a></div>
+  <details class="run-grid-collapsed"><summary>All 5 cron jobs OK on last run — click for timestamps</summary><div class="run-grid"><div class="run-row"><span class="tag green">OK</span><span class="run-name">ACQ Call Recording Automation</span><span class="run-ts">Jul 26, 04:44 PM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">ACQ SMS Follow-Up + Dashboard</span><span class="run-ts">Jul 26, 04:03 PM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">APG Slack Scraper</span><span class="run-ts">Jul 26, 04:05 PM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">dashboard (script)</span><span class="run-ts">Jul 26, 05:16 PM</span><span class="run-detail">dashboard updated</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">sms (script)</span><span class="run-ts">Jul 26, 05:16 PM</span><span class="run-detail">{&quot;wait&quot;: 28, &quot;no-phone&quot;: 2, &quot;skipped-tag-prebail&quot;: 60, &quot;skipped&quot;: 7, &quot;replied-negative&quot;: 1}</span></div></div></details><div class="status-banner on"><div class="status-text"><span class="pulse"></span>SMS Automation: <span style="color:var(--green);font-weight:800">ACTIVE</span></div><a class="btn btn-kill" href="https://docs.google.com/spreadsheets/d/1wc3Pt46ze-ejLaryL8WIRQf4OjEkirolc4-O8lsRQZY/edit#gid=0" target="_blank">EMERGENCY KILL SWITCH</a></div>
 
   <section class="sec">
     <div class="tag-row"><span class="num">01</span><h2>At a Glance</h2></div>
     <hr>
     <div class="stat-row">
       <div class="stat"><div class="lab">Total Leads</div><div class="v">98</div><div class="sub">across all stages</div></div>
-      <div class="stat"><div class="lab">In Sequence</div><div class="v">31</div><div class="sub">SMS scheduled</div></div>
-      <div class="stat hot"><div class="lab">Replied — Call Now</div><div class="v">60</div><div class="sub">Jeff has tasks</div></div>
+      <div class="stat"><div class="lab">In Sequence</div><div class="v">30</div><div class="sub">SMS scheduled</div></div>
+      <div class="stat hot"><div class="lab">Replied — Call Now</div><div class="v">61</div><div class="sub">Jeff has tasks</div></div>
       <div class="stat warm"><div class="lab">Dormant — Manual Call</div><div class="v">1</div><div class="sub">no reply after sequence</div></div>
-      <div class="stat green"><div class="lab">Reply Rate</div><div class="v">65.2%</div><div class="sub">replied / total touched</div></div>
+      <div class="stat green"><div class="lab">Reply Rate</div><div class="v">66.3%</div><div class="sub">replied / total touched</div></div>
     </div>
   </section>
 
@@ -4835,6 +4835,7 @@ section h2, h2 {
 <tr><td><strong>Mark Hall (Referred by Phil)</strong></td><td>1819 W 6th St,</td><td><span class="tag">4. MAO</span></td><td><span class="tag hot"></span></td><td>PA Market</td></tr>
 <tr><td><strong>John Harrington</strong></td><td>1211 Jersey St</td><td><span class="tag">4. MAO</span></td><td><span class="tag hot"></span></td><td>AL Market</td></tr>
 <tr><td><strong>Beata Szyffer-Hopkins</strong></td><td>1030 N Olden Ave</td><td><span class="tag">4. MAO</span></td><td><span class="tag hot">May 09, 07:51 AM</span></td><td></td></tr>
+<tr><td><strong>Kenneth Bajek</strong></td><td>406 Adeline St</td><td><span class="tag">Follow Up 1.5mo</span></td><td><span class="tag hot">Jul 26, 05:09 PM</span></td><td>Jeff (NJ)</td></tr>
 <tr><td><strong>Raymond Bowman Sr</strong></td><td>118 SHIP AVE</td><td><span class="tag">Follow Up 1.5mo</span></td><td><span class="tag hot">Jun 07, 11:15 AM</span></td><td>Jeff (NJ)</td></tr>
 <tr><td><strong>Virginia Williams</strong></td><td>1172 Atlantic Ave</td><td><span class="tag">Follow Up 1.5mo</span></td><td><span class="tag hot">May 07, 07:08 PM</span></td><td></td></tr>
 <tr><td><strong>Deborah Ides</strong></td><td>48-50 Church St</td><td><span class="tag">Follow Up 1.5mo</span></td><td><span class="tag hot">Jul 25, 04:57 PM</span></td><td>Jeff (NJ)</td></tr>
@@ -4896,7 +4897,6 @@ section h2, h2 {
 <tr><td><strong>Erick Serrano</strong></td><td>494 Neville St</td><td>NJ</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">4</span></td><td>Jul 22, 04:03 PM</td><td>PA Market</td></tr>
 <tr><td><strong>Mason Hahn</strong></td><td>202 Grant Ave</td><td>NJ</td><td><span class="tag">Follow Up 1.5mo</span></td><td><span class="tag green">1</span></td><td>Jul 24, 04:43 PM</td><td>Jeff (NJ)</td></tr>
 <tr><td><strong>Kulila Austin</strong></td><td>6952 Casale Blvd</td><td>NJ</td><td><span class="tag">Follow Up 1.5mo</span></td><td><span class="tag green">1</span></td><td>Jul 24, 04:43 PM</td><td>Jeff (NJ)</td></tr>
-<tr><td><strong>Kenneth Bajek</strong></td><td>406 Adeline St</td><td>NJ</td><td><span class="tag">Follow Up 1.5mo</span></td><td><span class="tag green">1</span></td><td>Jul 25, 02:44 PM</td><td>Jeff (NJ)</td></tr>
 <tr><td><strong>Gary Rogan</strong></td><td>30 Taylor Rd</td><td>NJ</td><td><span class="tag">Follow Up 1.5mo</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
 <tr><td><strong>Linda Charles</strong></td><td>450 Seven Oaks Rd</td><td>NJ</td><td><span class="tag">Follow Up 1.5mo</span></td><td><span class="tag green">1</span></td><td>Jul 25, 02:44 PM</td><td>Jeff (NJ)</td></tr>
 <tr><td><strong>Joshua Ostrin</strong></td><td>33 S 1st Ave</td><td>NJ</td><td><span class="tag">Follow Up 1.5mo</span></td><td><span class="tag green">1</span></td><td>Jul 24, 04:43 PM</td><td>Jeff (NJ)</td></tr>
