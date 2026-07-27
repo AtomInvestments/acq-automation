@@ -1017,6 +1017,7 @@
     "reply_attempts": 0,
     "reply_class": "NEGATIVE",
     "reply_text": "Just as I thought. \nAll talk no action \nHave a good day",
+    "skip_reason": "tag-already-routed",
     "sms_count": 0,
     "stage_entered_at": "2026-06-24T18:14:39.920462+00:00",
     "stage_name": "qualified"
