@@ -217,6 +217,7 @@
     "reply_attempts": 0,
     "reply_class": "NEUTRAL",
     "reply_text": "Not yet",
+    "skip_reason": "tag-already-routed",
     "sms_count": 0,
     "stage_entered_at": "2026-07-27T14:03:44.983189+00:00",
     "stage_name": "qualified"
@@ -340,6 +341,7 @@
     "reply_attempts": 0,
     "reply_class": "NEGATIVE",
     "reply_text": "Hello Adam, we are keeping the house and looking for renters",
+    "skip_reason": "tag-already-routed",
     "sms_count": 0,
     "stage_entered_at": "2026-07-27T14:03:39.788923+00:00",
     "stage_name": "qualified"
@@ -432,6 +434,7 @@
     "reply_attempts": 0,
     "reply_class": "NEGATIVE",
     "reply_text": "No we just invested in a lot of upgrades and aren't interested in a low ball offer.",
+    "skip_reason": "tag-already-routed",
     "sms_count": 0,
     "stage_entered_at": "2026-07-27T14:03:38.854269+00:00",
     "stage_name": "qualified"
@@ -789,6 +792,7 @@
     "reply_attempts": 0,
     "reply_class": "NEUTRAL",
     "reply_text": "MONEYYYYYY",
+    "skip_reason": "tag-already-routed",
     "sms_count": 0,
     "stage_entered_at": "2026-07-27T14:03:48.102865+00:00",
     "stage_name": "qualified"
