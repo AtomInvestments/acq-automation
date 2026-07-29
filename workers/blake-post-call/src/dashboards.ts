@@ -4190,7 +4190,7 @@ section h2, h2 {
   <header class="masthead">
     <div class="brandrow">
       <span class="brand">Atom Investments · APG Operations</span>
-      <span>Last updated Jul 29, 2026 04:08 PM ET</span>
+      <span>Last updated Jul 29, 2026 05:25 PM ET</span>
     </div>
     <h1>Active <span class="accent">Deals.</span></h1>
     <p class="dek">Every property currently in stages 1-7 of the ACQ pipeline. Sorted by call rating within each stage so the strongest deals surface first.</p>
@@ -4751,7 +4751,7 @@ section h2, h2 {
   <header class="masthead">
     <div class="brandrow">
       <span class="brand">Atom Investments · APG Operations</span>
-      <span>Last updated Jul 29, 2026 04:07 PM ET</span>
+      <span>Last updated Jul 29, 2026 05:25 PM ET</span>
     </div>
     <h1>SMS <span class="accent">Follow-Ups.</span></h1>
     <p class="dek">Action queue for Jeff and Mike — replies to call back, leads gone dormant, and everything still cycling through the SMS sequence.</p>
@@ -4771,17 +4771,17 @@ section h2, h2 {
     <a href="sms-test.html">SMS Test</a>
   </nav>
 
-  <details class="run-grid-collapsed"><summary>All 5 cron jobs OK on last run — click for timestamps</summary><div class="run-grid"><div class="run-row"><span class="tag green">OK</span><span class="run-name">ACQ Call Recording Automation</span><span class="run-ts">Jul 29, 03:41 PM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">ACQ SMS Follow-Up + Dashboard</span><span class="run-ts">Jul 29, 02:48 PM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">APG Slack Scraper</span><span class="run-ts">Jul 29, 02:10 PM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">dashboard (script)</span><span class="run-ts">Jul 29, 04:07 PM</span><span class="run-detail">dashboard updated</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">sms (script)</span><span class="run-ts">Jul 29, 04:07 PM</span><span class="run-detail">{&quot;wait&quot;: 23, &quot;no-phone&quot;: 2, &quot;sent#4&quot;: 1, &quot;skipped-tag-prebail&quot;: 65, &quot;sent#5&quot;: 3, &quot;skipped&quot;: 7}</span></div></div></details><div class="status-banner on"><div class="status-text"><span class="pulse"></span>SMS Automation: <span style="color:var(--green);font-weight:800">ACTIVE</span></div><a class="btn btn-kill" href="https://docs.google.com/spreadsheets/d/1wc3Pt46ze-ejLaryL8WIRQf4OjEkirolc4-O8lsRQZY/edit#gid=0" target="_blank">EMERGENCY KILL SWITCH</a></div>
+  <details class="run-grid-collapsed"><summary>All 5 cron jobs OK on last run — click for timestamps</summary><div class="run-grid"><div class="run-row"><span class="tag green">OK</span><span class="run-name">ACQ Call Recording Automation</span><span class="run-ts">Jul 29, 04:34 PM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">ACQ SMS Follow-Up + Dashboard</span><span class="run-ts">Jul 29, 04:08 PM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">APG Slack Scraper</span><span class="run-ts">Jul 29, 04:07 PM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">dashboard (script)</span><span class="run-ts">Jul 29, 05:24 PM</span><span class="run-detail">dashboard updated</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">sms (script)</span><span class="run-ts">Jul 29, 05:24 PM</span><span class="run-detail">{&quot;wait&quot;: 26, &quot;no-phone&quot;: 2, &quot;skipped-tag-prebail&quot;: 65, &quot;skipped&quot;: 7, &quot;replied-neutral&quot;: 1}</span></div></div></details><div class="status-banner on"><div class="status-text"><span class="pulse"></span>SMS Automation: <span style="color:var(--green);font-weight:800">ACTIVE</span></div><a class="btn btn-kill" href="https://docs.google.com/spreadsheets/d/1wc3Pt46ze-ejLaryL8WIRQf4OjEkirolc4-O8lsRQZY/edit#gid=0" target="_blank">EMERGENCY KILL SWITCH</a></div>
 
   <section class="sec">
     <div class="tag-row"><span class="num">01</span><h2>At a Glance</h2></div>
     <hr>
     <div class="stat-row">
       <div class="stat"><div class="lab">Total Leads</div><div class="v">101</div><div class="sub">across all stages</div></div>
-      <div class="stat"><div class="lab">In Sequence</div><div class="v">29</div><div class="sub">SMS scheduled</div></div>
-      <div class="stat hot"><div class="lab">Replied — Call Now</div><div class="v">66</div><div class="sub">Jeff has tasks</div></div>
+      <div class="stat"><div class="lab">In Sequence</div><div class="v">28</div><div class="sub">SMS scheduled</div></div>
+      <div class="stat hot"><div class="lab">Replied — Call Now</div><div class="v">67</div><div class="sub">Jeff has tasks</div></div>
       <div class="stat warm"><div class="lab">Dormant — Manual Call</div><div class="v">0</div><div class="sub">no reply after sequence</div></div>
-      <div class="stat green"><div class="lab">Reply Rate</div><div class="v">69.5%</div><div class="sub">replied / total touched</div></div>
+      <div class="stat green"><div class="lab">Reply Rate</div><div class="v">70.5%</div><div class="sub">replied / total touched</div></div>
     </div>
   </section>
 
@@ -4827,6 +4827,7 @@ section h2, h2 {
 <tr><td><strong>Christopher Ascencio</strong></td><td>129 Lakeview Ave</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot"></span></td><td></td></tr>
 <tr><td><strong>Vance Stephens</strong></td><td>32 Cavell St</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot"></span></td><td></td></tr>
 <tr><td><strong>Venkata Bandaru</strong></td><td>35 George Davison Rd</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot"></span></td><td></td></tr>
+<tr><td><strong>Erick Serrano</strong></td><td>494 Neville St</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot">Jul 29, 04:31 PM</span></td><td>PA Market</td></tr>
 <tr><td><strong>Jimmie Brown</strong></td><td>4114 8th Ave</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot">May 09, 01:57 PM</span></td><td></td></tr>
 <tr><td><strong>Jeanette Nazon</strong></td><td>203 W Hanover St</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot"></span></td><td></td></tr>
 <tr><td><strong>Erica &amp; Stuart Smith</strong></td><td>4725 7th Ave</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot"></span></td><td></td></tr>
@@ -4904,7 +4905,6 @@ section h2, h2 {
 <tr><td><strong>David Williams</strong></td><td>435 KERRIGAN BLVD</td><td>NJ</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
 <tr><td><strong>Ben Clay</strong></td><td>206 16TH AVE S</td><td>AL</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
 <tr><td><strong>Chris Brindley</strong></td><td>41 JULIA AVE</td><td>NJ</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Erick Serrano</strong></td><td>494 Neville St</td><td>NJ</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">5</span></td><td>Jul 29, 04:06 PM</td><td>PA Market</td></tr>
 <tr><td><strong>Beata Szyffer-Hopkins</strong></td><td>412 Neadow Woods lane</td><td>NJ</td><td><span class="tag">2. LAO</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
 <tr><td><strong>Kahalil Ameen</strong></td><td>8039 7th Ave S,</td><td>AL</td><td><span class="tag">2. LAO</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
 <tr><td><strong>Carl Mccall</strong></td><td>48 Edgemere Ave</td><td>NJ</td><td><span class="tag">2. LAO</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
@@ -4973,6 +4973,8 @@ section h2, h2 {
 <tr><td><strong>Venkata Bandaru</strong></td><td>35 George Davison Rd</td><td>Call back: Venkata Bandaru (35 George Davison Rd)</td><td><span class="tag">Jeff</span></td><td>Jul 25, 04:03 PM</td></tr>
 <tr><td><strong>Chris Brindley</strong></td><td>41 JULIA AVE</td><td>Follow up with Chris Brindley </td><td><span class="tag">Jeff</span></td><td>May 14, 06:22 PM</td></tr>
 <tr><td><strong>Chris Brindley</strong></td><td>41 JULIA AVE</td><td>FUP Call: Getting discharge | selling it to move into senior home.</td><td><span class="tag">Jeff</span></td><td>Mar 19, 08:00 PM</td></tr>
+<tr><td><strong>Erick Serrano</strong></td><td>494 Neville St</td><td>REVIEW: Did Jeff call Erick Serrano back?</td><td><span class="tag">Mike</span></td><td>Jul 30, 05:24 PM</td></tr>
+<tr><td><strong>Erick Serrano</strong></td><td>494 Neville St</td><td>Call back: Erick Serrano (494 Neville St)</td><td><span class="tag">Jeff</span></td><td>Jul 29, 05:24 PM</td></tr>
 <tr><td><strong>Jimmie Brown</strong></td><td>4114 8th Ave</td><td>🔥 Call Jimmie Brown — Qualified seller (1h SLA)</td><td><span class="tag">Unassigned</span></td><td>May 27, 08:05 PM</td></tr>
 <tr><td><strong>Jimmie Brown</strong></td><td>4114 8th Ave</td><td>FUP - Need to acquire deed</td><td><span class="tag">Jeff</span></td><td>Apr 29, 08:00 PM</td></tr>
 <tr><td><strong>Erica &amp; Stuart Smith</strong></td><td>4725 7th Ave</td><td>Follow up with Erica &amp; Stuart Smith </td><td><span class="tag">Jeff</span></td><td>Jul 03, 06:22 PM</td></tr>
