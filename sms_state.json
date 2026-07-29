@@ -1313,8 +1313,11 @@
     "dormant": false,
     "last_from_number": "+12676197270",
     "last_sms_at": "2026-07-29T20:06:32.637554+00:00",
-    "replied": false,
-    "replied_at": null,
+    "replied": true,
+    "replied_at": "2026-07-29T20:31:12.307000+00:00",
+    "reply_attempts": 0,
+    "reply_class": "NEUTRAL",
+    "reply_text": "Text me a number",
     "sms_count": 5,
     "stage_entered_at": "2026-06-24T18:14:52.662074+00:00",
     "stage_name": "qualified"
