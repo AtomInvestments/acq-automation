@@ -192,8 +192,8 @@
     "reply_text": "Halt",
     "skip_reason": "tag-already-routed",
     "sms_count": 0,
-    "stage_entered_at": "2026-07-27T14:03:49.159676+00:00",
-    "stage_name": "qualified"
+    "stage_entered_at": "2026-07-29T22:26:03.946926+00:00",
+    "stage_name": "dead"
   },
   "736R0udUHSrTnfHtgbXi": {
     "dormant": false,
@@ -262,8 +262,8 @@
     "replied_at": null,
     "skip_reason": "tag-already-routed",
     "sms_count": 0,
-    "stage_entered_at": "2026-05-07T23:05:34.717268+00:00",
-    "stage_name": "qualified"
+    "stage_entered_at": "2026-07-29T22:26:06.318212+00:00",
+    "stage_name": "dead"
   },
   "BMLkjh4QUYGIreuC1tUT": {
     "dormant": false,
@@ -302,14 +302,14 @@
   },
   "CP7U85hQcVe72jam8Iw1": {
     "dormant": false,
-    "last_from_number": "+12568006289",
-    "last_sms_at": "2026-05-14T23:49:24.066390+00:00",
+    "last_from_number": null,
+    "last_sms_at": null,
     "replied": true,
     "replied_at": null,
     "skip_reason": "tag-already-routed",
-    "sms_count": 1,
-    "stage_entered_at": "2026-05-07T23:05:40.303946+00:00",
-    "stage_name": "qualified"
+    "sms_count": 0,
+    "stage_entered_at": "2026-07-29T22:26:06.716304+00:00",
+    "stage_name": "dead"
   },
   "CSLasrrF0X07ZO6GCNwL": {
     "dormant": false,
@@ -1301,13 +1301,13 @@
     "last_from_number": null,
     "last_sms_at": null,
     "replied": true,
-    "replied_at": "2026-05-07T23:44:15.062Z",
+    "replied_at": null,
     "reply_class": "POSITIVE",
     "reply_text": "DnD enabled by customer",
     "skip_reason": "tag-already-routed",
     "sms_count": 0,
-    "stage_entered_at": "2026-05-07T23:05:59.342444+00:00",
-    "stage_name": "qualified"
+    "stage_entered_at": "2026-07-29T22:26:18.806259+00:00",
+    "stage_name": "dead"
   },
   "z3hIKAIavUyFIZ5sRLlJ": {
     "dormant": false,
@@ -1318,6 +1318,7 @@
     "reply_attempts": 0,
     "reply_class": "NEUTRAL",
     "reply_text": "Text me a number",
+    "skip_reason": "tag-already-routed",
     "sms_count": 5,
     "stage_entered_at": "2026-06-24T18:14:52.662074+00:00",
     "stage_name": "qualified"
@@ -1334,8 +1335,8 @@
     "replied_at": null,
     "skip_reason": "tag-already-routed",
     "sms_count": 0,
-    "stage_entered_at": "2026-05-07T23:06:10.815390+00:00",
-    "stage_name": "qualified"
+    "stage_entered_at": "2026-07-29T22:26:19.204062+00:00",
+    "stage_name": "dead"
   },
   "zOgmMtqGqZHOC8pC4rY6": {
     "cn_attempts": 2,
