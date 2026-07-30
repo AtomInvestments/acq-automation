@@ -1954,5 +1954,16 @@
     "match_cid": "EBWHxjNP6kK0JVJUDZwM",
     "match_confidence": "high",
     "summary": "Owner willing to sell for $185K, property needs roof and kitchen work, wants to close within 60 days due to work relocation."
+  },
+  "C06MM4DQZ28:1785432996.122189": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": "Short sale - needs to reinstate $70,000 mortgage",
+      "reason_for_selling": "Financial distress - owes bank $70,000 to reinstate mortgage and interested in short sale",
+      "timeline": null
+    },
+    "match_cid": "SqeeJkxAxkJ4850ARC5d",
+    "match_confidence": "high",
+    "summary": "Scott confirmed property at 24 Essex Ln is in fair lived-in condition and he owes the bank $70,000 to reinstate the mortgage, expressing interest in a short sale."
   }
 }
