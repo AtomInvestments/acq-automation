@@ -382,7 +382,7 @@
     "replied": false,
     "replied_at": null,
     "sms_count": 0,
-    "stage_entered_at": "2026-07-30T15:11:06.100323+00:00",
+    "stage_entered_at": "2026-07-30T16:56:40.431787+00:00",
     "stage_name": "lao"
   },
   "BEyFlzfEhra9M6DR085v": {
@@ -1327,6 +1327,7 @@
     "reply_attempts": 0,
     "reply_class": "NEUTRAL",
     "reply_text": "DnD enabled by customer",
+    "skip_reason": "tag-already-routed",
     "sms_count": 0,
     "stage_entered_at": "2026-07-30T15:10:27.984972+00:00",
     "stage_name": "qualified"
@@ -1621,6 +1622,7 @@
     "reply_attempts": 0,
     "reply_class": "NEUTRAL",
     "reply_text": "DnD enabled by customer",
+    "skip_reason": "tag-already-routed",
     "sms_count": 0,
     "stage_entered_at": "2026-07-30T15:09:32.907246+00:00",
     "stage_name": "qualified"
@@ -1654,6 +1656,7 @@
     "reply_attempts": 0,
     "reply_class": "NEUTRAL",
     "reply_text": "DnD enabled by customer",
+    "skip_reason": "tag-already-routed",
     "sms_count": 0,
     "stage_entered_at": "2026-07-30T15:09:57.692398+00:00",
     "stage_name": "qualified"
@@ -1770,6 +1773,7 @@
     "reply_attempts": 0,
     "reply_class": "NEUTRAL",
     "reply_text": "DnD enabled by customer",
+    "skip_reason": "tag-already-routed",
     "sms_count": 0,
     "stage_entered_at": "2026-07-30T15:10:36.266377+00:00",
     "stage_name": "qualified"
