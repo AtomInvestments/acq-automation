@@ -1965,5 +1965,60 @@
     "match_cid": "SqeeJkxAxkJ4850ARC5d",
     "match_confidence": "high",
     "summary": "Scott confirmed property at 24 Essex Ln is in fair lived-in condition and he owes the bank $70,000 to reinstate the mortgage, expressing interest in a short sale."
+  },
+  "C06MM4DQZ28:1785519628.050199": {
+    "field_updates": {
+      "asking_price": 399900,
+      "motivation": null,
+      "reason_for_selling": null,
+      "timeline": "ASAP"
+    },
+    "match_cid": null,
+    "match_confidence": "none",
+    "summary": "Rachel (David Weiser's daughter) wants to sell 150 Nelson Dr, Williamstown NJ 08094, listed on Zillow at $399,900, and was available for an immediate call."
+  },
+  "C06MM4DQZ28:1785521107.977469": {
+    "field_updates": {
+      "asking_price": 488800,
+      "motivation": "Immediately available and requesting call now",
+      "reason_for_selling": null,
+      "timeline": "ASAP"
+    },
+    "match_cid": "079L2TuRw8LczMfY187J",
+    "match_confidence": "high",
+    "summary": "Lead is available now for a call to discuss selling their property at 122 Cortelyous Ln."
+  },
+  "C06MM4DQZ28:1785521583.270809": {
+    "field_updates": {
+      "asking_price": 442500,
+      "motivation": "Direct and transactional - wants offers without small talk",
+      "reason_for_selling": null,
+      "timeline": null
+    },
+    "match_cid": "xpnpDS8HLW96UDQRWQug",
+    "match_confidence": "high",
+    "summary": "Nicholas states property is 100% move-in ready with renovated master bathroom and finished basement, asking for direct offers without small talk."
+  },
+  "C06MM4DQZ28:1785521967.537289": {
+    "field_updates": {
+      "asking_price": 310000,
+      "motivation": "needs to move the property soon",
+      "reason_for_selling": "needs to move the property soon, prefers working with investor rather than realtor",
+      "timeline": "ASAP"
+    },
+    "match_cid": "Q3JZUSsThXjnUNt6iZ0J",
+    "match_confidence": "high",
+    "summary": "Raymond is asking $310k for 87 Fawn Ct, has new flooring and is installing new HVAC, wants investor only and needs to move the property soon."
+  },
+  "C06MM4DQZ28:1785522258.940259": {
+    "field_updates": {
+      "asking_price": 438898,
+      "motivation": null,
+      "reason_for_selling": "Already listed with realtor",
+      "timeline": null
+    },
+    "match_cid": "tSiWoyGjIIhehuHSmPO8",
+    "match_confidence": "high",
+    "summary": "Lead confirmed interest in discussing sale, property has brand new interior, already working with a realtor."
   }
 }
