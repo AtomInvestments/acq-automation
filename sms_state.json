@@ -227,6 +227,7 @@
     "reply_attempts": 0,
     "reply_class": "NEUTRAL",
     "reply_text": "So sorry, please give me some more information. I'm not certain who this is.",
+    "skip_reason": "tag-already-routed",
     "sms_count": 0,
     "stage_entered_at": "2026-07-30T15:10:45.104727+00:00",
     "stage_name": "qualified"
@@ -386,7 +387,7 @@
     "replied": false,
     "replied_at": null,
     "sms_count": 0,
-    "stage_entered_at": "2026-07-31T14:44:38.636607+00:00",
+    "stage_entered_at": "2026-07-31T16:29:06.448027+00:00",
     "stage_name": "lao"
   },
   "BEyFlzfEhra9M6DR085v": {
@@ -1018,6 +1019,7 @@
     "reply_attempts": 0,
     "reply_class": "NEUTRAL",
     "reply_text": "Who is this",
+    "skip_reason": "tag-already-routed",
     "sms_count": 0,
     "stage_entered_at": "2026-07-30T15:11:04.740024+00:00",
     "stage_name": "qualified"
@@ -1262,6 +1264,7 @@
     "reply_attempts": 0,
     "reply_class": "NEUTRAL",
     "reply_text": "Who is Adam?",
+    "skip_reason": "tag-already-routed",
     "sms_count": 0,
     "stage_entered_at": "2026-07-30T15:10:53.192962+00:00",
     "stage_name": "qualified"
@@ -1416,6 +1419,7 @@
     "reply_attempts": 0,
     "reply_class": "NEUTRAL",
     "reply_text": "Regarding?",
+    "skip_reason": "tag-already-routed",
     "sms_count": 0,
     "stage_entered_at": "2026-07-30T15:09:28.207797+00:00",
     "stage_name": "qualified"
@@ -1483,6 +1487,7 @@
     "reply_attempts": 0,
     "reply_class": "POSITIVE",
     "reply_text": "Yes 350 k please",
+    "skip_reason": "tag-already-routed",
     "sms_count": 0,
     "stage_entered_at": "2026-07-30T15:08:58.906492+00:00",
     "stage_name": "qualified"
@@ -1711,6 +1716,7 @@
     "reply_attempts": 0,
     "reply_class": "NEGATIVE",
     "reply_text": "We did this already",
+    "skip_reason": "tag-already-routed",
     "sms_count": 0,
     "stage_entered_at": "2026-07-30T15:10:35.345657+00:00",
     "stage_name": "qualified"
