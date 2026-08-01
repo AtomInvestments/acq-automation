@@ -387,7 +387,7 @@
     "replied": false,
     "replied_at": null,
     "sms_count": 0,
-    "stage_entered_at": "2026-07-31T23:29:00.882665+00:00",
+    "stage_entered_at": "2026-08-01T14:19:21.878752+00:00",
     "stage_name": "lao"
   },
   "BEyFlzfEhra9M6DR085v": {
@@ -1584,8 +1584,11 @@
     "dormant": false,
     "last_from_number": null,
     "last_sms_at": null,
-    "replied": false,
-    "replied_at": null,
+    "replied": true,
+    "replied_at": "2026-08-01T10:45:23.558000+00:00",
+    "reply_attempts": 0,
+    "reply_class": "POSITIVE",
+    "reply_text": "Sure",
     "sms_count": 0,
     "stage_entered_at": "2026-07-30T15:08:53.043307+00:00",
     "stage_name": "qualified"
