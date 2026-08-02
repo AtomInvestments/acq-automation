@@ -384,10 +384,14 @@
     "dormant": false,
     "last_from_number": null,
     "last_sms_at": null,
-    "replied": false,
+    "replied": true,
     "replied_at": null,
+    "reply_attempts": 0,
+    "reply_class": "NEUTRAL",
+    "reply_text": "Mike, what is the name of your company?",
+    "skip_reason": "tag-already-routed",
     "sms_count": 0,
-    "stage_entered_at": "2026-08-02T17:49:59.740782+00:00",
+    "stage_entered_at": "2026-08-02T18:48:39.686511+00:00",
     "stage_name": "lao"
   },
   "BEyFlzfEhra9M6DR085v": {
@@ -1225,6 +1229,7 @@
     "reply_attempts": 0,
     "reply_class": "NEUTRAL",
     "reply_text": "\ud83d\udc4d",
+    "skip_reason": "tag-already-routed",
     "sms_count": 0,
     "stage_entered_at": "2026-07-30T15:09:54.371273+00:00",
     "stage_name": "qualified"
