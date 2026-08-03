@@ -2020,5 +2020,49 @@
     "match_cid": "tSiWoyGjIIhehuHSmPO8",
     "match_confidence": "high",
     "summary": "Lead confirmed interest in discussing sale, property has brand new interior, already working with a realtor."
+  },
+  "C06MM4DQZ28:1785776938.107469": {
+    "field_updates": {
+      "asking_price": 750000,
+      "motivation": "Will list with realtor friend if asking price not met within two weeks",
+      "reason_for_selling": "Seeking asking price of $750k before listing with realtor friend in two weeks",
+      "timeline": "30 days"
+    },
+    "match_cid": "QixYnWx6fCMQuMD4Q3Qz",
+    "match_confidence": "high",
+    "summary": "Bruce is asking $750k for his renovated home that needs cosmetic work, only taking offers for two weeks before listing with a realtor friend."
+  },
+  "C06MM4DQZ28:1785777551.216719": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": null,
+      "reason_for_selling": null,
+      "timeline": null
+    },
+    "match_cid": "mltUTDVuCAiGpfAtaHfd",
+    "match_confidence": "high",
+    "summary": "Ashok is asking what price we can offer for his 3BR/2.5BA house with finished basement, garage, and attic room."
+  },
+  "C06MM4DQZ28:1785777776.601429": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": null,
+      "reason_for_selling": null,
+      "timeline": null
+    },
+    "match_cid": "VdYuSnnOweNdUYpcWdPp",
+    "match_confidence": "high",
+    "summary": "Tierre Jackson confirmed the property at 113 S 8th St is in good condition with everything up to code, cosmetic work only, and is not currently working with an agent."
+  },
+  "C06MM4DQZ28:1785778545.531829": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": "Planning to list through property manager",
+      "reason_for_selling": "Property is fully rented and owner is ready to list it for sale through their property manager",
+      "timeline": "ASAP"
+    },
+    "match_cid": "GpfekG60u3tPqQ57eR1h",
+    "match_confidence": "high",
+    "summary": "Daniel McCarthy is thinking of listing soon, property is fully rented with new roof and in good condition, working with property manager to list."
   }
 }
