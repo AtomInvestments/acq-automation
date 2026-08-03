@@ -2075,5 +2075,16 @@
     "match_cid": "mPTaM059ruxFkuzkCq6f",
     "match_confidence": "high",
     "summary": "Julius confirmed interest in selling and requested a phone call to discuss property condition."
+  },
+  "C06MM4DQZ28:1785792245.773739": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": "willing to sell for the right price",
+      "reason_for_selling": null,
+      "timeline": null
+    },
+    "match_cid": "AKh5eeUA7xqz5728Ho52",
+    "match_confidence": "high",
+    "summary": "Gregory indicated he'd sell for the right money, property is in great shape with carpet needing attention, not currently working with a realtor."
   }
 }
