@@ -391,7 +391,7 @@
     "reply_text": "Mike, what is the name of your company?",
     "skip_reason": "tag-already-routed",
     "sms_count": 0,
-    "stage_entered_at": "2026-08-03T16:44:33.988779+00:00",
+    "stage_entered_at": "2026-08-03T18:30:47.247746+00:00",
     "stage_name": "lao"
   },
   "BEyFlzfEhra9M6DR085v": {
@@ -1559,6 +1559,7 @@
     "reply_attempts": 0,
     "reply_class": "POSITIVE",
     "reply_text": "I'm entertaining offers at $750k as is. Thx",
+    "skip_reason": "tag-already-routed",
     "sms_count": 1,
     "stage_entered_at": "2026-07-27T14:03:49.543755+00:00",
     "stage_name": "qualified"
