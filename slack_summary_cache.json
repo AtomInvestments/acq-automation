@@ -154,6 +154,17 @@
     "match_confidence": "high",
     "summary": "CallTools callback attempt 2/3 failed due to unknown agent; manual call needed today."
   },
+  "C05M7E1TJP7:1785860123.444989": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": null,
+      "reason_for_selling": "Not interested at the moment, open to reconsidering in 8 months",
+      "timeline": "6+ months"
+    },
+    "match_cid": "X3YJZrYfMqswtjoZV4VB",
+    "match_confidence": "high",
+    "summary": "Salvador Diaz is a Spanish speaker not currently interested but open to follow-up in 8 months."
+  },
   "C05MP6K9RNV:1779136440.549199": {
     "field_updates": {
       "asking_price": null,
@@ -2108,5 +2119,60 @@
     "match_cid": "x17lzxXiAZki92bNDHSH",
     "match_confidence": "high",
     "summary": "Jack is selling 3 rental properties as a package in Birmingham (420 Medford Rd, 228 Meadowdale Ave, 104 95th St No) for $330k bundled, wants to sell ASAP as he's retiring after 51 years, but considering rehabbing Medford for market value $150-175k if daughter wants it."
+  },
+  "C06MM4DQZ28:1785857298.606409": {
+    "field_updates": {
+      "asking_price": 275000,
+      "motivation": "Not in a hurry, lived there 26 years with lots of stuff to move",
+      "reason_for_selling": "Has lived in the house since 2000 and accumulated 26 years of belongings, willing to sell but needs time to relocate",
+      "timeline": "60 days"
+    },
+    "match_cid": "gaxsvhCoeMjRoRxbzbnY",
+    "match_confidence": "high",
+    "summary": "Donald Renfro is selling 2399 W 40th St (plus 2407) for $275k cash, needs 60 days to move out, property needs rehab but he's lived there since 2000 with updated HVAC, roof, and windows."
+  },
+  "C06MM4DQZ28:1785858507.178359": {
+    "field_updates": {
+      "asking_price": 140000,
+      "motivation": "Multiple interested parties, everybody and their brother interested",
+      "reason_for_selling": "Has multiple buyers interested and wants to evaluate offers",
+      "timeline": "No rush"
+    },
+    "match_cid": "iFWAVtfdA58ek6ZL8Kqp",
+    "match_confidence": "high",
+    "summary": "Seller is motivated with multiple interested parties, asking $140k as-is for 3BR/1BA needing total renovation, no rush timeline, has HELOC on property."
+  },
+  "C06MM4DQZ28:1785859557.279729": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": "upgrading",
+      "reason_for_selling": "Owner is upgrading to a different property",
+      "timeline": "6+ months"
+    },
+    "match_cid": "q2XYEfcSrMQKKwMo0uME",
+    "match_confidence": "high",
+    "summary": "Seller Matthew Koltunicki at 42 Manalapan Ave has extensively renovated the property (new roof, kitchen, bathroom, porches, water heater) and is looking to sell next year at market value to upgrade, not interested in using a realtor."
+  },
+  "C06MM4DQZ28:1785859635.222049": {
+    "field_updates": {
+      "asking_price": 200000,
+      "motivation": "Tenant-occupied property, open to cash sale without listing",
+      "reason_for_selling": "Property recently vacated by previous tenant, now re-occupied through December, owner prefers direct sale over listing with agent",
+      "timeline": "No rush"
+    },
+    "match_cid": "2nlabx9SEfilw5XIAVkM",
+    "match_confidence": "high",
+    "summary": "Christopher Colavito is open to selling, asking $200K plus closing costs as-is, property is tenant-occupied through December and in very good condition with recent cleaning and painting."
+  },
+  "C06MM4DQZ28:1785859926.557819": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": "willing to sell for right price",
+      "reason_for_selling": "Considering selling owner-occupied property, needs to discuss timeline with wife before finalizing",
+      "timeline": "60 days"
+    },
+    "match_cid": "q03q3JpRsq3tnOYELhfc",
+    "match_confidence": "high",
+    "summary": "Louis confirmed property needs basement work, is owner-occupied, looking to sell within couple months, no liens, wants partner call Monday afternoon."
   }
 }
