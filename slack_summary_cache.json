@@ -2174,5 +2174,49 @@
     "match_cid": "q03q3JpRsq3tnOYELhfc",
     "match_confidence": "high",
     "summary": "Louis confirmed property needs basement work, is owner-occupied, looking to sell within couple months, no liens, wants partner call Monday afternoon."
+  },
+  "C06MM4DQZ28:1785867942.083089": {
+    "field_updates": {
+      "asking_price": 450000,
+      "motivation": "Would sell at right price but resistant to investor lowballs",
+      "reason_for_selling": "Open to selling but only at fair market value, not actively motivated to sell quickly",
+      "timeline": "No rush"
+    },
+    "match_cid": "2dokqJej4U2ML2FHPSxz",
+    "match_confidence": "high",
+    "summary": "Robert indicated he would consider selling for around $450k but doesn't want to be lowballed by investors; house needs minor cosmetic updates (paint and flooring)."
+  },
+  "C06MM4DQZ28:1785868183.719649": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": "Will sell privately to buyer without realtor",
+      "reason_for_selling": "Willing to sell the property at 129 Lakeview Ave but wants to avoid realtor fees by selling directly to investor",
+      "timeline": "30 days"
+    },
+    "match_cid": "SdXM0HQp8BsdOCqbyK2x",
+    "match_confidence": "high",
+    "summary": "Seller is open to selling privately without a realtor, property needs only minor cosmetic work, plans to get evaluation end of this month."
+  },
+  "C06MM4DQZ28:1785868370.467359": {
+    "field_updates": {
+      "asking_price": 580000,
+      "motivation": "Not distressed, open to offers, primary residence recently rehabbed",
+      "reason_for_selling": "Not a distressed seller, willing to consider cash offers on primary residence",
+      "timeline": "ASAP"
+    },
+    "match_cid": "NJBlmzaoKu2J1kGn6xEZ",
+    "match_confidence": "high",
+    "summary": "Edward owns 213 S Church St (not 210), asking $580k, has $250k mortgage, rehab 2 years ago, impeccable condition, ready to settle tomorrow for cash as-is, not distressed, primary residence."
+  },
+  "C06MM4DQZ28:1785870335.972189": {
+    "field_updates": {
+      "asking_price": 260000,
+      "motivation": "Seller is 77 years old",
+      "reason_for_selling": "Owner is 77 years old and looking to sell",
+      "timeline": "No rush"
+    },
+    "match_cid": "uHqcaOCUDDCBvOn36bnC",
+    "match_confidence": "high",
+    "summary": "Thomas confirmed 6 Juniper Way is a renovated 2BR/2BA third-floor condo currently rented for $2000/month, asking $255k-$265k, motivated by age (77 years old)."
   }
 }
