@@ -143,6 +143,17 @@
     "match_confidence": "high",
     "summary": "Call booked for Monday 7/27 at 10 AM; property is vacant 2-family selling as-is for cash, wants over $175K, buyer walkthroughs starting in 1-2 weeks."
   },
+  "C05M7E1TJP7:1785852016.569949": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": null,
+      "reason_for_selling": null,
+      "timeline": null
+    },
+    "match_cid": "AKh5eeUA7xqz5728Ho52",
+    "match_confidence": "high",
+    "summary": "CallTools callback attempt 2/3 failed due to unknown agent; manual call needed today."
+  },
   "C05MP6K9RNV:1779136440.549199": {
     "field_updates": {
       "asking_price": null,
@@ -2086,5 +2097,16 @@
     "match_cid": "AKh5eeUA7xqz5728Ho52",
     "match_confidence": "high",
     "summary": "Gregory indicated he'd sell for the right money, property is in great shape with carpet needing attention, not currently working with a realtor."
+  },
+  "C06MM4DQZ28:1785855784.196679": {
+    "field_updates": {
+      "asking_price": 330000,
+      "motivation": "Retiring after 51 years, wants to sell 3-property package",
+      "reason_for_selling": "Retiring after 51 years and wants to liquidate rental portfolio, though daughter may want him to rehab 420 Medford instead",
+      "timeline": "ASAP"
+    },
+    "match_cid": "x17lzxXiAZki92bNDHSH",
+    "match_confidence": "high",
+    "summary": "Jack is selling 3 rental properties as a package in Birmingham (420 Medford Rd, 228 Meadowdale Ave, 104 95th St No) for $330k bundled, wants to sell ASAP as he's retiring after 51 years, but considering rehabbing Medford for market value $150-175k if daughter wants it."
   }
 }
