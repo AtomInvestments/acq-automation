@@ -4190,7 +4190,7 @@ section h2, h2 {
   <header class="masthead">
     <div class="brandrow">
       <span class="brand">Atom Investments · APG Operations</span>
-      <span>Last updated Aug 05, 2026 03:31 AM ET</span>
+      <span>Last updated Aug 05, 2026 06:07 AM ET</span>
     </div>
     <h1>Active <span class="accent">Deals.</span></h1>
     <p class="dek">Every property currently in stages 1-7 of the ACQ pipeline. Sorted by call rating within each stage so the strongest deals surface first.</p>
@@ -4763,7 +4763,7 @@ section h2, h2 {
   <header class="masthead">
     <div class="brandrow">
       <span class="brand">Atom Investments · APG Operations</span>
-      <span>Last updated Aug 05, 2026 03:29 AM ET</span>
+      <span>Last updated Aug 05, 2026 06:06 AM ET</span>
     </div>
     <h1>SMS <span class="accent">Follow-Ups.</span></h1>
     <p class="dek">Action queue for Jeff and Mike — replies to call back, leads gone dormant, and everything still cycling through the SMS sequence.</p>
@@ -4783,7 +4783,7 @@ section h2, h2 {
     <a href="sms-test.html">SMS Test</a>
   </nav>
 
-  <details class="run-grid-collapsed"><summary>All 5 cron jobs OK on last run — click for timestamps</summary><div class="run-grid"><div class="run-row"><span class="tag green">OK</span><span class="run-name">ACQ Call Recording Automation</span><span class="run-ts">Aug 05, 02:18 AM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">ACQ SMS Follow-Up + Dashboard</span><span class="run-ts">Aug 05, 12:36 AM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">APG Slack Scraper</span><span class="run-ts">Aug 05, 12:53 AM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">dashboard (script)</span><span class="run-ts">Aug 05, 03:29 AM</span><span class="run-detail">dashboard updated</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">sms (script)</span><span class="run-ts">Aug 05, 03:28 AM</span><span class="run-detail">outside business hours (hour=3 ET)</span></div></div></details><div class="status-banner on"><div class="status-text"><span class="pulse"></span>SMS Automation: <span style="color:var(--green);font-weight:800">ACTIVE</span></div><a class="btn btn-kill" href="https://docs.google.com/spreadsheets/d/1wc3Pt46ze-ejLaryL8WIRQf4OjEkirolc4-O8lsRQZY/edit#gid=0" target="_blank">EMERGENCY KILL SWITCH</a></div>
+  <details class="run-grid-collapsed"><summary>All 5 cron jobs OK on last run — click for timestamps</summary><div class="run-grid"><div class="run-row"><span class="tag green">OK</span><span class="run-name">ACQ Call Recording Automation</span><span class="run-ts">Aug 05, 05:16 AM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">ACQ SMS Follow-Up + Dashboard</span><span class="run-ts">Aug 05, 03:31 AM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">APG Slack Scraper</span><span class="run-ts">Aug 05, 03:31 AM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">dashboard (script)</span><span class="run-ts">Aug 05, 06:05 AM</span><span class="run-detail">dashboard updated</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">sms (script)</span><span class="run-ts">Aug 05, 06:05 AM</span><span class="run-detail">outside business hours (hour=6 ET)</span></div></div></details><div class="status-banner on"><div class="status-text"><span class="pulse"></span>SMS Automation: <span style="color:var(--green);font-weight:800">ACTIVE</span></div><a class="btn btn-kill" href="https://docs.google.com/spreadsheets/d/1wc3Pt46ze-ejLaryL8WIRQf4OjEkirolc4-O8lsRQZY/edit#gid=0" target="_blank">EMERGENCY KILL SWITCH</a></div>
 
   <section class="sec">
     <div class="tag-row"><span class="num">01</span><h2>At a Glance</h2></div>
@@ -4895,8 +4895,8 @@ section h2, h2 {
 <tr><td><strong>Shirley Xu</strong></td><td>231 Hamilton Ave,</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot">May 07, 07:09 PM</span></td><td></td></tr>
 <tr><td><strong>Tya Miles</strong></td><td>1145 Langham Ave</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot"></span></td><td></td></tr>
 <tr><td><strong>Kenneth Leposa</strong></td><td>419 Church St,</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot"></span></td><td></td></tr>
-<tr><td><strong>(no name)</strong></td><td></td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot"></span></td><td></td></tr>
-<tr><td><strong>(no name)</strong></td><td></td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot"></span></td><td></td></tr>
+<tr><td><strong>Barbara Demedicis</strong></td><td>636 CAMP CIR</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot"></span></td><td></td></tr>
+<tr><td><strong>Philip Tappenden</strong></td><td>715 Mill St,</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot"></span></td><td></td></tr>
 <tr><td><strong>Shen Zhou</strong></td><td>365 Bromley Pl</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot"></span></td><td></td></tr>
 <tr><td><strong>William Lindsey</strong></td><td>41 Westminster Dr</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot"></span></td><td></td></tr>
 <tr><td><strong>Harinder Gill</strong></td><td>6 Parrotta Dr</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot"></span></td><td></td></tr></tbody></table></div>
@@ -5195,6 +5195,7 @@ section h2, h2 {
 <tr><td><strong>Clinton Junior (Referred by Phil)</strong></td><td>2649 W Lehigh Ave</td><td>Justus handling re: 70K Offer</td><td><span class="tag">Jeff</span></td><td>Mar 13, 08:00 PM</td></tr>
 <tr><td><strong>George Pritchett</strong></td><td>4112 7th Ave</td><td>FUP - Burnt House: Offer $5k to assign for $15k purchase price</td><td><span class="tag">Unassigned</span></td><td>Mar 10, 08:00 PM</td></tr>
 <tr><td><strong>Kenneth Leposa</strong></td><td>419 Church St,</td><td>Get w/ Adam -Seller Financing - Vacant/High Price</td><td><span class="tag">Jeff</span></td><td>Feb 24, 08:00 PM</td></tr>
+<tr><td><strong>Philip Tappenden</strong></td><td>715 Mill St,</td><td>Lead who referred some leads - wants Tips</td><td><span class="tag">Jeff</span></td><td>Mar 03, 08:00 PM</td></tr>
 <tr><td><strong>Shen Zhou</strong></td><td>365 Bromley Pl</td><td>🔥 Call Shen Zhou — Qualified seller (1h SLA)</td><td><span class="tag">Unassigned</span></td><td>May 27, 08:05 PM</td></tr>
 <tr><td><strong>William Lindsey</strong></td><td>41 Westminster Dr</td><td>🔥 Call William Lindsey — Qualified seller (1h SLA)</td><td><span class="tag">Unassigned</span></td><td>May 27, 08:05 PM</td></tr>
 <tr><td><strong>William Lindsey</strong></td><td>41 Westminster Dr</td><td>REVIEW: Did Jeff call William Lindsey? (Voorhees)</td><td><span class="tag">Mike</span></td><td>May 11, 10:36 AM</td></tr>
@@ -5240,7 +5241,7 @@ new Chart(document.getElementById('stageChart'), {
 
 new Chart(document.getElementById('stateChart'), {
   type: 'bar',
-  data: { labels: ["NJ", "AL", "PA", "OH", "UNKNOWN", "WI", "IN", "TN", "MI", "SC"], datasets: [{ data: [104, 23, 16, 6, 5, 1, 1, 1, 1, 1], backgroundColor: '#C9A52A', borderRadius: 4 }] },
+  data: { labels: ["NJ", "AL", "PA", "OH", "UNKNOWN", "WI", "IN", "TN", "MI", "SC"], datasets: [{ data: [104, 24, 17, 6, 3, 1, 1, 1, 1, 1], backgroundColor: '#C9A52A', borderRadius: 4 }] },
   options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { precision: 0, color: '#6B7591' }, grid: { color: 'rgba(26,40,64,0.06)' } }, x: { ticks: { color: '#455066' }, grid: { display: false } } } }
 });
 
