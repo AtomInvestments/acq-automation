@@ -198,6 +198,17 @@
     "match_confidence": "high",
     "summary": "Hot lead under 30 days for Gina Ambrosio at 2014 Spruce Hills Dr in Glen Gardner, NJ, with connected phone call recording available."
   },
+  "C05M7E1TJP7:1785961545.882909": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": null,
+      "reason_for_selling": null,
+      "timeline": null
+    },
+    "match_cid": null,
+    "match_confidence": "none",
+    "summary": "This is a triage list summarizing 10+ different leads requiring follow-up, not a message about one specific lead."
+  },
   "C05MP6K9RNV:1779136440.549199": {
     "field_updates": {
       "asking_price": null,
@@ -2339,5 +2350,38 @@
     "match_cid": "FEDwcMFacyz3CgCNNZSQ",
     "match_confidence": "high",
     "summary": "Jose is interested in selling but prefers in-person meetings after 4pm; house is livable but needs a roof and he's not working with a realtor."
+  },
+  "C06MM4DQZ28:1785957305.914189": {
+    "field_updates": {
+      "asking_price": 175000,
+      "motivation": "Tenant vacated, property vacant since July 15th",
+      "reason_for_selling": "Tenant vacated the property and seller wants to sell as-is two-family house for cash",
+      "timeline": "30 days"
+    },
+    "match_cid": "4b1Cfm2w1ZYy1IjGiFLp",
+    "match_confidence": "high",
+    "summary": "Seller confirmed property vacant since July 15th, planning walk-throughs in 1-2 weeks, selling as-is two-family house for cash with asking price over $175K."
+  },
+  "C06MM4DQZ28:1785958009.710809": {
+    "field_updates": {
+      "asking_price": 452000,
+      "motivation": "Getting nice rent, flexible on timing, no specific reason to sell",
+      "reason_for_selling": "No specific reason stated - currently holding as rental property getting good rent",
+      "timeline": "No rush"
+    },
+    "match_cid": "J5CWzt8TSbI0SH62RTAf",
+    "match_confidence": "high",
+    "summary": "Scott Bruder confirmed he's open to selling his rented property at 6 Preston Rd for $452,000 but wants no lowball offers and already has a realtor."
+  },
+  "C06MM4DQZ28:1785961992.515289": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": null,
+      "reason_for_selling": null,
+      "timeline": null
+    },
+    "match_cid": "yVpd2dgdP4cMgg818SCo",
+    "match_confidence": "high",
+    "summary": "Kwame Asare responded to outreach about 153 New Freedom Rd, asking about price and suggesting scheduling an appointment to see the units."
   }
 }
