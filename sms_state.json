@@ -2,10 +2,10 @@
   "0Nt8GxK5uzIEJnyLRoUq": {
     "dormant": false,
     "last_from_number": "+12676197270",
-    "last_sms_at": "2026-07-29T20:06:09.078412+00:00",
+    "last_sms_at": "2026-08-05T20:41:55.394655+00:00",
     "replied": false,
     "replied_at": null,
-    "sms_count": 4,
+    "sms_count": 5,
     "stage_entered_at": "2026-07-01T18:19:54.233952+00:00",
     "stage_name": "qualified"
   },
@@ -123,10 +123,10 @@
   "4CeD82EG3hcDDxmqVdlb": {
     "dormant": false,
     "last_from_number": "+12676197270",
-    "last_sms_at": "2026-07-29T20:06:19.116958+00:00",
+    "last_sms_at": "2026-08-05T20:42:09.363466+00:00",
     "replied": false,
     "replied_at": null,
-    "sms_count": 5,
+    "sms_count": 6,
     "stage_entered_at": "2026-06-24T18:14:48.304850+00:00",
     "stage_name": "qualified"
   },
@@ -401,7 +401,7 @@
     "reply_text": "Mike, what is the name of your company?",
     "skip_reason": "tag-already-routed",
     "sms_count": 0,
-    "stage_entered_at": "2026-08-05T19:25:45.613019+00:00",
+    "stage_entered_at": "2026-08-05T20:43:04.149774+00:00",
     "stage_name": "lao"
   },
   "BEyFlzfEhra9M6DR085v": {
@@ -585,8 +585,11 @@
     "dormant": false,
     "last_from_number": null,
     "last_sms_at": null,
-    "replied": false,
-    "replied_at": null,
+    "replied": true,
+    "replied_at": "2026-08-05T20:25:16.327000+00:00",
+    "reply_attempts": 0,
+    "reply_class": "NEUTRAL",
+    "reply_text": "Okay",
     "sms_count": 0,
     "stage_entered_at": "2026-08-05T19:23:46.367581+00:00",
     "stage_name": "qualified"
@@ -707,10 +710,10 @@
   "IRpEM11tGInAozHbw7VM": {
     "dormant": false,
     "last_from_number": "+12676197270",
-    "last_sms_at": "2026-07-29T20:06:12.125830+00:00",
+    "last_sms_at": "2026-08-05T20:41:57.782743+00:00",
     "replied": false,
     "replied_at": null,
-    "sms_count": 5,
+    "sms_count": 6,
     "stage_entered_at": "2026-06-24T18:14:38.240032+00:00",
     "stage_name": "qualified"
   },
@@ -722,6 +725,16 @@
     "replied_at": null,
     "sms_count": 1,
     "stage_entered_at": "2026-07-24T17:55:55.280074+00:00",
+    "stage_name": "qualified"
+  },
+  "J5CWzt8TSbI0SH62RTAf": {
+    "dormant": false,
+    "last_from_number": null,
+    "last_sms_at": null,
+    "replied": false,
+    "replied_at": null,
+    "sms_count": 0,
+    "stage_entered_at": "2026-08-05T20:41:39.494251+00:00",
     "stage_name": "qualified"
   },
   "JJH6kQvqgdeLZBSl6Nei": {
@@ -1809,6 +1822,7 @@
     "reply_attempts": 0,
     "reply_class": "NEUTRAL",
     "reply_text": "I looked at your link and I don't see any recent deals that you have closed. All I see is a request to sell my property.",
+    "skip_reason": "tag-already-routed",
     "sms_count": 0,
     "stage_entered_at": "2026-08-05T19:23:49.089510+00:00",
     "stage_name": "qualified"
@@ -1978,6 +1992,16 @@
     "sms_count": 0,
     "stage_entered_at": "2026-05-20T17:37:51.629440+00:00",
     "stage_name": "mao"
+  },
+  "yVpd2dgdP4cMgg818SCo": {
+    "dormant": false,
+    "last_from_number": null,
+    "last_sms_at": null,
+    "replied": false,
+    "replied_at": null,
+    "sms_count": 0,
+    "stage_entered_at": "2026-08-05T20:41:38.784990+00:00",
+    "stage_name": "qualified"
   },
   "ycucJNQR1Cps8idBB6df": {
     "dormant": false,
