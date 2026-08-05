@@ -401,7 +401,7 @@
     "reply_text": "Mike, what is the name of your company?",
     "skip_reason": "tag-already-routed",
     "sms_count": 0,
-    "stage_entered_at": "2026-08-05T22:03:36.897054+00:00",
+    "stage_entered_at": "2026-08-05T23:27:34.814864+00:00",
     "stage_name": "lao"
   },
   "BEyFlzfEhra9M6DR085v": {
@@ -737,6 +737,7 @@
     "reply_attempts": 0,
     "reply_class": "POSITIVE",
     "reply_text": "You can call anytime. I just want to make sure we don't waste each other's time. There is very little room in my price. This is rental property for me I am ok owning for a few more years  I have no mortgage so I'm not desperate. Just trying to avoid lowball offers I have been getting.",
+    "skip_reason": "tag-already-routed",
     "sms_count": 0,
     "stage_entered_at": "2026-08-05T20:41:39.494251+00:00",
     "stage_name": "qualified"
