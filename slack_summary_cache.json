@@ -165,6 +165,17 @@
     "match_confidence": "high",
     "summary": "Salvador Diaz is a Spanish speaker not currently interested but open to follow-up in 8 months."
   },
+  "C05M7E1TJP7:1785945918.429179": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": null,
+      "reason_for_selling": "Has not thought about selling yet, requested follow-up in 1 year",
+      "timeline": "6+ months"
+    },
+    "match_cid": "XYT8ejpQ6LnnZgc2MOpB",
+    "match_confidence": "high",
+    "summary": "Robert Demarco hasn't thought about selling yet but is open to a follow-up in 1 year to see if his situation changes."
+  },
   "C05MP6K9RNV:1779136440.549199": {
     "field_updates": {
       "asking_price": null,
@@ -2218,5 +2229,16 @@
     "match_cid": "uHqcaOCUDDCBvOn36bnC",
     "match_confidence": "high",
     "summary": "Thomas confirmed 6 Juniper Way is a renovated 2BR/2BA third-floor condo currently rented for $2000/month, asking $255k-$265k, motivated by age (77 years old)."
+  },
+  "C06MM4DQZ28:1785943530.742199": {
+    "field_updates": {
+      "asking_price": 550000,
+      "motivation": "Downsizing - no longer needs 5 bedrooms and almost an acre",
+      "reason_for_selling": "Downsizing because they no longer need 5 bedrooms and almost an acre of property",
+      "timeline": "No rush"
+    },
+    "match_cid": "0ji3jVGF5OY7pGH3TREF",
+    "match_confidence": "high",
+    "summary": "Patricia Cook wants to downsize from her 5-bedroom home at 6 Blackwood Dr, pricing it in the high $500k range, property is in good condition with recent updates including paint and paver patio."
   }
 }
