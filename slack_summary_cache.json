@@ -209,6 +209,28 @@
     "match_confidence": "none",
     "summary": "This is a triage list summarizing 10+ different leads requiring follow-up, not a message about one specific lead."
   },
+  "C05M7E1TJP7:1786036060.535249": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": null,
+      "reason_for_selling": null,
+      "timeline": "30 days"
+    },
+    "match_cid": "tab9pwOatu1RUVokwaJn",
+    "match_confidence": "high",
+    "summary": "Hot lead connected via phone call with timeline under 30 days, but most details including address, owner name, and asking price are not yet available."
+  },
+  "C05M7E1TJP7:1786053282.378539": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": null,
+      "reason_for_selling": null,
+      "timeline": null
+    },
+    "match_cid": null,
+    "match_confidence": "none",
+    "summary": "Automated callback scheduling notification listing multiple leads requiring manual follow-up attempts."
+  },
   "C05MP6K9RNV:1779136440.549199": {
     "field_updates": {
       "asking_price": null,
@@ -2383,5 +2405,16 @@
     "match_cid": "yVpd2dgdP4cMgg818SCo",
     "match_confidence": "high",
     "summary": "Kwame Asare responded to outreach about 153 New Freedom Rd, asking about price and suggesting scheduling an appointment to see the units."
+  },
+  "C06MM4DQZ28:1786038860.015809": {
+    "field_updates": {
+      "asking_price": 500000,
+      "motivation": "wants to sell right away, can be out in a month",
+      "reason_for_selling": null,
+      "timeline": "30 days"
+    },
+    "match_cid": "Gs9EioL4qts6L3bdttcF",
+    "match_confidence": "high",
+    "summary": "Raymond wants to sell right away (out in a month), has a mortgage but no liens, asking $500k, inside is good shape but bathroom needs updating, not working with a realtor."
   }
 }
