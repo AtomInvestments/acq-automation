@@ -2427,5 +2427,27 @@
     "match_cid": "Gs9EioL4qts6L3bdttcF",
     "match_confidence": "high",
     "summary": "Raymond wants to sell right away (out in a month), has a mortgage but no liens, asking $500k, inside is good shape but bathroom needs updating, not working with a realtor."
+  },
+  "C06MM4DQZ28:1786121963.872759": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": "Eager to proceed, wants to work directly with investor",
+      "reason_for_selling": null,
+      "timeline": "ASAP"
+    },
+    "match_cid": "DRTx5JRkjVhQint4c8dg",
+    "match_confidence": "high",
+    "summary": "Glenn expressed strong interest in working together, confirmed the house is in average lived-in condition, and is ready to hear an offer without involving other realtors."
+  },
+  "C06MM4DQZ28:1786122052.140669": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": "Expressed strong interest in selling (triple yes response)",
+      "reason_for_selling": null,
+      "timeline": null
+    },
+    "match_cid": "8nFavg25sVsiiSdafzw1",
+    "match_confidence": "high",
+    "summary": "Kenny Lozano responded 'Yes yes yes' to inquiry about selling 2234 41st St."
   }
 }
