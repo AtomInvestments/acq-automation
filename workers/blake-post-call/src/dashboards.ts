@@ -4190,7 +4190,7 @@ section h2, h2 {
   <header class="masthead">
     <div class="brandrow">
       <span class="brand">Atom Investments · APG Operations</span>
-      <span>Last updated Aug 08, 2026 02:21 PM ET</span>
+      <span>Last updated Aug 08, 2026 03:08 PM ET</span>
     </div>
     <h1>Active <span class="accent">Deals.</span></h1>
     <p class="dek">Every property currently in stages 1-7 of the ACQ pipeline. Sorted by call rating within each stage so the strongest deals surface first.</p>
@@ -4763,7 +4763,7 @@ section h2, h2 {
   <header class="masthead">
     <div class="brandrow">
       <span class="brand">Atom Investments · APG Operations</span>
-      <span>Last updated Aug 08, 2026 02:20 PM ET</span>
+      <span>Last updated Aug 08, 2026 03:07 PM ET</span>
     </div>
     <h1>SMS <span class="accent">Follow-Ups.</span></h1>
     <p class="dek">Action queue for Jeff and Mike — replies to call back, leads gone dormant, and everything still cycling through the SMS sequence.</p>
@@ -4783,7 +4783,7 @@ section h2, h2 {
     <a href="sms-test.html">SMS Test</a>
   </nav>
 
-  <details class="run-grid-collapsed"><summary>All 5 cron jobs OK on last run — click for timestamps</summary><div class="run-grid"><div class="run-row"><span class="tag green">OK</span><span class="run-name">ACQ Call Recording Automation</span><span class="run-ts">Aug 08, 01:57 PM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">ACQ SMS Follow-Up + Dashboard</span><span class="run-ts">Aug 08, 01:56 PM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">APG Slack Scraper</span><span class="run-ts">Aug 08, 01:21 PM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">dashboard (script)</span><span class="run-ts">Aug 08, 02:19 PM</span><span class="run-detail">dashboard updated</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">sms (script)</span><span class="run-ts">Aug 08, 02:19 PM</span><span class="run-detail">{&quot;wait&quot;: 67, &quot;skipped-tag-prebail&quot;: 89, &quot;no-phone&quot;: 2, &quot;wait-dormant&quot;: 2, &quot;skipped&quot;: 13}</span></div></div></details><div class="status-banner on"><div class="status-text"><span class="pulse"></span>SMS Automation: <span style="color:var(--green);font-weight:800">ACTIVE</span></div><a class="btn btn-kill" href="https://docs.google.com/spreadsheets/d/1wc3Pt46ze-ejLaryL8WIRQf4OjEkirolc4-O8lsRQZY/edit#gid=0" target="_blank">EMERGENCY KILL SWITCH</a></div>
+  <details class="run-grid-collapsed"><summary>All 5 cron jobs OK on last run — click for timestamps</summary><div class="run-grid"><div class="run-row"><span class="tag green">OK</span><span class="run-name">ACQ Call Recording Automation</span><span class="run-ts">Aug 08, 02:23 PM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">ACQ SMS Follow-Up + Dashboard</span><span class="run-ts">Aug 08, 02:21 PM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">APG Slack Scraper</span><span class="run-ts">Aug 08, 02:20 PM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">dashboard (script)</span><span class="run-ts">Aug 08, 03:06 PM</span><span class="run-detail">dashboard updated</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">sms (script)</span><span class="run-ts">Aug 08, 03:06 PM</span><span class="run-detail">{&quot;wait&quot;: 67, &quot;skipped-tag-prebail&quot;: 89, &quot;no-phone&quot;: 2, &quot;wait-dormant&quot;: 2, &quot;skipped&quot;: 13}</span></div></div></details><div class="status-banner on"><div class="status-text"><span class="pulse"></span>SMS Automation: <span style="color:var(--green);font-weight:800">ACTIVE</span></div><a class="btn btn-kill" href="https://docs.google.com/spreadsheets/d/1wc3Pt46ze-ejLaryL8WIRQf4OjEkirolc4-O8lsRQZY/edit#gid=0" target="_blank">EMERGENCY KILL SWITCH</a></div>
 
   <section class="sec">
     <div class="tag-row"><span class="num">01</span><h2>At a Glance</h2></div>
@@ -5089,6 +5089,19 @@ section h2, h2 {
 <tr><td><strong>Venkata Bandaru</strong></td><td>35 George Davison Rd</td><td>REVIEW: Did Jeff call Venkata Bandaru back?</td><td><span class="tag">Mike</span></td><td>Jul 26, 04:03 PM</td></tr>
 <tr><td><strong>Venkata Bandaru</strong></td><td>35 George Davison Rd</td><td>Call back: Venkata Bandaru (35 George Davison Rd)</td><td><span class="tag">Jeff</span></td><td>Jul 25, 04:03 PM</td></tr>
 <tr><td><strong>Ben Clay</strong></td><td>206 16TH AVE S</td><td>Follow up with Ben Clay </td><td><span class="tag">Jeff</span></td><td>Jul 30, 02:57 PM</td></tr>
+<tr><td><strong>Chris Brindley</strong></td><td>41 JULIA AVE</td><td>Follow up with Chris Brindley </td><td><span class="tag">Jeff</span></td><td>May 14, 06:22 PM</td></tr>
+<tr><td><strong>Chris Brindley</strong></td><td>41 JULIA AVE</td><td>FUP Call: Getting discharge | selling it to move into senior home.</td><td><span class="tag">Jeff</span></td><td>Mar 19, 08:00 PM</td></tr>
+<tr><td><strong>Erick Serrano</strong></td><td>494 Neville St</td><td>REVIEW: Did Jeff call Erick Serrano back?</td><td><span class="tag">Mike</span></td><td>Jul 30, 05:24 PM</td></tr>
+<tr><td><strong>Erick Serrano</strong></td><td>494 Neville St</td><td>Call back: Erick Serrano (494 Neville St)</td><td><span class="tag">Jeff</span></td><td>Jul 29, 05:24 PM</td></tr>
+<tr><td><strong>Jimmie Brown</strong></td><td>4114 8th Ave</td><td>🔥 Call Jimmie Brown — Qualified seller (1h SLA)</td><td><span class="tag">Unassigned</span></td><td>May 27, 08:05 PM</td></tr>
+<tr><td><strong>Jimmie Brown</strong></td><td>4114 8th Ave</td><td>FUP - Need to acquire deed</td><td><span class="tag">Jeff</span></td><td>Apr 29, 08:00 PM</td></tr>
+<tr><td><strong>Erica &amp; Stuart Smith</strong></td><td>4725 7th Ave</td><td>Follow up with Erica &amp; Stuart Smith </td><td><span class="tag">Jeff</span></td><td>Jul 03, 06:22 PM</td></tr>
+<tr><td><strong>Erica &amp; Stuart Smith</strong></td><td>4725 7th Ave</td><td>CR: Get UC - 10K Contract sent</td><td><span class="tag">Jeff</span></td><td>May 01, 08:00 PM</td></tr>
+<tr><td><strong>Keith E Amiano</strong></td><td>1097 State Route 173</td><td>🔥 Call Keith E Amiano — Qualified seller (1h SLA)</td><td><span class="tag">Unassigned</span></td><td>May 27, 08:05 PM</td></tr>
+<tr><td><strong>Keith E Amiano</strong></td><td>1097 State Route 173</td><td>Get w/ Adam - Possible Novation</td><td><span class="tag">Jeff</span></td><td>Feb 27, 08:00 PM</td></tr>
+<tr><td><strong>Clarissa Williams</strong></td><td>5648 CAMDEN AVE</td><td>🔥 Call Clarissa Williams — Qualified seller (1h SLA)</td><td><span class="tag">Unassigned</span></td><td>May 27, 08:05 PM</td></tr>
+<tr><td><strong>Demetrius Singleton</strong></td><td>309 17TH AVE SW</td><td>🔥 Call Demetrius Singleton — Qualified seller (1h SLA)</td><td><span class="tag">Unassigned</span></td><td>May 27, 08:05 PM</td></tr>
+<tr><td><strong>Demetrius Singleton</strong></td><td>309 17TH AVE SW</td><td>PM: Asking 10K - Dorothy</td><td><span class="tag">Jeff</span></td><td>Mar 24, 08:00 PM</td></tr>
 <tr><td><strong>Chuck  Pagano</strong></td><td>31 CHESTNUT ST</td><td>REVIEW: Did Jeff call Chuck  Pagano back?</td><td><span class="tag">Mike</span></td><td>Aug 03, 01:49 PM</td></tr>
 <tr><td><strong>Chuck  Pagano</strong></td><td>31 CHESTNUT ST</td><td>Call back: Chuck  Pagano (31 CHESTNUT ST)</td><td><span class="tag">Jeff</span></td><td>Aug 02, 01:49 PM</td></tr>
 <tr><td><strong>Chuck  Pagano</strong></td><td>31 CHESTNUT ST</td><td>FUP call: Last convo | He wants 115K. That&#x27;s his bottom low</td><td><span class="tag">Jeff</span></td><td>May 05, 01:00 PM</td></tr>
@@ -5188,6 +5201,7 @@ section h2, h2 {
 <tr><td><strong>Beata Szyffer-Hopkins</strong></td><td>1030 N Olden Ave</td><td>REVIEW: Did Jeff call Beata Szyffer-Hopkins? (Trenton)</td><td><span class="tag">Mike</span></td><td>May 09, 09:06 AM</td></tr>
 <tr><td><strong>Beata Szyffer-Hopkins</strong></td><td>1030 N Olden Ave</td><td>CALL: Beata Szyffer-Hopkins (Trenton)</td><td><span class="tag">Jeff</span></td><td>May 08, 09:06 AM</td></tr>
 <tr><td><strong>Beata Szyffer-Hopkins</strong></td><td>1030 N Olden Ave</td><td>REVIEW: Did Jeff call Beata Szyffer-Hopkins? (1030 N Olden Ave)</td><td><span class="tag">Mike</span></td><td>Apr 30, 06:26 PM</td></tr>
+<tr><td><strong>Evelyn Carter-Amuzu</strong></td><td>158 Lawnside Ave</td><td>Get w/ Adam re: In person</td><td><span class="tag">Jeff</span></td><td>Apr 17, 08:00 PM</td></tr>
 <tr><td><strong>Craig Haley</strong></td><td>14 Kristin Way</td><td>REVIEW: Did Jeff call Craig Haley back?</td><td><span class="tag">Mike</span></td><td>Aug 01, 05:01 PM</td></tr>
 <tr><td><strong>Craig Haley</strong></td><td>14 Kristin Way</td><td>Call back: Craig Haley (14 Kristin Way)</td><td><span class="tag">Jeff</span></td><td>Jul 31, 05:01 PM</td></tr>
 <tr><td><strong>Raymond Bowman Sr</strong></td><td>118 SHIP AVE</td><td>FU - Novation $275k</td><td><span class="tag">Unassigned</span></td><td>Jul 24, 08:00 AM</td></tr>
