@@ -2471,5 +2471,16 @@
     "match_cid": "RmIelvbFC0jJ0R90P2tT",
     "match_confidence": "high",
     "summary": "Frank confirmed interest in selling his duplex mid-fall, mentioned a competing offer of $135k, cited reason as tired/husband passed, and noted kitchen renovation in progress for tenants."
+  },
+  "C06MM4DQZ28:1786390898.649299": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": null,
+      "reason_for_selling": null,
+      "timeline": null
+    },
+    "match_cid": "VFa9fTDVIW5A2Ou7aaPn",
+    "match_confidence": "high",
+    "summary": "Ronaldo responded 'Yes' to selling interest, says property is in good condition with no work needed, and offered to show the property instead of providing a price."
   }
 }
