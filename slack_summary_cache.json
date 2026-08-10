@@ -2449,5 +2449,27 @@
     "match_cid": "8nFavg25sVsiiSdafzw1",
     "match_confidence": "high",
     "summary": "Kenny Lozano responded 'Yes yes yes' to inquiry about selling 2234 41st St."
+  },
+  "C06MM4DQZ28:1786382114.376129": {
+    "field_updates": {
+      "asking_price": 180000,
+      "motivation": "Needs cash buyer, no time for showings or broker process",
+      "reason_for_selling": "Wants quick cash sale without broker involvement or property showings",
+      "timeline": "ASAP"
+    },
+    "match_cid": "PqX50IOyk5mvV36IioIo",
+    "match_confidence": "high",
+    "summary": "Dennis Washington confirmed interest in selling 2501 41st St for $180k cash (was offered $220k), wants cash buyer only, property needs roof/garage work but has land for potential subdivision."
+  },
+  "C06MM4DQZ28:1786382683.937079": {
+    "field_updates": {
+      "asking_price": 135000,
+      "motivation": "Tired of managing property, husband passed away a few years ago",
+      "reason_for_selling": "Husband passed away a few years ago and is tired of managing the property, though a management company currently handles it and there's no urgency to sell.",
+      "timeline": "6+ months"
+    },
+    "match_cid": "RmIelvbFC0jJ0R90P2tT",
+    "match_confidence": "high",
+    "summary": "Frank confirmed interest in selling his duplex mid-fall, mentioned a competing offer of $135k, cited reason as tired/husband passed, and noted kitchen renovation in progress for tenants."
   }
 }
