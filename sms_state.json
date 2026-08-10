@@ -411,7 +411,7 @@
     "reply_text": "Mike, what is the name of your company?",
     "skip_reason": "tag-already-routed",
     "sms_count": 0,
-    "stage_entered_at": "2026-08-10T17:16:06.367828+00:00",
+    "stage_entered_at": "2026-08-10T18:10:40.902554+00:00",
     "stage_name": "lao"
   },
   "BEyFlzfEhra9M6DR085v": {
@@ -952,6 +952,16 @@
     "stage_entered_at": "2026-05-07T23:09:17.027273+00:00",
     "stage_name": "dead"
   },
+  "PqX50IOyk5mvV36IioIo": {
+    "dormant": false,
+    "last_from_number": null,
+    "last_sms_at": null,
+    "replied": false,
+    "replied_at": null,
+    "sms_count": 0,
+    "stage_entered_at": "2026-08-10T18:08:57.311052+00:00",
+    "stage_name": "qualified"
+  },
   "QADeGOcV8pkrMliTlB5X": {
     "dormant": false,
     "last_from_number": "+16094388996",
@@ -1016,6 +1026,16 @@
     "replied_at": null,
     "sms_count": 1,
     "stage_entered_at": "2026-07-30T15:11:03.591694+00:00",
+    "stage_name": "qualified"
+  },
+  "RmIelvbFC0jJ0R90P2tT": {
+    "dormant": false,
+    "last_from_number": null,
+    "last_sms_at": null,
+    "replied": false,
+    "replied_at": null,
+    "sms_count": 0,
+    "stage_entered_at": "2026-08-10T18:08:55.698270+00:00",
     "stage_name": "qualified"
   },
   "RtO9IAtznsmpylqu3l2f": {
