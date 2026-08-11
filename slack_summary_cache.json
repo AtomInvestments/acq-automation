@@ -2493,5 +2493,16 @@
     "match_cid": "ypIlfEFI30fDksho0Qz8",
     "match_confidence": "high",
     "summary": "Seller stated asking price of $85,000 for vacant land ready to build, with flexible timeline (anytime ready)."
+  },
+  "C06MM4DQZ28:1786475994.828509": {
+    "field_updates": {
+      "asking_price": 495000,
+      "motivation": "Firm on price, not interested in lowball offers",
+      "reason_for_selling": "Wants to sell by end of October, willing to take calls to discuss further",
+      "timeline": "90 days"
+    },
+    "match_cid": "QEnV8ueqecyJxYHoxeCL",
+    "match_confidence": "high",
+    "summary": "Steven Stone confirmed he will sell 118 Villanova Dr for $495k minimum, property is in excellent condition with recent updates, needs only paint, timeline is by end of October, available for call today/tomorrow afternoon."
   }
 }
