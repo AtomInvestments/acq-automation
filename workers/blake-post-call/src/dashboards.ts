@@ -4190,7 +4190,7 @@ section h2, h2 {
   <header class="masthead">
     <div class="brandrow">
       <span class="brand">Atom Investments · APG Operations</span>
-      <span>Last updated Aug 11, 2026 04:02 AM ET</span>
+      <span>Last updated Aug 11, 2026 04:56 AM ET</span>
     </div>
     <h1>Active <span class="accent">Deals.</span></h1>
     <p class="dek">Every property currently in stages 1-7 of the ACQ pipeline. Sorted by call rating within each stage so the strongest deals surface first.</p>
@@ -4763,7 +4763,7 @@ section h2, h2 {
   <header class="masthead">
     <div class="brandrow">
       <span class="brand">Atom Investments · APG Operations</span>
-      <span>Last updated Aug 11, 2026 04:01 AM ET</span>
+      <span>Last updated Aug 11, 2026 04:55 AM ET</span>
     </div>
     <h1>SMS <span class="accent">Follow-Ups.</span></h1>
     <p class="dek">Action queue for Jeff and Mike — replies to call back, leads gone dormant, and everything still cycling through the SMS sequence.</p>
@@ -4783,7 +4783,7 @@ section h2, h2 {
     <a href="sms-test.html">SMS Test</a>
   </nav>
 
-  <details class="run-grid-collapsed"><summary>All 5 cron jobs OK on last run — click for timestamps</summary><div class="run-grid"><div class="run-row"><span class="tag green">OK</span><span class="run-name">ACQ Call Recording Automation</span><span class="run-ts">Aug 11, 03:52 AM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">ACQ SMS Follow-Up + Dashboard</span><span class="run-ts">Aug 11, 02:44 AM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">APG Slack Scraper</span><span class="run-ts">Aug 11, 02:44 AM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">dashboard (script)</span><span class="run-ts">Aug 11, 03:59 AM</span><span class="run-detail">dashboard updated</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">sms (script)</span><span class="run-ts">Aug 11, 03:59 AM</span><span class="run-detail">outside business hours (hour=3 ET)</span></div></div></details><div class="status-banner on"><div class="status-text"><span class="pulse"></span>SMS Automation: <span style="color:var(--green);font-weight:800">ACTIVE</span></div><a class="btn btn-kill" href="https://docs.google.com/spreadsheets/d/1wc3Pt46ze-ejLaryL8WIRQf4OjEkirolc4-O8lsRQZY/edit#gid=0" target="_blank">EMERGENCY KILL SWITCH</a></div>
+  <details class="run-grid-collapsed"><summary>All 5 cron jobs OK on last run — click for timestamps</summary><div class="run-grid"><div class="run-row"><span class="tag green">OK</span><span class="run-name">ACQ Call Recording Automation</span><span class="run-ts">Aug 11, 04:42 AM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">ACQ SMS Follow-Up + Dashboard</span><span class="run-ts">Aug 11, 04:03 AM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">APG Slack Scraper</span><span class="run-ts">Aug 11, 04:03 AM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">dashboard (script)</span><span class="run-ts">Aug 11, 04:54 AM</span><span class="run-detail">dashboard updated</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">sms (script)</span><span class="run-ts">Aug 11, 04:53 AM</span><span class="run-detail">outside business hours (hour=4 ET)</span></div></div></details><div class="status-banner on"><div class="status-text"><span class="pulse"></span>SMS Automation: <span style="color:var(--green);font-weight:800">ACTIVE</span></div><a class="btn btn-kill" href="https://docs.google.com/spreadsheets/d/1wc3Pt46ze-ejLaryL8WIRQf4OjEkirolc4-O8lsRQZY/edit#gid=0" target="_blank">EMERGENCY KILL SWITCH</a></div>
 
   <section class="sec">
     <div class="tag-row"><span class="num">01</span><h2>At a Glance</h2></div>
@@ -4974,7 +4974,7 @@ section h2, h2 {
 <tr><td><strong>Larry Hollman</strong></td><td>1005 Wanda Cir</td><td>AL</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">1</span></td><td>Aug 06, 11:41 AM</td><td>AL Market</td></tr>
 <tr><td><strong>Michael Turner</strong></td><td>2425 31st Ave N</td><td>AL</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">1</span></td><td>Aug 06, 11:41 AM</td><td>AL Market</td></tr>
 <tr><td><strong>Justin Sims</strong></td><td>5418 Cairo Ave</td><td>AL</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">1</span></td><td>Aug 06, 11:41 AM</td><td>AL Market</td></tr>
-<tr><td><strong>(no name)</strong></td><td></td><td></td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">1</span></td><td>Aug 06, 11:41 AM</td><td>Jeff (NJ)</td></tr>
+<tr><td><strong>Richard Fry</strong></td><td>21 Seabright Ave</td><td>NJ</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">1</span></td><td>Aug 06, 11:41 AM</td><td>Jeff (NJ)</td></tr>
 <tr><td><strong>Pamela Richardson</strong></td><td>819 Atlantic Ave</td><td>NJ</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">1</span></td><td>Aug 06, 11:41 AM</td><td>Jeff (NJ)</td></tr>
 <tr><td><strong>Gheorghe Salgau</strong></td><td>Philadelphia</td><td>PA</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">1</span></td><td>Aug 06, 11:41 AM</td><td>PA Market</td></tr>
 <tr><td><strong>Joseph Wargo</strong></td><td>323 W 4th St</td><td>NJ</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">1</span></td><td>Aug 06, 11:41 AM</td><td>Jeff (NJ)</td></tr>
@@ -5136,7 +5136,7 @@ section h2, h2 {
 <tr><td><strong>Larry Hollman</strong></td><td>1005 Wanda Cir</td><td>Call Larry - qualified, no response to booking texts</td><td><span class="tag">Jeff</span></td><td>Aug 03, 12:00 AM</td></tr>
 <tr><td><strong>Michael Turner</strong></td><td>2425 31st Ave N</td><td>Call Michael - qualified, no response to booking texts</td><td><span class="tag">Jeff</span></td><td>Aug 03, 12:00 AM</td></tr>
 <tr><td><strong>Justin Sims</strong></td><td>5418 Cairo Ave</td><td>Call Justin - qualified, no response to booking texts</td><td><span class="tag">Jeff</span></td><td>Aug 03, 12:00 AM</td></tr>
-<tr><td><strong>(no name)</strong></td><td></td><td>Call Richard - qualified, no response to booking texts</td><td><span class="tag">John</span></td><td>Aug 03, 12:00 AM</td></tr>
+<tr><td><strong>Richard Fry</strong></td><td>21 Seabright Ave</td><td>Call Richard - qualified, no response to booking texts</td><td><span class="tag">John</span></td><td>Aug 03, 12:00 AM</td></tr>
 <tr><td><strong>Lisa Myler</strong></td><td>63 Harbor Dr</td><td>Call Lisa - qualified, no response to booking texts</td><td><span class="tag">John</span></td><td>Aug 03, 12:00 AM</td></tr>
 <tr><td><strong>Lisa Myler</strong></td><td>63 Harbor Dr</td><td>REVIEW: Did Jeff call Lisa Myler back?</td><td><span class="tag">Mike</span></td><td>Jul 31, 11:10 AM</td></tr>
 <tr><td><strong>Lisa Myler</strong></td><td>63 Harbor Dr</td><td>Call back: Lisa Myler (63 Harbor Dr)</td><td><span class="tag">Jeff</span></td><td>Jul 30, 11:10 AM</td></tr>
@@ -5271,7 +5271,7 @@ new Chart(document.getElementById('stageChart'), {
 
 new Chart(document.getElementById('stateChart'), {
   type: 'bar',
-  data: { labels: ["NJ", "AL", "PA", "OH", "UNKNOWN", "WI", "IN", "TN", "MI", "SC"], datasets: [{ data: [116, 26, 18, 7, 4, 1, 1, 1, 1, 1], backgroundColor: '#C9A52A', borderRadius: 4 }] },
+  data: { labels: ["NJ", "AL", "PA", "OH", "UNKNOWN", "WI", "IN", "TN", "MI", "SC"], datasets: [{ data: [117, 26, 18, 7, 3, 1, 1, 1, 1, 1], backgroundColor: '#C9A52A', borderRadius: 4 }] },
   options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { precision: 0, color: '#6B7591' }, grid: { color: 'rgba(26,40,64,0.06)' } }, x: { ticks: { color: '#455066' }, grid: { display: false } } } }
 });
 
