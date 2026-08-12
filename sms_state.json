@@ -2,10 +2,10 @@
   "0Nt8GxK5uzIEJnyLRoUq": {
     "dormant": false,
     "last_from_number": "+12676197270",
-    "last_sms_at": "2026-08-05T20:41:55.394655+00:00",
+    "last_sms_at": "2026-08-12T21:12:13.235857+00:00",
     "replied": false,
     "replied_at": null,
-    "sms_count": 5,
+    "sms_count": 6,
     "stage_entered_at": "2026-07-01T18:19:54.233952+00:00",
     "stage_name": "qualified"
   },
@@ -411,7 +411,7 @@
     "reply_text": "Mike, what is the name of your company?",
     "skip_reason": "tag-already-routed",
     "sms_count": 0,
-    "stage_entered_at": "2026-08-12T20:29:53.220389+00:00",
+    "stage_entered_at": "2026-08-12T21:13:14.856837+00:00",
     "stage_name": "lao"
   },
   "BEyFlzfEhra9M6DR085v": {
@@ -2102,11 +2102,11 @@
   },
   "yVpd2dgdP4cMgg818SCo": {
     "dormant": false,
-    "last_from_number": null,
-    "last_sms_at": null,
+    "last_from_number": "+16094388996",
+    "last_sms_at": "2026-08-12T21:12:04.806762+00:00",
     "replied": false,
     "replied_at": null,
-    "sms_count": 0,
+    "sms_count": 1,
     "stage_entered_at": "2026-08-05T20:41:38.784990+00:00",
     "stage_name": "qualified"
   },
