@@ -2504,5 +2504,27 @@
     "match_cid": "QEnV8ueqecyJxYHoxeCL",
     "match_confidence": "high",
     "summary": "Steven Stone confirmed he will sell 118 Villanova Dr for $495k minimum, property is in excellent condition with recent updates, needs only paint, timeline is by end of October, available for call today/tomorrow afternoon."
+  },
+  "C06MM4DQZ28:1786555995.303239": {
+    "field_updates": {
+      "asking_price": 375000,
+      "motivation": null,
+      "reason_for_selling": null,
+      "timeline": "90 days"
+    },
+    "match_cid": "gqsock9ree3ixxxKnQdp",
+    "match_confidence": "high",
+    "summary": "Seller confirmed property needs no interior work, asking $350K-400K, and has a timeline of a few months to sell."
+  },
+  "C06MM4DQZ28:1786556008.176669": {
+    "field_updates": {
+      "asking_price": 600000,
+      "motivation": null,
+      "reason_for_selling": null,
+      "timeline": "30 days"
+    },
+    "match_cid": "ZAb71bIePRFEvjABxGg1",
+    "match_confidence": "high",
+    "summary": "Giuseppe states he's on vacation, returning end of month, has tenants in property which is in good condition, and wants $600k with no negotiations."
   }
 }
