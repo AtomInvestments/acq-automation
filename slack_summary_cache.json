@@ -2526,5 +2526,16 @@
     "match_cid": "ZAb71bIePRFEvjABxGg1",
     "match_confidence": "high",
     "summary": "Giuseppe states he's on vacation, returning end of month, has tenants in property which is in good condition, and wants $600k with no negotiations."
+  },
+  "C06MM4DQZ28:1786558946.290269": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": "Father is sick overseas, needs to return to home country",
+      "reason_for_selling": "Owner is contractor who needs to travel back to his country because his father is sick and wants to sell quickly",
+      "timeline": "ASAP"
+    },
+    "match_cid": "ycNhuekZBk9DuxUmpan7",
+    "match_confidence": "high",
+    "summary": "Seller states 488 W State St is already sold but offers two other properties: 1410 Pennington Rd in Ewing NJ (90% renovated, asking $250-255k) and 210 West Union St in Burlington NJ (needs only kitchen); needs to sell quickly due to sick father overseas."
   }
 }
