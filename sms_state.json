@@ -341,8 +341,11 @@
     "dormant": false,
     "last_from_number": "+12568006289",
     "last_sms_at": "2026-08-13T16:16:13.266140+00:00",
-    "replied": false,
-    "replied_at": null,
+    "replied": true,
+    "replied_at": "2026-08-13T19:57:43.370000+00:00",
+    "reply_attempts": 0,
+    "reply_class": "POSITIVE",
+    "reply_text": "It's a tax property if you want it, it's yours",
     "sms_count": 2,
     "stage_entered_at": "2026-07-30T15:10:22.269179+00:00",
     "stage_name": "qualified"
@@ -441,7 +444,7 @@
     "reply_text": "Mike, what is the name of your company?",
     "skip_reason": "tag-already-routed",
     "sms_count": 0,
-    "stage_entered_at": "2026-08-13T19:32:53.402929+00:00",
+    "stage_entered_at": "2026-08-13T20:28:13.527871+00:00",
     "stage_name": "lao"
   },
   "BEyFlzfEhra9M6DR085v": {
