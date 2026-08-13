@@ -2537,5 +2537,71 @@
     "match_cid": "ycNhuekZBk9DuxUmpan7",
     "match_confidence": "high",
     "summary": "Seller states 488 W State St is already sold but offers two other properties: 1410 Pennington Rd in Ewing NJ (90% renovated, asking $250-255k) and 210 West Union St in Burlington NJ (needs only kitchen); needs to sell quickly due to sick father overseas."
+  },
+  "C06MM4DQZ28:1786643846.123589": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": null,
+      "reason_for_selling": null,
+      "timeline": null
+    },
+    "match_cid": "9hj4BGQ6GOKElAb9uNju",
+    "match_confidence": "high",
+    "summary": "Seller at 1826 Greenwood Ave responded asking what firm Emma represents."
+  },
+  "C06MM4DQZ28:1786643880.369789": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": null,
+      "reason_for_selling": null,
+      "timeline": null
+    },
+    "match_cid": "ijXhGxJ7QyvTqvj5qyew",
+    "match_confidence": "high",
+    "summary": "Ernesto Roque responded 'Yes' when asked if he'd consider selling 711 N 9th St, and the conversation is progressing to discuss property condition."
+  },
+  "C06MM4DQZ28:1786643885.097319": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": null,
+      "reason_for_selling": null,
+      "timeline": null
+    },
+    "match_cid": "QJykCUzUmwWWIe2SVwTf",
+    "match_confidence": "high",
+    "summary": "Howard Dickstein responded 'Yes' when asked if he's thought about selling his home at 4 Morningside Ln, and is now being asked about the property's condition."
+  },
+  "C06MM4DQZ28:1786643906.874199": {
+    "field_updates": {
+      "asking_price": 350000,
+      "motivation": null,
+      "reason_for_selling": null,
+      "timeline": null
+    },
+    "match_cid": "8SW87e3yuyGqZcycrrpS",
+    "match_confidence": "high",
+    "summary": "Jay Wassell is asking $350k cash for the property."
+  },
+  "C06MM4DQZ28:1786644033.996909": {
+    "field_updates": {
+      "asking_price": 300000,
+      "motivation": null,
+      "reason_for_selling": null,
+      "timeline": null
+    },
+    "match_cid": "9Dsm3eRzKpaWNH4BWfgK",
+    "match_confidence": "high",
+    "summary": "Seller stated asking price of $300k for 917 Woodland Ave."
+  },
+  "C06MM4DQZ28:1786644090.731669": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": null,
+      "reason_for_selling": null,
+      "timeline": null
+    },
+    "match_cid": "AgV83PFA4yOczmzXyMmP",
+    "match_confidence": "high",
+    "summary": "Steven confirmed extensive recent renovations including new kitchen, bathroom, floors, doors, and wet bar, and invited the buyer to view the property."
   }
 }
