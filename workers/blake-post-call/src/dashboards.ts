@@ -4190,7 +4190,7 @@ section h2, h2 {
   <header class="masthead">
     <div class="brandrow">
       <span class="brand">Atom Investments · APG Operations</span>
-      <span>Last updated Aug 14, 2026 05:16 PM ET</span>
+      <span>Last updated Aug 14, 2026 05:48 PM ET</span>
     </div>
     <h1>Active <span class="accent">Deals.</span></h1>
     <p class="dek">Every property currently in stages 1-7 of the ACQ pipeline. Sorted by call rating within each stage so the strongest deals surface first.</p>
@@ -4763,7 +4763,7 @@ section h2, h2 {
   <header class="masthead">
     <div class="brandrow">
       <span class="brand">Atom Investments · APG Operations</span>
-      <span>Last updated Aug 14, 2026 05:15 PM ET</span>
+      <span>Last updated Aug 14, 2026 05:47 PM ET</span>
     </div>
     <h1>SMS <span class="accent">Follow-Ups.</span></h1>
     <p class="dek">Action queue for Jeff and Mike — replies to call back, leads gone dormant, and everything still cycling through the SMS sequence.</p>
@@ -4783,7 +4783,7 @@ section h2, h2 {
     <a href="sms-test.html">SMS Test</a>
   </nav>
 
-  <details class="run-grid-collapsed"><summary>All 5 cron jobs OK on last run — click for timestamps</summary><div class="run-grid"><div class="run-row"><span class="tag green">OK</span><span class="run-name">ACQ Call Recording Automation</span><span class="run-ts">Aug 14, 04:53 PM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">ACQ SMS Follow-Up + Dashboard</span><span class="run-ts">Aug 14, 04:34 PM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">APG Slack Scraper</span><span class="run-ts">Aug 14, 04:21 PM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">dashboard (script)</span><span class="run-ts">Aug 14, 05:14 PM</span><span class="run-detail">dashboard updated</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">sms (script)</span><span class="run-ts">Aug 14, 05:14 PM</span><span class="run-detail">{&quot;wait&quot;: 78, &quot;skipped&quot;: 17, &quot;skipped-tag-prebail&quot;: 89, &quot;no-phone&quot;: 2, &quot;wait-dormant&quot;: 1}</span></div></div></details><div class="status-banner on"><div class="status-text"><span class="pulse"></span>SMS Automation: <span style="color:var(--green);font-weight:800">ACTIVE</span></div><a class="btn btn-kill" href="https://docs.google.com/spreadsheets/d/1wc3Pt46ze-ejLaryL8WIRQf4OjEkirolc4-O8lsRQZY/edit#gid=0" target="_blank">EMERGENCY KILL SWITCH</a></div>
+  <details class="run-grid-collapsed"><summary>All 5 cron jobs OK on last run — click for timestamps</summary><div class="run-grid"><div class="run-row"><span class="tag green">OK</span><span class="run-name">ACQ Call Recording Automation</span><span class="run-ts">Aug 14, 05:41 PM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">ACQ SMS Follow-Up + Dashboard</span><span class="run-ts">Aug 14, 05:16 PM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">APG Slack Scraper</span><span class="run-ts">Aug 14, 05:16 PM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">dashboard (script)</span><span class="run-ts">Aug 14, 05:47 PM</span><span class="run-detail">dashboard updated</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">sms (script)</span><span class="run-ts">Aug 14, 05:47 PM</span><span class="run-detail">{&quot;wait&quot;: 78, &quot;skipped&quot;: 17, &quot;skipped-tag-prebail&quot;: 89, &quot;no-phone&quot;: 2, &quot;wait-dormant&quot;: 1}</span></div></div></details><div class="status-banner on"><div class="status-text"><span class="pulse"></span>SMS Automation: <span style="color:var(--green);font-weight:800">ACTIVE</span></div><a class="btn btn-kill" href="https://docs.google.com/spreadsheets/d/1wc3Pt46ze-ejLaryL8WIRQf4OjEkirolc4-O8lsRQZY/edit#gid=0" target="_blank">EMERGENCY KILL SWITCH</a></div>
 
   <section class="sec">
     <div class="tag-row"><span class="num">01</span><h2>At a Glance</h2></div>
@@ -5080,6 +5080,13 @@ section h2, h2 {
 <tr><td><strong>Joshua Ostrin</strong></td><td>33 S 1st Ave</td><td>Call back: Joshua Ostrin (33 S 1st Ave)</td><td><span class="tag">Jeff</span></td><td>Aug 03, 12:43 PM</td></tr>
 <tr><td><strong>Andres Morales</strong></td><td>808 Lamberton St</td><td>Call Andres - qualified, no response to booking texts</td><td><span class="tag">John</span></td><td>Aug 03, 12:00 AM</td></tr>
 <tr><td><strong>Lacy Dungee</strong></td><td>166 PAUL ROBESON BLVD</td><td>Call Lacy - qualified, no response to booking texts</td><td><span class="tag">John</span></td><td>Aug 03, 12:00 AM</td></tr>
+<tr><td><strong>Toni Williams</strong></td><td>12b Steel St</td><td>Call Toni - qualified, no response to booking texts</td><td><span class="tag">John</span></td><td>Aug 03, 12:00 AM</td></tr>
+<tr><td><strong>Toni Williams</strong></td><td>12b Steel St</td><td>REVIEW: Did Jeff call Toni Williams back?</td><td><span class="tag">Mike</span></td><td>Jul 31, 11:09 AM</td></tr>
+<tr><td><strong>Toni Williams</strong></td><td>12b Steel St</td><td>Call back: Toni Williams (12b Steel St)</td><td><span class="tag">Jeff</span></td><td>Jul 30, 11:09 AM</td></tr>
+<tr><td><strong>Kimberly Clarke</strong></td><td>133 Maplewood Ave</td><td>Call Kimberly - qualified, no response to booking texts</td><td><span class="tag">John</span></td><td>Aug 03, 12:00 AM</td></tr>
+<tr><td><strong>Kevin Dalton</strong></td><td>55 Boulevard E</td><td>Call Kevin - qualified, no response to booking texts</td><td><span class="tag">John</span></td><td>Aug 03, 12:00 AM</td></tr>
+<tr><td><strong>Avin</strong></td><td>305, 315 &amp; 319 Roosevelt ave</td><td>🔥 Call Avin — Qualified seller (1h SLA)</td><td><span class="tag">Unassigned</span></td><td>May 27, 08:05 PM</td></tr>
+<tr><td><strong>Kris</strong></td><td>58 Morris Ln,, NJ 08854</td><td>🔥 Call Kris — Qualified seller (1h SLA)</td><td><span class="tag">Unassigned</span></td><td>May 27, 08:05 PM</td></tr>
 <tr><td><strong>Sheila Pope</strong></td><td>2901 N 23rd St, Philadelphia, PA 19132</td><td>🔥 Call Sheila — Qualified seller (1h SLA)</td><td><span class="tag">Unassigned</span></td><td>May 27, 08:05 PM</td></tr>
 <tr><td><strong>Sheila Pope</strong></td><td>2901 N 23rd St, Philadelphia, PA 19132</td><td>REVIEW: Did Jeff call Sheila back?</td><td><span class="tag">Mike</span></td><td>May 16, 10:43 AM</td></tr>
 <tr><td><strong>Sheila Pope</strong></td><td>2901 N 23rd St, Philadelphia, PA 19132</td><td>Call back: Sheila (2901 N 23rd St, Philadelphia, PA 19132)</td><td><span class="tag">Jeff</span></td><td>May 15, 10:43 AM</td></tr>
@@ -5147,6 +5154,41 @@ section h2, h2 {
 <tr><td><strong>Alice Moszczynski</strong></td><td>119 N Rhode Island Ave</td><td>Call Alice - qualified, no response to booking texts</td><td><span class="tag">John</span></td><td>Aug 03, 12:00 AM</td></tr>
 <tr><td><strong>Alice Moszczynski</strong></td><td>119 N Rhode Island Ave</td><td>REVIEW: Did Jeff call Alice Moszczynski back?</td><td><span class="tag">Mike</span></td><td>Jul 31, 11:10 AM</td></tr>
 <tr><td><strong>Alice Moszczynski</strong></td><td>119 N Rhode Island Ave</td><td>Call back: Alice Moszczynski (119 N Rhode Island Ave)</td><td><span class="tag">Jeff</span></td><td>Jul 30, 11:10 AM</td></tr>
+<tr><td><strong>Pamela Richardson</strong></td><td>819 Atlantic Ave</td><td>Call Pamela - qualified, no response to booking texts</td><td><span class="tag">John</span></td><td>Aug 03, 12:00 AM</td></tr>
+<tr><td><strong>Sergei Karpovitch</strong></td><td>920 N Olden Ave</td><td>🔥 Call Sergei Karpovitch — Qualified seller (1h SLA)</td><td><span class="tag">Unassigned</span></td><td>May 27, 08:05 PM</td></tr>
+<tr><td><strong>Sergei Karpovitch</strong></td><td>920 N Olden Ave</td><td>REVIEW: Did Jeff call Sergei Karpovitch? (Trenton)</td><td><span class="tag">Mike</span></td><td>May 11, 10:36 AM</td></tr>
+<tr><td><strong>Sergei Karpovitch</strong></td><td>920 N Olden Ave</td><td>CALL: Sergei Karpovitch (Trenton)</td><td><span class="tag">Jeff</span></td><td>May 10, 10:36 AM</td></tr>
+<tr><td><strong>Sergei Karpovitch</strong></td><td>920 N Olden Ave</td><td>REVIEW: Did Jeff call Sergei Karpovitch? (Trenton)</td><td><span class="tag">Mike</span></td><td>May 09, 09:06 AM</td></tr>
+<tr><td><strong>Sergei Karpovitch</strong></td><td>920 N Olden Ave</td><td>CALL: Sergei Karpovitch (Trenton)</td><td><span class="tag">Jeff</span></td><td>May 08, 09:06 AM</td></tr>
+<tr><td><strong>Thomas Gambino</strong></td><td>31 W Rutherford Ln</td><td>Call Thomas - qualified, no response to booking texts</td><td><span class="tag">John</span></td><td>Aug 03, 12:00 AM</td></tr>
+<tr><td><strong>Thomas Gambino</strong></td><td>31 W Rutherford Ln</td><td>REVIEW: Did Jeff call Thomas Gambino back?</td><td><span class="tag">Mike</span></td><td>Aug 01, 10:44 AM</td></tr>
+<tr><td><strong>Thomas Gambino</strong></td><td>31 W Rutherford Ln</td><td>Call back: Thomas Gambino (31 W Rutherford Ln)</td><td><span class="tag">Jeff</span></td><td>Jul 31, 10:44 AM</td></tr>
+<tr><td><strong>Joseph Wargo</strong></td><td>323 W 4th St</td><td>Call Joseph - qualified, no response to booking texts</td><td><span class="tag">John</span></td><td>Aug 03, 12:00 AM</td></tr>
+<tr><td><strong>Joseph Quartullo</strong></td><td>80 Shawnee Pl</td><td>Call Joseph - qualified, no response to booking texts</td><td><span class="tag">John</span></td><td>Aug 03, 12:00 AM</td></tr>
+<tr><td><strong>Joseph Quartullo</strong></td><td>80 Shawnee Pl</td><td>FUP Call - Lease expires Oct 31st</td><td><span class="tag">Jeff</span></td><td>Sep 01, 01:00 PM</td></tr>
+<tr><td><strong>Brian Cavallucci</strong></td><td>29 Fox Hollow Dr</td><td>🔥 Call Brian Cavallucci — Qualified seller (1h SLA)</td><td><span class="tag">Unassigned</span></td><td>May 27, 08:05 PM</td></tr>
+<tr><td><strong>Brian Cavallucci</strong></td><td>29 Fox Hollow Dr</td><td>REVIEW: Did Jeff call Brian Cavallucci? (Cherry Hill)</td><td><span class="tag">Mike</span></td><td>May 11, 10:36 AM</td></tr>
+<tr><td><strong>Brian Cavallucci</strong></td><td>29 Fox Hollow Dr</td><td>CALL: Brian Cavallucci (Cherry Hill)</td><td><span class="tag">Jeff</span></td><td>May 10, 10:36 AM</td></tr>
+<tr><td><strong>Brian Cavallucci</strong></td><td>29 Fox Hollow Dr</td><td>REVIEW: Did Jeff call Brian Cavallucci? (Cherry Hill)</td><td><span class="tag">Mike</span></td><td>May 09, 09:06 AM</td></tr>
+<tr><td><strong>Brian Cavallucci</strong></td><td>29 Fox Hollow Dr</td><td>CALL: Brian Cavallucci (Cherry Hill)</td><td><span class="tag">Jeff</span></td><td>May 08, 09:06 AM</td></tr>
+<tr><td><strong>Peter Mimmo</strong></td><td>4708 Atlantic Ave</td><td>Call Peter - qualified, no response to booking texts</td><td><span class="tag">John</span></td><td>Aug 03, 12:00 AM</td></tr>
+<tr><td><strong>Peter Mimmo</strong></td><td>4708 Atlantic Ave</td><td>CR: Pics</td><td><span class="tag">Jeff</span></td><td>Apr 29, 08:00 PM</td></tr>
+<tr><td><strong>Bryan Carestia</strong></td><td>26 Tamar Ct</td><td>🔥 Call Bryan Carestia — Qualified seller (1h SLA)</td><td><span class="tag">Unassigned</span></td><td>May 27, 08:05 PM</td></tr>
+<tr><td><strong>Bryan Carestia</strong></td><td>26 Tamar Ct</td><td>REVIEW: Did Jeff call Bryan Carestia? (Lawrence Township)</td><td><span class="tag">Mike</span></td><td>May 11, 10:35 AM</td></tr>
+<tr><td><strong>Bryan Carestia</strong></td><td>26 Tamar Ct</td><td>CALL: Bryan Carestia (Lawrence Township)</td><td><span class="tag">Jeff</span></td><td>May 10, 10:35 AM</td></tr>
+<tr><td><strong>Bryan Carestia</strong></td><td>26 Tamar Ct</td><td>REVIEW: Did Jeff call Bryan Carestia? (Lawrence Township)</td><td><span class="tag">Mike</span></td><td>May 09, 09:06 AM</td></tr>
+<tr><td><strong>Bryan Carestia</strong></td><td>26 Tamar Ct</td><td>CALL: Bryan Carestia (Lawrence Township)</td><td><span class="tag">Jeff</span></td><td>May 08, 09:06 AM</td></tr>
+<tr><td><strong>Linda A</strong></td><td>4611 Schooner Rd # 1</td><td>🔥 Call Linda A — Qualified seller (1h SLA)</td><td><span class="tag">Unassigned</span></td><td>May 27, 08:05 PM</td></tr>
+<tr><td><strong>Linda A</strong></td><td>4611 Schooner Rd # 1</td><td>REVIEW: Did Jeff call Linda A? (Brigantine)</td><td><span class="tag">Mike</span></td><td>May 11, 10:36 AM</td></tr>
+<tr><td><strong>Linda A</strong></td><td>4611 Schooner Rd # 1</td><td>CALL: Linda A (Brigantine)</td><td><span class="tag">Jeff</span></td><td>May 10, 10:35 AM</td></tr>
+<tr><td><strong>Linda A</strong></td><td>4611 Schooner Rd # 1</td><td>REVIEW: Did Jeff call Linda A? (Brigantine)</td><td><span class="tag">Mike</span></td><td>May 09, 09:06 AM</td></tr>
+<tr><td><strong>Linda A</strong></td><td>4611 Schooner Rd # 1</td><td>CALL: Linda A (Brigantine)</td><td><span class="tag">Jeff</span></td><td>May 08, 09:06 AM</td></tr>
+<tr><td><strong>Steven Dadura</strong></td><td>1629 S Delaware St</td><td>🔥 Call Steven Dadura — Qualified seller (1h SLA)</td><td><span class="tag">Unassigned</span></td><td>May 27, 08:05 PM</td></tr>
+<tr><td><strong>Steven Dadura</strong></td><td>1629 S Delaware St</td><td>REVIEW: Did Jeff call Steven Dadura? (Paulsboro)</td><td><span class="tag">Mike</span></td><td>May 11, 10:36 AM</td></tr>
+<tr><td><strong>Steven Dadura</strong></td><td>1629 S Delaware St</td><td>CALL: Steven Dadura (Paulsboro)</td><td><span class="tag">Jeff</span></td><td>May 10, 10:36 AM</td></tr>
+<tr><td><strong>Steven Dadura</strong></td><td>1629 S Delaware St</td><td>REVIEW: Did Jeff call Steven Dadura? (Paulsboro)</td><td><span class="tag">Mike</span></td><td>May 09, 09:06 AM</td></tr>
+<tr><td><strong>Steven Dadura</strong></td><td>1629 S Delaware St</td><td>CALL: Steven Dadura (Paulsboro)</td><td><span class="tag">Jeff</span></td><td>May 08, 09:06 AM</td></tr>
+<tr><td><strong>Naeem Malik</strong></td><td>42 Franklin Corner Rd</td><td>Call Naeem - qualified, no response to booking texts</td><td><span class="tag">John</span></td><td>Aug 03, 12:00 AM</td></tr>
 <tr><td><strong>Brian Haberkern</strong></td><td>107 E Revere Ave</td><td>Call Brian - qualified, no response to booking texts</td><td><span class="tag">John</span></td><td>Aug 03, 12:00 AM</td></tr>
 <tr><td><strong>Brian Haberkern</strong></td><td>107 E Revere Ave</td><td>REVIEW: Did Jeff call Brian Haberkern back?</td><td><span class="tag">Mike</span></td><td>Aug 01, 10:44 AM</td></tr>
 <tr><td><strong>Brian Haberkern</strong></td><td>107 E Revere Ave</td><td>Call back: Brian Haberkern (107 E Revere Ave)</td><td><span class="tag">Jeff</span></td><td>Jul 31, 10:44 AM</td></tr>
@@ -5188,7 +5230,17 @@ section h2, h2 {
 <tr><td><strong>Jimmie Lee</strong></td><td>2823 29TH PLACE ENSLEY</td><td>🔥 Call Jimmie Lee — Qualified seller (1h SLA)</td><td><span class="tag">Unassigned</span></td><td>May 27, 08:05 PM</td></tr>
 <tr><td><strong>Jimmie Lee</strong></td><td>2823 29TH PLACE ENSLEY</td><td>PM-See if he got it then FUP on Pics</td><td><span class="tag">Jeff</span></td><td>Mar 31, 08:00 PM</td></tr>
 <tr><td><strong>Lawrence M aka El Mandela Jenkins</strong></td><td>1958 Case St</td><td>FU - El Mandela (Name not Lawrence)</td><td><span class="tag">Adam</span></td><td>Apr 01, 09:48 AM</td></tr>
-<tr><td><strong>Clinton Junior (Referred by Phil)</strong></td><td>2649 W Lehigh Ave</td><td>Justus handling re: 70K Offer</td><td><span class="tag">Jeff</span></td><td>Mar 13, 08:00 PM</td></tr></tbody></table></div>
+<tr><td><strong>Clinton Junior (Referred by Phil)</strong></td><td>2649 W Lehigh Ave</td><td>Justus handling re: 70K Offer</td><td><span class="tag">Jeff</span></td><td>Mar 13, 08:00 PM</td></tr>
+<tr><td><strong>Gloria Haygood</strong></td><td>7903 5th Ave N</td><td>CR: FUP on Lockbox - Pics</td><td><span class="tag">Jeff</span></td><td>Apr 21, 08:00 PM</td></tr>
+<tr><td><strong>George Pritchett</strong></td><td>4112 7th Ave</td><td>FUP - Burnt House: Offer $5k to assign for $15k purchase price</td><td><span class="tag">Unassigned</span></td><td>Mar 10, 08:00 PM</td></tr>
+<tr><td><strong>Kenneth Leposa</strong></td><td>419 Church St,</td><td>Get w/ Adam -Seller Financing - Vacant/High Price</td><td><span class="tag">Jeff</span></td><td>Feb 24, 08:00 PM</td></tr>
+<tr><td><strong>Philip Tappenden</strong></td><td>715 Mill St,</td><td>Lead who referred some leads - wants Tips</td><td><span class="tag">Jeff</span></td><td>Mar 03, 08:00 PM</td></tr>
+<tr><td><strong>Shen Zhou</strong></td><td>365 Bromley Pl</td><td>🔥 Call Shen Zhou — Qualified seller (1h SLA)</td><td><span class="tag">Unassigned</span></td><td>May 27, 08:05 PM</td></tr>
+<tr><td><strong>William Lindsey</strong></td><td>41 Westminster Dr</td><td>🔥 Call William Lindsey — Qualified seller (1h SLA)</td><td><span class="tag">Unassigned</span></td><td>May 27, 08:05 PM</td></tr>
+<tr><td><strong>William Lindsey</strong></td><td>41 Westminster Dr</td><td>REVIEW: Did Jeff call William Lindsey? (Voorhees)</td><td><span class="tag">Mike</span></td><td>May 11, 10:36 AM</td></tr>
+<tr><td><strong>William Lindsey</strong></td><td>41 Westminster Dr</td><td>CALL: William Lindsey (Voorhees)</td><td><span class="tag">Jeff</span></td><td>May 10, 10:36 AM</td></tr>
+<tr><td><strong>William Lindsey</strong></td><td>41 Westminster Dr</td><td>REVIEW: Did Jeff call William Lindsey? (Voorhees)</td><td><span class="tag">Mike</span></td><td>May 09, 09:06 AM</td></tr>
+<tr><td><strong>William Lindsey</strong></td><td>41 Westminster Dr</td><td>CALL: William Lindsey (Voorhees)</td><td><span class="tag">Jeff</span></td><td>May 08, 09:06 AM</td></tr></tbody></table></div>
   </section>
 
   <section class="sec">
