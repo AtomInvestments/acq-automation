@@ -148,7 +148,7 @@
     {
       "date": "2026-08-14",
       "had_business_hour_run": true,
-      "sends": 2
+      "sends": 3
     }
   ],
   "last_alerted_at": "2026-05-22T10:35:03.241312+00:00"
