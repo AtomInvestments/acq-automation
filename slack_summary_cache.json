@@ -2603,5 +2603,27 @@
     "match_cid": "AgV83PFA4yOczmzXyMmP",
     "match_confidence": "high",
     "summary": "Steven confirmed extensive recent renovations including new kitchen, bathroom, floors, doors, and wet bar, and invited the buyer to view the property."
+  },
+  "C06MM4DQZ28:1786728454.881289": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": null,
+      "reason_for_selling": "Planning to list property on market next month",
+      "timeline": "30 days"
+    },
+    "match_cid": "f0abfMt7cwacRzcu3H9M",
+    "match_confidence": "high",
+    "summary": "Seller confirmed interest in selling and stated property will be listed on market next month, property is in super condition."
+  },
+  "C06MM4DQZ28:1786728620.246009": {
+    "field_updates": {
+      "asking_price": 400000,
+      "motivation": null,
+      "reason_for_selling": null,
+      "timeline": null
+    },
+    "match_cid": "0gbhLMtew4qcFmVIemTQ",
+    "match_confidence": "high",
+    "summary": "Seller stated asking price of $400k and mentioned property is new construction in good condition."
   }
 }
