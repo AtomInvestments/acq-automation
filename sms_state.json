@@ -19,6 +19,16 @@
     "stage_entered_at": "2026-07-30T15:10:05.464289+00:00",
     "stage_name": "qualified"
   },
+  "0gbhLMtew4qcFmVIemTQ": {
+    "dormant": false,
+    "last_from_number": null,
+    "last_sms_at": null,
+    "replied": false,
+    "replied_at": null,
+    "sms_count": 0,
+    "stage_entered_at": "2026-08-14T18:11:03.850704+00:00",
+    "stage_name": "qualified"
+  },
   "1AAcHsRSqK7ebnr4fJAN": {
     "dormant": false,
     "last_from_number": "+16094388996",
@@ -366,11 +376,11 @@
   },
   "8nFavg25sVsiiSdafzw1": {
     "dormant": false,
-    "last_from_number": null,
-    "last_sms_at": null,
+    "last_from_number": "+16094388996",
+    "last_sms_at": "2026-08-14T18:11:20.370341+00:00",
     "replied": false,
     "replied_at": null,
-    "sms_count": 0,
+    "sms_count": 1,
     "stage_entered_at": "2026-08-07T17:37:35.548603+00:00",
     "stage_name": "qualified"
   },
@@ -448,7 +458,7 @@
     "reply_text": "Mike, what is the name of your company?",
     "skip_reason": "tag-already-routed",
     "sms_count": 0,
-    "stage_entered_at": "2026-08-14T17:23:38.345103+00:00",
+    "stage_entered_at": "2026-08-14T18:12:38.502007+00:00",
     "stage_name": "lao"
   },
   "BEyFlzfEhra9M6DR085v": {
@@ -551,11 +561,11 @@
   },
   "DRTx5JRkjVhQint4c8dg": {
     "dormant": false,
-    "last_from_number": null,
-    "last_sms_at": null,
+    "last_from_number": "+16094388996",
+    "last_sms_at": "2026-08-14T18:11:22.472049+00:00",
     "replied": false,
     "replied_at": null,
-    "sms_count": 0,
+    "sms_count": 1,
     "stage_entered_at": "2026-08-07T17:37:36.351194+00:00",
     "stage_name": "qualified"
   },
@@ -1504,6 +1514,16 @@
     "replied_at": null,
     "sms_count": 0,
     "stage_entered_at": "2026-07-30T15:09:55.208562+00:00",
+    "stage_name": "qualified"
+  },
+  "f0abfMt7cwacRzcu3H9M": {
+    "dormant": false,
+    "last_from_number": null,
+    "last_sms_at": null,
+    "replied": false,
+    "replied_at": null,
+    "sms_count": 0,
+    "stage_entered_at": "2026-08-14T18:11:04.720362+00:00",
     "stage_name": "qualified"
   },
   "feVgr9ChZKFVGHQClO1j": {
