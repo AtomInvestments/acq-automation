@@ -4190,7 +4190,7 @@ section h2, h2 {
   <header class="masthead">
     <div class="brandrow">
       <span class="brand">Atom Investments · APG Operations</span>
-      <span>Last updated Aug 15, 2026 03:51 AM ET</span>
+      <span>Last updated Aug 15, 2026 04:14 AM ET</span>
     </div>
     <h1>Active <span class="accent">Deals.</span></h1>
     <p class="dek">Every property currently in stages 1-7 of the ACQ pipeline. Sorted by call rating within each stage so the strongest deals surface first.</p>
@@ -4763,7 +4763,7 @@ section h2, h2 {
   <header class="masthead">
     <div class="brandrow">
       <span class="brand">Atom Investments · APG Operations</span>
-      <span>Last updated Aug 15, 2026 03:50 AM ET</span>
+      <span>Last updated Aug 15, 2026 04:13 AM ET</span>
     </div>
     <h1>SMS <span class="accent">Follow-Ups.</span></h1>
     <p class="dek">Action queue for Jeff and Mike — replies to call back, leads gone dormant, and everything still cycling through the SMS sequence.</p>
@@ -4783,7 +4783,7 @@ section h2, h2 {
     <a href="sms-test.html">SMS Test</a>
   </nav>
 
-  <details class="run-grid-collapsed"><summary>All 5 cron jobs OK on last run — click for timestamps</summary><div class="run-grid"><div class="run-row"><span class="tag green">OK</span><span class="run-name">ACQ Call Recording Automation</span><span class="run-ts">Aug 15, 03:45 AM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">ACQ SMS Follow-Up + Dashboard</span><span class="run-ts">Aug 15, 03:06 AM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">APG Slack Scraper</span><span class="run-ts">Aug 15, 03:22 AM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">dashboard (script)</span><span class="run-ts">Aug 15, 03:49 AM</span><span class="run-detail">dashboard updated</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">sms (script)</span><span class="run-ts">Aug 15, 03:48 AM</span><span class="run-detail">outside business hours (hour=3 ET)</span></div></div></details><div class="status-banner on"><div class="status-text"><span class="pulse"></span>SMS Automation: <span style="color:var(--green);font-weight:800">ACTIVE</span></div><a class="btn btn-kill" href="https://docs.google.com/spreadsheets/d/1wc3Pt46ze-ejLaryL8WIRQf4OjEkirolc4-O8lsRQZY/edit#gid=0" target="_blank">EMERGENCY KILL SWITCH</a></div>
+  <details class="run-grid-collapsed"><summary>All 5 cron jobs OK on last run — click for timestamps</summary><div class="run-grid"><div class="run-row"><span class="tag green">OK</span><span class="run-name">ACQ Call Recording Automation</span><span class="run-ts">Aug 15, 04:00 AM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">ACQ SMS Follow-Up + Dashboard</span><span class="run-ts">Aug 15, 03:51 AM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">APG Slack Scraper</span><span class="run-ts">Aug 15, 03:22 AM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">dashboard (script)</span><span class="run-ts">Aug 15, 04:12 AM</span><span class="run-detail">dashboard updated</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">sms (script)</span><span class="run-ts">Aug 15, 04:12 AM</span><span class="run-detail">outside business hours (hour=4 ET)</span></div></div></details><div class="status-banner on"><div class="status-text"><span class="pulse"></span>SMS Automation: <span style="color:var(--green);font-weight:800">ACTIVE</span></div><a class="btn btn-kill" href="https://docs.google.com/spreadsheets/d/1wc3Pt46ze-ejLaryL8WIRQf4OjEkirolc4-O8lsRQZY/edit#gid=0" target="_blank">EMERGENCY KILL SWITCH</a></div>
 
   <section class="sec">
     <div class="tag-row"><span class="num">01</span><h2>At a Glance</h2></div>
@@ -4881,9 +4881,9 @@ section h2, h2 {
 <tr><td><strong>John Harrington</strong></td><td>1211 Jersey St</td><td><span class="tag">2. LAO</span></td><td><span class="tag hot"></span></td><td></td></tr>
 <tr><td><strong>Marcus Patterson</strong></td><td>5900 Court M</td><td><span class="tag">2. LAO</span></td><td><span class="tag hot"></span></td><td>AL Market</td></tr>
 <tr><td><strong>Carla Ider Clyde Limited Partnership</strong></td><td>118 66TH PL N</td><td><span class="tag">2. LAO</span></td><td><span class="tag hot">May 13, 08:17 PM</span></td><td></td></tr>
-<tr><td><strong>Beata Szyffer-Hopkins</strong></td><td>1030 N Olden Ave</td><td><span class="tag">2. LAO</span></td><td><span class="tag hot"></span></td><td></td></tr>
-<tr><td><strong>Adam Shun</strong></td><td>167 Prospect Ave</td><td><span class="tag">2. LAO</span></td><td><span class="tag hot"></span></td><td></td></tr>
-<tr><td><strong>Evelyn Carter-Amuzu</strong></td><td>158 Lawnside Ave</td><td><span class="tag">2. LAO</span></td><td><span class="tag hot"></span></td><td></td></tr>
+<tr><td><strong>(no name)</strong></td><td></td><td><span class="tag">2. LAO</span></td><td><span class="tag hot"></span></td><td></td></tr>
+<tr><td><strong>(no name)</strong></td><td></td><td><span class="tag">2. LAO</span></td><td><span class="tag hot"></span></td><td></td></tr>
+<tr><td><strong>(no name)</strong></td><td></td><td><span class="tag">2. LAO</span></td><td><span class="tag hot"></span></td><td></td></tr>
 <tr><td><strong>Kyle Morse</strong></td><td>125 White Horse Ave</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot">Jun 24, 12:20 PM</span></td><td></td></tr>
 <tr><td><strong>Kevin Fanelli</strong></td><td>136 Lamplighter Ct</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot"></span></td><td></td></tr>
 <tr><td><strong>Craig Haley</strong></td><td>14 Kristin Way</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot">Jul 30, 08:09 AM</span></td><td></td></tr>
@@ -4989,7 +4989,7 @@ section h2, h2 {
 <tr><td><strong>Pamela Richardson</strong></td><td>819 Atlantic Ave</td><td>NJ</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">2</span></td><td>Aug 13, 12:16 PM</td><td>Jeff (NJ)</td></tr>
 <tr><td><strong>Gheorghe Salgau</strong></td><td>Philadelphia</td><td>PA</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">2</span></td><td>Aug 13, 12:16 PM</td><td>PA Market</td></tr>
 <tr><td><strong>Joseph Wargo</strong></td><td>323 W 4th St</td><td>NJ</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">2</span></td><td>Aug 13, 12:16 PM</td><td>Jeff (NJ)</td></tr>
-<tr><td><strong>Joseph Quartullo</strong></td><td>80 Shawnee Pl</td><td>NJ</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">2</span></td><td>Aug 13, 12:16 PM</td><td>Jeff (NJ)</td></tr>
+<tr><td><strong>(no name)</strong></td><td></td><td></td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">2</span></td><td>Aug 13, 12:16 PM</td><td>Jeff (NJ)</td></tr>
 <tr><td><strong>Peter Mimmo</strong></td><td>4708 Atlantic Ave</td><td>NJ</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">2</span></td><td>Aug 13, 12:16 PM</td><td>Jeff (NJ)</td></tr>
 <tr><td><strong>Naeem Malik</strong></td><td>42 Franklin Corner Rd</td><td>NJ</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">2</span></td><td>Aug 13, 12:16 PM</td><td>Jeff (NJ)</td></tr>
 <tr><td><strong>Richard Wick</strong></td><td>25 E 8th Ave</td><td>NJ</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">2</span></td><td>Aug 13, 12:16 PM</td><td>Jeff (NJ)</td></tr>
@@ -5001,7 +5001,7 @@ section h2, h2 {
 <tr><td><strong>Beata Szyffer-Hopkins</strong></td><td>412 Neadow Woods lane</td><td>NJ</td><td><span class="tag">2. LAO</span></td><td><span class="tag green">2</span></td><td>Aug 10, 10:10 AM</td><td>Jeff (NJ)</td></tr>
 <tr><td><strong>Kahalil Ameen</strong></td><td>8039 7th Ave S,</td><td>AL</td><td><span class="tag">2. LAO</span></td><td><span class="tag green">1</span></td><td>Aug 10, 10:10 AM</td><td>AL Market</td></tr>
 <tr><td><strong>Carl Mccall</strong></td><td>48 Edgemere Ave</td><td>NJ</td><td><span class="tag">2. LAO</span></td><td><span class="tag green">2</span></td><td>Aug 10, 10:10 AM</td><td>Jeff (NJ)</td></tr>
-<tr><td><strong>Donald Renfro</strong></td><td>2399 W 40th St</td><td>OH</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
+<tr><td><strong>(no name)</strong></td><td></td><td></td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
 <tr><td><strong>Jack Ever</strong></td><td>420 Medford Rd</td><td>AL</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
 <tr><td><strong>Test Wholesaler</strong></td><td></td><td></td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
 <tr><td><strong>William Huss</strong></td><td>34 Blackhawk Ct</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
@@ -5163,9 +5163,6 @@ section h2, h2 {
 <tr><td><strong>Thomas Gambino</strong></td><td>31 W Rutherford Ln</td><td>Call Thomas - qualified, no response to booking texts</td><td><span class="tag">John</span></td><td>Aug 03, 12:00 AM</td></tr>
 <tr><td><strong>Thomas Gambino</strong></td><td>31 W Rutherford Ln</td><td>REVIEW: Did Jeff call Thomas Gambino back?</td><td><span class="tag">Mike</span></td><td>Aug 01, 10:44 AM</td></tr>
 <tr><td><strong>Thomas Gambino</strong></td><td>31 W Rutherford Ln</td><td>Call back: Thomas Gambino (31 W Rutherford Ln)</td><td><span class="tag">Jeff</span></td><td>Jul 31, 10:44 AM</td></tr>
-<tr><td><strong>Joseph Wargo</strong></td><td>323 W 4th St</td><td>Call Joseph - qualified, no response to booking texts</td><td><span class="tag">John</span></td><td>Aug 03, 12:00 AM</td></tr>
-<tr><td><strong>Joseph Quartullo</strong></td><td>80 Shawnee Pl</td><td>Call Joseph - qualified, no response to booking texts</td><td><span class="tag">John</span></td><td>Aug 03, 12:00 AM</td></tr>
-<tr><td><strong>Joseph Quartullo</strong></td><td>80 Shawnee Pl</td><td>FUP Call - Lease expires Oct 31st</td><td><span class="tag">Jeff</span></td><td>Sep 01, 01:00 PM</td></tr>
 <tr><td><strong>Brian Cavallucci</strong></td><td>29 Fox Hollow Dr</td><td>🔥 Call Brian Cavallucci — Qualified seller (1h SLA)</td><td><span class="tag">Unassigned</span></td><td>May 27, 08:05 PM</td></tr>
 <tr><td><strong>Brian Cavallucci</strong></td><td>29 Fox Hollow Dr</td><td>REVIEW: Did Jeff call Brian Cavallucci? (Cherry Hill)</td><td><span class="tag">Mike</span></td><td>May 11, 10:36 AM</td></tr>
 <tr><td><strong>Brian Cavallucci</strong></td><td>29 Fox Hollow Dr</td><td>CALL: Brian Cavallucci (Cherry Hill)</td><td><span class="tag">Jeff</span></td><td>May 10, 10:36 AM</td></tr>
@@ -5214,10 +5211,6 @@ section h2, h2 {
 <tr><td><strong>Carl Mccall</strong></td><td>48 Edgemere Ave</td><td>3PM - Get UC - Contract sent at 170K</td><td><span class="tag">Jeff</span></td><td>May 01, 08:00 PM</td></tr>
 <tr><td><strong>Marcus Patterson</strong></td><td>5900 Court M</td><td>CI on other prop</td><td><span class="tag">Jeff</span></td><td>May 15, 08:00 PM</td></tr>
 <tr><td><strong>Carla Ider Clyde Limited Partnership</strong></td><td>118 66TH PL N</td><td>CR: Offer made at 10K</td><td><span class="tag">Jeff</span></td><td>May 01, 08:00 PM</td></tr>
-<tr><td><strong>Beata Szyffer-Hopkins</strong></td><td>1030 N Olden Ave</td><td>REVIEW: Did Jeff call Beata Szyffer-Hopkins? (Trenton)</td><td><span class="tag">Mike</span></td><td>May 09, 09:06 AM</td></tr>
-<tr><td><strong>Beata Szyffer-Hopkins</strong></td><td>1030 N Olden Ave</td><td>CALL: Beata Szyffer-Hopkins (Trenton)</td><td><span class="tag">Jeff</span></td><td>May 08, 09:06 AM</td></tr>
-<tr><td><strong>Beata Szyffer-Hopkins</strong></td><td>1030 N Olden Ave</td><td>REVIEW: Did Jeff call Beata Szyffer-Hopkins? (1030 N Olden Ave)</td><td><span class="tag">Mike</span></td><td>Apr 30, 06:26 PM</td></tr>
-<tr><td><strong>Evelyn Carter-Amuzu</strong></td><td>158 Lawnside Ave</td><td>Get w/ Adam re: In person</td><td><span class="tag">Jeff</span></td><td>Apr 17, 08:00 PM</td></tr>
 <tr><td><strong>Craig Haley</strong></td><td>14 Kristin Way</td><td>REVIEW: Did Jeff call Craig Haley back?</td><td><span class="tag">Mike</span></td><td>Aug 01, 05:01 PM</td></tr>
 <tr><td><strong>Craig Haley</strong></td><td>14 Kristin Way</td><td>Call back: Craig Haley (14 Kristin Way)</td><td><span class="tag">Jeff</span></td><td>Jul 31, 05:01 PM</td></tr>
 <tr><td><strong>Raymond Bowman Sr</strong></td><td>118 SHIP AVE</td><td>FU - Novation $275k</td><td><span class="tag">Unassigned</span></td><td>Jul 24, 08:00 AM</td></tr>
@@ -5280,7 +5273,7 @@ new Chart(document.getElementById('stageChart'), {
 
 new Chart(document.getElementById('stateChart'), {
   type: 'bar',
-  data: { labels: ["NJ", "AL", "PA", "OH", "UNKNOWN", "WI", "IN", "TN", "MI", "SC"], datasets: [{ data: [128, 26, 18, 7, 3, 1, 1, 1, 1, 1], backgroundColor: '#C9A52A', borderRadius: 4 }] },
+  data: { labels: ["NJ", "AL", "PA", "UNKNOWN", "OH", "WI", "IN", "TN", "MI", "SC"], datasets: [{ data: [124, 26, 18, 8, 6, 1, 1, 1, 1, 1], backgroundColor: '#C9A52A', borderRadius: 4 }] },
   options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { precision: 0, color: '#6B7591' }, grid: { color: 'rgba(26,40,64,0.06)' } }, x: { ticks: { color: '#455066' }, grid: { display: false } } } }
 });
 
