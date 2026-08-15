@@ -458,8 +458,8 @@
     "reply_text": "Mike, what is the name of your company?",
     "skip_reason": "tag-already-routed",
     "sms_count": 0,
-    "stage_entered_at": "2026-08-15T19:12:23.076261+00:00",
-    "stage_name": "qualified"
+    "stage_entered_at": "2026-08-15T19:41:54.859827+00:00",
+    "stage_name": "lao"
   },
   "BEyFlzfEhra9M6DR085v": {
     "dormant": false,
