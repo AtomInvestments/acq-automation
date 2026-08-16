@@ -4190,7 +4190,7 @@ section h2, h2 {
   <header class="masthead">
     <div class="brandrow">
       <span class="brand">Atom Investments · APG Operations</span>
-      <span>Last updated Aug 16, 2026 05:43 PM ET</span>
+      <span>Last updated Aug 16, 2026 06:10 PM ET</span>
     </div>
     <h1>Active <span class="accent">Deals.</span></h1>
     <p class="dek">Every property currently in stages 1-7 of the ACQ pipeline. Sorted by call rating within each stage so the strongest deals surface first.</p>
@@ -4763,7 +4763,7 @@ section h2, h2 {
   <header class="masthead">
     <div class="brandrow">
       <span class="brand">Atom Investments · APG Operations</span>
-      <span>Last updated Aug 16, 2026 05:42 PM ET</span>
+      <span>Last updated Aug 16, 2026 06:09 PM ET</span>
     </div>
     <h1>SMS <span class="accent">Follow-Ups.</span></h1>
     <p class="dek">Action queue for Jeff and Mike — replies to call back, leads gone dormant, and everything still cycling through the SMS sequence.</p>
@@ -4783,7 +4783,7 @@ section h2, h2 {
     <a href="sms-test.html">SMS Test</a>
   </nav>
 
-  <details class="run-grid-collapsed"><summary>All 5 cron jobs OK on last run — click for timestamps</summary><div class="run-grid"><div class="run-row"><span class="tag green">OK</span><span class="run-name">ACQ Call Recording Automation</span><span class="run-ts">Aug 16, 05:33 PM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">ACQ SMS Follow-Up + Dashboard</span><span class="run-ts">Aug 16, 05:10 PM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">APG Slack Scraper</span><span class="run-ts">Aug 16, 05:11 PM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">dashboard (script)</span><span class="run-ts">Aug 16, 05:42 PM</span><span class="run-detail">dashboard updated</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">sms (script)</span><span class="run-ts">Aug 16, 05:41 PM</span><span class="run-detail">{&quot;wait&quot;: 78, &quot;skipped&quot;: 18, &quot;skipped-tag-prebail&quot;: 89, &quot;no-phone&quot;: 2}</span></div></div></details><div class="status-banner on"><div class="status-text"><span class="pulse"></span>SMS Automation: <span style="color:var(--green);font-weight:800">ACTIVE</span></div><a class="btn btn-kill" href="https://docs.google.com/spreadsheets/d/1wc3Pt46ze-ejLaryL8WIRQf4OjEkirolc4-O8lsRQZY/edit#gid=0" target="_blank">EMERGENCY KILL SWITCH</a></div>
+  <details class="run-grid-collapsed"><summary>All 5 cron jobs OK on last run — click for timestamps</summary><div class="run-grid"><div class="run-row"><span class="tag green">OK</span><span class="run-name">ACQ Call Recording Automation</span><span class="run-ts">Aug 16, 05:54 PM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">ACQ SMS Follow-Up + Dashboard</span><span class="run-ts">Aug 16, 05:44 PM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">APG Slack Scraper</span><span class="run-ts">Aug 16, 05:11 PM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">dashboard (script)</span><span class="run-ts">Aug 16, 06:09 PM</span><span class="run-detail">dashboard updated</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">sms (script)</span><span class="run-ts">Aug 16, 06:09 PM</span><span class="run-detail">{&quot;wait&quot;: 78, &quot;skipped&quot;: 18, &quot;skipped-tag-prebail&quot;: 89, &quot;no-phone&quot;: 2}</span></div></div></details><div class="status-banner on"><div class="status-text"><span class="pulse"></span>SMS Automation: <span style="color:var(--green);font-weight:800">ACTIVE</span></div><a class="btn btn-kill" href="https://docs.google.com/spreadsheets/d/1wc3Pt46ze-ejLaryL8WIRQf4OjEkirolc4-O8lsRQZY/edit#gid=0" target="_blank">EMERGENCY KILL SWITCH</a></div>
 
   <section class="sec">
     <div class="tag-row"><span class="num">01</span><h2>At a Glance</h2></div>
@@ -5025,20 +5025,6 @@ section h2, h2 {
     <hr>
     <div class="lead-table"><table><thead><tr><th>Contact</th><th>Address</th><th>Task</th><th>Assignee</th><th>Due</th></tr></thead><tbody><tr><td><strong>Scott Bruder</strong></td><td>6 Preston Rd</td><td>REVIEW: Did Jeff call Scott Bruder back?</td><td><span class="tag">Mike</span></td><td>Aug 06, 06:02 PM</td></tr>
 <tr><td><strong>Scott Bruder</strong></td><td>6 Preston Rd</td><td>Call back: Scott Bruder (6 Preston Rd)</td><td><span class="tag">Jeff</span></td><td>Aug 05, 06:02 PM</td></tr>
-<tr><td><strong>Deborah Gallucio</strong></td><td>107 Kent Ave</td><td>REVIEW: Did Jeff call Deborah Gallucio back?</td><td><span class="tag">Mike</span></td><td>Aug 06, 03:23 PM</td></tr>
-<tr><td><strong>Deborah Gallucio</strong></td><td>107 Kent Ave</td><td>Call back: Deborah Gallucio (107 Kent Ave)</td><td><span class="tag">Jeff</span></td><td>Aug 05, 03:23 PM</td></tr>
-<tr><td><strong>James Sammarco</strong></td><td>1513 Country Mill Dr</td><td>REVIEW: Did Jeff call James Sammarco?</td><td><span class="tag">Mike</span></td><td>Aug 17, 05:41 PM</td></tr>
-<tr><td><strong>James Sammarco</strong></td><td>1513 Country Mill Dr</td><td>Manual call attempt: James Sammarco (1513 Country Mill Dr)</td><td><span class="tag">Jeff</span></td><td>Aug 15, 05:41 PM</td></tr>
-<tr><td><strong>Jennifer Torres</strong></td><td>1154 Jackson St</td><td>REVIEW: Did Jeff call Jennifer Torres back?</td><td><span class="tag">Mike</span></td><td>Jul 12, 10:15 AM</td></tr>
-<tr><td><strong>Jennifer Torres</strong></td><td>1154 Jackson St</td><td>Call back: Jennifer Torres (1154 Jackson St)</td><td><span class="tag">Jeff</span></td><td>Jul 11, 10:15 AM</td></tr>
-<tr><td><strong>James Zago</strong></td><td>919 Sunset Ave</td><td>REVIEW: Did Jeff call James Zago?</td><td><span class="tag">Mike</span></td><td>Aug 10, 04:53 PM</td></tr>
-<tr><td><strong>James Zago</strong></td><td>919 Sunset Ave</td><td>Manual call attempt: James Zago (919 Sunset Ave)</td><td><span class="tag">Jeff</span></td><td>Aug 08, 04:53 PM</td></tr>
-<tr><td><strong>James Zago</strong></td><td>919 Sunset Ave</td><td>Update Status - Construction - Can go anytime.</td><td><span class="tag">Jeff</span></td><td>Jan 16, 08:00 PM</td></tr>
-<tr><td><strong>Robert Jesionka</strong></td><td>308 Ryan St</td><td>Update Status - CONST APPT</td><td><span class="tag">Jeff</span></td><td>Mar 17, 08:00 PM</td></tr>
-<tr><td><strong>Howard Goodman</strong></td><td>9 Belmont Ave</td><td>Call Howard - qualified, no response to booking texts</td><td><span class="tag">John</span></td><td>Aug 03, 12:00 AM</td></tr>
-<tr><td><strong>Michael Perry</strong></td><td>163 Pompton Ave</td><td>Call Michael - qualified, no response to booking texts</td><td><span class="tag">John</span></td><td>Aug 03, 12:00 AM</td></tr>
-<tr><td><strong>Michael Perry</strong></td><td>163 Pompton Ave</td><td>REVIEW: Did Jeff call Michael Perry back?</td><td><span class="tag">Mike</span></td><td>Jun 25, 04:15 PM</td></tr>
-<tr><td><strong>Michael Perry</strong></td><td>163 Pompton Ave</td><td>Call back: Michael Perry (163 Pompton Ave)</td><td><span class="tag">Jeff</span></td><td>Jun 24, 04:15 PM</td></tr>
 <tr><td><strong>Kulila Austin</strong></td><td>6952 Casale Blvd</td><td>FUP - see if Open to Listing</td><td><span class="tag">Jeff</span></td><td>Feb 16, 05:00 PM</td></tr>
 <tr><td><strong>Arvind Dichpally</strong></td><td>317 Kramer Ct</td><td>Call Arvind - qualified, no response to booking texts</td><td><span class="tag">John</span></td><td>Aug 03, 12:00 AM</td></tr>
 <tr><td><strong>Arvind Dichpally</strong></td><td>317 Kramer Ct</td><td>REVIEW: Did Jeff call Arvind Dichpally back?</td><td><span class="tag">Mike</span></td><td>Aug 02, 10:18 AM</td></tr>
@@ -5111,46 +5097,6 @@ section h2, h2 {
 <tr><td><strong>Erick Serrano</strong></td><td>494 Neville St</td><td>Call back: Erick Serrano (494 Neville St)</td><td><span class="tag">Jeff</span></td><td>Jul 29, 05:24 PM</td></tr>
 <tr><td><strong>Jimmie Brown</strong></td><td>4114 8th Ave</td><td>🔥 Call Jimmie Brown — Qualified seller (1h SLA)</td><td><span class="tag">Unassigned</span></td><td>May 27, 08:05 PM</td></tr>
 <tr><td><strong>Jimmie Brown</strong></td><td>4114 8th Ave</td><td>FUP - Need to acquire deed</td><td><span class="tag">Jeff</span></td><td>Apr 29, 08:00 PM</td></tr>
-<tr><td><strong>Erica &amp; Stuart Smith</strong></td><td>4725 7th Ave</td><td>Follow up with Erica &amp; Stuart Smith </td><td><span class="tag">Jeff</span></td><td>Jul 03, 06:22 PM</td></tr>
-<tr><td><strong>Erica &amp; Stuart Smith</strong></td><td>4725 7th Ave</td><td>CR: Get UC - 10K Contract sent</td><td><span class="tag">Jeff</span></td><td>May 01, 08:00 PM</td></tr>
-<tr><td><strong>Keith E Amiano</strong></td><td>1097 State Route 173</td><td>🔥 Call Keith E Amiano — Qualified seller (1h SLA)</td><td><span class="tag">Unassigned</span></td><td>May 27, 08:05 PM</td></tr>
-<tr><td><strong>Keith E Amiano</strong></td><td>1097 State Route 173</td><td>Get w/ Adam - Possible Novation</td><td><span class="tag">Jeff</span></td><td>Feb 27, 08:00 PM</td></tr>
-<tr><td><strong>Clarissa Williams</strong></td><td>5648 CAMDEN AVE</td><td>🔥 Call Clarissa Williams — Qualified seller (1h SLA)</td><td><span class="tag">Unassigned</span></td><td>May 27, 08:05 PM</td></tr>
-<tr><td><strong>Demetrius Singleton</strong></td><td>309 17TH AVE SW</td><td>🔥 Call Demetrius Singleton — Qualified seller (1h SLA)</td><td><span class="tag">Unassigned</span></td><td>May 27, 08:05 PM</td></tr>
-<tr><td><strong>Demetrius Singleton</strong></td><td>309 17TH AVE SW</td><td>PM: Asking 10K - Dorothy</td><td><span class="tag">Jeff</span></td><td>Mar 24, 08:00 PM</td></tr>
-<tr><td><strong>Chuck  Pagano</strong></td><td>31 CHESTNUT ST</td><td>REVIEW: Did Jeff call Chuck  Pagano back?</td><td><span class="tag">Mike</span></td><td>Aug 03, 01:49 PM</td></tr>
-<tr><td><strong>Chuck  Pagano</strong></td><td>31 CHESTNUT ST</td><td>Call back: Chuck  Pagano (31 CHESTNUT ST)</td><td><span class="tag">Jeff</span></td><td>Aug 02, 01:49 PM</td></tr>
-<tr><td><strong>Chuck  Pagano</strong></td><td>31 CHESTNUT ST</td><td>FUP call: Last convo | He wants 115K. That&#x27;s his bottom low</td><td><span class="tag">Jeff</span></td><td>May 05, 01:00 PM</td></tr>
-<tr><td><strong>Mr.  King</strong></td><td>2208 E 81st St</td><td>Call Mr.  - qualified, no response to booking texts</td><td><span class="tag">Jeff</span></td><td>Aug 03, 12:00 AM</td></tr>
-<tr><td><strong>Carrie Smith</strong></td><td>152 Scheerer Ave</td><td>Call Carrie - qualified, no response to booking texts</td><td><span class="tag">John</span></td><td>Aug 03, 12:00 AM</td></tr>
-<tr><td><strong>Carrie Smith</strong></td><td>152 Scheerer Ave</td><td>REVIEW: Did Jeff call Carrie Smith back?</td><td><span class="tag">Mike</span></td><td>Jul 31, 11:10 AM</td></tr>
-<tr><td><strong>Carrie Smith</strong></td><td>152 Scheerer Ave</td><td>Call back: Carrie Smith (152 Scheerer Ave)</td><td><span class="tag">Jeff</span></td><td>Jul 30, 11:09 AM</td></tr>
-<tr><td><strong>Michael Georgetti</strong></td><td>2122 Branch Pike</td><td>Call Michael - qualified, no response to booking texts</td><td><span class="tag">John</span></td><td>Aug 03, 12:00 AM</td></tr>
-<tr><td><strong>Monique Johnson</strong></td><td>5136 N 32nd St</td><td>Call Monique - qualified, no response to booking texts</td><td><span class="tag">Jeff</span></td><td>Aug 03, 12:00 AM</td></tr>
-<tr><td><strong>Douglas Rice</strong></td><td>316 Lincoln Ave</td><td>Call Douglas - qualified, no response to booking texts</td><td><span class="tag">John</span></td><td>Aug 03, 12:00 AM</td></tr>
-<tr><td><strong>Douglas Rice</strong></td><td>316 Lincoln Ave</td><td>PA - 5PM - Update Status</td><td><span class="tag">Jeff</span></td><td>Apr 17, 08:00 PM</td></tr>
-<tr><td><strong>Fannie  Hicks</strong></td><td>910 4th Court West</td><td>Call Fannie  - qualified, no response to booking texts</td><td><span class="tag">Jeff</span></td><td>Aug 03, 12:00 AM</td></tr>
-<tr><td><strong>Joel  Lowe</strong></td><td>1240 Princeton Avenue Southwest</td><td>Call Joel  - qualified, no response to booking texts</td><td><span class="tag">Jeff</span></td><td>Aug 03, 12:00 AM</td></tr>
-<tr><td><strong>Christine  Davis</strong></td><td>4113 40th Terrace North</td><td>Call Christine  - qualified, no response to booking texts</td><td><span class="tag">Jeff</span></td><td>Aug 03, 12:00 AM</td></tr>
-<tr><td><strong>Dana M  Grant</strong></td><td>4532 Grasselli Boulevard Southwest</td><td>Call Dana M  - qualified, no response to booking texts</td><td><span class="tag">Jeff</span></td><td>Aug 03, 12:00 AM</td></tr>
-<tr><td><strong>Dana M  Grant</strong></td><td>4532 Grasselli Boulevard Southwest</td><td>Get w/ Adam - Call w/ Dana</td><td><span class="tag">Jeff</span></td><td>Feb 05, 08:00 PM</td></tr>
-<tr><td><strong>Edith Harris</strong></td><td>1819 Courtney Ave</td><td>Call Edith - qualified, no response to booking texts</td><td><span class="tag">Jeff</span></td><td>Aug 03, 12:00 AM</td></tr>
-<tr><td><strong>Edith Harris</strong></td><td>1819 Courtney Ave</td><td>Land - waiting on Adam to asses</td><td><span class="tag">Jeff</span></td><td>Jan 21, 08:00 PM</td></tr>
-<tr><td><strong>Mi Mee Mee Lay</strong></td><td>3622 Poinsettia Dr</td><td>Call Mi Mee Mee - qualified, no response to booking texts</td><td><span class="tag">Jeff</span></td><td>Aug 03, 12:00 AM</td></tr>
-<tr><td><strong>Robert Madden</strong></td><td>3675 Spottswood Ave</td><td>Call Robert - qualified, no response to booking texts</td><td><span class="tag">Jeff</span></td><td>Aug 03, 12:00 AM</td></tr>
-<tr><td><strong>Robert Madden</strong></td><td>3675 Spottswood Ave</td><td>CI - Find out Tenant situation</td><td><span class="tag">Jeff</span></td><td>May 05, 05:00 PM</td></tr>
-<tr><td><strong>Robert Hunter</strong></td><td>1327 42nd Street Ensley</td><td>Call Robert - qualified, no response to booking texts</td><td><span class="tag">Jeff</span></td><td>Aug 03, 12:00 AM</td></tr>
-<tr><td><strong>Robert Hunter</strong></td><td>1327 42nd Street Ensley</td><td>REVIEW: Did Jeff call Robert Hunter back?</td><td><span class="tag">Mike</span></td><td>Aug 01, 02:01 PM</td></tr>
-<tr><td><strong>Robert Hunter</strong></td><td>1327 42nd Street Ensley</td><td>Call back: Robert Hunter (1327 42nd Street Ensley)</td><td><span class="tag">Jeff</span></td><td>Jul 31, 02:01 PM</td></tr>
-<tr><td><strong>Larry Hollman</strong></td><td>1005 Wanda Cir</td><td>Call Larry - qualified, no response to booking texts</td><td><span class="tag">Jeff</span></td><td>Aug 03, 12:00 AM</td></tr>
-<tr><td><strong>Michael Turner</strong></td><td>2425 31st Ave N</td><td>Call Michael - qualified, no response to booking texts</td><td><span class="tag">Jeff</span></td><td>Aug 03, 12:00 AM</td></tr>
-<tr><td><strong>Justin Sims</strong></td><td>5418 Cairo Ave</td><td>REVIEW: Did Jeff call Justin Sims back?</td><td><span class="tag">Mike</span></td><td>Aug 14, 04:27 PM</td></tr>
-<tr><td><strong>Justin Sims</strong></td><td>5418 Cairo Ave</td><td>Call back: Justin Sims (5418 Cairo Ave)</td><td><span class="tag">Jeff</span></td><td>Aug 13, 04:27 PM</td></tr>
-<tr><td><strong>Justin Sims</strong></td><td>5418 Cairo Ave</td><td>Call Justin - qualified, no response to booking texts</td><td><span class="tag">Jeff</span></td><td>Aug 03, 12:00 AM</td></tr>
-<tr><td><strong>Richard Fry</strong></td><td>21 Seabright Ave</td><td>Call Richard - qualified, no response to booking texts</td><td><span class="tag">John</span></td><td>Aug 03, 12:00 AM</td></tr>
-<tr><td><strong>Lisa Myler</strong></td><td>63 Harbor Dr</td><td>Call Lisa - qualified, no response to booking texts</td><td><span class="tag">John</span></td><td>Aug 03, 12:00 AM</td></tr>
-<tr><td><strong>Lisa Myler</strong></td><td>63 Harbor Dr</td><td>REVIEW: Did Jeff call Lisa Myler back?</td><td><span class="tag">Mike</span></td><td>Jul 31, 11:10 AM</td></tr>
-<tr><td><strong>Lisa Myler</strong></td><td>63 Harbor Dr</td><td>Call back: Lisa Myler (63 Harbor Dr)</td><td><span class="tag">Jeff</span></td><td>Jul 30, 11:10 AM</td></tr>
 <tr><td><strong>Richard Zinna</strong></td><td>33 Patton Dr</td><td>Follow up with Richard Zinna </td><td><span class="tag">Jeff</span></td><td>May 31, 04:07 PM</td></tr>
 <tr><td><strong>Richard Zinna</strong></td><td>33 Patton Dr</td><td>FUP-Possible Listing deal - Tenants moving out in June</td><td><span class="tag">Jeff</span></td><td>May 19, 08:00 PM</td></tr>
 <tr><td><strong>Alice Moszczynski</strong></td><td>119 N Rhode Island Ave</td><td>Call Alice - qualified, no response to booking texts</td><td><span class="tag">John</span></td><td>Aug 03, 12:00 AM</td></tr>
@@ -5219,20 +5165,6 @@ section h2, h2 {
 <tr><td><strong>Beata Szyffer-Hopkins</strong></td><td>1030 N Olden Ave</td><td>REVIEW: Did Jeff call Beata Szyffer-Hopkins? (Trenton)</td><td><span class="tag">Mike</span></td><td>May 09, 09:06 AM</td></tr>
 <tr><td><strong>Beata Szyffer-Hopkins</strong></td><td>1030 N Olden Ave</td><td>CALL: Beata Szyffer-Hopkins (Trenton)</td><td><span class="tag">Jeff</span></td><td>May 08, 09:06 AM</td></tr>
 <tr><td><strong>Beata Szyffer-Hopkins</strong></td><td>1030 N Olden Ave</td><td>REVIEW: Did Jeff call Beata Szyffer-Hopkins? (1030 N Olden Ave)</td><td><span class="tag">Mike</span></td><td>Apr 30, 06:26 PM</td></tr>
-<tr><td><strong>Evelyn Carter-Amuzu</strong></td><td>158 Lawnside Ave</td><td>Get w/ Adam re: In person</td><td><span class="tag">Jeff</span></td><td>Apr 17, 08:00 PM</td></tr>
-<tr><td><strong>Craig Haley</strong></td><td>14 Kristin Way</td><td>REVIEW: Did Jeff call Craig Haley back?</td><td><span class="tag">Mike</span></td><td>Aug 01, 05:01 PM</td></tr>
-<tr><td><strong>Craig Haley</strong></td><td>14 Kristin Way</td><td>Call back: Craig Haley (14 Kristin Way)</td><td><span class="tag">Jeff</span></td><td>Jul 31, 05:01 PM</td></tr>
-<tr><td><strong>Raymond Bowman Sr</strong></td><td>118 SHIP AVE</td><td>FU - Novation $275k</td><td><span class="tag">Unassigned</span></td><td>Jul 24, 08:00 AM</td></tr>
-<tr><td><strong>Raymond Bowman Sr</strong></td><td>118 SHIP AVE</td><td>Follow up with Raymond Bowman Sr </td><td><span class="tag">Jeff</span></td><td>Jun 15, 04:39 PM</td></tr>
-<tr><td><strong>Frankie</strong></td><td>300 Broad St</td><td>REVIEW: Did Jeff call Frankie back?</td><td><span class="tag">Mike</span></td><td>Aug 08, 09:46 AM</td></tr>
-<tr><td><strong>Frankie</strong></td><td>300 Broad St</td><td>Call back: Frankie (300 Broad St)</td><td><span class="tag">Jeff</span></td><td>Aug 07, 09:46 AM</td></tr>
-<tr><td><strong>Frankie</strong></td><td>300 Broad St</td><td>Call Frankie - qualified, no response to booking texts</td><td><span class="tag">Jeff</span></td><td>Aug 03, 12:00 AM</td></tr>
-<tr><td><strong>Frankie</strong></td><td>300 Broad St</td><td>CI - Brand new prop - moving out of Country</td><td><span class="tag">Jeff</span></td><td>Jun 19, 08:00 AM</td></tr>
-<tr><td><strong>Elisha Ruiz</strong></td><td>4103 UNRUH AVE</td><td>🔥 Call Elisha Ruiz — Qualified seller (1h SLA)</td><td><span class="tag">Unassigned</span></td><td>May 27, 08:05 PM</td></tr>
-<tr><td><strong>Jimmie Lee</strong></td><td>2823 29TH PLACE ENSLEY</td><td>🔥 Call Jimmie Lee — Qualified seller (1h SLA)</td><td><span class="tag">Unassigned</span></td><td>May 27, 08:05 PM</td></tr>
-<tr><td><strong>Jimmie Lee</strong></td><td>2823 29TH PLACE ENSLEY</td><td>PM-See if he got it then FUP on Pics</td><td><span class="tag">Jeff</span></td><td>Mar 31, 08:00 PM</td></tr>
-<tr><td><strong>Lawrence M aka El Mandela Jenkins</strong></td><td>1958 Case St</td><td>FU - El Mandela (Name not Lawrence)</td><td><span class="tag">Adam</span></td><td>Apr 01, 09:48 AM</td></tr>
-<tr><td><strong>Clinton Junior (Referred by Phil)</strong></td><td>2649 W Lehigh Ave</td><td>Justus handling re: 70K Offer</td><td><span class="tag">Jeff</span></td><td>Mar 13, 08:00 PM</td></tr>
 <tr><td><strong>Gloria Haygood</strong></td><td>7903 5th Ave N</td><td>CR: FUP on Lockbox - Pics</td><td><span class="tag">Jeff</span></td><td>Apr 21, 08:00 PM</td></tr>
 <tr><td><strong>George Pritchett</strong></td><td>4112 7th Ave</td><td>FUP - Burnt House: Offer $5k to assign for $15k purchase price</td><td><span class="tag">Unassigned</span></td><td>Mar 10, 08:00 PM</td></tr>
 <tr><td><strong>Kenneth Leposa</strong></td><td>419 Church St,</td><td>Get w/ Adam -Seller Financing - Vacant/High Price</td><td><span class="tag">Jeff</span></td><td>Feb 24, 08:00 PM</td></tr>
