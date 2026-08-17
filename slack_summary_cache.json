@@ -2680,5 +2680,16 @@
     "match_cid": "nCO0yg05Zdy7RDvsxtpu",
     "match_confidence": "high",
     "summary": "Seller stated asking price of $255k as-is with 10% deposit, buyer pays all closing costs, closing after 9/7, and confirmed property is dated inside needing work."
+  },
+  "C06MM4DQZ28:1787001445.669449": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": null,
+      "reason_for_selling": null,
+      "timeline": "ASAP"
+    },
+    "match_cid": "8f8nsvVdZpkVHFopeURi",
+    "match_confidence": "high",
+    "summary": "Seller confirmed property is in good condition with no work needed and asked when they can schedule a showing."
   }
 }
