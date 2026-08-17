@@ -431,8 +431,11 @@
     "dormant": false,
     "last_from_number": "+16094388996",
     "last_sms_at": "2026-08-17T14:20:11.658102+00:00",
-    "replied": false,
-    "replied_at": null,
+    "replied": true,
+    "replied_at": "2026-08-17T17:49:50.801000+00:00",
+    "reply_attempts": 0,
+    "reply_class": "NEUTRAL",
+    "reply_text": "DnD enabled by customer",
     "sms_count": 3,
     "stage_entered_at": "2026-07-27T14:03:54.114514+00:00",
     "stage_name": "qualified"
@@ -458,8 +461,8 @@
     "reply_text": "Mike, what is the name of your company?",
     "skip_reason": "tag-already-routed",
     "sms_count": 0,
-    "stage_entered_at": "2026-08-17T17:15:02.597061+00:00",
-    "stage_name": "qualified"
+    "stage_entered_at": "2026-08-17T17:51:52.791419+00:00",
+    "stage_name": "lao"
   },
   "BEyFlzfEhra9M6DR085v": {
     "dormant": false,
