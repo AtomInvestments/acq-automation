@@ -2669,5 +2669,16 @@
     "match_cid": "M1NAoo8nCFh6Ere8AAFM",
     "match_confidence": "high",
     "summary": "Seller states property is in excellent condition with high-end upgrades and is asking in the mid-900s based on comparable listings."
+  },
+  "C06MM4DQZ28:1786995345.727749": {
+    "field_updates": {
+      "asking_price": 255000,
+      "motivation": null,
+      "reason_for_selling": null,
+      "timeline": "30 days"
+    },
+    "match_cid": "nCO0yg05Zdy7RDvsxtpu",
+    "match_confidence": "high",
+    "summary": "Seller stated asking price of $255k as-is with 10% deposit, buyer pays all closing costs, closing after 9/7, and confirmed property is dated inside needing work."
   }
 }
