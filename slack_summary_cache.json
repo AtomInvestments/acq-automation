@@ -2625,5 +2625,49 @@
     "match_cid": "0gbhLMtew4qcFmVIemTQ",
     "match_confidence": "high",
     "summary": "Seller stated asking price of $400k and mentioned property is new construction in good condition."
+  },
+  "C06MM4DQZ28:1786990244.587649": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": null,
+      "reason_for_selling": null,
+      "timeline": null
+    },
+    "match_cid": "mYXJcqXsIp3xwAeKD3k4",
+    "match_confidence": "high",
+    "summary": "Seller Artis Jones responded to SMS outreach asking for a proposal and offer for 35 Valley Way."
+  },
+  "C06MM4DQZ28:1786990253.549939": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": null,
+      "reason_for_selling": null,
+      "timeline": null
+    },
+    "match_cid": "r8TtB3YfJL0eAZGtD98x",
+    "match_confidence": "high",
+    "summary": "Seller responded 'Yes' to discussing the sale of 17 River Bend Rd; conversation is in early stage asking about property condition."
+  },
+  "C06MM4DQZ28:1786990330.874679": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": null,
+      "reason_for_selling": "Property needs to be redone",
+      "timeline": null
+    },
+    "match_cid": "k6DxKcW6VGpFAgLFkvD7",
+    "match_confidence": "high",
+    "summary": "Seller confirmed interest in selling and stated the property needs to be completely redone inside."
+  },
+  "C06MM4DQZ28:1786990371.593519": {
+    "field_updates": {
+      "asking_price": 950000,
+      "motivation": null,
+      "reason_for_selling": null,
+      "timeline": null
+    },
+    "match_cid": "M1NAoo8nCFh6Ere8AAFM",
+    "match_confidence": "high",
+    "summary": "Seller states property is in excellent condition with high-end upgrades and is asking in the mid-900s based on comparable listings."
   }
 }
