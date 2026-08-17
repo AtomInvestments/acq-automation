@@ -4190,7 +4190,7 @@ section h2, h2 {
   <header class="masthead">
     <div class="brandrow">
       <span class="brand">Atom Investments · APG Operations</span>
-      <span>Last updated Aug 17, 2026 04:09 AM ET</span>
+      <span>Last updated Aug 17, 2026 05:07 AM ET</span>
     </div>
     <h1>Active <span class="accent">Deals.</span></h1>
     <p class="dek">Every property currently in stages 1-7 of the ACQ pipeline. Sorted by call rating within each stage so the strongest deals surface first.</p>
@@ -4763,7 +4763,7 @@ section h2, h2 {
   <header class="masthead">
     <div class="brandrow">
       <span class="brand">Atom Investments · APG Operations</span>
-      <span>Last updated Aug 17, 2026 04:08 AM ET</span>
+      <span>Last updated Aug 17, 2026 05:06 AM ET</span>
     </div>
     <h1>SMS <span class="accent">Follow-Ups.</span></h1>
     <p class="dek">Action queue for Jeff and Mike — replies to call back, leads gone dormant, and everything still cycling through the SMS sequence.</p>
@@ -4783,7 +4783,7 @@ section h2, h2 {
     <a href="sms-test.html">SMS Test</a>
   </nav>
 
-  <details class="run-grid-collapsed"><summary>All 5 cron jobs OK on last run — click for timestamps</summary><div class="run-grid"><div class="run-row"><span class="tag green">OK</span><span class="run-name">ACQ Call Recording Automation</span><span class="run-ts">Aug 17, 03:38 AM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">ACQ SMS Follow-Up + Dashboard</span><span class="run-ts">Aug 17, 03:32 AM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">APG Slack Scraper</span><span class="run-ts">Aug 17, 03:43 AM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">dashboard (script)</span><span class="run-ts">Aug 17, 04:06 AM</span><span class="run-detail">dashboard updated</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">sms (script)</span><span class="run-ts">Aug 17, 04:06 AM</span><span class="run-detail">outside business hours (hour=4 ET)</span></div></div></details><div class="status-banner on"><div class="status-text"><span class="pulse"></span>SMS Automation: <span style="color:var(--green);font-weight:800">ACTIVE</span></div><a class="btn btn-kill" href="https://docs.google.com/spreadsheets/d/1wc3Pt46ze-ejLaryL8WIRQf4OjEkirolc4-O8lsRQZY/edit#gid=0" target="_blank">EMERGENCY KILL SWITCH</a></div>
+  <details class="run-grid-collapsed"><summary>All 5 cron jobs OK on last run — click for timestamps</summary><div class="run-grid"><div class="run-row"><span class="tag green">OK</span><span class="run-name">ACQ Call Recording Automation</span><span class="run-ts">Aug 17, 04:23 AM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">ACQ SMS Follow-Up + Dashboard</span><span class="run-ts">Aug 17, 04:09 AM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">APG Slack Scraper</span><span class="run-ts">Aug 17, 04:30 AM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">dashboard (script)</span><span class="run-ts">Aug 17, 05:05 AM</span><span class="run-detail">dashboard updated</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">sms (script)</span><span class="run-ts">Aug 17, 05:04 AM</span><span class="run-detail">outside business hours (hour=5 ET)</span></div></div></details><div class="status-banner on"><div class="status-text"><span class="pulse"></span>SMS Automation: <span style="color:var(--green);font-weight:800">ACTIVE</span></div><a class="btn btn-kill" href="https://docs.google.com/spreadsheets/d/1wc3Pt46ze-ejLaryL8WIRQf4OjEkirolc4-O8lsRQZY/edit#gid=0" target="_blank">EMERGENCY KILL SWITCH</a></div>
 
   <section class="sec">
     <div class="tag-row"><span class="num">01</span><h2>At a Glance</h2></div>
@@ -4816,7 +4816,7 @@ section h2, h2 {
     <div class="lead-table"><table><thead><tr><th>Contact</th><th>Address</th><th>Stage</th><th>Replied</th><th>Last Number</th></tr></thead><tbody><tr><td><strong>Karim Mohammad</strong></td><td>488 W State St</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot">Aug 14, 12:05 PM</span></td><td></td></tr>
 <tr><td><strong>Scott Bruder</strong></td><td>6 Preston Rd</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot">Aug 05, 04:57 PM</span></td><td></td></tr>
 <tr><td><strong>Deborah Gallucio</strong></td><td>107 Kent Ave</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot">Aug 05, 02:27 PM</span></td><td></td></tr>
-<tr><td><strong>Jennifer Torres</strong></td><td>1154 Jackson St</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot">Jul 10, 09:21 PM</span></td><td>Jeff (NJ)</td></tr>
+<tr><td><strong>(no name)</strong></td><td></td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot">Jul 10, 09:21 PM</span></td><td>Jeff (NJ)</td></tr>
 <tr><td><strong>Robert Jesionka</strong></td><td>308 Ryan St</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot">Jun 24, 04:34 PM</span></td><td></td></tr>
 <tr><td><strong>Howard Goodman</strong></td><td>9 Belmont Ave</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot">Aug 02, 04:37 PM</span></td><td></td></tr>
 <tr><td><strong>Michael Perry</strong></td><td>163 Pompton Ave</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot">Jun 24, 03:57 PM</span></td><td></td></tr>
@@ -4836,16 +4836,16 @@ section h2, h2 {
 <tr><td><strong>Joseph Schili</strong></td><td>1370 Oriental Ave</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot"></span></td><td>Jeff (NJ)</td></tr>
 <tr><td><strong>Cheryl Weisenberg</strong></td><td>810 3rd St</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot">Jul 31, 10:06 AM</span></td><td></td></tr>
 <tr><td><strong>Joshua Ostrin</strong></td><td>33 S 1st Ave</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot">Aug 03, 10:10 AM</span></td><td>Jeff (NJ)</td></tr>
-<tr><td><strong>Lacy Dungee</strong></td><td>166 PAUL ROBESON BLVD</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot">Aug 14, 01:07 PM</span></td><td>Jeff (NJ)</td></tr>
-<tr><td><strong>Toni Williams</strong></td><td>12b Steel St</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot">Apr 29, 02:30 PM</span></td><td></td></tr>
-<tr><td><strong>Avin</strong></td><td>305, 315 &amp; 319 Roosevelt ave</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot"></span></td><td>AL Market</td></tr>
-<tr><td><strong>Virginia Williams</strong></td><td>1172 Atlantic Ave</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot"></span></td><td></td></tr>
-<tr><td><strong>Kris</strong></td><td>58 Morris Ln,, NJ 08854</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot"></span></td><td>Jeff (NJ)</td></tr>
-<tr><td><strong>Sheila Pope</strong></td><td>2901 N 23rd St, Philadelphia, PA 19132</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot">May 14, 08:06 PM</span></td><td>PA Market</td></tr>
-<tr><td><strong>Deborah Ides</strong></td><td>48-50 Church St</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot"></span></td><td></td></tr>
-<tr><td><strong>Tony</strong></td><td>223 Tyler St</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot"></span></td><td></td></tr>
-<tr><td><strong>Rafael Paragulla</strong></td><td>143 Harding Ave</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot"></span></td><td></td></tr>
-<tr><td><strong>Christopher Ascencio</strong></td><td>129 Lakeview Ave</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot"></span></td><td></td></tr>
+<tr><td><strong>(no name)</strong></td><td></td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot">Aug 14, 01:07 PM</span></td><td>Jeff (NJ)</td></tr>
+<tr><td><strong>(no name)</strong></td><td></td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot">Apr 29, 02:30 PM</span></td><td></td></tr>
+<tr><td><strong>(no name)</strong></td><td></td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot"></span></td><td>AL Market</td></tr>
+<tr><td><strong>(no name)</strong></td><td></td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot"></span></td><td></td></tr>
+<tr><td><strong>(no name)</strong></td><td></td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot"></span></td><td>Jeff (NJ)</td></tr>
+<tr><td><strong>(no name)</strong></td><td></td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot">May 14, 08:06 PM</span></td><td>PA Market</td></tr>
+<tr><td><strong>(no name)</strong></td><td></td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot"></span></td><td></td></tr>
+<tr><td><strong>(no name)</strong></td><td></td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot"></span></td><td></td></tr>
+<tr><td><strong>(no name)</strong></td><td></td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot"></span></td><td></td></tr>
+<tr><td><strong>(no name)</strong></td><td></td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot"></span></td><td></td></tr>
 <tr><td><strong>Vance Stephens</strong></td><td>32 Cavell St</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot"></span></td><td></td></tr>
 <tr><td><strong>Venkata Bandaru</strong></td><td>35 George Davison Rd</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot"></span></td><td></td></tr>
 <tr><td><strong>Erick Serrano</strong></td><td>494 Neville St</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot">Jul 29, 04:31 PM</span></td><td>PA Market</td></tr>
@@ -4856,11 +4856,11 @@ section h2, h2 {
 <tr><td><strong>Chuck  Pagano</strong></td><td>31 CHESTNUT ST</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot">Aug 02, 01:06 PM</span></td><td></td></tr>
 <tr><td><strong>Carrie Smith</strong></td><td>152 Scheerer Ave</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot">Jun 24, 12:35 PM</span></td><td></td></tr>
 <tr><td><strong>Robert Hunter</strong></td><td>1327 42nd Street Ensley</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot">Jul 31, 01:38 PM</span></td><td></td></tr>
-<tr><td><strong>Justin Sims</strong></td><td>5418 Cairo Ave</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot">Aug 13, 03:57 PM</span></td><td>AL Market</td></tr>
-<tr><td><strong>Lisa Myler</strong></td><td>63 Harbor Dr</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot">Apr 14, 12:30 PM</span></td><td></td></tr>
-<tr><td><strong>Richard Zinna</strong></td><td>33 Patton Dr</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot"></span></td><td></td></tr>
-<tr><td><strong>Anaida Girau</strong></td><td>183 Pennington Ave</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot">Jul 31, 10:18 AM</span></td><td></td></tr>
-<tr><td><strong>Alice Moszczynski</strong></td><td>119 N Rhode Island Ave</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot">Apr 18, 01:24 PM</span></td><td></td></tr>
+<tr><td><strong>(no name)</strong></td><td></td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot">Aug 13, 03:57 PM</span></td><td>AL Market</td></tr>
+<tr><td><strong>(no name)</strong></td><td></td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot">Apr 14, 12:30 PM</span></td><td></td></tr>
+<tr><td><strong>(no name)</strong></td><td></td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot"></span></td><td></td></tr>
+<tr><td><strong>(no name)</strong></td><td></td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot">Jul 31, 10:18 AM</span></td><td></td></tr>
+<tr><td><strong>(no name)</strong></td><td></td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot">Apr 18, 01:24 PM</span></td><td></td></tr>
 <tr><td><strong>Sergei Karpovitch</strong></td><td>920 N Olden Ave</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot"></span></td><td>Jeff (NJ)</td></tr>
 <tr><td><strong>Thomas Gambino</strong></td><td>31 W Rutherford Ln</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot">Jul 31, 10:07 AM</span></td><td></td></tr>
 <tr><td><strong>Brian Cavallucci</strong></td><td>29 Fox Hollow Dr</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot"></span></td><td>Jeff (NJ)</td></tr>
@@ -4874,11 +4874,11 @@ section h2, h2 {
 <tr><td><strong>Justin / Danielle Offutt</strong></td><td>5910 WILBER AVE</td><td><span class="tag">2. LAO</span></td><td><span class="tag hot"></span></td><td>OH Market</td></tr>
 <tr><td><strong>Mike</strong></td><td>445 Cleveland Rd,</td><td><span class="tag">2. LAO</span></td><td><span class="tag hot"></span></td><td></td></tr>
 <tr><td><strong>Lisa Rivera</strong></td><td>107 Deepwater Cir</td><td><span class="tag">2. LAO</span></td><td><span class="tag hot"></span></td><td></td></tr>
-<tr><td><strong>Mac Hall</strong></td><td>2903 Taylor St</td><td><span class="tag">2. LAO</span></td><td><span class="tag hot"></span></td><td></td></tr>
-<tr><td><strong>Mary &amp; Marisa Kaneda</strong></td><td>405 Pearl St</td><td><span class="tag">2. LAO</span></td><td><span class="tag hot"></span></td><td></td></tr>
-<tr><td><strong>Angela Martin</strong></td><td>608 Alabama Ave Sw</td><td><span class="tag">2. LAO</span></td><td><span class="tag hot">May 22, 01:55 PM</span></td><td>AL Market</td></tr>
-<tr><td><strong>Mark Hall (Referred by Phil)</strong></td><td>1819 W 6th St,</td><td><span class="tag">2. LAO</span></td><td><span class="tag hot"></span></td><td></td></tr>
-<tr><td><strong>John Harrington</strong></td><td>1211 Jersey St</td><td><span class="tag">2. LAO</span></td><td><span class="tag hot"></span></td><td></td></tr>
+<tr><td><strong>(no name)</strong></td><td></td><td><span class="tag">2. LAO</span></td><td><span class="tag hot"></span></td><td></td></tr>
+<tr><td><strong>(no name)</strong></td><td></td><td><span class="tag">2. LAO</span></td><td><span class="tag hot"></span></td><td></td></tr>
+<tr><td><strong>(no name)</strong></td><td></td><td><span class="tag">2. LAO</span></td><td><span class="tag hot">May 22, 01:55 PM</span></td><td>AL Market</td></tr>
+<tr><td><strong>(no name)</strong></td><td></td><td><span class="tag">2. LAO</span></td><td><span class="tag hot"></span></td><td></td></tr>
+<tr><td><strong>(no name)</strong></td><td></td><td><span class="tag">2. LAO</span></td><td><span class="tag hot"></span></td><td></td></tr>
 <tr><td><strong>Marcus Patterson</strong></td><td>5900 Court M</td><td><span class="tag">2. LAO</span></td><td><span class="tag hot"></span></td><td>AL Market</td></tr>
 <tr><td><strong>Carla Ider Clyde Limited Partnership</strong></td><td>118 66TH PL N</td><td><span class="tag">2. LAO</span></td><td><span class="tag hot">May 13, 08:17 PM</span></td><td></td></tr>
 <tr><td><strong>Beata Szyffer-Hopkins</strong></td><td>1030 N Olden Ave</td><td><span class="tag">2. LAO</span></td><td><span class="tag hot"></span></td><td></td></tr>
@@ -4912,8 +4912,8 @@ section h2, h2 {
     <div class="tag-row"><span class="num">04</span><h2><span class="dot warm"></span>Dormant — Manual Call Needed</h2></div>
     <hr>
     <p style="color:var(--muted);font-size:13px;margin:0 0 12px">Leads that received all 6 SMS with no reply. Jeff calls these manually.</p>
-    <div class="lead-table"><table><thead><tr><th>Contact</th><th>Address</th><th>Stage</th><th>Reason</th><th>SMS Sent</th><th>Last Sent</th></tr></thead><tbody><tr><td><strong>James Sammarco</strong></td><td>1513 Country Mill Dr</td><td><span class="tag">1. Qualified</span></td><td><span class="tag warm">6 SMS no reply — call manually</span></td><td><span class="tag warm">6/6</span></td><td>Aug 12, 05:12 PM</td></tr>
-<tr><td><strong>James Zago</strong></td><td>919 Sunset Ave</td><td><span class="tag">1. Qualified</span></td><td><span class="tag warm">6 SMS no reply — call manually</span></td><td><span class="tag warm">6/6</span></td><td>Aug 05, 04:41 PM</td></tr>
+    <div class="lead-table"><table><thead><tr><th>Contact</th><th>Address</th><th>Stage</th><th>Reason</th><th>SMS Sent</th><th>Last Sent</th></tr></thead><tbody><tr><td><strong>(no name)</strong></td><td></td><td><span class="tag">1. Qualified</span></td><td><span class="tag warm">6 SMS no reply — call manually</span></td><td><span class="tag warm">6/6</span></td><td>Aug 12, 05:12 PM</td></tr>
+<tr><td><strong>(no name)</strong></td><td></td><td><span class="tag">1. Qualified</span></td><td><span class="tag warm">6 SMS no reply — call manually</span></td><td><span class="tag warm">6/6</span></td><td>Aug 05, 04:41 PM</td></tr>
 <tr><td><strong>4520 Lee Llc</strong></td><td>4520 BERGENLINE AVE</td><td><span class="tag">1. Qualified</span></td><td><span class="tag warm">6 SMS no reply — call manually</span></td><td><span class="tag warm">6/6</span></td><td>Jul 30, 11:09 AM</td></tr>
 <tr><td><strong>Denise Lannon</strong></td><td>412 South Coles Avenue</td><td><span class="tag">1. Qualified</span></td><td><span class="tag warm">6 SMS no reply — call manually</span></td><td><span class="tag warm">6/6</span></td><td>Aug 05, 04:42 PM</td></tr></tbody></table></div>
   </section>
@@ -4960,15 +4960,15 @@ section h2, h2 {
 <tr><td><strong>James Fuccello</strong></td><td>408 Elmer St</td><td>NJ</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">1</span></td><td>Aug 12, 03:32 PM</td><td>Jeff (NJ)</td></tr>
 <tr><td><strong>Angela Patnaude</strong></td><td>7 Jefferson Dr</td><td>NJ</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">1</span></td><td>Aug 12, 03:32 PM</td><td>Jeff (NJ)</td></tr>
 <tr><td><strong>Raymond Brandefine</strong></td><td>532 Halsey Rd</td><td>NJ</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">1</span></td><td>Aug 12, 03:32 PM</td><td>Jeff (NJ)</td></tr>
-<tr><td><strong>Gina Ambrosio</strong></td><td>2014 SPRUCE HILLS DR</td><td>NJ</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">1</span></td><td>Aug 12, 02:12 PM</td><td>Jeff (NJ)</td></tr>
-<tr><td><strong>Juan Marin</strong></td><td>40 Farnham Ave</td><td>NJ</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">3</span></td><td>Aug 14, 03:24 PM</td><td>Jeff (NJ)</td></tr>
-<tr><td><strong>Jay Zuniga</strong></td><td>14 Gibson St, Cape May Court House, NJ 08210</td><td></td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Jamal Jackson</strong></td><td></td><td></td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">3</span></td><td>Aug 11, 11:26 AM</td><td>Jeff (NJ)</td></tr>
+<tr><td><strong>(no name)</strong></td><td></td><td></td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">1</span></td><td>Aug 12, 02:12 PM</td><td>Jeff (NJ)</td></tr>
+<tr><td><strong>(no name)</strong></td><td></td><td></td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">3</span></td><td>Aug 14, 03:24 PM</td><td>Jeff (NJ)</td></tr>
+<tr><td><strong>(no name)</strong></td><td></td><td></td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
+<tr><td><strong>(no name)</strong></td><td></td><td></td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">3</span></td><td>Aug 11, 11:26 AM</td><td>Jeff (NJ)</td></tr>
 <tr><td><strong>Frank Musero</strong></td><td>803 United States Ave</td><td>NJ</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">2</span></td><td>Aug 13, 12:15 PM</td><td>Jeff (NJ)</td></tr>
 <tr><td><strong>Kishan Ravani</strong></td><td>1 Village Green Ln</td><td>NJ</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">2</span></td><td>Aug 13, 12:15 PM</td><td>Jeff (NJ)</td></tr>
 <tr><td><strong>Andres Morales</strong></td><td>808 Lamberton St</td><td>NJ</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">2</span></td><td>Aug 13, 12:15 PM</td><td>Jeff (NJ)</td></tr>
-<tr><td><strong>Kimberly Clarke</strong></td><td>133 Maplewood Ave</td><td>NJ</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">2</span></td><td>Aug 13, 12:15 PM</td><td>Jeff (NJ)</td></tr>
-<tr><td><strong>Kevin Dalton</strong></td><td>55 Boulevard E</td><td>NJ</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">2</span></td><td>Aug 13, 12:15 PM</td><td>Jeff (NJ)</td></tr>
+<tr><td><strong>(no name)</strong></td><td></td><td></td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">2</span></td><td>Aug 13, 12:15 PM</td><td>Jeff (NJ)</td></tr>
+<tr><td><strong>(no name)</strong></td><td></td><td></td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">2</span></td><td>Aug 13, 12:15 PM</td><td>Jeff (NJ)</td></tr>
 <tr><td><strong>Donnie Johnson</strong></td><td>1484 Stuyvesant Ave</td><td>NJ</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">2</span></td><td>Aug 10, 10:09 AM</td><td>Jeff (NJ)</td></tr>
 <tr><td><strong>David Williams</strong></td><td>435 KERRIGAN BLVD</td><td>NJ</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">1</span></td><td>Aug 10, 10:09 AM</td><td>Jeff (NJ)</td></tr>
 <tr><td><strong>Ben Clay</strong></td><td>206 16TH AVE S</td><td>AL</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">2</span></td><td>Aug 10, 10:09 AM</td><td>AL Market</td></tr>
@@ -4984,10 +4984,10 @@ section h2, h2 {
 <tr><td><strong>Mi Mee Mee Lay</strong></td><td>3622 Poinsettia Dr</td><td>IN</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">2</span></td><td>Aug 13, 12:16 PM</td><td>IN Market</td></tr>
 <tr><td><strong>Robert Madden</strong></td><td>3675 Spottswood Ave</td><td>TN</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">2</span></td><td>Aug 13, 12:16 PM</td><td>TN Market</td></tr>
 <tr><td><strong>Larry Hollman</strong></td><td>1005 Wanda Cir</td><td>AL</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">2</span></td><td>Aug 13, 12:16 PM</td><td>AL Market</td></tr>
-<tr><td><strong>Michael Turner</strong></td><td>2425 31st Ave N</td><td>AL</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">2</span></td><td>Aug 13, 12:16 PM</td><td>AL Market</td></tr>
-<tr><td><strong>Richard Fry</strong></td><td>21 Seabright Ave</td><td>NJ</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">2</span></td><td>Aug 13, 12:16 PM</td><td>Jeff (NJ)</td></tr>
-<tr><td><strong>Pamela Richardson</strong></td><td>819 Atlantic Ave</td><td>NJ</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">2</span></td><td>Aug 13, 12:16 PM</td><td>Jeff (NJ)</td></tr>
-<tr><td><strong>Gheorghe Salgau</strong></td><td>Philadelphia</td><td>PA</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">2</span></td><td>Aug 13, 12:16 PM</td><td>PA Market</td></tr>
+<tr><td><strong>(no name)</strong></td><td></td><td></td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">2</span></td><td>Aug 13, 12:16 PM</td><td>AL Market</td></tr>
+<tr><td><strong>(no name)</strong></td><td></td><td></td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">2</span></td><td>Aug 13, 12:16 PM</td><td>Jeff (NJ)</td></tr>
+<tr><td><strong>(no name)</strong></td><td></td><td></td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">2</span></td><td>Aug 13, 12:16 PM</td><td>Jeff (NJ)</td></tr>
+<tr><td><strong>(no name)</strong></td><td></td><td></td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">2</span></td><td>Aug 13, 12:16 PM</td><td>PA Market</td></tr>
 <tr><td><strong>Joseph Wargo</strong></td><td>323 W 4th St</td><td>NJ</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">2</span></td><td>Aug 13, 12:16 PM</td><td>Jeff (NJ)</td></tr>
 <tr><td><strong>Joseph Quartullo</strong></td><td>80 Shawnee Pl</td><td>NJ</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">2</span></td><td>Aug 13, 12:16 PM</td><td>Jeff (NJ)</td></tr>
 <tr><td><strong>Peter Mimmo</strong></td><td>4708 Atlantic Ave</td><td>NJ</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">2</span></td><td>Aug 13, 12:16 PM</td><td>Jeff (NJ)</td></tr>
@@ -4998,7 +4998,7 @@ section h2, h2 {
 <tr><td><strong>Derek Harris</strong></td><td>Camden</td><td>NJ</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">2</span></td><td>Aug 13, 12:16 PM</td><td>Jeff (NJ)</td></tr>
 <tr><td><strong>Victor Demeski</strong></td><td>Hamilton Township</td><td>NJ</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">2</span></td><td>Aug 13, 12:16 PM</td><td>Jeff (NJ)</td></tr>
 <tr><td><strong>Lawrence Craver</strong></td><td>Trenton</td><td>NJ</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">2</span></td><td>Aug 13, 12:16 PM</td><td>Jeff (NJ)</td></tr>
-<tr><td><strong>Beata Szyffer-Hopkins</strong></td><td>412 Neadow Woods lane</td><td>NJ</td><td><span class="tag">2. LAO</span></td><td><span class="tag green">2</span></td><td>Aug 10, 10:10 AM</td><td>Jeff (NJ)</td></tr>
+<tr><td><strong>(no name)</strong></td><td></td><td></td><td><span class="tag">2. LAO</span></td><td><span class="tag green">2</span></td><td>Aug 10, 10:10 AM</td><td>Jeff (NJ)</td></tr>
 <tr><td><strong>Kahalil Ameen</strong></td><td>8039 7th Ave S,</td><td>AL</td><td><span class="tag">2. LAO</span></td><td><span class="tag green">1</span></td><td>Aug 10, 10:10 AM</td><td>AL Market</td></tr>
 <tr><td><strong>Carl Mccall</strong></td><td>48 Edgemere Ave</td><td>NJ</td><td><span class="tag">2. LAO</span></td><td><span class="tag green">2</span></td><td>Aug 10, 10:10 AM</td><td>Jeff (NJ)</td></tr>
 <tr><td><strong>Donald Renfro</strong></td><td>2399 W 40th St</td><td>OH</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
@@ -5027,13 +5027,6 @@ section h2, h2 {
 <tr><td><strong>Scott Bruder</strong></td><td>6 Preston Rd</td><td>Call back: Scott Bruder (6 Preston Rd)</td><td><span class="tag">Jeff</span></td><td>Aug 05, 06:02 PM</td></tr>
 <tr><td><strong>Deborah Gallucio</strong></td><td>107 Kent Ave</td><td>REVIEW: Did Jeff call Deborah Gallucio back?</td><td><span class="tag">Mike</span></td><td>Aug 06, 03:23 PM</td></tr>
 <tr><td><strong>Deborah Gallucio</strong></td><td>107 Kent Ave</td><td>Call back: Deborah Gallucio (107 Kent Ave)</td><td><span class="tag">Jeff</span></td><td>Aug 05, 03:23 PM</td></tr>
-<tr><td><strong>James Sammarco</strong></td><td>1513 Country Mill Dr</td><td>REVIEW: Did Jeff call James Sammarco?</td><td><span class="tag">Mike</span></td><td>Aug 17, 05:41 PM</td></tr>
-<tr><td><strong>James Sammarco</strong></td><td>1513 Country Mill Dr</td><td>Manual call attempt: James Sammarco (1513 Country Mill Dr)</td><td><span class="tag">Jeff</span></td><td>Aug 15, 05:41 PM</td></tr>
-<tr><td><strong>Jennifer Torres</strong></td><td>1154 Jackson St</td><td>REVIEW: Did Jeff call Jennifer Torres back?</td><td><span class="tag">Mike</span></td><td>Jul 12, 10:15 AM</td></tr>
-<tr><td><strong>Jennifer Torres</strong></td><td>1154 Jackson St</td><td>Call back: Jennifer Torres (1154 Jackson St)</td><td><span class="tag">Jeff</span></td><td>Jul 11, 10:15 AM</td></tr>
-<tr><td><strong>James Zago</strong></td><td>919 Sunset Ave</td><td>REVIEW: Did Jeff call James Zago?</td><td><span class="tag">Mike</span></td><td>Aug 10, 04:53 PM</td></tr>
-<tr><td><strong>James Zago</strong></td><td>919 Sunset Ave</td><td>Manual call attempt: James Zago (919 Sunset Ave)</td><td><span class="tag">Jeff</span></td><td>Aug 08, 04:53 PM</td></tr>
-<tr><td><strong>James Zago</strong></td><td>919 Sunset Ave</td><td>Update Status - Construction - Can go anytime.</td><td><span class="tag">Jeff</span></td><td>Jan 16, 08:00 PM</td></tr>
 <tr><td><strong>Robert Jesionka</strong></td><td>308 Ryan St</td><td>Update Status - CONST APPT</td><td><span class="tag">Jeff</span></td><td>Mar 17, 08:00 PM</td></tr>
 <tr><td><strong>Howard Goodman</strong></td><td>9 Belmont Ave</td><td>Call Howard - qualified, no response to booking texts</td><td><span class="tag">John</span></td><td>Aug 03, 12:00 AM</td></tr>
 <tr><td><strong>Michael Perry</strong></td><td>163 Pompton Ave</td><td>Call Michael - qualified, no response to booking texts</td><td><span class="tag">John</span></td><td>Aug 03, 12:00 AM</td></tr>
@@ -5080,24 +5073,6 @@ section h2, h2 {
 <tr><td><strong>Cheryl Weisenberg</strong></td><td>810 3rd St</td><td>Call back: Cheryl Weisenberg (810 3rd St)</td><td><span class="tag">Jeff</span></td><td>Jul 31, 10:43 AM</td></tr>
 <tr><td><strong>Joshua Ostrin</strong></td><td>33 S 1st Ave</td><td>REVIEW: Did Jeff call Joshua Ostrin back?</td><td><span class="tag">Mike</span></td><td>Aug 04, 12:43 PM</td></tr>
 <tr><td><strong>Joshua Ostrin</strong></td><td>33 S 1st Ave</td><td>Call back: Joshua Ostrin (33 S 1st Ave)</td><td><span class="tag">Jeff</span></td><td>Aug 03, 12:43 PM</td></tr>
-<tr><td><strong>Andres Morales</strong></td><td>808 Lamberton St</td><td>Call Andres - qualified, no response to booking texts</td><td><span class="tag">John</span></td><td>Aug 03, 12:00 AM</td></tr>
-<tr><td><strong>Lacy Dungee</strong></td><td>166 PAUL ROBESON BLVD</td><td>Call Lacy - qualified, no response to booking texts</td><td><span class="tag">John</span></td><td>Aug 03, 12:00 AM</td></tr>
-<tr><td><strong>Toni Williams</strong></td><td>12b Steel St</td><td>Call Toni - qualified, no response to booking texts</td><td><span class="tag">John</span></td><td>Aug 03, 12:00 AM</td></tr>
-<tr><td><strong>Toni Williams</strong></td><td>12b Steel St</td><td>REVIEW: Did Jeff call Toni Williams back?</td><td><span class="tag">Mike</span></td><td>Jul 31, 11:09 AM</td></tr>
-<tr><td><strong>Toni Williams</strong></td><td>12b Steel St</td><td>Call back: Toni Williams (12b Steel St)</td><td><span class="tag">Jeff</span></td><td>Jul 30, 11:09 AM</td></tr>
-<tr><td><strong>Kimberly Clarke</strong></td><td>133 Maplewood Ave</td><td>Call Kimberly - qualified, no response to booking texts</td><td><span class="tag">John</span></td><td>Aug 03, 12:00 AM</td></tr>
-<tr><td><strong>Kevin Dalton</strong></td><td>55 Boulevard E</td><td>Call Kevin - qualified, no response to booking texts</td><td><span class="tag">John</span></td><td>Aug 03, 12:00 AM</td></tr>
-<tr><td><strong>Avin</strong></td><td>305, 315 &amp; 319 Roosevelt ave</td><td>🔥 Call Avin — Qualified seller (1h SLA)</td><td><span class="tag">Unassigned</span></td><td>May 27, 08:05 PM</td></tr>
-<tr><td><strong>Kris</strong></td><td>58 Morris Ln,, NJ 08854</td><td>🔥 Call Kris — Qualified seller (1h SLA)</td><td><span class="tag">Unassigned</span></td><td>May 27, 08:05 PM</td></tr>
-<tr><td><strong>Sheila Pope</strong></td><td>2901 N 23rd St, Philadelphia, PA 19132</td><td>🔥 Call Sheila — Qualified seller (1h SLA)</td><td><span class="tag">Unassigned</span></td><td>May 27, 08:05 PM</td></tr>
-<tr><td><strong>Sheila Pope</strong></td><td>2901 N 23rd St, Philadelphia, PA 19132</td><td>REVIEW: Did Jeff call Sheila back?</td><td><span class="tag">Mike</span></td><td>May 16, 10:43 AM</td></tr>
-<tr><td><strong>Sheila Pope</strong></td><td>2901 N 23rd St, Philadelphia, PA 19132</td><td>Call back: Sheila (2901 N 23rd St, Philadelphia, PA 19132)</td><td><span class="tag">Jeff</span></td><td>May 15, 10:43 AM</td></tr>
-<tr><td><strong>Sheila Pope</strong></td><td>2901 N 23rd St, Philadelphia, PA 19132</td><td>Call Sheila - 2901 N 23rd St, Philadelphia, PA 19132, philadelphia PA 19132 - (267) 592-5047</td><td><span class="tag">Jeff</span></td><td>Mar 27, 12:00 AM</td></tr>
-<tr><td><strong>Deborah Ides</strong></td><td>48-50 Church St</td><td>REVIEW: Did Jeff call Deborah Ides back?</td><td><span class="tag">Mike</span></td><td>Jul 26, 05:13 PM</td></tr>
-<tr><td><strong>Deborah Ides</strong></td><td>48-50 Church St</td><td>Call back: Deborah Ides (48 Church St # 50)</td><td><span class="tag">Jeff</span></td><td>Jul 25, 05:13 PM</td></tr>
-<tr><td><strong>Tony</strong></td><td>223 Tyler St</td><td>FUP - Tyler St. Lease ends June</td><td><span class="tag">Jeff</span></td><td>May 05, 08:00 PM</td></tr>
-<tr><td><strong>Rafael Paragulla</strong></td><td>143 Harding Ave</td><td>Follow up with Rafael Paragulla </td><td><span class="tag">Jeff</span></td><td>Jul 03, 06:30 PM</td></tr>
-<tr><td><strong>Christopher Ascencio</strong></td><td>129 Lakeview Ave</td><td>Follow up with Christopher Ascencio </td><td><span class="tag">Jeff</span></td><td>Jun 17, 02:14 PM</td></tr>
 <tr><td><strong>Donnie Johnson</strong></td><td>1484 Stuyvesant Ave</td><td>Follow up with Donnie Johnson </td><td><span class="tag">Jeff</span></td><td>May 02, 05:16 PM</td></tr>
 <tr><td><strong>David Williams</strong></td><td>435 KERRIGAN BLVD</td><td>Follow up with David Williams </td><td><span class="tag">Jeff</span></td><td>May 14, 06:26 PM</td></tr>
 <tr><td><strong>Vance Stephens</strong></td><td>32 Cavell St</td><td>REVIEW: Did Jeff call Vance Stephens back?</td><td><span class="tag">Mike</span></td><td>Jul 27, 10:21 AM</td></tr>
@@ -5142,21 +5117,6 @@ section h2, h2 {
 <tr><td><strong>Robert Hunter</strong></td><td>1327 42nd Street Ensley</td><td>Call Robert - qualified, no response to booking texts</td><td><span class="tag">Jeff</span></td><td>Aug 03, 12:00 AM</td></tr>
 <tr><td><strong>Robert Hunter</strong></td><td>1327 42nd Street Ensley</td><td>REVIEW: Did Jeff call Robert Hunter back?</td><td><span class="tag">Mike</span></td><td>Aug 01, 02:01 PM</td></tr>
 <tr><td><strong>Robert Hunter</strong></td><td>1327 42nd Street Ensley</td><td>Call back: Robert Hunter (1327 42nd Street Ensley)</td><td><span class="tag">Jeff</span></td><td>Jul 31, 02:01 PM</td></tr>
-<tr><td><strong>Larry Hollman</strong></td><td>1005 Wanda Cir</td><td>Call Larry - qualified, no response to booking texts</td><td><span class="tag">Jeff</span></td><td>Aug 03, 12:00 AM</td></tr>
-<tr><td><strong>Michael Turner</strong></td><td>2425 31st Ave N</td><td>Call Michael - qualified, no response to booking texts</td><td><span class="tag">Jeff</span></td><td>Aug 03, 12:00 AM</td></tr>
-<tr><td><strong>Justin Sims</strong></td><td>5418 Cairo Ave</td><td>REVIEW: Did Jeff call Justin Sims back?</td><td><span class="tag">Mike</span></td><td>Aug 14, 04:27 PM</td></tr>
-<tr><td><strong>Justin Sims</strong></td><td>5418 Cairo Ave</td><td>Call back: Justin Sims (5418 Cairo Ave)</td><td><span class="tag">Jeff</span></td><td>Aug 13, 04:27 PM</td></tr>
-<tr><td><strong>Justin Sims</strong></td><td>5418 Cairo Ave</td><td>Call Justin - qualified, no response to booking texts</td><td><span class="tag">Jeff</span></td><td>Aug 03, 12:00 AM</td></tr>
-<tr><td><strong>Richard Fry</strong></td><td>21 Seabright Ave</td><td>Call Richard - qualified, no response to booking texts</td><td><span class="tag">John</span></td><td>Aug 03, 12:00 AM</td></tr>
-<tr><td><strong>Lisa Myler</strong></td><td>63 Harbor Dr</td><td>Call Lisa - qualified, no response to booking texts</td><td><span class="tag">John</span></td><td>Aug 03, 12:00 AM</td></tr>
-<tr><td><strong>Lisa Myler</strong></td><td>63 Harbor Dr</td><td>REVIEW: Did Jeff call Lisa Myler back?</td><td><span class="tag">Mike</span></td><td>Jul 31, 11:10 AM</td></tr>
-<tr><td><strong>Lisa Myler</strong></td><td>63 Harbor Dr</td><td>Call back: Lisa Myler (63 Harbor Dr)</td><td><span class="tag">Jeff</span></td><td>Jul 30, 11:10 AM</td></tr>
-<tr><td><strong>Richard Zinna</strong></td><td>33 Patton Dr</td><td>Follow up with Richard Zinna </td><td><span class="tag">Jeff</span></td><td>May 31, 04:07 PM</td></tr>
-<tr><td><strong>Richard Zinna</strong></td><td>33 Patton Dr</td><td>FUP-Possible Listing deal - Tenants moving out in June</td><td><span class="tag">Jeff</span></td><td>May 19, 08:00 PM</td></tr>
-<tr><td><strong>Alice Moszczynski</strong></td><td>119 N Rhode Island Ave</td><td>Call Alice - qualified, no response to booking texts</td><td><span class="tag">John</span></td><td>Aug 03, 12:00 AM</td></tr>
-<tr><td><strong>Alice Moszczynski</strong></td><td>119 N Rhode Island Ave</td><td>REVIEW: Did Jeff call Alice Moszczynski back?</td><td><span class="tag">Mike</span></td><td>Jul 31, 11:10 AM</td></tr>
-<tr><td><strong>Alice Moszczynski</strong></td><td>119 N Rhode Island Ave</td><td>Call back: Alice Moszczynski (119 N Rhode Island Ave)</td><td><span class="tag">Jeff</span></td><td>Jul 30, 11:10 AM</td></tr>
-<tr><td><strong>Pamela Richardson</strong></td><td>819 Atlantic Ave</td><td>Call Pamela - qualified, no response to booking texts</td><td><span class="tag">John</span></td><td>Aug 03, 12:00 AM</td></tr>
 <tr><td><strong>Sergei Karpovitch</strong></td><td>920 N Olden Ave</td><td>🔥 Call Sergei Karpovitch — Qualified seller (1h SLA)</td><td><span class="tag">Unassigned</span></td><td>May 27, 08:05 PM</td></tr>
 <tr><td><strong>Sergei Karpovitch</strong></td><td>920 N Olden Ave</td><td>REVIEW: Did Jeff call Sergei Karpovitch? (Trenton)</td><td><span class="tag">Mike</span></td><td>May 11, 10:36 AM</td></tr>
 <tr><td><strong>Sergei Karpovitch</strong></td><td>920 N Olden Ave</td><td>CALL: Sergei Karpovitch (Trenton)</td><td><span class="tag">Jeff</span></td><td>May 10, 10:36 AM</td></tr>
@@ -5204,14 +5164,6 @@ section h2, h2 {
 <tr><td><strong>Justin / Danielle Offutt</strong></td><td>5910 WILBER AVE</td><td>Call Justin Offutt - 5910 WILBER AVE, parma, OH 44129 - (216) 543-2769</td><td><span class="tag">Jeff</span></td><td>Jun 25, 03:35 PM</td></tr>
 <tr><td><strong>Justin / Danielle Offutt</strong></td><td>5910 WILBER AVE</td><td>TO-LUV: 2nd Offer Nos</td><td><span class="tag">Jeff</span></td><td>May 05, 08:00 PM</td></tr>
 <tr><td><strong>Mike</strong></td><td>445 Cleveland Rd,</td><td>CR-Will send video -42K Price in the mid | MAO 30K</td><td><span class="tag">Jeff</span></td><td>May 05, 08:00 PM</td></tr>
-<tr><td><strong>Mac Hall</strong></td><td>2903 Taylor St</td><td>Schedule Walkthru</td><td><span class="tag">Jeff</span></td><td>May 05, 08:00 PM</td></tr>
-<tr><td><strong>Beata Szyffer-Hopkins</strong></td><td>412 Neadow Woods lane</td><td>REVIEW: Did Jeff call Beata Szyffer-Hopkins?</td><td><span class="tag">Mike</span></td><td>Jun 25, 02:59 PM</td></tr>
-<tr><td><strong>Beata Szyffer-Hopkins</strong></td><td>412 Neadow Woods lane</td><td>Manual call attempt: Beata Szyffer-Hopkins (412 Neadow Woods lane)</td><td><span class="tag">Jeff</span></td><td>Jun 23, 02:59 PM</td></tr>
-<tr><td><strong>Beata Szyffer-Hopkins</strong></td><td>412 Neadow Woods lane</td><td>Need 2nd offer nos</td><td><span class="tag">Jeff</span></td><td>Apr 21, 08:00 PM</td></tr>
-<tr><td><strong>Angela Martin</strong></td><td>608 Alabama Ave Sw</td><td>REVIEW: Did Jeff call Angela Martin back?</td><td><span class="tag">Mike</span></td><td>May 23, 05:49 PM</td></tr>
-<tr><td><strong>Angela Martin</strong></td><td>608 Alabama Ave Sw</td><td>Call back: Angela Martin (608 Alabama Ave Sw)</td><td><span class="tag">Jeff</span></td><td>May 22, 05:49 PM</td></tr>
-<tr><td><strong>Angela Martin</strong></td><td>608 Alabama Ave Sw</td><td>RR-Son will CB: Omar</td><td><span class="tag">Jeff</span></td><td>Mar 17, 08:00 PM</td></tr>
-<tr><td><strong>Mark Hall (Referred by Phil)</strong></td><td>1819 W 6th St,</td><td>FUP-Offer call &amp; get details on the Package deal</td><td><span class="tag">Jeff</span></td><td>Mar 17, 08:00 PM</td></tr>
 <tr><td><strong>Kahalil Ameen</strong></td><td>8039 7th Ave S,</td><td>PM: Contract Issue: Get UC - 23K Close in 3wks</td><td><span class="tag">Jeff</span></td><td>Mar 17, 08:00 PM</td></tr>
 <tr><td><strong>Carl Mccall</strong></td><td>48 Edgemere Ave</td><td>3PM - Get UC - Contract sent at 170K</td><td><span class="tag">Jeff</span></td><td>May 01, 08:00 PM</td></tr>
 <tr><td><strong>Marcus Patterson</strong></td><td>5900 Court M</td><td>CI on other prop</td><td><span class="tag">Jeff</span></td><td>May 15, 08:00 PM</td></tr>
@@ -5282,7 +5234,7 @@ new Chart(document.getElementById('stageChart'), {
 
 new Chart(document.getElementById('stateChart'), {
   type: 'bar',
-  data: { labels: ["NJ", "AL", "PA", "OH", "UNKNOWN", "WI", "IN", "TN", "MI", "SC"], datasets: [{ data: [128, 26, 18, 7, 3, 1, 1, 1, 1, 1], backgroundColor: '#C9A52A', borderRadius: 4 }] },
+  data: { labels: ["NJ", "UNKNOWN", "AL", "PA", "OH", "WI", "IN", "TN", "SC"], datasets: [{ data: [106, 35, 21, 14, 7, 1, 1, 1, 1], backgroundColor: '#C9A52A', borderRadius: 4 }] },
   options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { precision: 0, color: '#6B7591' }, grid: { color: 'rgba(26,40,64,0.06)' } }, x: { ticks: { color: '#455066' }, grid: { display: false } } } }
 });
 
