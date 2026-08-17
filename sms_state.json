@@ -462,7 +462,7 @@
     "reply_text": "Mike, what is the name of your company?",
     "skip_reason": "tag-already-routed",
     "sms_count": 0,
-    "stage_entered_at": "2026-08-17T18:19:52.940347+00:00",
+    "stage_entered_at": "2026-08-17T19:05:58.886401+00:00",
     "stage_name": "lao"
   },
   "BEyFlzfEhra9M6DR085v": {
@@ -1113,8 +1113,11 @@
     "dormant": false,
     "last_from_number": "+12676197270",
     "last_sms_at": "2026-08-17T18:18:29.360010+00:00",
-    "replied": false,
-    "replied_at": null,
+    "replied": true,
+    "replied_at": "2026-08-17T18:20:09.334000+00:00",
+    "reply_attempts": 0,
+    "reply_class": "NEUTRAL",
+    "reply_text": "Still thinking. Waiting for the kitchen to be finished",
     "sms_count": 1,
     "stage_entered_at": "2026-08-10T18:08:55.698270+00:00",
     "stage_name": "qualified"
