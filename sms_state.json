@@ -18,6 +18,7 @@
     "reply_attempts": 0,
     "reply_class": "NEUTRAL",
     "reply_text": "Who is this",
+    "skip_reason": "tag-already-routed",
     "sms_count": 0,
     "stage_entered_at": "2026-08-18T17:03:22.746224+00:00",
     "stage_name": "dead"
@@ -256,6 +257,7 @@
     "reply_attempts": 0,
     "reply_class": "WRONG",
     "reply_text": "No. I just got Mario's old phone number 15 years ago. Or Mario put wrong phone number on listing.  Can you please send me link to where you found my phone #.",
+    "skip_reason": "tag-already-routed",
     "sms_count": 0,
     "stage_entered_at": "2026-08-18T16:59:56.325014+00:00",
     "stage_name": "dead"
@@ -526,6 +528,7 @@
     "reply_attempts": 0,
     "reply_class": "NEUTRAL",
     "reply_text": "Now works.",
+    "skip_reason": "tag-already-routed",
     "sms_count": 0,
     "stage_entered_at": "2026-08-18T17:09:54.102494+00:00",
     "stage_name": "dead"
@@ -579,6 +582,7 @@
     "reply_attempts": 0,
     "reply_class": "WRONG",
     "reply_text": "DnD enabled by customer",
+    "skip_reason": "tag-already-routed",
     "sms_count": 0,
     "stage_entered_at": "2026-08-18T16:58:55.921376+00:00",
     "stage_name": "dead"
@@ -592,6 +596,7 @@
     "reply_attempts": 0,
     "reply_class": "NEUTRAL",
     "reply_text": "Okay",
+    "skip_reason": "tag-already-routed",
     "sms_count": 0,
     "stage_entered_at": "2026-08-18T17:05:30.367131+00:00",
     "stage_name": "dead"
@@ -674,12 +679,13 @@
     "last_from_number": null,
     "last_sms_at": null,
     "replied": true,
-    "replied_at": "2026-08-14T17:25:56.526000+00:00",
+    "replied_at": null,
     "reply_attempts": 0,
     "reply_class": "NEUTRAL",
     "reply_text": "4600$ a month",
+    "skip_reason": "tag-already-routed",
     "sms_count": 0,
-    "stage_entered_at": "2026-08-18T17:09:19.371957+00:00",
+    "stage_entered_at": "2026-08-18T17:25:25.762377+00:00",
     "stage_name": "dead"
   },
   "5mAPLORxWEZQIJK3VdTp": {
@@ -840,6 +846,7 @@
     "reply_attempts": 0,
     "reply_class": "NEGATIVE",
     "reply_text": "Halt",
+    "skip_reason": "tag-already-routed",
     "sms_count": 0,
     "stage_entered_at": "2026-08-18T17:03:46.932389+00:00",
     "stage_name": "dead"
@@ -905,7 +912,7 @@
     "replied": false,
     "replied_at": null,
     "sms_count": 0,
-    "stage_entered_at": "2026-08-18T17:01:43.772159+00:00",
+    "stage_entered_at": "2026-08-18T17:21:11.775537+00:00",
     "stage_name": "dead"
   },
   "7soqLBHcZHreXlJNPF7t": {
@@ -1061,6 +1068,7 @@
     "reply_attempts": 0,
     "reply_class": "NEUTRAL",
     "reply_text": "Good.  New roof and kitchen floor",
+    "skip_reason": "tag-already-routed",
     "sms_count": 0,
     "stage_entered_at": "2026-08-18T17:06:02.985771+00:00",
     "stage_name": "dead"
@@ -1277,6 +1285,7 @@
     "reply_attempts": 0,
     "reply_class": "POSITIVE",
     "reply_text": "Sure",
+    "skip_reason": "tag-already-routed",
     "sms_count": 0,
     "stage_entered_at": "2026-08-18T16:57:13.934163+00:00",
     "stage_name": "dead"
@@ -1346,7 +1355,7 @@
     "reply_text": "Mike, what is the name of your company?",
     "skip_reason": "tag-already-routed",
     "sms_count": 0,
-    "stage_entered_at": "2026-08-18T16:55:29.098775+00:00",
+    "stage_entered_at": "2026-08-18T17:16:59.976924+00:00",
     "stage_name": "lao"
   },
   "ArMfF4s5gIASzze9WAA9": {
@@ -1474,6 +1483,7 @@
     "reply_attempts": 0,
     "reply_class": "NEGATIVE",
     "reply_text": "Halt",
+    "skip_reason": "tag-already-routed",
     "sms_count": 0,
     "stage_entered_at": "2026-08-18T17:00:38.094163+00:00",
     "stage_name": "dead"
@@ -1540,6 +1550,7 @@
     "reply_attempts": 0,
     "reply_class": "NEUTRAL",
     "reply_text": "Who are you",
+    "skip_reason": "tag-already-routed",
     "sms_count": 0,
     "stage_entered_at": "2026-08-18T17:03:39.169889+00:00",
     "stage_name": "dead"
@@ -1573,6 +1584,7 @@
     "reply_attempts": 0,
     "reply_class": "WRONG",
     "reply_text": "You are texting his ex-wife.  I am the one selling the property.",
+    "skip_reason": "tag-already-routed",
     "sms_count": 0,
     "stage_entered_at": "2026-08-18T17:08:20.765489+00:00",
     "stage_name": "dead"
@@ -1912,7 +1924,7 @@
     "replied": false,
     "replied_at": null,
     "sms_count": 0,
-    "stage_entered_at": "2026-08-18T16:57:41.825289+00:00",
+    "stage_entered_at": "2026-08-18T17:18:08.988961+00:00",
     "stage_name": "dead"
   },
   "GZNK3Om1AF4in4v0TnAV": {
@@ -1946,7 +1958,7 @@
     "reply_text": "No we just invested in a lot of upgrades and aren't interested in a low ball offer.",
     "skip_reason": "tag-already-routed",
     "sms_count": 0,
-    "stage_entered_at": "2026-08-18T16:58:19.128623+00:00",
+    "stage_entered_at": "2026-08-18T17:18:35.433127+00:00",
     "stage_name": "dead"
   },
   "GdoPFapfkMCtT2MEQ11w": {
@@ -2017,8 +2029,8 @@
     "replied": false,
     "replied_at": null,
     "sms_count": 0,
-    "stage_entered_at": "2026-08-18T16:56:15.290951+00:00",
-    "stage_name": "dead"
+    "stage_entered_at": "2026-08-18T17:15:31.420233+00:00",
+    "stage_name": "qualified"
   },
   "Gzku9tYtjeNGHHJFOfAU": {
     "dormant": false,
@@ -2089,6 +2101,7 @@
     "reply_attempts": 0,
     "reply_class": "NEGATIVE",
     "reply_text": "Liked \u201cNo worries, I'll pause here. If you change your mind, just let me know. Have a good one!\u201d",
+    "skip_reason": "tag-already-routed",
     "sms_count": 0,
     "stage_entered_at": "2026-08-18T16:58:42.175571+00:00",
     "stage_name": "dead"
@@ -2246,6 +2259,7 @@
     "reply_attempts": 0,
     "reply_class": "NEUTRAL",
     "reply_text": "Received",
+    "skip_reason": "tag-already-routed",
     "sms_count": 0,
     "stage_entered_at": "2026-08-18T17:02:36.946653+00:00",
     "stage_name": "dead"
@@ -2281,7 +2295,7 @@
     "reply_text": "You can call anytime. I just want to make sure we don't waste each other's time. There is very little room in my price. This is rental property for me I am ok owning for a few more years  I have no mortgage so I'm not desperate. Just trying to avoid lowball offers I have been getting.",
     "skip_reason": "tag-already-routed",
     "sms_count": 0,
-    "stage_entered_at": "2026-08-18T16:57:02.410016+00:00",
+    "stage_entered_at": "2026-08-18T17:17:43.932629+00:00",
     "stage_name": "dead"
   },
   "J5DzSNvRrF9st5RuSg96": {
@@ -2303,6 +2317,7 @@
     "reply_attempts": 0,
     "reply_class": "NEGATIVE",
     "reply_text": "\u200b\ud83d\udc4e\u200b to \u201c\u200aIf we are unable to meet your price expectations, have you considered listing the property or exploring the option of seller financing?\u200a\u201d",
+    "skip_reason": "tag-already-routed",
     "sms_count": 0,
     "stage_entered_at": "2026-08-18T16:58:36.207220+00:00",
     "stage_name": "dead"
@@ -2341,6 +2356,7 @@
     "reply_attempts": 0,
     "reply_class": "NEGATIVE",
     "reply_text": "Halt",
+    "skip_reason": "tag-already-routed",
     "sms_count": 0,
     "stage_entered_at": "2026-08-18T17:07:10.071665+00:00",
     "stage_name": "dead"
@@ -2574,7 +2590,7 @@
     "replied_at": null,
     "skip_reason": "tag-already-routed",
     "sms_count": 0,
-    "stage_entered_at": "2026-08-18T17:03:03.601772+00:00",
+    "stage_entered_at": "2026-08-18T17:21:46.491704+00:00",
     "stage_name": "dead"
   },
   "MZY6nvM07fNAcxyrcbpR": {
@@ -2747,6 +2763,7 @@
     "reply_attempts": 0,
     "reply_class": "NEGATIVE",
     "reply_text": "Not interested",
+    "skip_reason": "tag-already-routed",
     "sms_count": 0,
     "stage_entered_at": "2026-08-18T17:07:39.236836+00:00",
     "stage_name": "dead"
@@ -2800,6 +2817,7 @@
     "reply_attempts": 0,
     "reply_class": "NEGATIVE",
     "reply_text": "No",
+    "skip_reason": "tag-already-routed",
     "sms_count": 0,
     "stage_entered_at": "2026-08-18T17:04:30.157296+00:00",
     "stage_name": "dead"
@@ -2992,6 +3010,7 @@
     "reply_attempts": 0,
     "reply_class": "NEUTRAL",
     "reply_text": "Who is this",
+    "skip_reason": "tag-already-routed",
     "sms_count": 0,
     "stage_entered_at": "2026-08-18T17:08:50.917229+00:00",
     "stage_name": "dead"
@@ -3171,6 +3190,7 @@
     "reply_attempts": 0,
     "reply_class": "NEUTRAL",
     "reply_text": "DnD enabled by customer",
+    "skip_reason": "tag-already-routed",
     "sms_count": 0,
     "stage_entered_at": "2026-08-18T16:58:20.824021+00:00",
     "stage_name": "dead"
@@ -3297,7 +3317,7 @@
     "reply_text": "Still thinking. Waiting for the kitchen to be finished",
     "skip_reason": "tag-already-routed",
     "sms_count": 0,
-    "stage_entered_at": "2026-08-18T16:59:09.150430+00:00",
+    "stage_entered_at": "2026-08-18T17:19:10.864750+00:00",
     "stage_name": "dead"
   },
   "RtO9IAtznsmpylqu3l2f": {
@@ -3363,6 +3383,7 @@
     "reply_attempts": 0,
     "reply_class": "WRONG",
     "reply_text": "I didn't speak to anyone about a property",
+    "skip_reason": "tag-already-routed",
     "sms_count": 0,
     "stage_entered_at": "2026-08-18T17:03:34.824976+00:00",
     "stage_name": "dead"
@@ -3517,6 +3538,7 @@
     "reply_attempts": 0,
     "reply_class": "NEUTRAL",
     "reply_text": "The email is not active, you can send information about your company to this my new email\nlinmotive244@gmail.com",
+    "skip_reason": "tag-already-routed",
     "sms_count": 0,
     "stage_entered_at": "2026-08-18T17:06:41.732780+00:00",
     "stage_name": "dead"
@@ -3565,6 +3587,7 @@
     "reply_attempts": 0,
     "reply_class": "WRONG",
     "reply_text": "DnD enabled by customer",
+    "skip_reason": "tag-already-routed",
     "sms_count": 0,
     "stage_entered_at": "2026-08-18T17:03:05.358068+00:00",
     "stage_name": "dead"
@@ -3646,6 +3669,7 @@
     "reply_attempts": 0,
     "reply_class": "NEUTRAL",
     "reply_text": "Who is this?",
+    "skip_reason": "tag-already-routed",
     "sms_count": 0,
     "stage_entered_at": "2026-08-18T17:05:37.217108+00:00",
     "stage_name": "dead"
@@ -3670,6 +3694,7 @@
     "reply_attempts": 0,
     "reply_class": "HARD_STOP",
     "reply_text": "Hi,\nWe sent you an email earlier with additional information about our company and relevant details for your review. Please take a moment to look it over and let me know if you have any questions.\nReply Halt to QUIT\nThanks -",
+    "skip_reason": "tag-already-routed",
     "sms_count": 0,
     "stage_entered_at": "2026-08-18T17:06:10.862887+00:00",
     "stage_name": "dead"
@@ -3713,6 +3738,7 @@
     "reply_attempts": 0,
     "reply_class": "NEGATIVE",
     "reply_text": "At my price, it's already maximized.",
+    "skip_reason": "tag-already-routed",
     "sms_count": 0,
     "stage_entered_at": "2026-08-18T16:57:26.432485+00:00",
     "stage_name": "dead"
@@ -3777,6 +3803,7 @@
     "reply_attempts": 0,
     "reply_class": "NEUTRAL",
     "reply_text": "DnD enabled by customer",
+    "skip_reason": "tag-already-routed",
     "sms_count": 0,
     "stage_entered_at": "2026-08-18T17:06:27.992943+00:00",
     "stage_name": "dead"
@@ -3855,6 +3882,7 @@
     "reply_attempts": 0,
     "reply_class": "NEGATIVE",
     "reply_text": "Im really not interested right now",
+    "skip_reason": "tag-already-routed",
     "sms_count": 0,
     "stage_entered_at": "2026-08-18T17:07:57.960931+00:00",
     "stage_name": "dead"
@@ -3868,6 +3896,7 @@
     "reply_attempts": 0,
     "reply_class": "NEUTRAL",
     "reply_text": "Who are you?",
+    "skip_reason": "tag-already-routed",
     "sms_count": 0,
     "stage_entered_at": "2026-08-18T17:05:03.699656+00:00",
     "stage_name": "dead"
@@ -3980,6 +4009,7 @@
     "reply_attempts": 0,
     "reply_class": "NEUTRAL",
     "reply_text": "We just renovated",
+    "skip_reason": "tag-already-routed",
     "sms_count": 0,
     "stage_entered_at": "2026-08-18T16:59:32.646033+00:00",
     "stage_name": "dead"
@@ -4023,6 +4053,7 @@
     "reply_attempts": 0,
     "reply_class": "NEUTRAL",
     "reply_text": "And what email",
+    "skip_reason": "tag-already-routed",
     "sms_count": 0,
     "stage_entered_at": "2026-08-18T17:07:24.929246+00:00",
     "stage_name": "dead"
@@ -4086,6 +4117,7 @@
     "reply_attempts": 0,
     "reply_class": "NEUTRAL",
     "reply_text": "DnD enabled by customer",
+    "skip_reason": "tag-already-routed",
     "sms_count": 0,
     "stage_entered_at": "2026-08-18T17:01:45.296309+00:00",
     "stage_name": "dead"
@@ -4157,6 +4189,7 @@
     "reply_attempts": 0,
     "reply_class": "NEUTRAL",
     "reply_text": "What email",
+    "skip_reason": "tag-already-routed",
     "sms_count": 0,
     "stage_entered_at": "2026-08-18T17:03:11.523311+00:00",
     "stage_name": "dead"
@@ -4220,6 +4253,7 @@
     "reply_attempts": 0,
     "reply_class": "NEGATIVE",
     "reply_text": "No thanks",
+    "skip_reason": "tag-already-routed",
     "sms_count": 0,
     "stage_entered_at": "2026-08-18T16:57:54.609997+00:00",
     "stage_name": "dead"
@@ -4374,6 +4408,7 @@
     "reply_attempts": 0,
     "reply_class": "NEUTRAL",
     "reply_text": "DnD enabled by customer",
+    "skip_reason": "tag-already-routed",
     "sms_count": 0,
     "stage_entered_at": "2026-08-18T17:05:22.556805+00:00",
     "stage_name": "dead"
@@ -4714,6 +4749,7 @@
     "reply_attempts": 0,
     "reply_class": "NEUTRAL",
     "reply_text": "DnD enabled by customer",
+    "skip_reason": "tag-already-routed",
     "sms_count": 0,
     "stage_entered_at": "2026-08-18T17:06:51.542012+00:00",
     "stage_name": "dead"
@@ -4762,6 +4798,7 @@
     "reply_attempts": 0,
     "reply_class": "NEUTRAL",
     "reply_text": "DnD enabled by customer",
+    "skip_reason": "tag-already-routed",
     "sms_count": 0,
     "stage_entered_at": "2026-08-18T17:07:12.863919+00:00",
     "stage_name": "dead"
@@ -4775,6 +4812,7 @@
     "reply_attempts": 0,
     "reply_class": "NEGATIVE",
     "reply_text": "Halt",
+    "skip_reason": "tag-already-routed",
     "sms_count": 0,
     "stage_entered_at": "2026-08-18T17:09:30.183239+00:00",
     "stage_name": "dead"
@@ -4829,6 +4867,7 @@
     "reply_attempts": 0,
     "reply_class": "NEGATIVE",
     "reply_text": "Not at this time",
+    "skip_reason": "tag-already-routed",
     "sms_count": 0,
     "stage_entered_at": "2026-08-18T17:04:57.936842+00:00",
     "stage_name": "dead"
@@ -4958,6 +4997,7 @@
     "reply_attempts": 0,
     "reply_class": "NEUTRAL",
     "reply_text": "Who is this?  I don't need help",
+    "skip_reason": "tag-already-routed",
     "sms_count": 0,
     "stage_entered_at": "2026-08-18T17:01:57.806964+00:00",
     "stage_name": "dead"
@@ -4984,7 +5024,7 @@
     "replied_at": null,
     "skip_reason": "tag-already-routed",
     "sms_count": 0,
-    "stage_entered_at": "2026-08-18T17:09:53.305049+00:00",
+    "stage_entered_at": "2026-08-18T17:25:54.097501+00:00",
     "stage_name": "dead"
   },
   "gZBc0lSSpZCAGdU5iAkF": {
@@ -5208,6 +5248,7 @@
     "reply_attempts": 0,
     "reply_class": "NEUTRAL",
     "reply_text": "this is redundant",
+    "skip_reason": "tag-already-routed",
     "sms_count": 0,
     "stage_entered_at": "2026-08-18T16:58:08.354027+00:00",
     "stage_name": "dead"
@@ -5221,6 +5262,7 @@
     "reply_attempts": 0,
     "reply_class": "HOSTILE",
     "reply_text": "Have an offer, in attorney review",
+    "skip_reason": "tag-already-routed",
     "sms_count": 0,
     "stage_entered_at": "2026-08-18T16:56:56.528097+00:00",
     "stage_name": "dead"
@@ -5271,6 +5313,7 @@
     "reply_attempts": 0,
     "reply_class": "WRONG",
     "reply_text": "DnD enabled by customer",
+    "skip_reason": "tag-already-routed",
     "sms_count": 0,
     "stage_entered_at": "2026-08-18T16:58:16.428050+00:00",
     "stage_name": "dead"
@@ -5466,6 +5509,7 @@
     "reply_attempts": 0,
     "reply_class": "NEGATIVE",
     "reply_text": "Halt",
+    "skip_reason": "tag-already-routed",
     "sms_count": 0,
     "stage_entered_at": "2026-08-18T17:00:48.667470+00:00",
     "stage_name": "dead"
@@ -5489,6 +5533,7 @@
     "reply_attempts": 0,
     "reply_class": "NEGATIVE",
     "reply_text": "my property was sold 7/7/2026 it was a private sale",
+    "skip_reason": "tag-already-routed",
     "sms_count": 0,
     "stage_entered_at": "2026-08-18T17:04:10.906447+00:00",
     "stage_name": "dead"
@@ -5582,6 +5627,7 @@
     "reply_attempts": 0,
     "reply_class": "NEGATIVE",
     "reply_text": "Prop sold",
+    "skip_reason": "tag-already-routed",
     "sms_count": 0,
     "stage_entered_at": "2026-08-18T16:57:49.006061+00:00",
     "stage_name": "dead"
@@ -5625,6 +5671,7 @@
     "reply_attempts": 0,
     "reply_class": "NEUTRAL",
     "reply_text": "Didn't get it",
+    "skip_reason": "tag-already-routed",
     "sms_count": 0,
     "stage_entered_at": "2026-08-18T17:02:24.940236+00:00",
     "stage_name": "dead"
@@ -5668,6 +5715,7 @@
     "reply_attempts": 0,
     "reply_class": "NEUTRAL",
     "reply_text": "DnD enabled by customer",
+    "skip_reason": "tag-already-routed",
     "sms_count": 0,
     "stage_entered_at": "2026-08-18T17:06:15.351711+00:00",
     "stage_name": "dead"
@@ -5711,6 +5759,7 @@
     "reply_attempts": 0,
     "reply_class": "NEGATIVE",
     "reply_text": "Halt",
+    "skip_reason": "tag-already-routed",
     "sms_count": 0,
     "stage_entered_at": "2026-08-18T17:02:44.813844+00:00",
     "stage_name": "dead"
@@ -5891,7 +5940,7 @@
     "reply_text": "I'm entertaining offers at $750k as is. Thx",
     "skip_reason": "tag-already-routed",
     "sms_count": 0,
-    "stage_entered_at": "2026-08-18T17:08:36.515844+00:00",
+    "stage_entered_at": "2026-08-18T17:25:00.560569+00:00",
     "stage_name": "dead"
   },
   "nCO0yg05Zdy7RDvsxtpu": {
@@ -6059,6 +6108,7 @@
     "reply_attempts": 0,
     "reply_class": "POSITIVE",
     "reply_text": "DnD enabled by customer",
+    "skip_reason": "tag-already-routed",
     "sms_count": 0,
     "stage_entered_at": "2026-08-18T17:00:56.118044+00:00",
     "stage_name": "dead"
@@ -6101,8 +6151,8 @@
     "replied": false,
     "replied_at": null,
     "sms_count": 0,
-    "stage_entered_at": "2026-08-18T16:56:05.378483+00:00",
-    "stage_name": "dead"
+    "stage_entered_at": "2026-08-18T17:15:36.292910+00:00",
+    "stage_name": "qualified"
   },
   "p6oqAEarL8xigyeKmJql": {
     "dormant": false,
@@ -6361,7 +6411,7 @@
     "reply_text": "DnD enabled by customer",
     "skip_reason": "tag-already-routed",
     "sms_count": 0,
-    "stage_entered_at": "2026-08-18T17:09:06.570004+00:00",
+    "stage_entered_at": "2026-08-18T17:25:20.315645+00:00",
     "stage_name": "dead"
   },
   "rQ1EwW0Yr7FlS4AA76aJ": {
@@ -6433,6 +6483,7 @@
     "reply_attempts": 0,
     "reply_class": "NEUTRAL",
     "reply_text": "Who is this ?\nHow did you get this number?",
+    "skip_reason": "tag-already-routed",
     "sms_count": 0,
     "stage_entered_at": "2026-08-18T16:55:58.777120+00:00",
     "stage_name": "dead"
@@ -6486,6 +6537,7 @@
     "reply_attempts": 0,
     "reply_class": "HARD_STOP",
     "reply_text": "STOP",
+    "skip_reason": "tag-already-routed",
     "sms_count": 0,
     "stage_entered_at": "2026-08-18T17:04:27.291377+00:00",
     "stage_name": "dead"
@@ -6563,6 +6615,7 @@
     "reply_attempts": 0,
     "reply_class": "NEUTRAL",
     "reply_text": "Now",
+    "skip_reason": "tag-already-routed",
     "sms_count": 0,
     "stage_entered_at": "2026-08-18T17:04:34.989310+00:00",
     "stage_name": "dead"
@@ -6578,7 +6631,7 @@
     "reply_text": "I looked at your link and I don't see any recent deals that you have closed. All I see is a request to sell my property.",
     "skip_reason": "tag-already-routed",
     "sms_count": 0,
-    "stage_entered_at": "2026-08-18T17:05:48.615459+00:00",
+    "stage_entered_at": "2026-08-18T17:23:12.557954+00:00",
     "stage_name": "dead"
   },
   "tjhaGVUXaGue3qnr83uL": {
@@ -6690,6 +6743,7 @@
     "reply_attempts": 0,
     "reply_class": "POSITIVE",
     "reply_text": "YES GOT UR EMAIL THANK U FIR ALL UR HELP",
+    "skip_reason": "tag-already-routed",
     "sms_count": 0,
     "stage_entered_at": "2026-08-18T17:02:18.457704+00:00",
     "stage_name": "dead"
@@ -6803,6 +6857,7 @@
     "reply_attempts": 0,
     "reply_class": "NEUTRAL",
     "reply_text": "Needs to be appraised first",
+    "skip_reason": "tag-already-routed",
     "sms_count": 0,
     "stage_entered_at": "2026-08-18T17:00:28.231513+00:00",
     "stage_name": "dead"
@@ -6836,6 +6891,7 @@
     "reply_attempts": 0,
     "reply_class": "NEUTRAL",
     "reply_text": "Who is this?",
+    "skip_reason": "tag-already-routed",
     "sms_count": 0,
     "stage_entered_at": "2026-08-18T17:09:09.008728+00:00",
     "stage_name": "dead"
@@ -6988,6 +7044,7 @@
     "reply_attempts": 0,
     "reply_class": "NEUTRAL",
     "reply_text": "DnD enabled by customer",
+    "skip_reason": "tag-already-routed",
     "sms_count": 0,
     "stage_entered_at": "2026-08-18T16:57:33.891675+00:00",
     "stage_name": "dead"
@@ -7041,6 +7098,7 @@
     "reply_attempts": 0,
     "reply_class": "NEUTRAL",
     "reply_text": "DnD enabled by customer",
+    "skip_reason": "tag-already-routed",
     "sms_count": 0,
     "stage_entered_at": "2026-08-18T17:02:05.077736+00:00",
     "stage_name": "dead"
@@ -7096,6 +7154,7 @@
     "reply_attempts": 0,
     "reply_class": "NEGATIVE",
     "reply_text": "Halt",
+    "skip_reason": "tag-already-routed",
     "sms_count": 0,
     "stage_entered_at": "2026-08-18T17:06:24.216679+00:00",
     "stage_name": "dead"
@@ -7109,6 +7168,7 @@
     "reply_attempts": 0,
     "reply_class": "NEGATIVE",
     "reply_text": "Not interested",
+    "skip_reason": "tag-already-routed",
     "sms_count": 0,
     "stage_entered_at": "2026-08-18T16:58:47.637592+00:00",
     "stage_name": "dead"
