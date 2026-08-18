@@ -2691,5 +2691,60 @@
     "match_cid": "8f8nsvVdZpkVHFopeURi",
     "match_confidence": "high",
     "summary": "Seller confirmed property is in good condition with no work needed and asked when they can schedule a showing."
+  },
+  "C06MM4DQZ28:1787073631.830549": {
+    "field_updates": {
+      "asking_price": 100000,
+      "motivation": null,
+      "reason_for_selling": null,
+      "timeline": null
+    },
+    "match_cid": "coPAWNSJ7w6sWZgz1RLP",
+    "match_confidence": "high",
+    "summary": "Rickie Banks responded with asking prices of $100k for 4915 N 17th St and also mentioned 4636 N 11th St."
+  },
+  "C06MM4DQZ28:1787073642.451489": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": "Open to offers",
+      "reason_for_selling": null,
+      "timeline": null
+    },
+    "match_cid": "VAmvP9vQT8gN5gJbe7AV",
+    "match_confidence": "high",
+    "summary": "Seller is open to offers, house is updated with new roof 5 years ago but no central air, asking price not yet disclosed."
+  },
+  "C06MM4DQZ28:1787073654.655509": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": null,
+      "reason_for_selling": null,
+      "timeline": null
+    },
+    "match_cid": "59p867K56Nl2CWLIoYHu",
+    "match_confidence": "high",
+    "summary": "Seller responded asking for an offer and team member asked about property condition and interior work needed."
+  },
+  "C06MM4DQZ28:1787076382.845579": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": null,
+      "reason_for_selling": null,
+      "timeline": null
+    },
+    "match_cid": "T0lJ9kUr5peYmqTc0tJg",
+    "match_confidence": "high",
+    "summary": "Seller confirmed interest in selling and stated the property is in excellent condition with everything 2-3 years old, no work needed."
+  },
+  "C06MM4DQZ28:1787076430.292209": {
+    "field_updates": {
+      "asking_price": 600000,
+      "motivation": null,
+      "reason_for_selling": null,
+      "timeline": null
+    },
+    "match_cid": "uK2juy3lNpvbOdxghaGB",
+    "match_confidence": "high",
+    "summary": "Edward Balut states his house is in excellent condition and mentions a neighbor sold a comparable property for $600k as a price reference."
   }
 }
