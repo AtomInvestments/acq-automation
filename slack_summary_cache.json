@@ -2746,5 +2746,16 @@
     "match_cid": "uK2juy3lNpvbOdxghaGB",
     "match_confidence": "high",
     "summary": "Edward Balut states his house is in excellent condition and mentions a neighbor sold a comparable property for $600k as a price reference."
+  },
+  "C06MM4DQZ28:1787082831.741029": {
+    "field_updates": {
+      "asking_price": 550000,
+      "motivation": null,
+      "reason_for_selling": null,
+      "timeline": "No rush"
+    },
+    "match_cid": "3GSpUJHqn5XIFT1GFLXf",
+    "match_confidence": "high",
+    "summary": "Lead states asking price of $550k or $525k cash as-is, property needs work, and seller is in no rush to sell."
   }
 }
