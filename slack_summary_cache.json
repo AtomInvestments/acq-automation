@@ -2757,5 +2757,38 @@
     "match_cid": "3GSpUJHqn5XIFT1GFLXf",
     "match_confidence": "high",
     "summary": "Lead states asking price of $550k or $525k cash as-is, property needs work, and seller is in no rush to sell."
+  },
+  "C06MM4DQZ28:1787163631.382079": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": null,
+      "reason_for_selling": null,
+      "timeline": null
+    },
+    "match_cid": "YanTPLeVaCiChzVQgMr9",
+    "match_confidence": "high",
+    "summary": "Seller Miguel responded to initial outreach about 216 Tioga St asking how much money would be offered."
+  },
+  "C06MM4DQZ28:1787163676.769529": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": "Open to offers",
+      "reason_for_selling": null,
+      "timeline": null
+    },
+    "match_cid": "ArKob7rxAY6mKRgp4I9k",
+    "match_confidence": "high",
+    "summary": "William Babuschak responded to initial outreach about 301 Lakeside Blvd saying 'Shoot me an offer' and conversation is ongoing about property condition."
+  },
+  "C06MM4DQZ28:1787163965.443799": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": "Retirement",
+      "reason_for_selling": "Approaching retirement and starting to think about selling",
+      "timeline": "6+ months"
+    },
+    "match_cid": "0naSw7ax2bc0RF64TXU6",
+    "match_confidence": "high",
+    "summary": "Lynn Baker confirmed property is well-maintained with older kitchen, considering selling in 6-10 months for retirement, wants price before call."
   }
 }
