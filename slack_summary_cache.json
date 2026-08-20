@@ -297,6 +297,28 @@
     "match_confidence": "high",
     "summary": "Larry Hollman requested no more calls after not answering for 31 minutes."
   },
+  "C05M7E1TJP7:1787259627.695219": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": null,
+      "reason_for_selling": null,
+      "timeline": null
+    },
+    "match_cid": "Nfx9v3I3KQFOjJzpfAaI",
+    "match_confidence": "high",
+    "summary": "Team member sent follow-up message asking Rudolph if he'd still sell 37 Mead St, giving him option to reply Y or stop outreach."
+  },
+  "C05M7E1TJP7:1787259627.870409": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": null,
+      "reason_for_selling": null,
+      "timeline": null
+    },
+    "match_cid": "NQQCk8Pcg5r5t4Hj01y3",
+    "match_confidence": "low",
+    "summary": "Lead responded with just the letter 'K' after 58 minutes, likely acknowledging a previous message."
+  },
   "C05MP6K9RNV:1779136440.549199": {
     "field_updates": {
       "asking_price": null,
