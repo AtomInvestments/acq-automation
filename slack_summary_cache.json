@@ -275,6 +275,28 @@
     "match_confidence": "high",
     "summary": "Gregorio Martinez confirmed availability and has a call block scheduled for Thu Aug 20 at 3:15 PM ET."
   },
+  "C05M7E1TJP7:1787255062.627679": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": "open to selling",
+      "reason_for_selling": null,
+      "timeline": "ASAP"
+    },
+    "match_cid": "AgV83PFA4yOczmzXyMmP",
+    "match_confidence": "high",
+    "summary": "Steven Guinto confirmed he is looking to sell and a call is scheduled for Thursday August 20 at 4:45 PM ET."
+  },
+  "C05M7E1TJP7:1787256027.732339": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": null,
+      "reason_for_selling": null,
+      "timeline": null
+    },
+    "match_cid": "7gtqR9U3fsYpFGqNfzxb",
+    "match_confidence": "high",
+    "summary": "Larry Hollman requested no more calls after not answering for 31 minutes."
+  },
   "C05MP6K9RNV:1779136440.549199": {
     "field_updates": {
       "asking_price": null,
@@ -2856,5 +2878,16 @@
     "match_cid": "jadOPtCGfeVv97WdHibI",
     "match_confidence": "high",
     "summary": "Seller has a tenant moving out in October and plans to show the duplex then; property needs some work but has recent upgrades including new windows and hot water heater."
+  },
+  "C06MM4DQZ28:1787255889.440359": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": null,
+      "reason_for_selling": null,
+      "timeline": null
+    },
+    "match_cid": "NQQCk8Pcg5r5t4Hj01y3",
+    "match_confidence": "high",
+    "summary": "Seller states kitchen and bathroom need renovating, has not thought about price range yet, timeline question still pending response."
   }
 }
