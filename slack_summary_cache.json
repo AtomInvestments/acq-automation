@@ -242,6 +242,39 @@
     "match_confidence": "none",
     "summary": "Automated callback scheduling report listing multiple leads across attempt 2/3 and 3/3 with various CallTools scheduling issues."
   },
+  "C05M7E1TJP7:1787247100.214479": {
+    "field_updates": {
+      "asking_price": 1150000,
+      "motivation": null,
+      "reason_for_selling": null,
+      "timeline": "No rush"
+    },
+    "match_cid": "YOmzK2nW3UamtcmFhtka",
+    "match_confidence": "high",
+    "summary": "Seller named asking price of $1.1M-$1.2M for beach house at 4708 Atlantic Avenue and has second property at 1420 Valley Road listed at $750K."
+  },
+  "C05M7E1TJP7:1787248828.798289": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": null,
+      "reason_for_selling": null,
+      "timeline": null
+    },
+    "match_cid": "T0lJ9kUr5peYmqTc0tJg",
+    "match_confidence": "high",
+    "summary": "Adhish Desai sent an unanswered message 36 minutes ago asking for details about who will visit and when so he can inform his tenant, mentioning he told them they are appraisers."
+  },
+  "C05M7E1TJP7:1787249066.952069": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": null,
+      "reason_for_selling": null,
+      "timeline": null
+    },
+    "match_cid": "RR7VCImRM6imHWu2mQmh",
+    "match_confidence": "high",
+    "summary": "Gregorio Martinez confirmed availability and has a call block scheduled for Thu Aug 20 at 3:15 PM ET."
+  },
   "C05MP6K9RNV:1779136440.549199": {
     "field_updates": {
       "asking_price": null,
@@ -2801,5 +2834,27 @@
     "match_cid": "XvdqTlW3JUn9hhgGxpEe",
     "match_confidence": "high",
     "summary": "Seller Brian Remeta is open to selling in summer 2027 for $350-375k, property is in fair condition with cosmetic work needed and dead AC."
+  },
+  "C06MM4DQZ28:1787248846.332199": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": null,
+      "reason_for_selling": null,
+      "timeline": null
+    },
+    "match_cid": "RR7VCImRM6imHWu2mQmh",
+    "match_confidence": "high",
+    "summary": "Gregorio Martinez confirmed the interior is all new but stated no asking price yet and asked for the buyer to make an offer."
+  },
+  "C06MM4DQZ28:1787249080.845989": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": "Tenant moving out after 15 years",
+      "reason_for_selling": "Tenant of 15 years is moving out in October and seller plans to sell the duplex at that time",
+      "timeline": "90 days"
+    },
+    "match_cid": "jadOPtCGfeVv97WdHibI",
+    "match_confidence": "high",
+    "summary": "Seller has a tenant moving out in October and plans to show the duplex then; property needs some work but has recent upgrades including new windows and hot water heater."
   }
 }
