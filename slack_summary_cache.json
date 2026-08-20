@@ -319,6 +319,17 @@
     "match_confidence": "low",
     "summary": "Lead responded with just the letter 'K' after 58 minutes, likely acknowledging a previous message."
   },
+  "C05M7E1TJP7:1787263228.263429": {
+    "field_updates": {
+      "asking_price": 600000,
+      "motivation": null,
+      "reason_for_selling": null,
+      "timeline": null
+    },
+    "match_cid": "Nfx9v3I3KQFOjJzpfAaI",
+    "match_confidence": "high",
+    "summary": "Rudolph Thompson stated a price of $600,000 for the property."
+  },
   "C05MP6K9RNV:1779136440.549199": {
     "field_updates": {
       "asking_price": null,
