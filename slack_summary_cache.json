@@ -385,6 +385,17 @@
     "match_confidence": "high",
     "summary": "Seller named asking price of $300,000 for currently rented property in 8-9/10 condition, not urgent to sell but will consider offers and send pictures."
   },
+  "C05M7E1TJP7:1787349626.386229": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": null,
+      "reason_for_selling": "Retirement in October",
+      "timeline": "6+ months"
+    },
+    "match_cid": "IdrrnwDAcIzlYhKYwbaY",
+    "match_confidence": "high",
+    "summary": "Juan Marin stated he will be in touch once he retires in October."
+  },
   "C05MP6K9RNV:1779136440.549199": {
     "field_updates": {
       "asking_price": null,
