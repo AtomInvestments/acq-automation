@@ -341,6 +341,17 @@
     "match_confidence": "high",
     "summary": "Joseph Quartullo stated a firm asking price of $300k with no negotiation."
   },
+  "C05M7E1TJP7:1787314253.546869": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": null,
+      "reason_for_selling": null,
+      "timeline": null
+    },
+    "match_cid": "jadOPtCGfeVv97WdHibI",
+    "match_confidence": "high",
+    "summary": "Bryan Winters requested a call before 10 AM on Friday, August 21st, and ACQ team has booked the call block."
+  },
   "C05MP6K9RNV:1779136440.549199": {
     "field_updates": {
       "asking_price": null,
