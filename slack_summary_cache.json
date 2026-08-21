@@ -330,6 +330,17 @@
     "match_confidence": "high",
     "summary": "Rudolph Thompson stated a price of $600,000 for the property."
   },
+  "C05M7E1TJP7:1787274031.292609": {
+    "field_updates": {
+      "asking_price": 300000,
+      "motivation": "Firm on price - no negotiation",
+      "reason_for_selling": null,
+      "timeline": null
+    },
+    "match_cid": "nWqg3CVZIhTrASjrIsx6",
+    "match_confidence": "high",
+    "summary": "Joseph Quartullo stated a firm asking price of $300k with no negotiation."
+  },
   "C05MP6K9RNV:1779136440.549199": {
     "field_updates": {
       "asking_price": null,
