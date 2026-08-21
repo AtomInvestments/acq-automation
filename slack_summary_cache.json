@@ -2988,5 +2988,38 @@
     "match_cid": "v4NaUiJCnEJYc8HNTXYT",
     "match_confidence": "high",
     "summary": "Seller needs kitchen and bath updates, wants investor to make an offer directly without phone calls, hasn't stated asking price or timeline yet."
+  },
+  "C06MM4DQZ28:1787332030.476329": {
+    "field_updates": {
+      "asking_price": 370000,
+      "motivation": "willing to sell for high price",
+      "reason_for_selling": null,
+      "timeline": null
+    },
+    "match_cid": "KYJGt0kvDTyjT586MxMB",
+    "match_confidence": "high",
+    "summary": "Marlene confirmed interest in selling at ~$370k but stated the property needs work and expects a high price."
+  },
+  "C06MM4DQZ28:1787332034.401469": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": null,
+      "reason_for_selling": null,
+      "timeline": null
+    },
+    "match_cid": "qhimxLWHqf9KzjYeU74w",
+    "match_confidence": "high",
+    "summary": "Armando Sanzari responded 'yes' to inquiry about selling 101 Arnot St and conversation is progressing to discuss property condition."
+  },
+  "C06MM4DQZ28:1787332043.200779": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": "Has multiple competing offers",
+      "reason_for_selling": "Currently considering multiple offers on the property",
+      "timeline": null
+    },
+    "match_cid": "9L0w2jgSBFKSQc9Wjq7g",
+    "match_confidence": "high",
+    "summary": "Lead has multiple offers, property needs exterior repaint and minor touches, interior has normal wear and tear, plumbing and electrical are solid."
   }
 }
