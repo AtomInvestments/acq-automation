@@ -4190,7 +4190,7 @@ section h2, h2 {
   <header class="masthead">
     <div class="brandrow">
       <span class="brand">Atom Investments · APG Operations</span>
-      <span>Last updated Aug 21, 2026 03:20 AM ET</span>
+      <span>Last updated Aug 21, 2026 04:07 AM ET</span>
     </div>
     <h1>Active <span class="accent">Deals.</span></h1>
     <p class="dek">Every property currently in stages 1-7 of the ACQ pipeline. Sorted by call rating within each stage so the strongest deals surface first.</p>
@@ -4997,7 +4997,7 @@ section h2, h2 {
   <header class="masthead">
     <div class="brandrow">
       <span class="brand">Atom Investments · APG Operations</span>
-      <span>Last updated Aug 21, 2026 03:19 AM ET</span>
+      <span>Last updated Aug 21, 2026 04:06 AM ET</span>
     </div>
     <h1>SMS <span class="accent">Follow-Ups.</span></h1>
     <p class="dek">Action queue for Jeff and Mike — replies to call back, leads gone dormant, and everything still cycling through the SMS sequence.</p>
@@ -5017,7 +5017,7 @@ section h2, h2 {
     <a href="sms-test.html">SMS Test</a>
   </nav>
 
-  <details class="run-grid-collapsed"><summary>All 5 cron jobs OK on last run — click for timestamps</summary><div class="run-grid"><div class="run-row"><span class="tag green">OK</span><span class="run-name">ACQ Call Recording Automation</span><span class="run-ts">Aug 21, 02:25 AM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">ACQ SMS Follow-Up + Dashboard</span><span class="run-ts">Aug 21, 02:32 AM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">APG Slack Scraper</span><span class="run-ts">Aug 21, 02:25 AM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">dashboard (script)</span><span class="run-ts">Aug 21, 03:15 AM</span><span class="run-detail">dashboard updated</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">sms (script)</span><span class="run-ts">Aug 21, 03:13 AM</span><span class="run-detail">outside business hours (hour=3 ET)</span></div></div></details><div class="status-banner on"><div class="status-text"><span class="pulse"></span>SMS Automation: <span style="color:var(--green);font-weight:800">ACTIVE</span></div><a class="btn btn-kill" href="https://docs.google.com/spreadsheets/d/1wc3Pt46ze-ejLaryL8WIRQf4OjEkirolc4-O8lsRQZY/edit#gid=0" target="_blank">EMERGENCY KILL SWITCH</a></div>
+  <details class="run-grid-collapsed"><summary>All 5 cron jobs OK on last run — click for timestamps</summary><div class="run-grid"><div class="run-row"><span class="tag green">OK</span><span class="run-name">ACQ Call Recording Automation</span><span class="run-ts">Aug 21, 03:58 AM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">ACQ SMS Follow-Up + Dashboard</span><span class="run-ts">Aug 21, 03:20 AM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">APG Slack Scraper</span><span class="run-ts">Aug 21, 03:36 AM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">dashboard (script)</span><span class="run-ts">Aug 21, 04:03 AM</span><span class="run-detail">dashboard updated</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">sms (script)</span><span class="run-ts">Aug 21, 04:01 AM</span><span class="run-detail">outside business hours (hour=4 ET)</span></div></div></details><div class="status-banner on"><div class="status-text"><span class="pulse"></span>SMS Automation: <span style="color:var(--green);font-weight:800">ACTIVE</span></div><a class="btn btn-kill" href="https://docs.google.com/spreadsheets/d/1wc3Pt46ze-ejLaryL8WIRQf4OjEkirolc4-O8lsRQZY/edit#gid=0" target="_blank">EMERGENCY KILL SWITCH</a></div>
 
   <section class="sec">
     <div class="tag-row"><span class="num">01</span><h2>At a Glance</h2></div>
@@ -5090,7 +5090,7 @@ section h2, h2 {
 <tr><td><strong>Rudolph Thompson</strong></td><td>37 Mead St</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot">Aug 20, 04:22 PM</span></td><td>Jeff (NJ)</td></tr>
 <tr><td><strong>Carrie Smith</strong></td><td>152 Scheerer Ave</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot">Jun 24, 12:35 PM</span></td><td></td></tr>
 <tr><td><strong>Michael Georgetti</strong></td><td>2122 Branch Pike</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot">Aug 20, 12:52 PM</span></td><td>Jeff (NJ)</td></tr>
-<tr><td><strong>(no name)</strong></td><td></td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot">Aug 20, 12:20 PM</span></td><td>AL Market</td></tr>
+<tr><td><strong>Dana M  Grant</strong></td><td>4532 Grasselli Boulevard Southwest</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot">Aug 20, 12:20 PM</span></td><td>AL Market</td></tr>
 <tr><td><strong>Robert Hunter</strong></td><td>1327 42nd Street Ensley</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot">Jul 31, 01:38 PM</span></td><td></td></tr>
 <tr><td><strong>Justin Sims</strong></td><td>5418 Cairo Ave</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot">Aug 13, 03:57 PM</span></td><td>AL Market</td></tr>
 <tr><td><strong>Lisa Myler</strong></td><td>63 Harbor Dr</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot">Apr 14, 12:30 PM</span></td><td></td></tr>
@@ -5247,9 +5247,9 @@ section h2, h2 {
 <tr><td><strong>Clarissa Williams</strong></td><td>5648 CAMDEN AVE</td><td><span class="tag">1. Qualified</span></td><td><span class="tag gray">DND — do not contact</span></td><td><span class="tag warm">0/6</span></td><td></td></tr>
 <tr><td><strong>Demetrius Singleton</strong></td><td>309 17TH AVE SW</td><td><span class="tag">1. Qualified</span></td><td><span class="tag gray">DND — do not contact</span></td><td><span class="tag warm">0/6</span></td><td></td></tr>
 <tr><td><strong>Mr.  King</strong></td><td>2208 E 81st St</td><td><span class="tag">1. Qualified</span></td><td><span class="tag gray">DND — do not contact</span></td><td><span class="tag warm">0/6</span></td><td></td></tr>
-<tr><td><strong>(no name)</strong></td><td></td><td><span class="tag">1. Qualified</span></td><td><span class="tag gray">DND — do not contact</span></td><td><span class="tag warm">0/6</span></td><td></td></tr>
-<tr><td><strong>(no name)</strong></td><td></td><td><span class="tag">1. Qualified</span></td><td><span class="tag gray">DND — do not contact</span></td><td><span class="tag warm">0/6</span></td><td></td></tr>
-<tr><td><strong>(no name)</strong></td><td></td><td><span class="tag">1. Qualified</span></td><td><span class="tag gray">DND — do not contact</span></td><td><span class="tag warm">0/6</span></td><td></td></tr>
+<tr><td><strong>Fannie  Hicks</strong></td><td>910 4th Court West</td><td><span class="tag">1. Qualified</span></td><td><span class="tag gray">DND — do not contact</span></td><td><span class="tag warm">0/6</span></td><td></td></tr>
+<tr><td><strong>Michael Larkin</strong></td><td>627 E Stafford St</td><td><span class="tag">1. Qualified</span></td><td><span class="tag gray">DND — do not contact</span></td><td><span class="tag warm">0/6</span></td><td></td></tr>
+<tr><td><strong>Tony Lewis</strong></td><td>1273 S Taylor St</td><td><span class="tag">1. Qualified</span></td><td><span class="tag gray">DND — do not contact</span></td><td><span class="tag warm">0/6</span></td><td></td></tr>
 <tr><td><strong>vgdxrnqnzj</strong></td><td>kuxuhodtpq</td><td><span class="tag">Dead Deals</span></td><td><span class="tag gray">DND — do not contact</span></td><td><span class="tag warm">0/6</span></td><td></td></tr>
 <tr><td><strong>Ellen / Cliff Lacy</strong></td><td>3206 STATE ROUTE 27</td><td><span class="tag">Dead Deals</span></td><td><span class="tag gray">DND — do not contact</span></td><td><span class="tag warm">0/6</span></td><td></td></tr>
 <tr><td><strong>Kuldip Kaur</strong></td><td>24 LOGAN AVE</td><td><span class="tag">Dead Deals</span></td><td><span class="tag gray">DND — do not contact</span></td><td><span class="tag warm">0/6</span></td><td></td></tr>
@@ -5302,10 +5302,10 @@ section h2, h2 {
 <tr><td><strong>Chris Brindley</strong></td><td>41 JULIA AVE</td><td>NJ</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">3</span></td><td>Aug 17, 10:20 AM</td><td>Jeff (NJ)</td></tr>
 <tr><td><strong>Monique Johnson</strong></td><td>5136 N 32nd St</td><td>WI</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">3</span></td><td>Aug 20, 12:19 PM</td><td>WI Market</td></tr>
 <tr><td><strong>Douglas Rice</strong></td><td>316 Lincoln Ave</td><td>NJ</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">3</span></td><td>Aug 20, 12:19 PM</td><td>Jeff (NJ)</td></tr>
-<tr><td><strong>(no name)</strong></td><td></td><td></td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">3</span></td><td>Aug 20, 12:19 PM</td><td>AL Market</td></tr>
-<tr><td><strong>(no name)</strong></td><td></td><td></td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">3</span></td><td>Aug 20, 12:19 PM</td><td>AL Market</td></tr>
-<tr><td><strong>(no name)</strong></td><td></td><td></td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">3</span></td><td>Aug 20, 12:19 PM</td><td>AL Market</td></tr>
-<tr><td><strong>(no name)</strong></td><td></td><td></td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">3</span></td><td>Aug 20, 12:19 PM</td><td>IN Market</td></tr>
+<tr><td><strong>Joel  Lowe</strong></td><td>1240 Princeton Avenue Southwest</td><td>AL</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">3</span></td><td>Aug 20, 12:19 PM</td><td>AL Market</td></tr>
+<tr><td><strong>Christine  Davis</strong></td><td>4113 40th Terrace North</td><td>AL</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">3</span></td><td>Aug 20, 12:19 PM</td><td>AL Market</td></tr>
+<tr><td><strong>Edith Harris</strong></td><td>1819 Courtney Ave</td><td>AL</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">3</span></td><td>Aug 20, 12:19 PM</td><td>AL Market</td></tr>
+<tr><td><strong>Mi Mee Mee Lay</strong></td><td>3622 Poinsettia Dr</td><td>IN</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">3</span></td><td>Aug 20, 12:19 PM</td><td>IN Market</td></tr>
 <tr><td><strong>Robert Madden</strong></td><td>3675 Spottswood Ave</td><td>TN</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">3</span></td><td>Aug 20, 12:19 PM</td><td>TN Market</td></tr>
 <tr><td><strong>Michael Turner</strong></td><td>2425 31st Ave N</td><td>AL</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">3</span></td><td>Aug 20, 12:19 PM</td><td>AL Market</td></tr>
 <tr><td><strong>Richard Fry</strong></td><td>21 Seabright Ave</td><td>NJ</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">3</span></td><td>Aug 20, 12:19 PM</td><td>Jeff (NJ)</td></tr>
@@ -5317,7 +5317,7 @@ section h2, h2 {
 <tr><td><strong>Richard Wick</strong></td><td>25 E 8th Ave</td><td>NJ</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">3</span></td><td>Aug 20, 12:20 PM</td><td>Jeff (NJ)</td></tr>
 <tr><td><strong>Ramona Stephens</strong></td><td>Atlantic City</td><td>NJ</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">3</span></td><td>Aug 20, 12:20 PM</td><td>Jeff (NJ)</td></tr>
 <tr><td><strong>Avudaiyappan Lakshmanan</strong></td><td>Piscataway</td><td>NJ</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">3</span></td><td>Aug 20, 12:20 PM</td><td>Jeff (NJ)</td></tr>
-<tr><td><strong>(no name)</strong></td><td></td><td></td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">3</span></td><td>Aug 20, 12:20 PM</td><td>Jeff (NJ)</td></tr>
+<tr><td><strong>Derek Harris</strong></td><td>Camden</td><td>NJ</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">3</span></td><td>Aug 20, 12:20 PM</td><td>Jeff (NJ)</td></tr>
 <tr><td><strong>Victor Demeski</strong></td><td>Hamilton Township</td><td>NJ</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">3</span></td><td>Aug 20, 12:20 PM</td><td>Jeff (NJ)</td></tr>
 <tr><td><strong>Lawrence Craver</strong></td><td>Trenton</td><td>NJ</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">3</span></td><td>Aug 20, 12:20 PM</td><td>Jeff (NJ)</td></tr>
 <tr><td><strong>Kahalil Ameen</strong></td><td>8039 7th Ave S,</td><td>AL</td><td><span class="tag">2. LAO</span></td><td><span class="tag green">2</span></td><td>Aug 17, 10:21 AM</td><td>AL Market</td></tr>
@@ -5837,7 +5837,7 @@ new Chart(document.getElementById('stageChart'), {
 
 new Chart(document.getElementById('stateChart'), {
   type: 'bar',
-  data: { labels: ["NJ", "PA", "AL", "OH", "UNKNOWN", "WI", "TX", "IN", "TN", "MI"], datasets: [{ data: [411, 123, 72, 54, 29, 9, 2, 2, 1, 1], backgroundColor: '#C9A52A', borderRadius: 4 }] },
+  data: { labels: ["NJ", "PA", "AL", "OH", "UNKNOWN", "WI", "IN", "TX", "TN", "MI"], datasets: [{ data: [412, 125, 77, 54, 20, 9, 3, 2, 1, 1], backgroundColor: '#C9A52A', borderRadius: 4 }] },
   options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { precision: 0, color: '#6B7591' }, grid: { color: 'rgba(26,40,64,0.06)' } }, x: { ticks: { color: '#455066' }, grid: { display: false } } } }
 });
 
