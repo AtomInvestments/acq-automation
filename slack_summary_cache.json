@@ -2977,5 +2977,16 @@
     "match_cid": "NQQCk8Pcg5r5t4Hj01y3",
     "match_confidence": "high",
     "summary": "Seller states kitchen and bathroom need renovating, has not thought about price range yet, timeline question still pending response."
+  },
+  "C06MM4DQZ28:1787327266.980659": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": "Wants investor offer, not taking calls",
+      "reason_for_selling": "Property needs kitchen and bath updates, small size, location factors mentioned",
+      "timeline": null
+    },
+    "match_cid": "v4NaUiJCnEJYc8HNTXYT",
+    "match_confidence": "high",
+    "summary": "Seller needs kitchen and bath updates, wants investor to make an offer directly without phone calls, hasn't stated asking price or timeline yet."
   }
 }
