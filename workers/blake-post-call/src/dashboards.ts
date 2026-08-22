@@ -4190,7 +4190,7 @@ section h2, h2 {
   <header class="masthead">
     <div class="brandrow">
       <span class="brand">Atom Investments · APG Operations</span>
-      <span>Last updated Aug 22, 2026 04:22 PM ET</span>
+      <span>Last updated Aug 22, 2026 04:58 PM ET</span>
     </div>
     <h1>Active <span class="accent">Deals.</span></h1>
     <p class="dek">Every property currently in stages 1-7 of the ACQ pipeline. Sorted by call rating within each stage so the strongest deals surface first.</p>
@@ -5129,7 +5129,7 @@ section h2, h2 {
   <header class="masthead">
     <div class="brandrow">
       <span class="brand">Atom Investments · APG Operations</span>
-      <span>Last updated Aug 22, 2026 04:20 PM ET</span>
+      <span>Last updated Aug 22, 2026 04:57 PM ET</span>
     </div>
     <h1>SMS <span class="accent">Follow-Ups.</span></h1>
     <p class="dek">Action queue for Jeff and Mike — replies to call back, leads gone dormant, and everything still cycling through the SMS sequence.</p>
@@ -5149,7 +5149,7 @@ section h2, h2 {
     <a href="sms-test.html">SMS Test</a>
   </nav>
 
-  <details class="run-grid-collapsed"><summary>All 5 cron jobs OK on last run — click for timestamps</summary><div class="run-grid"><div class="run-row"><span class="tag green">OK</span><span class="run-name">ACQ Call Recording Automation</span><span class="run-ts">Aug 22, 04:11 PM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">ACQ SMS Follow-Up + Dashboard</span><span class="run-ts">Aug 22, 03:55 PM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">APG Slack Scraper</span><span class="run-ts">Aug 22, 04:12 PM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">dashboard (script)</span><span class="run-ts">Aug 22, 04:18 PM</span><span class="run-detail">dashboard updated</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">sms (script)</span><span class="run-ts">Aug 22, 04:18 PM</span><span class="run-detail">{&quot;wait&quot;: 483, &quot;skipped-tag-prebail&quot;: 178, &quot;skipped&quot;: 25, &quot;no-phone&quot;: 5}</span></div></div></details><div class="status-banner on"><div class="status-text"><span class="pulse"></span>SMS Automation: <span style="color:var(--green);font-weight:800">ACTIVE</span></div><a class="btn btn-kill" href="https://docs.google.com/spreadsheets/d/1wc3Pt46ze-ejLaryL8WIRQf4OjEkirolc4-O8lsRQZY/edit#gid=0" target="_blank">EMERGENCY KILL SWITCH</a></div>
+  <details class="run-grid-collapsed"><summary>All 5 cron jobs OK on last run — click for timestamps</summary><div class="run-grid"><div class="run-row"><span class="tag green">OK</span><span class="run-name">ACQ Call Recording Automation</span><span class="run-ts">Aug 22, 04:38 PM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">ACQ SMS Follow-Up + Dashboard</span><span class="run-ts">Aug 22, 04:22 PM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">APG Slack Scraper</span><span class="run-ts">Aug 22, 04:12 PM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">dashboard (script)</span><span class="run-ts">Aug 22, 04:55 PM</span><span class="run-detail">dashboard updated</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">sms (script)</span><span class="run-ts">Aug 22, 04:55 PM</span><span class="run-detail">{&quot;wait&quot;: 498, &quot;skipped-tag-prebail&quot;: 180, &quot;skipped&quot;: 25, &quot;no-phone&quot;: 6}</span></div></div></details><div class="status-banner on"><div class="status-text"><span class="pulse"></span>SMS Automation: <span style="color:var(--green);font-weight:800">ACTIVE</span></div><a class="btn btn-kill" href="https://docs.google.com/spreadsheets/d/1wc3Pt46ze-ejLaryL8WIRQf4OjEkirolc4-O8lsRQZY/edit#gid=0" target="_blank">EMERGENCY KILL SWITCH</a></div>
 
   <section class="sec">
     <div class="tag-row"><span class="num">01</span><h2>At a Glance</h2></div>
@@ -5934,8 +5934,7 @@ section h2, h2 {
 <tr><td><strong>Peter Mimmo</strong></td><td>4708 Atlantic Avenue</td><td>TEXT FIRST, then call Peter Mimmo - 2 properties ($1.1-1.2M AC + $750k Jenkintown) - confirm 4702 vs 4708</td><td><span class="tag">Adam</span></td><td>Aug 20, 06:00 PM</td></tr>
 <tr><td><strong>Karim Mohammad</strong></td><td>1410 Pennington Rd</td><td>CALL TODAY - Karim Mohammad - ask $250k vs MAO $134k (+87%)</td><td><span class="tag">Jeff</span></td><td>Aug 20, 05:30 PM</td></tr>
 <tr><td><strong>Angela Patnaude</strong></td><td>7 Jefferson Dr</td><td>CALL TODAY - Angela Patnaude - establish her number (no price on record)</td><td><span class="tag">Jeff</span></td><td>Aug 20, 05:30 PM</td></tr>
-<tr><td><strong>Shahbaz Zubairi</strong></td><td>358 Bromley Pl</td><td>CALL TODAY - Scott Bruder - ask $453k vs MAO $469k (-3%)</td><td><span class="tag">Jeff</span></td><td>Aug 20, 05:30 PM</td></tr>
-<tr><td><strong>John P Primiano</strong></td><td>Grace Ferry Avenue</td><td>CALL TODAY - John P Primiano - ask $595k vs MAO $434k (+37%)</td><td><span class="tag">Jeff</span></td><td>Aug 20, 05:30 PM</td></tr></tbody></table></div>
+<tr><td><strong>Shahbaz Zubairi</strong></td><td>358 Bromley Pl</td><td>CALL TODAY - Scott Bruder - ask $453k vs MAO $469k (-3%)</td><td><span class="tag">Jeff</span></td><td>Aug 20, 05:30 PM</td></tr></tbody></table></div>
   </section>
 
   <section class="sec">
