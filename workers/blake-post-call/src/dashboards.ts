@@ -4190,7 +4190,7 @@ section h2, h2 {
   <header class="masthead">
     <div class="brandrow">
       <span class="brand">Atom Investments · APG Operations</span>
-      <span>Last updated Aug 22, 2026 02:22 AM ET</span>
+      <span>Last updated Aug 22, 2026 03:08 AM ET</span>
     </div>
     <h1>Active <span class="accent">Deals.</span></h1>
     <p class="dek">Every property currently in stages 1-7 of the ACQ pipeline. Sorted by call rating within each stage so the strongest deals surface first.</p>
@@ -4362,7 +4362,7 @@ Cosmetic Repairs - $4960" target="_blank">Rehab Report</a><a class="btn secondar
 HVAC System Upgrade - $12000
 Kitchen Remodel - $15000
 Bathroom Updates - $8000
-Cosmetic Repairs - $10500" target="_blank">Rehab Report</a><a class="btn secondary" href="https://www.zillow.com/homes/6952 Casale Blvd-Mays Landing-NJ-08330-1313/" target="_blank">Zillow</a></div></div><div class="card stage-qualified" data-stage="1. Qualified" data-flags="" data-search="gregorio martinez 83 lyons ave # 85 newark nj newark, nj, 07112        1. qualified"><div class="top"><div><div class="name">Gregorio Martinez</div><div class="addr">83 Lyons Ave # 85</div><div class="place">Newark, NJ, 07112</div></div><div class="stage-pill stage-qualified">1. Qualified</div></div><div class="pillrow"><span class="pill">⏱ Updated 1d ago</span></div><div class="specs"><span><strong>10</strong>bd / <strong>4.5</strong>ba</span></div><div class="fin-grid"><div class="fin"><div class="lab">Asking</div><div class="val">—</div></div><div class="fin"><div class="lab">ARV</div><div class="val">—</div></div><div class="fin"><div class="lab">70% MAO</div><div class="val">—</div></div><div class="fin"><div class="lab">Assign Fee</div><div class="val">—</div></div></div><div class="rating-row"><div><span class="label">Call</span><span class="rating gray">—</span></div><div class="summary">No call analysis yet.</div></div><div class="actions"><a class="btn primary" href="https://app.gohighlevel.com/v2/location/RCkiUmWqXX4BYQ39JXmm/contacts/detail/RR7VCImRM6imHWu2mQmh" target="_blank">Open in GHL</a><span class="btn ghost">No rehab yet</span><a class="btn secondary" href="https://www.zillow.com/homes/83-Lyons-Ave--85-Newark-NJ-07112_rb/" target="_blank">Zillow</a></div></div><div class="card stage-qualified" data-stage="1. Qualified" data-flags="has-arv" data-search="michael larkin 627 e stafford st philadelphia pa philadelphia, pa, 19144 option 4 - listing       1. qualified"><div class="top"><div><div class="name">Michael Larkin</div><div class="addr">627 E Stafford St</div><div class="place">Philadelphia, PA, 19144</div></div><div class="stage-pill stage-qualified">1. Qualified</div></div><div class="pillrow"><span class="pill">⏱ Updated 1d ago</span><span class="pill">Option 4 - Listing</span></div><div class="specs"><span><strong>3</strong>bd / <strong>1</strong>ba</span><span><strong>1,200</strong> sqft</span></div><div class="fin-grid"><div class="fin"><div class="lab">Asking</div><div class="val">—</div></div><div class="fin"><div class="lab">ARV</div><div class="val">$145k</div></div><div class="fin"><div class="lab">70% MAO</div><div class="val">$101k</div></div><div class="fin"><div class="lab">Assign Fee</div><div class="val">—</div></div></div><div class="rating-row"><div><span class="label">Call</span><span class="rating gray">—</span></div><div class="summary">No call analysis yet.</div></div><div class="actions"><a class="btn primary" href="https://app.gohighlevel.com/v2/location/RCkiUmWqXX4BYQ39JXmm/contacts/detail/zlDEYaV8E7ZVdNItXxlk" target="_blank">Open in GHL</a><span class="btn ghost">No rehab yet</span><a class="btn secondary" href="https://www.zillow.com/homes/627-E-Stafford-St-Philadelphia-PA-19144_rb/" target="_blank">Zillow</a></div></div><div class="card stage-qualified" data-stage="1. Qualified" data-flags="has-arv" data-search="angela patnaude 7 jefferson dr spotswood nj spotswood, nj, 08884  just looking to see how much can get if sell now to see if enough to move.  probably out of state, need to figure out that stuff. single family unit needs updating, everything works, deck should be replaced, front stoop steps need securing.  1. qualified"><div class="top"><div><div class="name">Angela Patnaude</div><div class="addr">7 Jefferson Dr</div><div class="place">Spotswood, NJ, 08884</div></div><div class="stage-pill stage-qualified">1. Qualified</div></div><div class="pillrow"><span class="pill">⏱ Updated 1d ago</span></div><div class="specs"><span><strong>3</strong>bd / <strong>1.5</strong>ba</span><span><strong>800</strong> sqft</span><span>Cond: <strong>Unit needs updating, everything works, deck should be replaced, front stoop steps need securing.</strong></span></div><div class="fin-grid"><div class="fin"><div class="lab">Asking</div><div class="val">—</div></div><div class="fin"><div class="lab">ARV</div><div class="val">$505k</div></div><div class="fin"><div class="lab">70% MAO</div><div class="val">$354k</div></div><div class="fin"><div class="lab">Assign Fee</div><div class="val">—</div></div></div><div class="rating-row"><div><span class="label">Call</span><span class="rating gray">—</span></div><div class="summary">No call analysis yet.</div></div><div class="deal-meta"><strong>Motivation:</strong> Just looking to see how much can get if sell now to see if enough to move.<br><strong>Timeline:</strong> probably out of state, need to figure out that stuff.<br><strong>Repairs:</strong> 52920</div><div class="actions"><a class="btn primary" href="https://app.gohighlevel.com/v2/location/RCkiUmWqXX4BYQ39JXmm/contacts/detail/p376Ju4At4KUYUt3aJDd" target="_blank">Open in GHL</a><a class="btn secondary" href="Roof - $8000
+Cosmetic Repairs - $10500" target="_blank">Rehab Report</a><a class="btn secondary" href="https://www.zillow.com/homes/6952 Casale Blvd-Mays Landing-NJ-08330-1313/" target="_blank">Zillow</a></div></div><div class="card stage-qualified" data-stage="1. Qualified" data-flags="" data-search="gregorio martinez 83 lyons ave # 85 newark nj newark, nj, 07112        1. qualified"><div class="top"><div><div class="name">Gregorio Martinez</div><div class="addr">83 Lyons Ave # 85</div><div class="place">Newark, NJ, 07112</div></div><div class="stage-pill stage-qualified">1. Qualified</div></div><div class="pillrow"><span class="pill">⏱ Updated 1d ago</span></div><div class="specs"><span><strong>10</strong>bd / <strong>4.5</strong>ba</span></div><div class="fin-grid"><div class="fin"><div class="lab">Asking</div><div class="val">—</div></div><div class="fin"><div class="lab">ARV</div><div class="val">—</div></div><div class="fin"><div class="lab">70% MAO</div><div class="val">—</div></div><div class="fin"><div class="lab">Assign Fee</div><div class="val">—</div></div></div><div class="rating-row"><div><span class="label">Call</span><span class="rating gray">—</span></div><div class="summary">No call analysis yet.</div></div><div class="actions"><a class="btn primary" href="https://app.gohighlevel.com/v2/location/RCkiUmWqXX4BYQ39JXmm/contacts/detail/RR7VCImRM6imHWu2mQmh" target="_blank">Open in GHL</a><span class="btn ghost">No rehab yet</span><a class="btn secondary" href="https://www.zillow.com/homes/83-Lyons-Ave--85-Newark-NJ-07112_rb/" target="_blank">Zillow</a></div></div><div class="card stage-qualified" data-stage="1. Qualified" data-flags="has-arv" data-search="angela patnaude 7 jefferson dr spotswood nj spotswood, nj, 08884  just looking to see how much can get if sell now to see if enough to move.  probably out of state, need to figure out that stuff. single family unit needs updating, everything works, deck should be replaced, front stoop steps need securing.  1. qualified"><div class="top"><div><div class="name">Angela Patnaude</div><div class="addr">7 Jefferson Dr</div><div class="place">Spotswood, NJ, 08884</div></div><div class="stage-pill stage-qualified">1. Qualified</div></div><div class="pillrow"><span class="pill">⏱ Updated 1d ago</span></div><div class="specs"><span><strong>3</strong>bd / <strong>1.5</strong>ba</span><span><strong>800</strong> sqft</span><span>Cond: <strong>Unit needs updating, everything works, deck should be replaced, front stoop steps need securing.</strong></span></div><div class="fin-grid"><div class="fin"><div class="lab">Asking</div><div class="val">—</div></div><div class="fin"><div class="lab">ARV</div><div class="val">$505k</div></div><div class="fin"><div class="lab">70% MAO</div><div class="val">$354k</div></div><div class="fin"><div class="lab">Assign Fee</div><div class="val">—</div></div></div><div class="rating-row"><div><span class="label">Call</span><span class="rating gray">—</span></div><div class="summary">No call analysis yet.</div></div><div class="deal-meta"><strong>Motivation:</strong> Just looking to see how much can get if sell now to see if enough to move.<br><strong>Timeline:</strong> probably out of state, need to figure out that stuff.<br><strong>Repairs:</strong> 52920</div><div class="actions"><a class="btn primary" href="https://app.gohighlevel.com/v2/location/RCkiUmWqXX4BYQ39JXmm/contacts/detail/p376Ju4At4KUYUt3aJDd" target="_blank">Open in GHL</a><a class="btn secondary" href="Roof - $8000
 HVAC - $6000
 Kitchen remodel - $10000
 Bathroom updates - $6000
@@ -4382,7 +4382,7 @@ Cosmetic Repairs - $5300" target="_blank">Rehab Report</a><a class="btn secondar
 HVAC System Upgrade - $15000
 Kitchen Remodel - $20000
 Bathroom Updates - $10000
-Cosmetic Repairs - $7880" target="_blank">Rehab Report</a><a class="btn secondary" href="https://www.zillow.com/homes/10-Hillcrest-Dr-Vincentown-NJ-08088_rb/" target="_blank">Zillow</a></div></div><div class="card stage-qualified" data-stage="1. Qualified" data-flags="has-arv" data-search="tony lewis 1273 s taylor st philadelphia pa philadelphia, pa, 19146 option 1 - wholesale/flip lead said it would take him a day to explain all reasons. lead said it would take him a day to explain all reasons.  multi family   1. qualified"><div class="top"><div><div class="name">Tony Lewis</div><div class="addr">1273 S Taylor St</div><div class="place">Philadelphia, PA, 19146</div></div><div class="stage-pill stage-qualified">1. Qualified</div></div><div class="pillrow"><span class="pill">⏱ Updated 1d ago</span><span class="pill">Option 1 - Wholesale/Flip</span></div><div class="specs"><span><strong>3</strong>bd / <strong>2</strong>ba</span><span><strong>1,200</strong> sqft</span></div><div class="fin-grid"><div class="fin"><div class="lab">Asking</div><div class="val">—</div></div><div class="fin"><div class="lab">ARV</div><div class="val">$307k</div></div><div class="fin"><div class="lab">70% MAO</div><div class="val">$215k</div></div><div class="fin"><div class="lab">Assign Fee</div><div class="val">—</div></div></div><div class="rating-row"><div><span class="label">Call</span><span class="rating gray">—</span></div><div class="summary">No call analysis yet.</div></div><div class="deal-meta"><strong>Motivation:</strong> Lead said it would take him a day to explain all reasons.<br><strong>Reason:</strong> Lead said it would take him a day to explain all reasons.</div><div class="actions"><a class="btn primary" href="https://app.gohighlevel.com/v2/location/RCkiUmWqXX4BYQ39JXmm/contacts/detail/4S376zYxdGiAcTazltX9" target="_blank">Open in GHL</a><span class="btn ghost">No rehab yet</span><a class="btn secondary" href="https://www.zillow.com/homes/1273-S-Taylor-St-Philadelphia-PA-19146_rb/" target="_blank">Zillow</a></div></div><div class="card stage-qualified" data-stage="1. Qualified" data-flags="has-arv" data-search="peter mimmo 4708 atlantic avenue atlantic city nj atlantic city, nj, 8401  seller 2026-08-20: &quot;if i got the right offer, i would sell because my wife and i are getting old, and it is a lot of work for her to take care of two big houses.&quot; also &quot;i am selling everything.&quot; but no urgency: &quot;i do not need the money. so i do not have to sell anything. i could sit there as long as i want.&quot; price-driven, not time-driven. april note: taxes ~$20k/yr + insurance ~$8k, 40-50k/yr carrying cost; wife previously declined a $1m offer and is the blocker.      1. qualified"><div class="top"><div><div class="name">Peter Mimmo</div><div class="addr">4708 Atlantic Avenue</div><div class="place">Atlantic City, NJ, 8401</div></div><div class="stage-pill stage-qualified">1. Qualified</div></div><div class="pillrow"><span class="pill">⏱ Updated 1d ago</span></div><div class="specs"><span><strong>9</strong>bd / <strong>4.5</strong>ba</span><span><strong>4,502</strong> sqft</span></div><div class="fin-grid"><div class="fin"><div class="lab">Asking</div><div class="val">$1.10M</div></div><div class="fin"><div class="lab">ARV</div><div class="val">$822k</div></div><div class="fin"><div class="lab">70% MAO</div><div class="val">$575k</div></div><div class="fin"><div class="lab">Assign Fee</div><div class="val">—</div></div></div><div class="rating-row"><div><span class="label">Call</span><span class="rating gray">—</span></div><div class="summary">No call analysis yet.</div></div><div class="deal-meta"><strong>Motivation:</strong> Seller 2026-08-20: &quot;If I got the right offer, I would sell because my wife and I are getting old, and it is a lot of work for her to take care of two big houses.&quot; Also &quot;I am selling everything.&quot; BUT no urgency: &quot;I do not need the money. So I do not have to sell anything. I could sit there as long as I want.&quot; Price-driven, not time-driven. April note: taxes ~$20k/yr + insurance ~$8k, 40-50k/yr carrying cost; wife previously declined a $1M offer and is the blocker.</div><div class="actions"><a class="btn primary" href="https://app.gohighlevel.com/v2/location/RCkiUmWqXX4BYQ39JXmm/contacts/detail/YOmzK2nW3UamtcmFhtka" target="_blank">Open in GHL</a><a class="btn secondary" href="Cosmetic updates - $50000
+Cosmetic Repairs - $7880" target="_blank">Rehab Report</a><a class="btn secondary" href="https://www.zillow.com/homes/10-Hillcrest-Dr-Vincentown-NJ-08088_rb/" target="_blank">Zillow</a></div></div><div class="card stage-qualified" data-stage="1. Qualified" data-flags="has-arv" data-search="peter mimmo 4708 atlantic avenue atlantic city nj atlantic city, nj, 8401  seller 2026-08-20: &quot;if i got the right offer, i would sell because my wife and i are getting old, and it is a lot of work for her to take care of two big houses.&quot; also &quot;i am selling everything.&quot; but no urgency: &quot;i do not need the money. so i do not have to sell anything. i could sit there as long as i want.&quot; price-driven, not time-driven. april note: taxes ~$20k/yr + insurance ~$8k, 40-50k/yr carrying cost; wife previously declined a $1m offer and is the blocker.      1. qualified"><div class="top"><div><div class="name">Peter Mimmo</div><div class="addr">4708 Atlantic Avenue</div><div class="place">Atlantic City, NJ, 8401</div></div><div class="stage-pill stage-qualified">1. Qualified</div></div><div class="pillrow"><span class="pill">⏱ Updated 1d ago</span></div><div class="specs"><span><strong>9</strong>bd / <strong>4.5</strong>ba</span><span><strong>4,502</strong> sqft</span></div><div class="fin-grid"><div class="fin"><div class="lab">Asking</div><div class="val">$1.10M</div></div><div class="fin"><div class="lab">ARV</div><div class="val">$822k</div></div><div class="fin"><div class="lab">70% MAO</div><div class="val">$575k</div></div><div class="fin"><div class="lab">Assign Fee</div><div class="val">—</div></div></div><div class="rating-row"><div><span class="label">Call</span><span class="rating gray">—</span></div><div class="summary">No call analysis yet.</div></div><div class="deal-meta"><strong>Motivation:</strong> Seller 2026-08-20: &quot;If I got the right offer, I would sell because my wife and I are getting old, and it is a lot of work for her to take care of two big houses.&quot; Also &quot;I am selling everything.&quot; BUT no urgency: &quot;I do not need the money. So I do not have to sell anything. I could sit there as long as I want.&quot; Price-driven, not time-driven. April note: taxes ~$20k/yr + insurance ~$8k, 40-50k/yr carrying cost; wife previously declined a $1M offer and is the blocker.</div><div class="actions"><a class="btn primary" href="https://app.gohighlevel.com/v2/location/RCkiUmWqXX4BYQ39JXmm/contacts/detail/YOmzK2nW3UamtcmFhtka" target="_blank">Open in GHL</a><a class="btn secondary" href="Cosmetic updates - $50000
 Kitchen remodel - $30000
 Bathroom updates - $40000
 Exterior improvements - $30000
@@ -4466,7 +4466,7 @@ Cosmetic Updates - $5000" target="_blank">Rehab Report</a><a class="btn secondar
 HVAC - $15000
 Kitchen remodel - $20000
 Bathroom updates - $10000
-Cosmetic repairs - $15720" target="_blank">Rehab Report</a><a class="btn secondary" href="https://www.zillow.com/homes/1484 Stuyvesant Ave-Trenton-NJ-08618-3308/" target="_blank">Zillow</a></div></div><div class="card stage-qualified" data-stage="1. Qualified" data-flags="has-arv" data-search="vance stephens 32 cavell st trenton nj trenton, nj, 08618        1. qualified"><div class="top"><div><div class="name">Vance Stephens</div><div class="addr">32 Cavell St</div><div class="place">Trenton, NJ, 08618</div></div><div class="stage-pill stage-qualified">1. Qualified</div></div><div class="pillrow"><span class="pill">⏱ Updated today</span></div><div class="specs"><span><strong>5</strong>bd / <strong>2</strong>ba</span><span><strong>1,864</strong> sqft</span></div><div class="fin-grid"><div class="fin"><div class="lab">Asking</div><div class="val">—</div></div><div class="fin"><div class="lab">ARV</div><div class="val">$218k</div></div><div class="fin"><div class="lab">70% MAO</div><div class="val">$153k</div></div><div class="fin"><div class="lab">Assign Fee</div><div class="val">—</div></div></div><div class="rating-row"><div><span class="label">Call</span><span class="rating gray">—</span></div><div class="summary">No call analysis yet.</div></div><div class="actions"><a class="btn primary" href="https://app.gohighlevel.com/v2/location/RCkiUmWqXX4BYQ39JXmm/contacts/detail/1G6lf5kOjbl35QE37jsZ" target="_blank">Open in GHL</a><a class="btn secondary" href="Roof Replacement - $15000
+Cosmetic repairs - $15720" target="_blank">Rehab Report</a><a class="btn secondary" href="https://www.zillow.com/homes/1484 Stuyvesant Ave-Trenton-NJ-08618-3308/" target="_blank">Zillow</a></div></div><div class="card stage-qualified" data-stage="1. Qualified" data-flags="has-arv" data-search="vance stephens 32 cavell st trenton nj trenton, nj, 08618        1. qualified"><div class="top"><div><div class="name">Vance Stephens</div><div class="addr">32 Cavell St</div><div class="place">Trenton, NJ, 08618</div></div><div class="stage-pill stage-qualified">1. Qualified</div></div><div class="pillrow"><span class="pill">⏱ Updated 1d ago</span></div><div class="specs"><span><strong>5</strong>bd / <strong>2</strong>ba</span><span><strong>1,864</strong> sqft</span></div><div class="fin-grid"><div class="fin"><div class="lab">Asking</div><div class="val">—</div></div><div class="fin"><div class="lab">ARV</div><div class="val">$218k</div></div><div class="fin"><div class="lab">70% MAO</div><div class="val">$153k</div></div><div class="fin"><div class="lab">Assign Fee</div><div class="val">—</div></div></div><div class="rating-row"><div><span class="label">Call</span><span class="rating gray">—</span></div><div class="summary">No call analysis yet.</div></div><div class="actions"><a class="btn primary" href="https://app.gohighlevel.com/v2/location/RCkiUmWqXX4BYQ39JXmm/contacts/detail/1G6lf5kOjbl35QE37jsZ" target="_blank">Open in GHL</a><a class="btn secondary" href="Roof Replacement - $15000
 HVAC System Upgrade - $12000
 Kitchen Remodel - $20000
 Bathroom Renovation - $10000
@@ -4594,7 +4594,15 @@ Cosmetic Repairs - $8655" target="_blank">Rehab Report</a><a class="btn secondar
 HVAC System Upgrade - $12000
 Kitchen Remodel - $15000
 Bathroom Renovation - $10000
-Cosmetic Updates - $10225" target="_blank">Rehab Report</a><a class="btn secondary" href="https://www.zillow.com/homes/323-W-4th-St-Florence-NJ-8518_rb/" target="_blank">Zillow</a></div></div></div></section>
+Cosmetic Updates - $10225" target="_blank">Rehab Report</a><a class="btn secondary" href="https://www.zillow.com/homes/323-W-4th-St-Florence-NJ-8518_rb/" target="_blank">Zillow</a></div></div><div class="card stage-qualified" data-stage="1. Qualified" data-flags="has-arv" data-search="michael larkin 627 e stafford st philadelphia pa philadelphia, pa, 19144 option 4 - listing       1. qualified"><div class="top"><div><div class="name">Michael Larkin</div><div class="addr">627 E Stafford St</div><div class="place">Philadelphia, PA, 19144</div></div><div class="stage-pill stage-qualified">1. Qualified</div></div><div class="pillrow"><span class="pill">⏱ Updated today</span><span class="pill">Option 4 - Listing</span></div><div class="specs"><span><strong>3</strong>bd / <strong>1</strong>ba</span><span><strong>1,200</strong> sqft</span></div><div class="fin-grid"><div class="fin"><div class="lab">Asking</div><div class="val">—</div></div><div class="fin"><div class="lab">ARV</div><div class="val">$145k</div></div><div class="fin"><div class="lab">70% MAO</div><div class="val">$101k</div></div><div class="fin"><div class="lab">Assign Fee</div><div class="val">—</div></div></div><div class="rating-row"><div><span class="label">Call</span><span class="rating gray">—</span></div><div class="summary">No call analysis yet.</div></div><div class="actions"><a class="btn primary" href="https://app.gohighlevel.com/v2/location/RCkiUmWqXX4BYQ39JXmm/contacts/detail/zlDEYaV8E7ZVdNItXxlk" target="_blank">Open in GHL</a><a class="btn secondary" href="Roof Replacement - $12000
+HVAC System Upgrade - $10000
+Kitchen Remodel - $15000
+Bathroom Update - $8000
+Cosmetic Repairs - $5000" target="_blank">Rehab Report</a><a class="btn secondary" href="https://www.zillow.com/homes/627-E-Stafford-St-Philadelphia-PA-19144_rb/" target="_blank">Zillow</a></div></div><div class="card stage-qualified" data-stage="1. Qualified" data-flags="has-arv" data-search="tony lewis 1273 s taylor st philadelphia pa philadelphia, pa, 19146 option 1 - wholesale/flip lead said it would take him a day to explain all reasons. lead said it would take him a day to explain all reasons.  multi family   1. qualified"><div class="top"><div><div class="name">Tony Lewis</div><div class="addr">1273 S Taylor St</div><div class="place">Philadelphia, PA, 19146</div></div><div class="stage-pill stage-qualified">1. Qualified</div></div><div class="pillrow"><span class="pill">⏱ Updated today</span><span class="pill">Option 1 - Wholesale/Flip</span></div><div class="specs"><span><strong>3</strong>bd / <strong>2</strong>ba</span><span><strong>1,200</strong> sqft</span></div><div class="fin-grid"><div class="fin"><div class="lab">Asking</div><div class="val">—</div></div><div class="fin"><div class="lab">ARV</div><div class="val">$307k</div></div><div class="fin"><div class="lab">70% MAO</div><div class="val">$215k</div></div><div class="fin"><div class="lab">Assign Fee</div><div class="val">—</div></div></div><div class="rating-row"><div><span class="label">Call</span><span class="rating gray">—</span></div><div class="summary">No call analysis yet.</div></div><div class="deal-meta"><strong>Motivation:</strong> Lead said it would take him a day to explain all reasons.<br><strong>Reason:</strong> Lead said it would take him a day to explain all reasons.</div><div class="actions"><a class="btn primary" href="https://app.gohighlevel.com/v2/location/RCkiUmWqXX4BYQ39JXmm/contacts/detail/4S376zYxdGiAcTazltX9" target="_blank">Open in GHL</a><a class="btn secondary" href="Roof Replacement - $10000
+HVAC System Upgrade - $12000
+Kitchen Remodel - $15000
+Bathroom Renovation - $8000
+Cosmetic Updates - $5000" target="_blank">Rehab Report</a><a class="btn secondary" href="https://www.zillow.com/homes/1273-S-Taylor-St-Philadelphia-PA-19146_rb/" target="_blank">Zillow</a></div></div></div></section>
 
   <footer>Auto-refreshed every 30 minutes by the GitHub Actions cron · Atom Investments · APG</footer>
 </div>
@@ -5105,7 +5113,7 @@ section h2, h2 {
   <header class="masthead">
     <div class="brandrow">
       <span class="brand">Atom Investments · APG Operations</span>
-      <span>Last updated Aug 22, 2026 02:21 AM ET</span>
+      <span>Last updated Aug 22, 2026 03:07 AM ET</span>
     </div>
     <h1>SMS <span class="accent">Follow-Ups.</span></h1>
     <p class="dek">Action queue for Jeff and Mike — replies to call back, leads gone dormant, and everything still cycling through the SMS sequence.</p>
@@ -5125,17 +5133,17 @@ section h2, h2 {
     <a href="sms-test.html">SMS Test</a>
   </nav>
 
-  <details class="run-grid-collapsed"><summary>All 5 cron jobs OK on last run — click for timestamps</summary><div class="run-grid"><div class="run-row"><span class="tag green">OK</span><span class="run-name">ACQ Call Recording Automation</span><span class="run-ts">Aug 22, 01:50 AM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">ACQ SMS Follow-Up + Dashboard</span><span class="run-ts">Aug 22, 01:55 AM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">APG Slack Scraper</span><span class="run-ts">Aug 22, 01:18 AM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">dashboard (script)</span><span class="run-ts">Aug 22, 02:17 AM</span><span class="run-detail">dashboard updated</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">sms (script)</span><span class="run-ts">Aug 22, 02:16 AM</span><span class="run-detail">outside business hours (hour=2 ET)</span></div></div></details><div class="status-banner on"><div class="status-text"><span class="pulse"></span>SMS Automation: <span style="color:var(--green);font-weight:800">ACTIVE</span></div><a class="btn btn-kill" href="https://docs.google.com/spreadsheets/d/1wc3Pt46ze-ejLaryL8WIRQf4OjEkirolc4-O8lsRQZY/edit#gid=0" target="_blank">EMERGENCY KILL SWITCH</a></div>
+  <details class="run-grid-collapsed"><summary>All 5 cron jobs OK on last run — click for timestamps</summary><div class="run-grid"><div class="run-row"><span class="tag green">OK</span><span class="run-name">ACQ Call Recording Automation</span><span class="run-ts">Aug 22, 02:19 AM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">ACQ SMS Follow-Up + Dashboard</span><span class="run-ts">Aug 22, 02:22 AM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">APG Slack Scraper</span><span class="run-ts">Aug 22, 02:20 AM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">dashboard (script)</span><span class="run-ts">Aug 22, 03:06 AM</span><span class="run-detail">dashboard updated</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">sms (script)</span><span class="run-ts">Aug 22, 03:05 AM</span><span class="run-detail">outside business hours (hour=3 ET)</span></div></div></details><div class="status-banner on"><div class="status-text"><span class="pulse"></span>SMS Automation: <span style="color:var(--green);font-weight:800">ACTIVE</span></div><a class="btn btn-kill" href="https://docs.google.com/spreadsheets/d/1wc3Pt46ze-ejLaryL8WIRQf4OjEkirolc4-O8lsRQZY/edit#gid=0" target="_blank">EMERGENCY KILL SWITCH</a></div>
 
   <section class="sec">
     <div class="tag-row"><span class="num">01</span><h2>At a Glance</h2></div>
     <hr>
     <div class="stat-row">
-      <div class="stat"><div class="lab">Total Leads</div><div class="v">709</div><div class="sub">across all stages</div></div>
-      <div class="stat"><div class="lab">In Sequence</div><div class="v">504</div><div class="sub">SMS scheduled</div></div>
-      <div class="stat hot"><div class="lab">Replied — Call Now</div><div class="v">183</div><div class="sub">Jeff has tasks</div></div>
+      <div class="stat"><div class="lab">Total Leads</div><div class="v">237</div><div class="sub">across all stages</div></div>
+      <div class="stat"><div class="lab">In Sequence</div><div class="v">136</div><div class="sub">SMS scheduled</div></div>
+      <div class="stat hot"><div class="lab">Replied — Call Now</div><div class="v">91</div><div class="sub">Jeff has tasks</div></div>
       <div class="stat warm"><div class="lab">Dormant — Manual Call</div><div class="v">2</div><div class="sub">no reply after sequence</div></div>
-      <div class="stat green"><div class="lab">Reply Rate</div><div class="v">26.6%</div><div class="sub">replied / total touched</div></div>
+      <div class="stat green"><div class="lab">Reply Rate</div><div class="v">39.7%</div><div class="sub">replied / total touched</div></div>
     </div>
   </section>
 
@@ -5155,21 +5163,21 @@ section h2, h2 {
   <section class="sec">
     <div class="tag-row"><span class="num">03</span><h2><span class="dot hot"></span>Replied — Action Needed</h2></div>
     <hr>
-    <div class="lead-table"><table><thead><tr><th>Contact</th><th>Address</th><th>Stage</th><th>Replied</th><th>Last Number</th></tr></thead><tbody><tr><td><strong>Delvi Tavarez</strong></td><td>39 Maple Ave</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot">Aug 20, 04:02 PM</span></td><td></td></tr>
+    <div class="lead-table"><table><thead><tr><th>Contact</th><th>Address</th><th>Stage</th><th>Replied</th><th>Last Number</th></tr></thead><tbody><tr><td><strong>(no name)</strong></td><td></td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot">Aug 20, 04:02 PM</span></td><td></td></tr>
 <tr><td><strong>Peter Mimmo</strong></td><td>4708 Atlantic Avenue</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot">Aug 20, 12:27 PM</span></td><td>Jeff (NJ)</td></tr>
 <tr><td><strong>Gregorio Martinez</strong></td><td>83 Lyons Ave # 85</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot">Aug 20, 02:04 PM</span></td><td></td></tr>
 <tr><td><strong>John P Primiano</strong></td><td>Grace Ferry Avenue</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot"></span></td><td></td></tr>
 <tr><td><strong>Steven Guinto</strong></td><td>10 Hillcrest Dr</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot">Aug 20, 03:44 PM</span></td><td>Jeff (NJ)</td></tr>
 <tr><td><strong>Howard Dickstein</strong></td><td>4 Morningside Lane</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot">Aug 19, 04:40 PM</span></td><td></td></tr>
 <tr><td><strong>Frank Rozinsky</strong></td><td>739 Hiland Ave # 741</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot"></span></td><td></td></tr>
-<tr><td><strong>Juan Marin</strong></td><td>40 Farnham Ave</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot">Aug 21, 05:09 PM</span></td><td>PA Market</td></tr>
+<tr><td><strong>(no name)</strong></td><td></td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot">Aug 21, 05:09 PM</span></td><td>PA Market</td></tr>
 <tr><td><strong>(no name)</strong></td><td></td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot">Jul 10, 09:21 PM</span></td><td>Jeff (NJ)</td></tr>
 <tr><td><strong>(no name)</strong></td><td></td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot"></span></td><td></td></tr>
 <tr><td><strong>(no name)</strong></td><td></td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot">Jul 28, 12:53 PM</span></td><td></td></tr>
 <tr><td><strong>(no name)</strong></td><td></td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot"></span></td><td></td></tr>
 <tr><td><strong>(no name)</strong></td><td></td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot"></span></td><td></td></tr>
-<tr><td><strong>Gary Rogan</strong></td><td>30 Taylor Rd</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot">Jul 28, 12:50 PM</span></td><td></td></tr>
-<tr><td><strong>Osvaldo Colon</strong></td><td>352 Colonial Rd</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot">Jun 24, 01:05 PM</span></td><td></td></tr>
+<tr><td><strong>(no name)</strong></td><td></td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot">Jul 28, 12:50 PM</span></td><td></td></tr>
+<tr><td><strong>(no name)</strong></td><td></td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot">Jun 24, 01:05 PM</span></td><td></td></tr>
 <tr><td><strong>James Southard</strong></td><td>9 Chelsea Pl</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot">Jun 24, 03:50 PM</span></td><td></td></tr>
 <tr><td><strong>Eleanor</strong></td><td>500 Jackson Road</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot">Jun 04, 08:01 PM</span></td><td>AL Market</td></tr>
 <tr><td><strong>Linda Charles</strong></td><td>450 Seven Oaks Rd</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot">Jul 28, 12:58 PM</span></td><td></td></tr>
@@ -5196,7 +5204,7 @@ section h2, h2 {
 <tr><td><strong>Chuck  Pagano</strong></td><td>31 CHESTNUT ST</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot">Aug 02, 01:06 PM</span></td><td></td></tr>
 <tr><td><strong>Rudolph Thompson</strong></td><td>37 Mead St</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot">Aug 20, 04:22 PM</span></td><td>Jeff (NJ)</td></tr>
 <tr><td><strong>Carrie Smith</strong></td><td>152 Scheerer Ave</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot">Jun 24, 12:35 PM</span></td><td></td></tr>
-<tr><td><strong>(no name)</strong></td><td></td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot">Aug 20, 12:52 PM</span></td><td>Jeff (NJ)</td></tr>
+<tr><td><strong>Michael Georgetti</strong></td><td>2122 Branch Pike</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot">Aug 20, 12:52 PM</span></td><td>Jeff (NJ)</td></tr>
 <tr><td><strong>Dana M  Grant</strong></td><td>4532 Grasselli Boulevard Southwest</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot">Aug 20, 12:20 PM</span></td><td>AL Market</td></tr>
 <tr><td><strong>Robert Hunter</strong></td><td>1327 42nd Street Ensley</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot">Jul 31, 01:38 PM</span></td><td></td></tr>
 <tr><td><strong>Justin Sims</strong></td><td>5418 Cairo Ave</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot">Aug 13, 03:57 PM</span></td><td>AL Market</td></tr>
@@ -5208,19 +5216,19 @@ section h2, h2 {
 <tr><td><strong>Thomas Gambino</strong></td><td>31 W Rutherford Ln</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot">Jul 31, 10:07 AM</span></td><td></td></tr>
 <tr><td><strong>Joseph Quartullo</strong></td><td>80 Shawnee Place</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot">Aug 20, 08:04 PM</span></td><td>Jeff (NJ)</td></tr>
 <tr><td><strong>Brian Cavallucci</strong></td><td>29 Fox Hollow Dr</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot"></span></td><td>Jeff (NJ)</td></tr>
-<tr><td><strong>Peter Mimmo</strong></td><td>4708 Atlantic Avenue</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot">Aug 20, 12:27 PM</span></td><td>Jeff (NJ)</td></tr>
-<tr><td><strong>Bryan Carestia</strong></td><td>26 Tamar Ct</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot">May 14, 07:49 PM</span></td><td>Jeff (NJ)</td></tr>
-<tr><td><strong>Linda A</strong></td><td>4611 Schooner Rd # 1</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot"></span></td><td>Jeff (NJ)</td></tr>
-<tr><td><strong>Steven Dadura</strong></td><td>1629 S Delaware St</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot">May 14, 07:51 PM</span></td><td>Jeff (NJ)</td></tr>
-<tr><td><strong>Brian Haberkern</strong></td><td>107 E Revere Ave</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot">Jul 31, 10:13 AM</span></td><td></td></tr>
-<tr><td><strong>Patricia Mcaloon</strong></td><td>Galloway</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot">Jul 31, 10:10 AM</span></td><td></td></tr>
+<tr><td><strong>(no name)</strong></td><td></td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot">Aug 20, 12:27 PM</span></td><td>Jeff (NJ)</td></tr>
+<tr><td><strong>(no name)</strong></td><td></td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot">May 14, 07:49 PM</span></td><td>Jeff (NJ)</td></tr>
+<tr><td><strong>(no name)</strong></td><td></td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot"></span></td><td>Jeff (NJ)</td></tr>
+<tr><td><strong>(no name)</strong></td><td></td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot">May 14, 07:51 PM</span></td><td>Jeff (NJ)</td></tr>
+<tr><td><strong>(no name)</strong></td><td></td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot">Jul 31, 10:13 AM</span></td><td></td></tr>
+<tr><td><strong>(no name)</strong></td><td></td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot">Jul 31, 10:10 AM</span></td><td></td></tr>
 <tr><td><strong>(no name)</strong></td><td></td><td><span class="tag">2. LAO</span></td><td><span class="tag hot"></span></td><td></td></tr>
 <tr><td><strong>(no name)</strong></td><td></td><td><span class="tag">2. LAO</span></td><td><span class="tag hot"></span></td><td>Jeff (NJ)</td></tr>
 <tr><td><strong>(no name)</strong></td><td></td><td><span class="tag">2. LAO</span></td><td><span class="tag hot"></span></td><td></td></tr>
 <tr><td><strong>(no name)</strong></td><td></td><td><span class="tag">2. LAO</span></td><td><span class="tag hot"></span></td><td></td></tr>
 <tr><td><strong>(no name)</strong></td><td></td><td><span class="tag">2. LAO</span></td><td><span class="tag hot"></span></td><td></td></tr>
-<tr><td><strong>(no name)</strong></td><td></td><td><span class="tag">2. LAO</span></td><td><span class="tag hot"></span></td><td></td></tr>
-<tr><td><strong>(no name)</strong></td><td></td><td><span class="tag">2. LAO</span></td><td><span class="tag hot"></span></td><td></td></tr>
+<tr><td><strong>Mac Hall</strong></td><td>2903 Taylor St</td><td><span class="tag">2. LAO</span></td><td><span class="tag hot"></span></td><td></td></tr>
+<tr><td><strong>Mary &amp; Marisa Kaneda</strong></td><td>405 Pearl St</td><td><span class="tag">2. LAO</span></td><td><span class="tag hot"></span></td><td></td></tr>
 <tr><td><strong>Angela Martin</strong></td><td>608 Alabama Ave Sw</td><td><span class="tag">2. LAO</span></td><td><span class="tag hot">May 22, 01:55 PM</span></td><td>AL Market</td></tr>
 <tr><td><strong>Mark Hall (Referred by Phil)</strong></td><td>1819 W 6th St,</td><td><span class="tag">2. LAO</span></td><td><span class="tag hot"></span></td><td></td></tr>
 <tr><td><strong>John Harrington</strong></td><td>1211 Jersey St</td><td><span class="tag">2. LAO</span></td><td><span class="tag hot"></span></td><td></td></tr>
@@ -5232,112 +5240,20 @@ section h2, h2 {
 <tr><td><strong>Philip Tappenden</strong></td><td>715 Mill St,</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot"></span></td><td></td></tr>
 <tr><td><strong>Clinton Junior (Referred by Phil)</strong></td><td>2649 W Lehigh Ave</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot"></span></td><td></td></tr>
 <tr><td><strong>Mike number from Phil</strong></td><td>951 Johnson St,</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot"></span></td><td></td></tr>
-<tr><td><strong>Mike number from Phil</strong></td><td>951 Johnson St,</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot"></span></td><td></td></tr>
-<tr><td><strong>Mike number from Phil</strong></td><td>951 Johnson St,</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot"></span></td><td></td></tr>
-<tr><td><strong>Mike number from Phil</strong></td><td>951 Johnson St,</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot"></span></td><td></td></tr>
-<tr><td><strong>Steven Stone</strong></td><td>118 Villanova Dr</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot"></span></td><td></td></tr>
-<tr><td><strong>Scott Francine Abadinsky (Wife)</strong></td><td>218 Jackson Mills Rd</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot">Jul 30, 08:10 AM</span></td><td></td></tr>
+<tr><td><strong>(no name)</strong></td><td></td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot"></span></td><td></td></tr>
+<tr><td><strong>(no name)</strong></td><td></td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot"></span></td><td></td></tr>
+<tr><td><strong>(no name)</strong></td><td></td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot"></span></td><td></td></tr>
+<tr><td><strong>(no name)</strong></td><td></td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot"></span></td><td></td></tr>
+<tr><td><strong>(no name)</strong></td><td></td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot">Jul 30, 08:10 AM</span></td><td></td></tr>
 <tr><td><strong>Julius Montford</strong></td><td>279 Meeker Ave # 281</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot">Aug 10, 08:42 AM</span></td><td></td></tr>
 <tr><td><strong>Leonard Felicioni</strong></td><td>3005 Marne Hwy</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot">Aug 05, 05:03 PM</span></td><td></td></tr>
 <tr><td><strong>Andrew Dobson</strong></td><td>253 Jefferson Rd</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot">Jul 30, 08:07 AM</span></td><td></td></tr>
 <tr><td><strong>Joseph Demato</strong></td><td>505 Halsey Rd</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot">Jul 30, 08:08 AM</span></td><td></td></tr>
-<tr><td><strong>Gregory Nemchik</strong></td><td>56 Lafayette Ave</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot">Jun 30, 03:48 PM</span></td><td></td></tr>
-<tr><td><strong>Kyle Morse</strong></td><td>125 White Horse Ave</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot">Jun 24, 12:20 PM</span></td><td></td></tr>
+<tr><td><strong>(no name)</strong></td><td></td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot">Jun 30, 03:48 PM</span></td><td></td></tr>
+<tr><td><strong>(no name)</strong></td><td></td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot">Jun 24, 12:20 PM</span></td><td></td></tr>
 <tr><td><strong>Kevin Fanelli</strong></td><td>136 Lamplighter Ct</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot"></span></td><td></td></tr>
 <tr><td><strong>George Morvey</strong></td><td>11 Saint Charles Ave</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot">Jun 24, 04:22 PM</span></td><td></td></tr>
-<tr><td><strong>Pantelis Tripolitis</strong></td><td>56 Cornell Dr</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot">Jun 24, 11:45 AM</span></td><td></td></tr>
-<tr><td><strong>Craig Haley</strong></td><td>14 Kristin Way</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot">Jul 30, 08:09 AM</span></td><td></td></tr>
-<tr><td><strong>Sydell Nadel</strong></td><td>362c Union Dr</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot">Jul 30, 08:34 AM</span></td><td></td></tr>
-<tr><td><strong>Nicholas Loberto</strong></td><td>740 Bringhurst Ave</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot">Jun 24, 02:27 PM</span></td><td></td></tr>
-<tr><td><strong>Garfield Delfico</strong></td><td>108 Beideman Ave</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot">Jun 24, 12:37 PM</span></td><td></td></tr>
-<tr><td><strong>Joseph Hopkins</strong></td><td>704 Division St</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot">Jun 24, 12:46 PM</span></td><td></td></tr>
-<tr><td><strong>Mason Hahn</strong></td><td>202 Grant Ave</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot"></span></td><td></td></tr>
-<tr><td><strong>John B</strong></td><td>3 Estaugh Avenue</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot">Jun 05, 11:00 AM</span></td><td></td></tr>
-<tr><td><strong>Mary Horezga</strong></td><td>130 Trenton Road</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot">Jun 24, 05:18 PM</span></td><td></td></tr>
-<tr><td><strong>Joel Hametz</strong></td><td>37 Stokes Ave</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot">Jun 24, 01:18 PM</span></td><td></td></tr>
-<tr><td><strong>Paul Carmelia</strong></td><td>315 Cedar Ln</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot">Jun 29, 12:18 PM</span></td><td></td></tr>
-<tr><td><strong>Richard Cotton</strong></td><td>10 Cornfield Ln</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot">Jun 24, 12:16 PM</span></td><td></td></tr>
-<tr><td><strong>Grace Chrustek</strong></td><td>2 Cider Mill Cir</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot"></span></td><td></td></tr>
-<tr><td><strong>Frank Rozinsky</strong></td><td>739 Hiland Ave # 741</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot"></span></td><td></td></tr>
-<tr><td><strong>Joshua Jenner</strong></td><td>35 Benson St</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot"></span></td><td></td></tr>
-<tr><td><strong>Mike</strong></td><td>2001 Lincoln St</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot">Apr 23, 04:16 PM</span></td><td></td></tr>
-<tr><td><strong>Raymond Bowman Sr</strong></td><td>118 SHIP AVE</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot"></span></td><td></td></tr>
-<tr><td><strong>(no name)</strong></td><td></td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot">Aug 06, 05:22 PM</span></td><td></td></tr>
-<tr><td><strong>Dennis Gilmore</strong></td><td>39 Forge Hill Rd</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot"></span></td><td></td></tr>
-<tr><td><strong>Pankaj Varshney</strong></td><td>1101 Jesse Way</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot"></span></td><td></td></tr>
-<tr><td><strong>Mario Toledo</strong></td><td>42 Harrison St</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot">Jun 25, 06:01 PM</span></td><td></td></tr>
-<tr><td><strong>Dimitrios Lemoniotis</strong></td><td>9 N SOVEREIGN AVE</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot"></span></td><td></td></tr>
-<tr><td><strong>Kenneth Nichols</strong></td><td>712 W Pleasant St</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot">Apr 03, 03:22 PM</span></td><td></td></tr>
-<tr><td><strong>Aylene Harper</strong></td><td>5743 5th Ave</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot">May 28, 02:51 PM</span></td><td></td></tr>
-<tr><td><strong>(no name)</strong></td><td></td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot">Apr 03, 02:22 PM</span></td><td></td></tr>
-<tr><td><strong>(no name)</strong></td><td></td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot">Apr 03, 02:27 PM</span></td><td></td></tr>
-<tr><td><strong>Dennis Gilmore</strong></td><td>39 Forge Hill Rd</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot"></span></td><td></td></tr>
-<tr><td><strong>Adele Moore</strong></td><td>Jackson Road</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot">May 26, 09:48 AM</span></td><td></td></tr>
-<tr><td><strong>Jorge Espinal</strong></td><td>2838 Pierce Ave</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot">Mar 31, 01:54 PM</span></td><td></td></tr>
-<tr><td><strong>Rachael S Amodei</strong></td><td>204 Conestoga Rd</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot">Mar 30, 03:30 PM</span></td><td></td></tr>
-<tr><td><strong>Timothy Paul</strong></td><td>3953 Kreidersville Rd</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot">Mar 30, 05:08 PM</span></td><td></td></tr>
-<tr><td><strong>David Rosenberg</strong></td><td>915 Olive St</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot">Mar 30, 02:51 PM</span></td><td></td></tr>
-<tr><td><strong>Steven B McGuire</strong></td><td>40 Concord St</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot">Mar 30, 02:19 PM</span></td><td></td></tr>
-<tr><td><strong>Howard James</strong></td><td>565 Chester Pike</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot">Mar 31, 07:26 PM</span></td><td></td></tr>
-<tr><td><strong>Madelyn M Brown</strong></td><td>1784 N Dove Rd</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot">Mar 30, 01:39 PM</span></td><td></td></tr>
-<tr><td><strong>Justin / Danielle Offutt</strong></td><td>5910 WILBER AVE</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot"></span></td><td></td></tr>
-<tr><td><strong>J Duarte</strong></td><td>946 Meredith Ave</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot">Mar 27, 04:19 PM</span></td><td></td></tr>
-<tr><td><strong>Marcella Dawson</strong></td><td>3445 E 139th St</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot">Mar 27, 03:01 PM</span></td><td></td></tr>
-<tr><td><strong>Shahram Abdollahi</strong></td><td>429 W 8th St</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot">Mar 27, 02:14 PM</span></td><td></td></tr>
-<tr><td><strong>Jeffrey William Quinn</strong></td><td>5099 Palmer Mill Rd</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot">Mar 27, 02:09 PM</span></td><td></td></tr>
-<tr><td><strong>James Beaulieu</strong></td><td>513 Cascade St</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot">Mar 27, 01:51 PM</span></td><td></td></tr>
-<tr><td><strong>William Knass</strong></td><td>92 Rosecrest Dr</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot">Mar 27, 01:31 PM</span></td><td></td></tr>
-<tr><td><strong>Elisha Ruiz</strong></td><td>4103 UNRUH AVE</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot"></span></td><td></td></tr>
-<tr><td><strong>Rene Turay</strong></td><td>99 HOFFMAN BLVD</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot">Jul 30, 08:55 AM</span></td><td></td></tr>
-<tr><td><strong>Jimmie Lee</strong></td><td>2823 29TH PLACE ENSLEY</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot"></span></td><td></td></tr>
-<tr><td><strong>Gordon M Ueki</strong></td><td>120 Plainfield Ave</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot">Apr 28, 08:05 PM</span></td><td></td></tr>
-<tr><td><strong>Timothy Adderly</strong></td><td>935 KIMBER ST</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot">Jul 30, 08:09 AM</span></td><td></td></tr>
-<tr><td><strong>Deloris</strong></td><td>philidelphia</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot"></span></td><td></td></tr>
-<tr><td><strong>Dafhi</strong></td><td>111 W Merchant St,</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot">Apr 29, 02:17 PM</span></td><td></td></tr>
-<tr><td><strong>Lawrence M aka El Mandela Jenkins</strong></td><td>1958 Case St</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot"></span></td><td></td></tr>
-<tr><td><strong>Marta Abbatemarco</strong></td><td>351 Outwater Ln</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot">Jun 24, 12:27 PM</span></td><td></td></tr>
-<tr><td><strong>April Archer</strong></td><td>13705 Union Ave</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot">Mar 16, 03:25 PM</span></td><td></td></tr>
-<tr><td><strong>Teresa Frederick</strong></td><td>150 Iler Dr</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot"></span></td><td></td></tr>
-<tr><td><strong>Gaetano Losa</strong></td><td>59 Kuhlthau Ave</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot">Mar 13, 03:08 PM</span></td><td></td></tr>
-<tr><td><strong>Gregory Garnett</strong></td><td>3080 W 46th St</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot">Mar 13, 03:49 PM</span></td><td></td></tr>
-<tr><td><strong>Lolita Greene</strong></td><td>1829 Rosemont Rd</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot">Mar 13, 02:01 PM</span></td><td></td></tr>
-<tr><td><strong>Deborah Gallucio</strong></td><td>107 Kent Ave</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot"></span></td><td></td></tr>
-<tr><td><strong>Michael Poindexter</strong></td><td>207 2nd Street Walk</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot">Jun 24, 01:34 PM</span></td><td></td></tr>
-<tr><td><strong>Jeffrey Allard</strong></td><td>2545 Homecroft Dr</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot">Mar 11, 04:38 PM</span></td><td></td></tr>
-<tr><td><strong>Jennifer Aguero</strong></td><td>447 Roosevelt Ave</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot">Mar 11, 01:59 PM</span></td><td></td></tr>
-<tr><td><strong>Anthony Iwenofu</strong></td><td>3419 W 88th St</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot">Mar 11, 04:20 PM</span></td><td></td></tr>
-<tr><td><strong>Leroy Sallee</strong></td><td>3906 Lee Heights Blvd</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot">Mar 11, 09:22 PM</span></td><td></td></tr>
-<tr><td><strong>Paul Jones</strong></td><td>3385 E 126th St</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot">Mar 10, 04:28 PM</span></td><td></td></tr>
-<tr><td><strong>Angel L Maldonado</strong></td><td>6101 Fir Ave</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot">Mar 10, 01:49 PM</span></td><td></td></tr>
-<tr><td><strong>Beata Szyffer-Hopkins</strong></td><td>412 Neadow Woods lane</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot"></span></td><td></td></tr>
-<tr><td><strong>Shahbaz Zubairi</strong></td><td>358 Bromley Pl</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot"></span></td><td></td></tr>
-<tr><td><strong>Lawrence Davis</strong></td><td>1 Spruce Rd</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot">Mar 09, 02:24 PM</span></td><td></td></tr>
-<tr><td><strong>Cheryl Crawford</strong></td><td>3930 Elson Rd</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot">Mar 09, 02:12 PM</span></td><td></td></tr>
-<tr><td><strong>John P Primiano</strong></td><td>Grace Ferry Avenue</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot"></span></td><td></td></tr>
-<tr><td><strong>Joseph Obrien</strong></td><td>15230 Bernita Dr</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot">Mar 09, 01:42 PM</span></td><td></td></tr>
-<tr><td><strong>Clinton Junior (Referred by Phil)</strong></td><td>2649 W Lehigh Ave</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot"></span></td><td></td></tr>
-<tr><td><strong>Elizabeth Hare</strong></td><td>184 E Maynard Ave</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot">Mar 06, 04:33 PM</span></td><td></td></tr>
-<tr><td><strong>Mike number from Phil</strong></td><td>951 Johnson St,</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot"></span></td><td></td></tr>
-<tr><td><strong>William E Davis</strong></td><td>9231 Vandike St # 35</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot">Mar 08, 10:30 AM</span></td><td></td></tr>
-<tr><td><strong>George Pritchett</strong></td><td>4112 7th Ave</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot"></span></td><td></td></tr>
-<tr><td><strong>Shirley Xu</strong></td><td>231 Hamilton Ave,</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot">May 07, 07:09 PM</span></td><td></td></tr>
-<tr><td><strong>Aaron Macks</strong></td><td>4725 Terrace Q</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot">Mar 04, 03:41 PM</span></td><td></td></tr>
-<tr><td><strong>Joshua Ostrin</strong></td><td>33 S 1st Ave</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot"></span></td><td></td></tr>
-<tr><td><strong>Plaut Mendoza</strong></td><td>4333 2nd Ave S</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot">Mar 03, 04:57 PM</span></td><td></td></tr>
-<tr><td><strong>Melvin W Staples</strong></td><td>3712 41st Avenue North</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot">May 29, 03:23 PM</span></td><td></td></tr>
-<tr><td><strong>Toni Williams</strong></td><td>12b Steel St</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot"></span></td><td></td></tr>
-<tr><td><strong>Matthew Bouzek</strong></td><td>4556 S Lenox St</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot">Mar 06, 05:41 PM</span></td><td></td></tr>
-<tr><td><strong>Tya Miles</strong></td><td>1145 Langham Ave</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot"></span></td><td></td></tr>
-<tr><td><strong>Lacy Dungee</strong></td><td>166 PAUL ROBESON BLVD</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot"></span></td><td></td></tr>
-<tr><td><strong>Kenneth Leposa</strong></td><td>419 Church St,</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot"></span></td><td></td></tr>
-<tr><td><strong>Barbara Demedicis</strong></td><td>636 CAMP CIR</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot"></span></td><td></td></tr>
-<tr><td><strong>Philip Tappenden</strong></td><td>715 Mill St,</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot"></span></td><td></td></tr>
-<tr><td><strong>Jacqueline Gaines</strong></td><td>238 Mulberry St</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot">Jul 30, 08:30 AM</span></td><td></td></tr>
-<tr><td><strong>Shen Zhou</strong></td><td>365 Bromley Pl</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot"></span></td><td></td></tr>
-<tr><td><strong>William Lindsey</strong></td><td>41 Westminster Dr</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot"></span></td><td></td></tr>
-<tr><td><strong>Joseph Schili</strong></td><td>1370 Oriental Ave</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot"></span></td><td></td></tr>
-<tr><td><strong>Judy Finkelstein</strong></td><td>692 Lamberton St</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot">Apr 22, 03:29 PM</span></td><td></td></tr>
-<tr><td><strong>Harinder Gill</strong></td><td>6 Parrotta Dr</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot"></span></td><td></td></tr></tbody></table></div>
+<tr><td><strong>Pantelis Tripolitis</strong></td><td>56 Cornell Dr</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot">Jun 24, 11:45 AM</span></td><td></td></tr></tbody></table></div>
   </section>
 
   <section class="sec">
@@ -5356,32 +5272,20 @@ section h2, h2 {
 <tr><td><strong>Clarissa Williams</strong></td><td>5648 CAMDEN AVE</td><td><span class="tag">1. Qualified</span></td><td><span class="tag gray">DND — do not contact</span></td><td><span class="tag warm">0/6</span></td><td></td></tr>
 <tr><td><strong>Demetrius Singleton</strong></td><td>309 17TH AVE SW</td><td><span class="tag">1. Qualified</span></td><td><span class="tag gray">DND — do not contact</span></td><td><span class="tag warm">0/6</span></td><td></td></tr>
 <tr><td><strong>Mr.  King</strong></td><td>2208 E 81st St</td><td><span class="tag">1. Qualified</span></td><td><span class="tag gray">DND — do not contact</span></td><td><span class="tag warm">0/6</span></td><td></td></tr>
+<tr><td><strong>Fannie  Hicks</strong></td><td>910 4th Court West</td><td><span class="tag">1. Qualified</span></td><td><span class="tag gray">DND — do not contact</span></td><td><span class="tag warm">0/6</span></td><td></td></tr>
 <tr><td><strong>(no name)</strong></td><td></td><td><span class="tag">1. Qualified</span></td><td><span class="tag gray">DND — do not contact</span></td><td><span class="tag warm">0/6</span></td><td></td></tr>
-<tr><td><strong>Michael Larkin</strong></td><td>627 E Stafford St</td><td><span class="tag">1. Qualified</span></td><td><span class="tag gray">DND — do not contact</span></td><td><span class="tag warm">0/6</span></td><td></td></tr>
-<tr><td><strong>Tony Lewis</strong></td><td>1273 S Taylor St</td><td><span class="tag">1. Qualified</span></td><td><span class="tag gray">DND — do not contact</span></td><td><span class="tag warm">0/6</span></td><td></td></tr>
-<tr><td><strong>vgdxrnqnzj</strong></td><td>kuxuhodtpq</td><td><span class="tag">Dead Deals</span></td><td><span class="tag gray">DND — do not contact</span></td><td><span class="tag warm">0/6</span></td><td></td></tr>
-<tr><td><strong>Ellen / Cliff Lacy</strong></td><td>3206 STATE ROUTE 27</td><td><span class="tag">Dead Deals</span></td><td><span class="tag gray">DND — do not contact</span></td><td><span class="tag warm">0/6</span></td><td></td></tr>
-<tr><td><strong>(no name)</strong></td><td></td><td><span class="tag">Dead Deals</span></td><td><span class="tag gray">DND — do not contact</span></td><td><span class="tag warm">0/6</span></td><td></td></tr>
-<tr><td><strong>Elie Chalom</strong></td><td>135 MADISON AVE</td><td><span class="tag">Dead Deals</span></td><td><span class="tag gray">DND — do not contact</span></td><td><span class="tag warm">0/6</span></td><td></td></tr>
-<tr><td><strong>Joseph Anisko</strong></td><td>300 HAMILTON ST</td><td><span class="tag">Dead Deals</span></td><td><span class="tag gray">DND — do not contact</span></td><td><span class="tag warm">0/6</span></td><td></td></tr>
-<tr><td><strong>Bell Manor Apartments Llc</strong></td><td>29 BRADY BLVD</td><td><span class="tag">Dead Deals</span></td><td><span class="tag gray">DND — do not contact</span></td><td><span class="tag warm">0/6</span></td><td></td></tr>
-<tr><td><strong>Dolores Faraca</strong></td><td>558 ALMON AVE</td><td><span class="tag">Dead Deals</span></td><td><span class="tag gray">DND — do not contact</span></td><td><span class="tag warm">0/6</span></td><td></td></tr>
-<tr><td><strong>Abdallah Elwir</strong></td><td>51 E CODDINGTON AVE</td><td><span class="tag">Dead Deals</span></td><td><span class="tag gray">DND — do not contact</span></td><td><span class="tag warm">0/6</span></td><td></td></tr>
-<tr><td><strong>Charles Lynch</strong></td><td>261 Evans Ave</td><td><span class="tag">Dead Deals</span></td><td><span class="tag gray">DND — do not contact</span></td><td><span class="tag warm">0/6</span></td><td></td></tr>
-<tr><td><strong>Victor Lopes</strong></td><td>842 BEATRICE PKWY</td><td><span class="tag">Dead Deals</span></td><td><span class="tag gray">DND — do not contact</span></td><td><span class="tag warm">0/6</span></td><td></td></tr>
-<tr><td><strong>Gustavo Bianchi</strong></td><td>4617 Worth St</td><td><span class="tag">Dead Deals</span></td><td><span class="tag gray">DND — do not contact</span></td><td><span class="tag warm">0/6</span></td><td></td></tr>
-<tr><td><strong>John Monaco</strong></td><td>59 ARNOT ST,</td><td><span class="tag">Dead Deals</span></td><td><span class="tag gray">DND — do not contact</span></td><td><span class="tag warm">0/6</span></td><td></td></tr>
-<tr><td><strong>Nicole Berkovich</strong></td><td>3101 Ocean Ave</td><td><span class="tag">Dead Deals</span></td><td><span class="tag gray">DND — do not contact</span></td><td><span class="tag warm">0/6</span></td><td></td></tr></tbody></table></div>
+<tr><td><strong>(no name)</strong></td><td></td><td><span class="tag">1. Qualified</span></td><td><span class="tag gray">DND — do not contact</span></td><td><span class="tag warm">0/6</span></td><td></td></tr>
+<tr><td><strong>(no name)</strong></td><td></td><td><span class="tag">Dead Deals</span></td><td><span class="tag gray">DND — do not contact</span></td><td><span class="tag warm">0/6</span></td><td></td></tr></tbody></table></div>
   </section>
 
   <section class="sec">
     <div class="tag-row"><span class="num">06</span><h2><span class="dot green"></span>Active in Sequence</h2></div>
     <hr>
     <input type="text" class="search" id="searchActive" placeholder="Search by name, address, state...">
-    <div class="lead-table"><table id="activeTable"><thead><tr><th>Contact</th><th>Address</th><th>State</th><th>Stage</th><th>SMS Sent</th><th>Last Sent</th><th>From Number</th></tr></thead><tbody><tr><td><strong>Douglas Gardens</strong></td><td>390 Hamilton St Apt C</td><td>NJ</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Armando Sanzari</strong></td><td>101 Arnot St</td><td>NJ</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Marlene Rundstrom</strong></td><td>333 Princeton Ave</td><td>NJ</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Richard A Stanaland</strong></td><td>46 Franklin Avenue</td><td>NJ</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
+    <div class="lead-table"><table id="activeTable"><thead><tr><th>Contact</th><th>Address</th><th>State</th><th>Stage</th><th>SMS Sent</th><th>Last Sent</th><th>From Number</th></tr></thead><tbody><tr><td><strong>(no name)</strong></td><td></td><td></td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
+<tr><td><strong>(no name)</strong></td><td></td><td></td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
+<tr><td><strong>(no name)</strong></td><td></td><td></td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
+<tr><td><strong>(no name)</strong></td><td></td><td></td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
 <tr><td><strong>Karim Mohammad</strong></td><td>1410 Pennington Rd</td><td>NJ</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
 <tr><td><strong>Karim Mohammad</strong></td><td>1410 Pennington Rd</td><td>NJ</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
 <tr><td><strong>William Babuschak</strong></td><td>301 Lakeside Blvd</td><td>NJ</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
@@ -5403,17 +5307,17 @@ section h2, h2 {
 <tr><td><strong>Dennis Washington</strong></td><td>2501 41st Street</td><td>NJ</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">1</span></td><td>Aug 17, 02:18 PM</td><td>Jeff (NJ)</td></tr>
 <tr><td><strong>Kenny Lozano</strong></td><td>2234 41st St</td><td>NJ</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">2</span></td><td>Aug 21, 02:18 PM</td><td>Jeff (NJ)</td></tr>
 <tr><td><strong>Glenn Mallery</strong></td><td>44 Annabelle Ave</td><td>NJ</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">2</span></td><td>Aug 21, 02:18 PM</td><td>Jeff (NJ)</td></tr>
-<tr><td><strong>James Fuccello</strong></td><td>408 Elmer St</td><td>NJ</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Angela Patnaude</strong></td><td>7 Jefferson Dr</td><td>NJ</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Raymond Brandefine</strong></td><td>532 Halsey Rd</td><td>NJ</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Jamal Jackson</strong></td><td></td><td></td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">4</span></td><td>Aug 18, 11:53 AM</td><td>PA Market</td></tr>
+<tr><td><strong>(no name)</strong></td><td></td><td></td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
+<tr><td><strong>(no name)</strong></td><td></td><td></td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
+<tr><td><strong>(no name)</strong></td><td></td><td></td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
+<tr><td><strong>(no name)</strong></td><td></td><td></td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">4</span></td><td>Aug 18, 11:53 AM</td><td>PA Market</td></tr>
 <tr><td><strong>Kimberly Clarke</strong></td><td>133 Maplewood Ave</td><td>NJ</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
 <tr><td><strong>David Williams</strong></td><td>435 KERRIGAN BLVD</td><td>NJ</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">2</span></td><td>Aug 17, 10:20 AM</td><td>Jeff (NJ)</td></tr>
 <tr><td><strong>Ben Clay</strong></td><td>206 16TH AVE S</td><td>AL</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">3</span></td><td>Aug 17, 10:20 AM</td><td>AL Market</td></tr>
 <tr><td><strong>Chris Brindley</strong></td><td>41 JULIA AVE</td><td>NJ</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">3</span></td><td>Aug 17, 10:20 AM</td><td>Jeff (NJ)</td></tr>
-<tr><td><strong>(no name)</strong></td><td></td><td></td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">3</span></td><td>Aug 20, 12:19 PM</td><td>WI Market</td></tr>
-<tr><td><strong>(no name)</strong></td><td></td><td></td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">3</span></td><td>Aug 20, 12:19 PM</td><td>Jeff (NJ)</td></tr>
-<tr><td><strong>(no name)</strong></td><td></td><td></td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">3</span></td><td>Aug 20, 12:19 PM</td><td>AL Market</td></tr>
+<tr><td><strong>Monique Johnson</strong></td><td>5136 N 32nd St</td><td>WI</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">3</span></td><td>Aug 20, 12:19 PM</td><td>WI Market</td></tr>
+<tr><td><strong>Douglas Rice</strong></td><td>316 Lincoln Ave</td><td>NJ</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">3</span></td><td>Aug 20, 12:19 PM</td><td>Jeff (NJ)</td></tr>
+<tr><td><strong>Joel  Lowe</strong></td><td>1240 Princeton Avenue Southwest</td><td>AL</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">3</span></td><td>Aug 20, 12:19 PM</td><td>AL Market</td></tr>
 <tr><td><strong>Christine  Davis</strong></td><td>4113 40th Terrace North</td><td>AL</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">3</span></td><td>Aug 20, 12:19 PM</td><td>AL Market</td></tr>
 <tr><td><strong>Edith Harris</strong></td><td>1819 Courtney Ave</td><td>AL</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">3</span></td><td>Aug 20, 12:19 PM</td><td>AL Market</td></tr>
 <tr><td><strong>Mi Mee Mee Lay</strong></td><td>3622 Poinsettia Dr</td><td>IN</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">3</span></td><td>Aug 20, 12:19 PM</td><td>IN Market</td></tr>
@@ -5423,13 +5327,13 @@ section h2, h2 {
 <tr><td><strong>Pamela Richardson</strong></td><td>819 Atlantic Ave</td><td>NJ</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
 <tr><td><strong>Gheorghe Salgau</strong></td><td>116 Tereck Rd</td><td>NJ</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">3</span></td><td>Aug 20, 12:19 PM</td><td>PA Market</td></tr>
 <tr><td><strong>Joseph Wargo</strong></td><td>323 W 4th St</td><td>NJ</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">3</span></td><td>Aug 20, 12:19 PM</td><td>Jeff (NJ)</td></tr>
-<tr><td><strong>Naeem Malik</strong></td><td>42 Franklin Corner Rd</td><td>NJ</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">3</span></td><td>Aug 20, 12:20 PM</td><td>Jeff (NJ)</td></tr>
-<tr><td><strong>Richard Wick</strong></td><td>25 E 8th Ave</td><td>NJ</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">3</span></td><td>Aug 20, 12:20 PM</td><td>Jeff (NJ)</td></tr>
-<tr><td><strong>Ramona Stephens</strong></td><td>Atlantic City</td><td>NJ</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">3</span></td><td>Aug 20, 12:20 PM</td><td>Jeff (NJ)</td></tr>
-<tr><td><strong>Avudaiyappan Lakshmanan</strong></td><td>Piscataway</td><td>NJ</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">3</span></td><td>Aug 20, 12:20 PM</td><td>Jeff (NJ)</td></tr>
-<tr><td><strong>Derek Harris</strong></td><td>Camden</td><td>NJ</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">3</span></td><td>Aug 20, 12:20 PM</td><td>Jeff (NJ)</td></tr>
-<tr><td><strong>Victor Demeski</strong></td><td>Hamilton Township</td><td>NJ</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">3</span></td><td>Aug 20, 12:20 PM</td><td>Jeff (NJ)</td></tr>
-<tr><td><strong>Lawrence Craver</strong></td><td>Trenton</td><td>NJ</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">3</span></td><td>Aug 20, 12:20 PM</td><td>Jeff (NJ)</td></tr>
+<tr><td><strong>(no name)</strong></td><td></td><td></td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">3</span></td><td>Aug 20, 12:20 PM</td><td>Jeff (NJ)</td></tr>
+<tr><td><strong>(no name)</strong></td><td></td><td></td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">3</span></td><td>Aug 20, 12:20 PM</td><td>Jeff (NJ)</td></tr>
+<tr><td><strong>(no name)</strong></td><td></td><td></td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">3</span></td><td>Aug 20, 12:20 PM</td><td>Jeff (NJ)</td></tr>
+<tr><td><strong>(no name)</strong></td><td></td><td></td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">3</span></td><td>Aug 20, 12:20 PM</td><td>Jeff (NJ)</td></tr>
+<tr><td><strong>(no name)</strong></td><td></td><td></td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">3</span></td><td>Aug 20, 12:20 PM</td><td>Jeff (NJ)</td></tr>
+<tr><td><strong>(no name)</strong></td><td></td><td></td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">3</span></td><td>Aug 20, 12:20 PM</td><td>Jeff (NJ)</td></tr>
+<tr><td><strong>(no name)</strong></td><td></td><td></td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">3</span></td><td>Aug 20, 12:20 PM</td><td>Jeff (NJ)</td></tr>
 <tr><td><strong>Kahalil Ameen</strong></td><td>8039 7th Ave S,</td><td>AL</td><td><span class="tag">2. LAO</span></td><td><span class="tag green">2</span></td><td>Aug 17, 10:21 AM</td><td>AL Market</td></tr>
 <tr><td><strong>Carl Mccall</strong></td><td>48 Edgemere Ave</td><td>NJ</td><td><span class="tag">2. LAO</span></td><td><span class="tag green">3</span></td><td>Aug 17, 10:21 AM</td><td>Jeff (NJ)</td></tr>
 <tr><td><strong>Tina Goins</strong></td><td>606 Penn Ave</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
@@ -5444,13 +5348,6 @@ section h2, h2 {
 <tr><td><strong>Turhan Richardson Bey</strong></td><td>101 E Durham St,</td><td>PA</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
 <tr><td><strong>Jack Ever</strong></td><td>420 Medford Rd</td><td>AL</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
 <tr><td><strong>Jack Ever</strong></td><td>420 Medford Rd</td><td>AL</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Karim Mohammad</strong></td><td>1410 Pennington Rd</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Gina Ambrosio</strong></td><td>2014 SPRUCE HILLS DR</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Donald Renfro</strong></td><td>2399 W 40th St</td><td>OH</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Jack Ever</strong></td><td>420 Medford Rd</td><td>AL</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Jay Zuniga</strong></td><td>14 Gibson St, Cape May Court House, NJ 08210</td><td></td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>-E</strong></td><td></td><td></td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Jenn</strong></td><td></td><td></td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
 <tr><td><strong>(no name)</strong></td><td></td><td></td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
 <tr><td><strong>(no name)</strong></td><td></td><td></td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
 <tr><td><strong>(no name)</strong></td><td></td><td></td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
@@ -5459,10 +5356,17 @@ section h2, h2 {
 <tr><td><strong>(no name)</strong></td><td></td><td></td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
 <tr><td><strong>(no name)</strong></td><td></td><td></td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
 <tr><td><strong>(no name)</strong></td><td></td><td></td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Arvinder Singh</strong></td><td>75 Leber Ave</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Wayne Wagoner</strong></td><td>4 Washington Ave</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Gregory Boccuti</strong></td><td>19 Barley Sheaf Rd</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Louis Siwy</strong></td><td>53 Main Blvd</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
+<tr><td><strong>(no name)</strong></td><td></td><td></td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
+<tr><td><strong>(no name)</strong></td><td></td><td></td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
+<tr><td><strong>(no name)</strong></td><td></td><td></td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
+<tr><td><strong>(no name)</strong></td><td></td><td></td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
+<tr><td><strong>(no name)</strong></td><td></td><td></td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
+<tr><td><strong>(no name)</strong></td><td></td><td></td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
+<tr><td><strong>(no name)</strong></td><td></td><td></td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
+<tr><td><strong>(no name)</strong></td><td></td><td></td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
+<tr><td><strong>(no name)</strong></td><td></td><td></td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
+<tr><td><strong>(no name)</strong></td><td></td><td></td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
+<tr><td><strong>(no name)</strong></td><td></td><td></td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
 <tr><td><strong>Angela Patnaude</strong></td><td>7 Jefferson Dr</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
 <tr><td><strong>Karen Sally</strong></td><td>4110 STATE ROUTE</td><td></td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
 <tr><td><strong>Raymond Brandefine</strong></td><td>532 Halsey Rd</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
@@ -5490,21 +5394,21 @@ section h2, h2 {
 <tr><td><strong>David Grametbauer</strong></td><td>71 6th St</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
 <tr><td><strong>Stephen Sutphen</strong></td><td>34 Navesink Ave</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
 <tr><td><strong>Unknown Partner</strong></td><td></td><td></td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>(no name)</strong></td><td></td><td></td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>(no name)</strong></td><td></td><td></td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>(no name)</strong></td><td></td><td></td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>(no name)</strong></td><td></td><td></td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>(no name)</strong></td><td></td><td></td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>(no name)</strong></td><td></td><td></td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>(no name)</strong></td><td></td><td></td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
+<tr><td><strong>John Hannan</strong></td><td>12 Jill Dr</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
+<tr><td><strong>Kevin McHenry</strong></td><td>15 Woodlot Rd</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
+<tr><td><strong>Brittani Arthur</strong></td><td>1222 Jackson St</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
+<tr><td><strong>Steven Yeretzian</strong></td><td>1075 Hedding Rd</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
+<tr><td><strong>Harvey Greenstein</strong></td><td>14 Barge Ln</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
+<tr><td><strong>123 47Th Street U C Llc</strong></td><td>123 47TH ST</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
+<tr><td><strong>Philip Smyth</strong></td><td>1028 Liberty St</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
 <tr><td><strong>Sean Foreman</strong></td><td>216 Fernwood Ave</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
 <tr><td><strong>William Carson</strong></td><td>4 Cripple Creek Rd</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
 <tr><td><strong>Kenneth Konchan</strong></td><td>15 4th St</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
 <tr><td><strong>Denise Still</strong></td><td>325 N Ohio Ave</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
 <tr><td><strong>Christopher Colavito</strong></td><td>3801 Atlantic Ave Apt C3</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
 <tr><td><strong>William Huss</strong></td><td>34 Blackhawk Ct</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Keith Lumpkins</strong></td><td>109 Norman Rd # 111</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Yesenia Davila</strong></td><td>47 Titus Ave</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
+<tr><td><strong>(no name)</strong></td><td></td><td></td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
+<tr><td><strong>(no name)</strong></td><td></td><td></td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
 <tr><td><strong>Matthew Piotrowski</strong></td><td>4116 Oak Rd</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
 <tr><td><strong>Tyler Newhart</strong></td><td>6892 3rd Ave</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
 <tr><td><strong>Tina Goins</strong></td><td>606 Penn Ave</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
@@ -5513,384 +5417,13 @@ section h2, h2 {
 <tr><td><strong>Jeffrey Adamiak</strong></td><td>156 Grant St</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
 <tr><td><strong>Barbara Jean Danyel R Barnes Revocable Trust</strong></td><td>447 Berkley St</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
 <tr><td><strong>Scott Scheffler</strong></td><td>42 Greens Way</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>James Fuccello</strong></td><td>408 Elmer St</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Nicholas Falabella</strong></td><td>12 Yellow Brook Dr</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Angela Harvey-Botts</strong></td><td>2245 Hollinshed Ave</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Michael Alcaide</strong></td><td>363 Crosspointe Dr</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Raymond Flynn</strong></td><td>207 Stokes Ave</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Kyung Jung</strong></td><td>7 Tower Rd</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Brett Sheehan</strong></td><td>127 Lawrence Ave</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Tina Goins</strong></td><td>606 Penn Ave</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Erik Seymore</strong></td><td>1713 2nd St S</td><td>AL</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>John Kemp</strong></td><td>67 Juliustown Rd</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Marian Hofmann</strong></td><td>42 Chatham Pl</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Thomas Walters</strong></td><td>6 Juniper Way</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>James Simila</strong></td><td>329 Newport Rd</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>(no name)</strong></td><td></td><td></td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>(no name)</strong></td><td></td><td></td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>(no name)</strong></td><td></td><td></td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>(no name)</strong></td><td></td><td></td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>(no name)</strong></td><td></td><td></td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>(no name)</strong></td><td></td><td></td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>(no name)</strong></td><td></td><td></td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>(no name)</strong></td><td></td><td></td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Harish Pehlanjani</strong></td><td>218 1ST ST</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>James Ranoldo</strong></td><td>77 Summit Dr</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Michael Bonner</strong></td><td>18 Spring Hill Rd</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>RJ</strong></td><td></td><td></td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Keon Charles</strong></td><td>11 La Salle Drive</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Frank Rodriguez</strong></td><td>1207 S Octagon Rd</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Clara Haignere</strong></td><td>K18 Shirley Ln</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>(no name)</strong></td><td>KILLEEN</td><td>TX</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Frank Buschgans</strong></td><td>76 Hamilton Ave</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Jeff</strong></td><td></td><td></td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Jerry Harris</strong></td><td>140 Weston Ave</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Vincent Christopher</strong></td><td>127 Glendale Dr</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Catalin Sks del LLC</strong></td><td>220 Clifton Ave</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>George Kazantzis</strong></td><td>217 S Nassau Dr</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Dian Smith</strong></td><td>Deklyn Ave</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Adam C</strong></td><td>2 siracusa</td><td></td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Mike Kent</strong></td><td>610 West 5th Street</td><td>PA</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Mary Befumo</strong></td><td>100 Lancaster Rd</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Michael Sprung</strong></td><td>3025 Riverview St</td><td>PA</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Aaron Runko</strong></td><td>51 Crater Lake Rd</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Robert Kausch</strong></td><td>26 Sedgwick Rd</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Anthony Bernice</strong></td><td>6 Smithfield Rd</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Vartanush Lazarian</strong></td><td>957 Virgil Ave</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Zachary Rosenthal</strong></td><td>12 Smith St</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>John Vivona</strong></td><td>348 Myrtle Ave</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Jon Meyer</strong></td><td>8 W Glen Ave</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Mark Gallagher</strong></td><td>432 Grove St</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Juan Maestre</strong></td><td>785 6th St</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>(no name)</strong></td><td></td><td></td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>(no name)</strong></td><td></td><td></td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>(no name)</strong></td><td></td><td></td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>(no name)</strong></td><td></td><td></td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Ivan Martin</strong></td><td>3 Badminton Ct</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Esther Diller</strong></td><td>73 Washington St</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Jacqueline Malloy</strong></td><td>143 Grove St</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>James Kelly</strong></td><td>99 Stockton Ave</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Mei Cheng</strong></td><td>804 JANE DR</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>N N Pandurangan</strong></td><td>23 Boxwood Cir</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Cesare Schiano</strong></td><td>30 Ellen Heath Dr</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Raphael Pastor</strong></td><td>59 Valley Way</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Tara Dintrone</strong></td><td>14 Bolton Rd</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Peter Michelis</strong></td><td>235 Walton St</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Anthony Fornatale</strong></td><td>4 Mouse Creek Ct</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Ramon Rodriguez</strong></td><td>4 12th St</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Ashok Suryawanashi</strong></td><td>171 Franklin Ave</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Bruce Cipriani</strong></td><td>242 N Central Ave</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Mina Hwang</strong></td><td>154 Marion Dr</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Samuel Ciccone</strong></td><td>114 W Passaic Ave</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Scott Savarese</strong></td><td>6 Schweinberg Dr</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Darko Gregurovic</strong></td><td>426 N 10th St</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Symeon Brown</strong></td><td>10 Woodland Ter</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Kenji Fujishima</strong></td><td>4 Oliver Ct</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Richard Catalano</strong></td><td>19 Clara Pl</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Christian  Pinsonault</strong></td><td>437 Penwell Rd</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Peter Plantz</strong></td><td>283 Branchport Ave # 287</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Patricia Cook</strong></td><td>6 Blackwood Dr</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Mehul Patel</strong></td><td>301 Vasser Dr</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Jaime Simon</strong></td><td>1 Hazel Ave</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Stuart Saentz</strong></td><td>114 E Main St,</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Edward B Ryan</strong></td><td>210 S Church St</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Marcus Greenwood</strong></td><td>7719 Jeffries Ave</td><td>OH</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Frederick Chatman</strong></td><td>127 Lyons Ave</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Jerry Kreighbaum</strong></td><td>7413 Baldwin Creek Dr</td><td>OH</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Diane Howard</strong></td><td>Bramble Lane</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>(no name)</strong></td><td></td><td></td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>(no name)</strong></td><td></td><td></td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>(no name)</strong></td><td></td><td></td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>(no name)</strong></td><td></td><td></td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>(no name)</strong></td><td></td><td></td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Jose Clavijo</strong></td><td>432 Greylock Pkwy</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Paul Pitterson</strong></td><td>172 Watchung Ave</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Keith Peckman</strong></td><td>209 N 3rd Ave</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Krishna Deonandan</strong></td><td>189 DUNCAN AVE</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Daniel Sarama</strong></td><td>1990 ROUTE 9</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Omprakash Chugani</strong></td><td>125 WILLIAMS AVE</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Tim</strong></td><td>618 E Reynolds St</td><td>PA</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Festus K Mensah</strong></td><td>1056 GROVE ST # 1058</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Cesar Fernandez</strong></td><td>6103 HARRISON PL</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Abraham Chung</strong></td><td>912 MORTON ST</td><td>PA</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Joe / Margaret Gurganus</strong></td><td>213 Fairview Ave</td><td>PA</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>David R Hendricks</strong></td><td>19 Franklin Ave</td><td>PA</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Michael Oberlander</strong></td><td>162 W 2nd St</td><td>PA</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Alfred J Ostroski</strong></td><td>712 Hill St</td><td>PA</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Beverly Fout</strong></td><td>217 White Ave</td><td>PA</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Stella Boateng</strong></td><td>613 Sharon Ave</td><td>PA</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Linda Occhionero</strong></td><td>2834 Willow Street Pike N</td><td>PA</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Enrico Ferroni</strong></td><td>2027 Pittston Ave</td><td>PA</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Agnieszka Bator</strong></td><td>1 Claverack Rd</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Noah Dawgiello</strong></td><td>1514 Beechview Ave</td><td>PA</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>David Devers</strong></td><td>2089 Woodward Ave</td><td>PA</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Brandon Greene</strong></td><td>1026 Ross Ave</td><td>PA</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Matthew Kreider</strong></td><td>1588 Bellaire Pl # 1590</td><td>PA</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Dess Schnur</strong></td><td>400 W Penn St</td><td>PA</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Edward B Burke</strong></td><td>3138 Main St</td><td>PA</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Albert Hanser</strong></td><td>112 Knox Ave</td><td>PA</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Rob</strong></td><td>66 Duke St,</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Rose Johns</strong></td><td>17 N 33RD ST</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>(no name)</strong></td><td></td><td></td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>(no name)</strong></td><td></td><td></td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>(no name)</strong></td><td></td><td></td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Walter Evans</strong></td><td>45 Titus Ave</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Mary Gaspich</strong></td><td>419 Bloomfield St Apt 1</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Clay James</strong></td><td>3915 AVENUE K</td><td>AL</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Shulem Gruber</strong></td><td>308 ARDMORE AVE</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Deborah Samuels</strong></td><td>43 Mimi Rd</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Scott Soltis</strong></td><td>11 Concannon Dr</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>John Molenari</strong></td><td>68 N Franklin St</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Kenny</strong></td><td>13376 Galloway Gdn,</td><td>LA</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>David Latempa</strong></td><td>6 Hausserman Rd</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Karen Pierce</strong></td><td>1300 Ocean Rd</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>John Gugliotta</strong></td><td>749 Fischer Blvd</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Susan Scudder</strong></td><td>505 Bond St</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Jose Clavijo</strong></td><td>432 Greylock Pkwy</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Jose Valdez</strong></td><td>508 LAWRIE ST</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Pantaleo Gadaleta</strong></td><td>5 Fishel Rd</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Usher Steinmetz</strong></td><td>816 Summer St</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Karen Derose</strong></td><td>36 Campbell Ave</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Jonathan Koven</strong></td><td>22 Bunker Hill Dr</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Nancy Dilliplane</strong></td><td>288 Friendship Rd</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Matthew Bolash</strong></td><td>3 N Slope # 116</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Andrew Palumbo</strong></td><td>24 Smallwood Ln</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Shannon Poser</strong></td><td>50 Valentine St Unit 12a</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Alex Borga</strong></td><td>14 Fawn Run</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Keith / Leigh</strong></td><td>7800 Bridget Cir,</td><td>AL</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Kathleen Moore</strong></td><td>5 Josephine Ct</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Patricia Alexander</strong></td><td>110 Division St</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Anna</strong></td><td>76 POPLAR ST</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Jose Marcelo Desilva</strong></td><td>953 Walnut St</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Tajammal Gilani</strong></td><td>2720 State Route 27</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Veronica Breunig</strong></td><td>89 Route 50</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Kimberly Clarke</strong></td><td>133 Maplewood Ave</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Amarildo Lleshi</strong></td><td>8202 Ditman St</td><td>PA</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Darren Brash</strong></td><td>703 N Saint Clair St</td><td>PA</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Milton Broadnax</strong></td><td>3218 Norman Bridge Rd</td><td>AL</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Angelo Amato</strong></td><td>4106 E 80th St</td><td>OH</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Robert Carchidi</strong></td><td>902 S 38th Ave</td><td>NE</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Arnold Pagano</strong></td><td>2023 PLAZA GRANDE</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Pedro Antonio Martinez</strong></td><td>804 Hall Ave</td><td>AL</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Gilbert Simons</strong></td><td>3025 Norwood Ave # 3027</td><td>PA</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Charles Thompson</strong></td><td>934 W 7th St</td><td>PA</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Jason Sweeney</strong></td><td>1214 S Mcdonough St</td><td>AL</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Ayman Kacem Amghar</strong></td><td>2212 E 5th St</td><td>AL</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Connor Hubbard</strong></td><td>952 Mccay Ave</td><td>AL</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Faye McQueen</strong></td><td>104 Courtland Dr</td><td>AL</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Lee Whitman</strong></td><td>905 Tate Dr</td><td>AL</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Desmond Davis</strong></td><td>1108 Lake St</td><td>AL</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Samantha Gaiser</strong></td><td>140 N Sprague Ave # 142</td><td>PA</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Michael Zabielski</strong></td><td>1395 W Miner Rd</td><td>OH</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Rosa Duncan</strong></td><td>2724 1st St</td><td>AL</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Carla King</strong></td><td>2960 E 7th Ave</td><td>OH</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Adam Yeh</strong></td><td>914 Edpas Rd</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Francis Wayne Andrus</strong></td><td>1636 Pearson Ave Sw</td><td>AL</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Lynda Stewart</strong></td><td>713 Cedar St</td><td>PA</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Norman Nebblett</strong></td><td>1017 12th Ave</td><td>AL</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Daniel McCarthy</strong></td><td>13 2nd Ave</td><td>PA</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Ross B Smith</strong></td><td>3717 4th Ave S</td><td>AL</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Thomas George</strong></td><td>1960 Ridge Ave</td><td>AL</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Walter Eddy</strong></td><td>6301 FULLERTON AVE</td><td>OH</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Helen Wong</strong></td><td>9 Wynnewood Rd</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Nathaniel &quot; Nate&quot; Ferro</strong></td><td>2229 REDWOOD AVE</td><td>PA</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Damian Schlinger</strong></td><td>1015 12th Ave</td><td>AL</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>James Staples</strong></td><td>12518 Leeila Ave</td><td>OH</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Gladeline Lergier</strong></td><td>688 Franklin St</td><td>PA</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>William Roberson</strong></td><td>724 Whitney Ave</td><td>PA</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>John Laboon</strong></td><td>808 Woodward Ave</td><td>PA</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Roseland Jean</strong></td><td>740 Franklin Ave</td><td>PA</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Sean McCloud</strong></td><td>576 S Dove Rd</td><td>PA</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Kyle Peterson</strong></td><td>208 E 9th St</td><td>PA</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Kevin Stegena</strong></td><td>115 N Main St</td><td>PA</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Michael J Rensel</strong></td><td>1044 Mccarter Ave</td><td>PA</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Ping Yang</strong></td><td>230 Baldwin St</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Jason Dunado</strong></td><td>402 S Webster Ave</td><td>PA</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Robert Baker</strong></td><td>13251 THORNHOPE RD</td><td>OH</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Etta Frederick</strong></td><td>29 CENTER PL S</td><td>AL</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Marroquin Marroquin-Sincal L</strong></td><td>49 PARTRIDGE AVE</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Tamika</strong></td><td>houston</td><td>TX</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Imran Chaudhri</strong></td><td>29 Deborah Dr</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>William Meehan</strong></td><td>21 Harrington Ter</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Liu</strong></td><td>718 N Broad St, Philadelphia, PA</td><td>PA</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>(no name)</strong></td><td></td><td></td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>(no name)</strong></td><td></td><td></td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>(no name)</strong></td><td></td><td></td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>(no name)</strong></td><td></td><td></td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>(no name)</strong></td><td></td><td></td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>(no name)</strong></td><td></td><td></td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>(no name)</strong></td><td></td><td></td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>(no name)</strong></td><td></td><td></td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>(no name)</strong></td><td></td><td></td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Paige Wilkins</strong></td><td>1156 Madison Ave</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Ramon Rodriguez</strong></td><td>65 MERCER ST</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Clarence Coats</strong></td><td>828 N RURAL ST</td><td>IN</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>jim brown</strong></td><td>4500 J M Brooks Rd</td><td>AL</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Ramona Mojica</strong></td><td>924 N Olden Ave</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>James Pierano</strong></td><td>2847 Wayne Ave</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Mike</strong></td><td>1109 INDIANA ST</td><td>AL</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Edwin Clapp</strong></td><td>21 Comstock St</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>James Robinson Jr.</strong></td><td>1719 Bangs Ave</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Juan Alonzo</strong></td><td>515 Spruce Ave</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Jennifer Siciliano</strong></td><td>19 Western Dr</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Joel Lisotto</strong></td><td>19 Collinson Dr</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Spiro Stathonikos</strong></td><td>15 Woodlawn Ave</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>David Walter</strong></td><td>1543 E Weber Rd</td><td>OH</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Tom Elly</strong></td><td>17 CHRISTOPH AVE</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Prasoon Nasa</strong></td><td>52 HEMAN ST</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Laeeq Khan</strong></td><td>271 La Cascata</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Concetta Glover</strong></td><td>1607 Arena Dr</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Rickardo Flores</strong></td><td>917 Beatty St</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Jeffrey Peppers</strong></td><td>129 S Logan Ave</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Andrew Sagan</strong></td><td>714 Ohio Ave,</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Gary Jolly</strong></td><td>107 DENOW RD</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>James Brooks</strong></td><td>1727 Genesee St</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Tara Otto</strong></td><td>608 Maple Ave</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Jill Karuzas</strong></td><td>3871 W 17th St</td><td>OH</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Arnold McBean</strong></td><td>1912 Bangs Ave</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Monique Smith</strong></td><td>621 Buckelew Ave</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Gerald Yaros</strong></td><td>139 Amboy Ave</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>James Byrge</strong></td><td>12805 Milligan Ave</td><td>OH</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Fady Bechay</strong></td><td>394 Spotswd-engtwn Rd</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Jamie Bartholomew</strong></td><td>21 Wolf Dr</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Barbara Harris</strong></td><td>4140 E 135th St</td><td>OH</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Dane R Marley</strong></td><td>1406 Clifton Ave</td><td>PA</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Sulaiman Akbar</strong></td><td>4421 E 156th St</td><td>OH</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Johnnie Benson</strong></td><td>1702 Avalon Rd</td><td>OH</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Michael Omoh</strong></td><td>3590 Nottingham Way</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Lina Bolden</strong></td><td>5019 Dolloff Rd</td><td>OH</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Antonio Robinson</strong></td><td>13217 Harvard Ave</td><td>OH</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Dean T Soper</strong></td><td>25 Fairview Ave</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Ervin D Vincent</strong></td><td>3996 E 190th St</td><td>OH</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Vincent Masdonati</strong></td><td>705 Zlotkin Cir Apt 3</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Henry C Epp</strong></td><td>2215 Berkeley Dr</td><td>OH</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Charles Sherman</strong></td><td>68 Overlook Way Unit F</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Michael Hendershot</strong></td><td>3185 W 71st St</td><td>OH</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Donald Pope</strong></td><td>3219 Riverside Ave</td><td>OH</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Samuel Franklin</strong></td><td>1 Brandon Rd # A</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Christopher M Smiley</strong></td><td>6 5th St</td><td>PA</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Dawn Arseneau</strong></td><td>38 Home Pl</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Michael Troisi</strong></td><td>80 W Franklin St</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Gary A Snyder</strong></td><td>20870 Stanford Ave</td><td>OH</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Rita Poggi</strong></td><td>54 Maremanna Dr</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Arne Henn</strong></td><td>300 Carr Ave</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Xinwen Wang</strong></td><td>28 Campview Pl # 30</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Daniel Duran</strong></td><td>62 Brook St</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Frank Bardell</strong></td><td>57 Wilson Cir E</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>M M Pollock</strong></td><td>4b Village Mall</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Akur Achuiel</strong></td><td>10912 Grandview Ave</td><td>OH</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Job Mixson</strong></td><td>3115 W 10TH ST</td><td>PA</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Paul Riviere</strong></td><td>191c Malden Ln</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Laronda Applings</strong></td><td>7421 Melrose Ave</td><td>OH</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Nicholas Demayo</strong></td><td>7 Cameo Dr</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Paul Niswander</strong></td><td>2539 Pontiac St</td><td>OH</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Keith Rescorl</strong></td><td>29 Bay Ave</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Emilio Cooper</strong></td><td>4627 Woodland Ave</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Donald Renfro</strong></td><td>2399 W 40th St</td><td>OH</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Mohanad Ghazal</strong></td><td>3099 Sawtell Rd</td><td>OH</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>James Simpson</strong></td><td>923 main st</td><td>IN</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Dhinesh Kumar Prasath</strong></td><td>5204 Terrace J</td><td>AL</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Ryan Sipple</strong></td><td>3813 Louanna Ave</td><td>PA</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>John Fageaux</strong></td><td>10911 Peony Ave</td><td>OH</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>James Leo</strong></td><td>2480 Mecca Rd</td><td>OH</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>William Lopez</strong></td><td>619 17th Ave</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Icaros Chacalos</strong></td><td>3795 W 37th St</td><td>OH</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Jerome Jackson</strong></td><td>3387 E 65th St</td><td>OH</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Lajoy &amp; Jules Mubalama</strong></td><td>12109 Lenacrave Ave</td><td>OH</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Vincent Falcone</strong></td><td>58 N New Ardmore Ave</td><td>PA</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Dominador Chan</strong></td><td>3314 W 31st St</td><td>OH</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Darwin Penafiel</strong></td><td>3 TOPAZ LN</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Franklin Watson Sr</strong></td><td>1913 Saint Charles Ave Sw</td><td>AL</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>David Clark</strong></td><td>4590 Saint Anthony Ln</td><td>OH</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Barry Geffner</strong></td><td>47 Westboro Ln</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>James Moore</strong></td><td>14708 Ardenall Ave</td><td>OH</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Kopyt Leon</strong></td><td>447 Waring St</td><td>PA</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Johnny Contreras</strong></td><td>224 W 4th St</td><td>PA</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Toure Cockfield</strong></td><td>1841 Roxbury Rd</td><td>OH</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>J Scott Moran</strong></td><td>141 Mount Pleasant Rd</td><td>PA</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>John Jahr</strong></td><td>27 Fern St</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Lisa Plasters</strong></td><td>72 Heather Ct</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Samuel Stoltzfus</strong></td><td>241 N Sandy Hill Rd</td><td>PA</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Turhan Richardson Bey</strong></td><td>101 E Durham St,</td><td>PA</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Helen Delutis</strong></td><td>3310 Concord Rd</td><td>PA</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Colin Dawson</strong></td><td>633 Gates St</td><td>PA</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Merick Neumann</strong></td><td>507 S 3rd St</td><td>PA</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Edwin Irizarry</strong></td><td>2162 W 96th St</td><td>OH</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Charles Fuges</strong></td><td>9033 Lykens Ln</td><td>PA</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Frank Satiro</strong></td><td>1311 S Hanover St</td><td>PA</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Herman Burgos</strong></td><td>211 Trainer St</td><td>PA</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Anthony Graziano</strong></td><td>1907 Carter Rd</td><td>PA</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Sharon Misurello</strong></td><td>4941 Greenwood St</td><td>PA</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Jerome Williams</strong></td><td>205 23rd Ave S</td><td>AL</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Karen Downs</strong></td><td>5000 41st Way N</td><td>AL</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Markus Green</strong></td><td>178 Brunswick Ave</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Stanislaw Susul</strong></td><td>9216 CONVENT AVE</td><td>PA</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>John &quot;J.P.&quot; Pluta</strong></td><td>5930 W Adler St</td><td>WI</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Gloria Haygood</strong></td><td>7903 5th Ave N</td><td>AL</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Michael Zukowski</strong></td><td>8050 Walker St</td><td>PA</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Eleftherios Karapanagiotides</strong></td><td>4634 Canton St</td><td>PA</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Ah Ooi</strong></td><td>18 Ash Rd</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Nathan Perry</strong></td><td>1921 12th Pl Sw</td><td>AL</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Michael Jones</strong></td><td>225 E Slocum St</td><td>PA</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Darryl Jeans</strong></td><td>8069 N 105th St</td><td>WI</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Laverne Williams</strong></td><td>1562 Norris St</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Jack Ever</strong></td><td>420 Medford Rd</td><td>AL</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Raymond Henry</strong></td><td>5024 9th Ave N</td><td>AL</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>George Bowman</strong></td><td>309 Phillips St</td><td>PA</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Lou Vitanov</strong></td><td>Route 9 Rustic Dr</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Richard Brown</strong></td><td>607 66th Ave</td><td>PA</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Gary Wills</strong></td><td>9675 Academy Rd</td><td>PA</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Mohamed Kakay</strong></td><td>305 N 9th St</td><td>PA</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Benjamin F Tannehill</strong></td><td>1808 Goree Pl</td><td>AL</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>David Webb</strong></td><td>8513 4th Ave S</td><td>AL</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Glen Murphy</strong></td><td>5350 N 36th St</td><td>WI</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Parth Venkat</strong></td><td>8316 5th Ave S</td><td>AL</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Michael Boackle</strong></td><td>2323 Avenue G</td><td>AL</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Bryan Williams</strong></td><td>917 45th Street Ensley</td><td>AL</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Alan Rosenberg</strong></td><td>805 Elmwood Ave</td><td>PA</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Roberto Villarreal</strong></td><td>2751 N 76th St</td><td>WI</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Quincy D Moore</strong></td><td>116 Page Ave</td><td>AL</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>David Kim</strong></td><td>2304 Jesse Way</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Tommie Walters</strong></td><td>1925 11th Pl Nw</td><td>AL</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Dzeun Tufekci</strong></td><td>310 W Uncas Ave</td><td>WI</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Jamal Goodwin</strong></td><td>501 34th Ave W</td><td>AL</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Lawson Stringer</strong></td><td>1028 Alabama Ave Sw</td><td>AL</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Lamonte Whitehead Sr</strong></td><td>6141 N 37th St</td><td>WI</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Tony Garcia</strong></td><td>4747 S 7th St</td><td>WI</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>John Scocchio</strong></td><td>541 Roberts Ave</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Kyle Guy</strong></td><td>924 Trilby St</td><td>AL</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>John Scocchio</strong></td><td>541 Roberts Ave</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>James Ingalls</strong></td><td>536 Cambridge St</td><td>AL</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Pearl Moultrie</strong></td><td>4930 2nd Ave N</td><td>AL</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Claven robinson</strong></td><td>1541 South 27</td><td>PA</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Hubert Greaves</strong></td><td>41 W PAUL AVE</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>William Lee</strong></td><td>2108 ASPEN DR</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Mark Norris</strong></td><td>342 HARRY RD</td><td>PA</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Doris Watson</strong></td><td>1308 23RD AVE N</td><td>AL</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Gloria Forero-Chaves</strong></td><td>15 WOODLAND AVE</td><td>PA</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Daniel Mcgough</strong></td><td>1412 12th Ave N</td><td>AL</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Carolyn Doak</strong></td><td>756 45TH ST N</td><td>AL</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Phillip Brown</strong></td><td>1413 MONTVIEW RD</td><td>AL</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Bernard Hutchinson</strong></td><td>320 W COULTER ST</td><td>PA</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Yvonne Alexander</strong></td><td>1444 CANTON RD</td><td>OH</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Rufus Belser</strong></td><td>4520 11th Ave N</td><td>AL</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Donieckle Davis</strong></td><td>1637 PINE AVE SW</td><td>AL</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Emilio Cornacchione</strong></td><td>636 PLAINFIELD RD</td><td>OH</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Cdm Habib</strong></td><td>110 HIGHLAND AVE</td><td>PA</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Constantina Vasques</strong></td><td>246 SANFORD RD</td><td>PA</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Jeremiah Witherspoon</strong></td><td>1029 GREEN ST</td><td>PA</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Poonam S3 Enterprises Llc</strong></td><td>6318 N PARK AVE</td><td>PA</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Christopher Smith</strong></td><td>1639 Levity St</td><td>SC</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Lisa Maldonado</strong></td><td>200 Booker Ave</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr></tbody></table></div>
+<tr><td><strong>James Fuccello</strong></td><td>408 Elmer St</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr></tbody></table></div>
   </section>
 
   <section class="sec">
     <div class="tag-row"><span class="num">07</span><h2><span class="dot hot"></span>Open Tasks</h2></div>
     <hr>
-    <div class="lead-table"><table><thead><tr><th>Contact</th><th>Address</th><th>Task</th><th>Assignee</th><th>Due</th></tr></thead><tbody><tr><td><strong>Richard A Stanaland</strong></td><td>46 Franklin Avenue</td><td>Call Richard A Stanaland again - no answer (attempt 2)</td><td><span class="tag">Jeff</span></td><td>Aug 21, 04:15 PM</td></tr>
-<tr><td><strong>Delvi Tavarez</strong></td><td>39 Maple Ave</td><td>REVIEW: Did Jeff call Delvi Tavarez back?</td><td><span class="tag">Mike</span></td><td>Aug 21, 04:14 PM</td></tr>
-<tr><td><strong>Delvi Tavarez</strong></td><td>39 Maple Ave</td><td>Call back: Delvi Tavarez (39 Maple Ave)</td><td><span class="tag">Jeff</span></td><td>Aug 20, 04:14 PM</td></tr>
-<tr><td><strong>Peter Mimmo</strong></td><td>4708 Atlantic Avenue</td><td>TEXT FIRST, then call Peter Mimmo - 2 properties ($1.1-1.2M AC + $750k Jenkintown) - confirm 4702 vs 4708</td><td><span class="tag">Adam</span></td><td>Aug 20, 06:00 PM</td></tr>
+    <div class="lead-table"><table><thead><tr><th>Contact</th><th>Address</th><th>Task</th><th>Assignee</th><th>Due</th></tr></thead><tbody><tr><td><strong>Peter Mimmo</strong></td><td>4708 Atlantic Avenue</td><td>TEXT FIRST, then call Peter Mimmo - 2 properties ($1.1-1.2M AC + $750k Jenkintown) - confirm 4702 vs 4708</td><td><span class="tag">Adam</span></td><td>Aug 20, 06:00 PM</td></tr>
 <tr><td><strong>Gregorio Martinez</strong></td><td>83 Lyons Ave # 85</td><td>Call Gregorio Martinez again - no answer (attempt 1)</td><td><span class="tag">Jeff</span></td><td>Aug 21, 10:00 AM</td></tr>
 <tr><td><strong>Gregorio Martinez</strong></td><td>83 Lyons Ave # 85</td><td>REVIEW: Did Jeff call Gregorio Martinez back?</td><td><span class="tag">Mike</span></td><td>Aug 21, 02:18 PM</td></tr>
 <tr><td><strong>Gregorio Martinez</strong></td><td>83 Lyons Ave # 85</td><td>Call back: Gregorio Martinez (83 Lyons Ave # 85)</td><td><span class="tag">Jeff</span></td><td>Aug 20, 02:18 PM</td></tr>
@@ -5901,17 +5434,10 @@ section h2, h2 {
 <tr><td><strong>Steven Guinto</strong></td><td>10 Hillcrest Dr</td><td>Call Steven Guinto again - no answer (attempt 2)</td><td><span class="tag">Jeff</span></td><td>Aug 21, 10:00 AM</td></tr>
 <tr><td><strong>Steven Guinto</strong></td><td>10 Hillcrest Dr</td><td>REVIEW: Did Jeff call Steven Guinto back?</td><td><span class="tag">Mike</span></td><td>Aug 21, 03:51 PM</td></tr>
 <tr><td><strong>Steven Guinto</strong></td><td>10 Hillcrest Dr</td><td>Call back: Steven Guinto (10 Hillcrest Dr)</td><td><span class="tag">Jeff</span></td><td>Aug 20, 03:51 PM</td></tr>
-<tr><td><strong>Angela Patnaude</strong></td><td>7 Jefferson Dr</td><td>CALL TODAY - Angela Patnaude - establish her number (no price on record)</td><td><span class="tag">Jeff</span></td><td>Aug 20, 05:30 PM</td></tr>
-<tr><td><strong>Juan Marin</strong></td><td>40 Farnham Ave</td><td>REVIEW: Did Jeff call Juan Marin back?</td><td><span class="tag">Mike</span></td><td>Aug 22, 05:12 PM</td></tr>
-<tr><td><strong>Juan Marin</strong></td><td>40 Farnham Ave</td><td>Call back: Juan Marin (40 Farnham Ave)</td><td><span class="tag">Jeff</span></td><td>Aug 21, 05:12 PM</td></tr>
 <tr><td><strong>Joseph Quartullo</strong></td><td>80 Shawnee Place</td><td>Call Joseph Quartullo again - no answer (attempt 1)</td><td><span class="tag">Jeff</span></td><td>Aug 21, 02:31 PM</td></tr>
 <tr><td><strong>Joseph Quartullo</strong></td><td>80 Shawnee Place</td><td>REVIEW: Did Jeff call Joseph Quartullo back?</td><td><span class="tag">Mike</span></td><td>Aug 22, 09:24 AM</td></tr>
 <tr><td><strong>Joseph Quartullo</strong></td><td>80 Shawnee Place</td><td>Call back: Joseph Quartullo (80 Shawnee Pl)</td><td><span class="tag">Jeff</span></td><td>Aug 21, 09:24 AM</td></tr>
-<tr><td><strong>Peter Mimmo</strong></td><td>4708 Atlantic Avenue</td><td>TEXT FIRST, then call Peter Mimmo - 2 properties ($1.1-1.2M AC + $750k Jenkintown) - confirm 4702 vs 4708</td><td><span class="tag">Adam</span></td><td>Aug 20, 06:00 PM</td></tr>
-<tr><td><strong>Karim Mohammad</strong></td><td>1410 Pennington Rd</td><td>CALL TODAY - Karim Mohammad - ask $250k vs MAO $134k (+87%)</td><td><span class="tag">Jeff</span></td><td>Aug 20, 05:30 PM</td></tr>
-<tr><td><strong>Angela Patnaude</strong></td><td>7 Jefferson Dr</td><td>CALL TODAY - Angela Patnaude - establish her number (no price on record)</td><td><span class="tag">Jeff</span></td><td>Aug 20, 05:30 PM</td></tr>
-<tr><td><strong>Shahbaz Zubairi</strong></td><td>358 Bromley Pl</td><td>CALL TODAY - Scott Bruder - ask $453k vs MAO $469k (-3%)</td><td><span class="tag">Jeff</span></td><td>Aug 20, 05:30 PM</td></tr>
-<tr><td><strong>John P Primiano</strong></td><td>Grace Ferry Avenue</td><td>CALL TODAY - John P Primiano - ask $595k vs MAO $434k (+37%)</td><td><span class="tag">Jeff</span></td><td>Aug 20, 05:30 PM</td></tr></tbody></table></div>
+<tr><td><strong>Angela Patnaude</strong></td><td>7 Jefferson Dr</td><td>CALL TODAY - Angela Patnaude - establish her number (no price on record)</td><td><span class="tag">Jeff</span></td><td>Aug 20, 05:30 PM</td></tr></tbody></table></div>
   </section>
 
   <section class="sec">
@@ -5945,19 +5471,19 @@ const palette = ['#C9A52A','#1A2840','#2F7D5B','#B57A1A','#C5443A','#6B7591','#8
 
 new Chart(document.getElementById('stageChart'), {
   type: 'doughnut',
-  data: { labels: ["1. Qualified", "2. LAO", "Dead Deals"], datasets: [{ data: [120, 17, 572], backgroundColor: palette, borderWidth: 2, borderColor: '#FFFCF4' }] },
+  data: { labels: ["1. Qualified", "2. LAO", "Dead Deals"], datasets: [{ data: [120, 17, 100], backgroundColor: palette, borderWidth: 2, borderColor: '#FFFCF4' }] },
   options: { plugins: { legend: { position: 'bottom', labels: { padding: 12, usePointStyle: true, color: '#455066' } } }, cutout: '65%' }
 });
 
 new Chart(document.getElementById('stateChart'), {
   type: 'bar',
-  data: { labels: ["NJ", "PA", "UNKNOWN", "AL", "OH", "WI", "IN", "TX", "TN", "CO"], datasets: [{ data: [368, 119, 78, 74, 52, 8, 3, 2, 1, 1], backgroundColor: '#C9A52A', borderRadius: 4 }] },
+  data: { labels: ["NJ", "UNKNOWN", "AL", "PA", "OH", "WI", "IN", "TN", "MI"], datasets: [{ data: [122, 71, 22, 17, 1, 1, 1, 1, 1], backgroundColor: '#C9A52A', borderRadius: 4 }] },
   options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { precision: 0, color: '#6B7591' }, grid: { color: 'rgba(26,40,64,0.06)' } }, x: { ticks: { color: '#455066' }, grid: { display: false } } } }
 });
 
 new Chart(document.getElementById('progressChart'), {
   type: 'bar',
-  data: { labels: ['0','1','2','3','4','5','6'], datasets: [{ label: 'Contacts', data: [651, 18, 7, 28, 2, 1, 2], backgroundColor: '#1A2840', borderRadius: 4 }] },
+  data: { labels: ['0','1','2','3','4','5','6'], datasets: [{ label: 'Contacts', data: [179, 18, 7, 28, 2, 1, 2], backgroundColor: '#1A2840', borderRadius: 4 }] },
   options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { precision: 0, color: '#6B7591' }, grid: { color: 'rgba(26,40,64,0.06)' } }, x: { ticks: { color: '#455066' }, grid: { display: false } } } }
 });
 
