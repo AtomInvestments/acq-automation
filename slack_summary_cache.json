@@ -550,6 +550,28 @@
     "match_confidence": "high",
     "summary": "Seller's son called about appraisal letter for 1410 Pennington Avenue property, seller wants to close quickly and has a buyer interested at $245,000."
   },
+  "C05M7E1TJP7:1787603831.932299": {
+    "field_updates": {
+      "asking_price": 255000,
+      "motivation": "Ready to sell with specific terms, wants 10% deposit",
+      "reason_for_selling": null,
+      "timeline": "ASAP"
+    },
+    "match_cid": "nCO0yg05Zdy7RDvsxtpu",
+    "match_confidence": "high",
+    "summary": "Brian Sattinger has named his asking price at $255k, all closing costs on buyer, with 10% deposit and closing after 9/7."
+  },
+  "C05M7E1TJP7:1787605233.744619": {
+    "field_updates": {
+      "asking_price": 255000,
+      "motivation": null,
+      "reason_for_selling": null,
+      "timeline": "ASAP"
+    },
+    "match_cid": "nCO0yg05Zdy7RDvsxtpu",
+    "match_confidence": "high",
+    "summary": "Brian Sattinger is offering $255k as-is with buyer paying all closing costs, 10% deposit, and closing after 9/7."
+  },
   "C05MP6K9RNV:1779136440.549199": {
     "field_updates": {
       "asking_price": null,
