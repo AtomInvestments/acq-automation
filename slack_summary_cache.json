@@ -407,6 +407,28 @@
     "match_confidence": "high",
     "summary": "Frank Rozinsky requested a call and asked for at least 3 more weeks to finish ongoing projects before proceeding."
   },
+  "C05M7E1TJP7:1787576431.658689": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": null,
+      "reason_for_selling": "Needs to finish current projects before proceeding",
+      "timeline": "30 days"
+    },
+    "match_cid": "RmIelvbFC0jJ0R90P2tT",
+    "match_confidence": "high",
+    "summary": "Frank Rozinsky asked to be contacted in at least 3 more weeks after he finishes current projects."
+  },
+  "C05M7E1TJP7:1787576432.184889": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": null,
+      "reason_for_selling": null,
+      "timeline": null
+    },
+    "match_cid": "jadOPtCGfeVv97WdHibI",
+    "match_confidence": "high",
+    "summary": "Bryan Winters called back and said \"He already called me\" after being unanswered for 49 minutes."
+  },
   "C05MP6K9RNV:1779136440.549199": {
     "field_updates": {
       "asking_price": null,
