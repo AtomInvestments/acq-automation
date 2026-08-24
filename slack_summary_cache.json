@@ -484,6 +484,50 @@
     "match_confidence": "high",
     "summary": "Lead is available at the property today until late afternoon and invited the team to stop by."
   },
+  "C05M7E1TJP7:1787588617.382719": {
+    "field_updates": {
+      "asking_price": 300000,
+      "motivation": null,
+      "reason_for_selling": null,
+      "timeline": null
+    },
+    "match_cid": "9Dsm3eRzKpaWNH4BWfgK",
+    "match_confidence": "high",
+    "summary": "Michael McCown named an asking price of $300k and ACQ team is taking over the conversation with a call scheduled for Mon 24/08/2026 at 1:30 PM ET."
+  },
+  "C05M7E1TJP7:1787590839.650129": {
+    "field_updates": {
+      "asking_price": 300000,
+      "motivation": null,
+      "reason_for_selling": null,
+      "timeline": null
+    },
+    "match_cid": "9Dsm3eRzKpaWNH4BWfgK",
+    "match_confidence": "high",
+    "summary": "Michael McCown mentioned a price of $300k in an unanswered follow-up message."
+  },
+  "C05M7E1TJP7:1787590839.815009": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": null,
+      "reason_for_selling": "No longer owns the property",
+      "timeline": null
+    },
+    "match_cid": "JXl4pgVXzgIhDAFEk9OU",
+    "match_confidence": "high",
+    "summary": "Kahalil Ameen states he no longer owns 8039 and thanked team for reaching out."
+  },
+  "C05M7E1TJP7:1787590839.985559": {
+    "field_updates": {
+      "asking_price": 1000000,
+      "motivation": null,
+      "reason_for_selling": null,
+      "timeline": null
+    },
+    "match_cid": "sBQC0e6KmTZ6wSJLTxD2",
+    "match_confidence": "high",
+    "summary": "Kevin Dalton stated that the asking price needs to be over $1 million."
+  },
   "C05MP6K9RNV:1779136440.549199": {
     "field_updates": {
       "asking_price": null,
