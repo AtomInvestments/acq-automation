@@ -429,6 +429,39 @@
     "match_confidence": "high",
     "summary": "Bryan Winters called back and said \"He already called me\" after being unanswered for 49 minutes."
   },
+  "C05M7E1TJP7:1787580029.541359": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": "Both teachers starting new jobs next Monday, already moving into new place",
+      "reason_for_selling": "Moving into new place because both starting teaching jobs next Monday",
+      "timeline": "ASAP"
+    },
+    "match_cid": "GB3M32CIXFmDfwtuSv4m",
+    "match_confidence": "high",
+    "summary": "James needs to sell by 10/1 as both he and spouse are teachers starting work next Monday and moving into their new place this week."
+  },
+  "C05M7E1TJP7:1787580029.733499": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": null,
+      "reason_for_selling": null,
+      "timeline": null
+    },
+    "match_cid": "KYJGt0kvDTyjT586MxMB",
+    "match_confidence": "high",
+    "summary": "Marlene Rundstrom replied 'stop' to a message after 68 minutes of no response."
+  },
+  "C05M7E1TJP7:1787581252.374839": {
+    "field_updates": {
+      "asking_price": 245000,
+      "motivation": "Has competing buyer interest, willing to negotiate below appraisal",
+      "reason_for_selling": "Has buyer interested at $245k and is actively entertaining offers",
+      "timeline": "ASAP"
+    },
+    "match_cid": "ycNhuekZBk9DuxUmpan7",
+    "match_confidence": "high",
+    "summary": "Seller has a buyer interested at $245k for 1410 Pennington Avenue (appraised at $330k), is willing to negotiate and work with caller to find a buyer."
+  },
   "C05MP6K9RNV:1779136440.549199": {
     "field_updates": {
       "asking_price": null,
