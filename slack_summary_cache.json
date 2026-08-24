@@ -3164,5 +3164,27 @@
     "match_cid": "9L0w2jgSBFKSQc9Wjq7g",
     "match_confidence": "high",
     "summary": "Lead has multiple offers, property needs exterior repaint and minor touches, interior has normal wear and tear, plumbing and electrical are solid."
+  },
+  "C06MM4DQZ28:1787592026.967329": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": "Engaging with buyer inquiry, property freshly renovated",
+      "reason_for_selling": "Just completed full renovation this week, appears ready to sell",
+      "timeline": "ASAP"
+    },
+    "match_cid": "jrkRsvaxoMjkAQpF9zWT",
+    "match_confidence": "high",
+    "summary": "Lead responded to Jake's SMS inquiry asking how much they're offering, stated the property was just completely renovated and finished this week."
+  },
+  "C06MM4DQZ28:1787594353.126479": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": "Price-dependent, wants to be motivated to move",
+      "reason_for_selling": "Willing to sell if price is right, not urgently motivated",
+      "timeline": "No rush"
+    },
+    "match_cid": "y0TIoGfwvtjG6ISF7uIU",
+    "match_confidence": "high",
+    "summary": "Property is in excellent condition with recent updates (baths, floors, HVAC, water heater, deck), seller wants buyer to make first offer and will sell if price motivates them."
   }
 }
