@@ -462,6 +462,17 @@
     "match_confidence": "high",
     "summary": "Seller has a buyer interested at $245k for 1410 Pennington Avenue (appraised at $330k), is willing to negotiate and work with caller to find a buyer."
   },
+  "C05M7E1TJP7:1787585038.366329": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": null,
+      "reason_for_selling": null,
+      "timeline": "ASAP"
+    },
+    "match_cid": "3GSpUJHqn5XIFT1GFLXf",
+    "match_confidence": "high",
+    "summary": "Lead confirmed availability and invited team to stop by today until late afternoon."
+  },
   "C05MP6K9RNV:1779136440.549199": {
     "field_updates": {
       "asking_price": null,
