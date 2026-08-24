@@ -528,6 +528,17 @@
     "match_confidence": "high",
     "summary": "Kevin Dalton stated that the asking price needs to be over $1 million."
   },
+  "C05M7E1TJP7:1787598034.402209": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": null,
+      "reason_for_selling": null,
+      "timeline": null
+    },
+    "match_cid": "PqX50IOyk5mvV36IioIo",
+    "match_confidence": "high",
+    "summary": "Dennis Washington responded 'No' to an outreach attempt 39 minutes ago and has not been answered."
+  },
   "C05MP6K9RNV:1779136440.549199": {
     "field_updates": {
       "asking_price": null,
