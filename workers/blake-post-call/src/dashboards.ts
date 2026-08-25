@@ -4190,7 +4190,7 @@ section h2, h2 {
   <header class="masthead">
     <div class="brandrow">
       <span class="brand">Atom Investments · APG Operations</span>
-      <span>Last updated Aug 25, 2026 04:09 AM ET</span>
+      <span>Last updated Aug 25, 2026 05:11 AM ET</span>
     </div>
     <h1>Active <span class="accent">Deals.</span></h1>
     <p class="dek">Every property currently in stages 1-7 of the ACQ pipeline. Sorted by call rating within each stage so the strongest deals surface first.</p>
@@ -4288,7 +4288,7 @@ Cosmetic Updates - $7400" target="_blank">Rehab Report</a><a class="btn secondar
 HVAC System Upgrade - $15000
 Kitchen Remodel - $20000
 Bathroom Renovation - $10000
-Cosmetic Updates - $12640" target="_blank">Rehab Report</a><a class="btn secondary" href="https://www.zillow.com/homes/216 Tioga St-Trenton-NJ-08609-1434/" target="_blank">Zillow</a></div></div><div class="card stage-qualified" data-stage="1. Qualified" data-flags="has-arv" data-search="john p primiano grace ferry avenue philadelphia pa philadelphia, pa, 19146  ready to offload; never took tax credits - claims buyer inherits them (couple hundred k - verify)  now - walkthrough agreed tue aug 19 late afternoon single family livable per seller; 4th bed converted from laundry room (reversible). near chop campus expansion.  1. qualified"><div class="top"><div><div class="name">John P Primiano</div><div class="addr">Grace Ferry Avenue</div><div class="place">Philadelphia, PA, 19146</div></div><div class="stage-pill stage-qualified">1. Qualified</div></div><div class="pillrow"><span class="pill">⏱ Updated 4d ago</span></div><div class="specs"><span><strong>4</strong>bd / <strong>3</strong>ba</span><span><strong>2,740</strong> sqft</span><span>Cond: <strong>Livable per seller; 4th bed converted from laundry room (reversible). Near CHOP campus expansion.</strong></span></div><div class="fin-grid"><div class="fin"><div class="lab">Asking</div><div class="val">$595k</div></div><div class="fin"><div class="lab">ARV</div><div class="val">$625k</div></div><div class="fin"><div class="lab">70% MAO</div><div class="val">$437k</div></div><div class="fin"><div class="lab">Assign Fee</div><div class="val">—</div></div></div><div class="rating-row"><div><span class="label">Call</span><span class="rating gray">—</span></div><div class="summary">No call analysis yet.</div></div><div class="deal-meta"><strong>Motivation:</strong> Ready to offload; never took tax credits - claims buyer inherits them (couple hundred k - VERIFY)<br><strong>Timeline:</strong> NOW - walkthrough agreed Tue Aug 19 late afternoon</div><div class="actions"><a class="btn primary" href="https://app.gohighlevel.com/v2/location/RCkiUmWqXX4BYQ39JXmm/contacts/detail/4Fwolgtp5bs0m8KHLZu3" target="_blank">Open in GHL</a><a class="btn secondary" href="Roof Replacement - $15000
+Cosmetic Updates - $12640" target="_blank">Rehab Report</a><a class="btn secondary" href="https://www.zillow.com/homes/216 Tioga St-Trenton-NJ-08609-1434/" target="_blank">Zillow</a></div></div><div class="card stage-qualified" data-stage="1. Qualified" data-flags="has-arv" data-search="john p primiano grace ferry avenue philadelphia pa philadelphia, pa, 19146  ready to offload; never took tax credits - claims buyer inherits them (couple hundred k - verify)  now - walkthrough agreed tue aug 19 late afternoon single family livable per seller; 4th bed converted from laundry room (reversible). near chop campus expansion.  1. qualified"><div class="top"><div><div class="name">John P Primiano</div><div class="addr">Grace Ferry Avenue</div><div class="place">Philadelphia, PA, 19146</div></div><div class="stage-pill stage-qualified">1. Qualified</div></div><div class="pillrow"><span class="pill">⏱ Updated 4d ago</span></div><div class="specs"><span><strong>4</strong>bd / <strong>3</strong>ba</span><span><strong>2,049</strong> sqft</span><span>Cond: <strong>Livable per seller; 4th bed converted from laundry room (reversible). Near CHOP campus expansion.</strong></span></div><div class="fin-grid"><div class="fin"><div class="lab">Asking</div><div class="val">$595k</div></div><div class="fin"><div class="lab">ARV</div><div class="val">$625k</div></div><div class="fin"><div class="lab">70% MAO</div><div class="val">$437k</div></div><div class="fin"><div class="lab">Assign Fee</div><div class="val">—</div></div></div><div class="rating-row"><div><span class="label">Call</span><span class="rating gray">—</span></div><div class="summary">No call analysis yet.</div></div><div class="deal-meta"><strong>Motivation:</strong> Ready to offload; never took tax credits - claims buyer inherits them (couple hundred k - VERIFY)<br><strong>Timeline:</strong> NOW - walkthrough agreed Tue Aug 19 late afternoon</div><div class="actions"><a class="btn primary" href="https://app.gohighlevel.com/v2/location/RCkiUmWqXX4BYQ39JXmm/contacts/detail/4Fwolgtp5bs0m8KHLZu3" target="_blank">Open in GHL</a><a class="btn secondary" href="Roof Replacement - $15000
 HVAC System Upgrade - $20000
 Kitchen Remodel - $30000
 Bathroom Updates - $20000
@@ -5157,7 +5157,7 @@ section h2, h2 {
   <header class="masthead">
     <div class="brandrow">
       <span class="brand">Atom Investments · APG Operations</span>
-      <span>Last updated Aug 25, 2026 04:08 AM ET</span>
+      <span>Last updated Aug 25, 2026 05:09 AM ET</span>
     </div>
     <h1>SMS <span class="accent">Follow-Ups.</span></h1>
     <p class="dek">Action queue for Jeff and Mike — replies to call back, leads gone dormant, and everything still cycling through the SMS sequence.</p>
@@ -5177,7 +5177,7 @@ section h2, h2 {
     <a href="sms-test.html">SMS Test</a>
   </nav>
 
-  <details class="run-grid-collapsed"><summary>All 5 cron jobs OK on last run — click for timestamps</summary><div class="run-grid"><div class="run-row"><span class="tag green">OK</span><span class="run-name">ACQ Call Recording Automation</span><span class="run-ts">Aug 25, 03:23 AM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">ACQ SMS Follow-Up + Dashboard</span><span class="run-ts">Aug 25, 03:21 AM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">APG Slack Scraper</span><span class="run-ts">Aug 25, 03:37 AM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">dashboard (script)</span><span class="run-ts">Aug 25, 04:05 AM</span><span class="run-detail">dashboard updated</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">sms (script)</span><span class="run-ts">Aug 25, 04:03 AM</span><span class="run-detail">outside business hours (hour=4 ET)</span></div></div></details><div class="status-banner on"><div class="status-text"><span class="pulse"></span>SMS Automation: <span style="color:var(--green);font-weight:800">ACTIVE</span></div><a class="btn btn-kill" href="https://docs.google.com/spreadsheets/d/1wc3Pt46ze-ejLaryL8WIRQf4OjEkirolc4-O8lsRQZY/edit#gid=0" target="_blank">EMERGENCY KILL SWITCH</a></div>
+  <details class="run-grid-collapsed"><summary>All 5 cron jobs OK on last run — click for timestamps</summary><div class="run-grid"><div class="run-row"><span class="tag green">OK</span><span class="run-name">ACQ Call Recording Automation</span><span class="run-ts">Aug 25, 04:58 AM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">ACQ SMS Follow-Up + Dashboard</span><span class="run-ts">Aug 25, 04:09 AM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">APG Slack Scraper</span><span class="run-ts">Aug 25, 04:29 AM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">dashboard (script)</span><span class="run-ts">Aug 25, 05:06 AM</span><span class="run-detail">dashboard updated</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">sms (script)</span><span class="run-ts">Aug 25, 05:04 AM</span><span class="run-detail">outside business hours (hour=5 ET)</span></div></div></details><div class="status-banner on"><div class="status-text"><span class="pulse"></span>SMS Automation: <span style="color:var(--green);font-weight:800">ACTIVE</span></div><a class="btn btn-kill" href="https://docs.google.com/spreadsheets/d/1wc3Pt46ze-ejLaryL8WIRQf4OjEkirolc4-O8lsRQZY/edit#gid=0" target="_blank">EMERGENCY KILL SWITCH</a></div>
 
   <section class="sec">
     <div class="tag-row"><span class="num">01</span><h2>At a Glance</h2></div>
@@ -5217,12 +5217,12 @@ section h2, h2 {
 <tr><td><strong>Steven Guinto</strong></td><td>10 Hillcrest Dr</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot">Aug 20, 03:44 PM</span></td><td>Jeff (NJ)</td></tr>
 <tr><td><strong>Michael McCown</strong></td><td>917 Woodland Avenue</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot">Aug 24, 12:23 PM</span></td><td>Jeff (NJ)</td></tr>
 <tr><td><strong>Howard Dickstein</strong></td><td>4 Morningside Lane</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot">Aug 19, 04:40 PM</span></td><td></td></tr>
-<tr><td><strong>(no name)</strong></td><td></td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot"></span></td><td></td></tr>
-<tr><td><strong>(no name)</strong></td><td></td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot">Aug 24, 02:21 PM</span></td><td>Jeff (NJ)</td></tr>
-<tr><td><strong>(no name)</strong></td><td></td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot">Aug 05, 04:25 PM</span></td><td></td></tr>
-<tr><td><strong>(no name)</strong></td><td></td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot">Aug 24, 09:12 AM</span></td><td></td></tr>
-<tr><td><strong>(no name)</strong></td><td></td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot"></span></td><td></td></tr>
-<tr><td><strong>(no name)</strong></td><td></td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot">Aug 21, 05:09 PM</span></td><td>PA Market</td></tr>
+<tr><td><strong>Frank Rozinsky</strong></td><td>739 Hiland Ave # 741</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot"></span></td><td></td></tr>
+<tr><td><strong>Dennis Washington</strong></td><td>2501 41st Street</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot">Aug 24, 02:21 PM</span></td><td>Jeff (NJ)</td></tr>
+<tr><td><strong>Jose Dasilva</strong></td><td>300 Arch St</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot">Aug 05, 04:25 PM</span></td><td></td></tr>
+<tr><td><strong>James Fuccello</strong></td><td>408 Elmer St</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot">Aug 24, 09:12 AM</span></td><td></td></tr>
+<tr><td><strong>Shahbaz Zubairi</strong></td><td>358 Bromley Pl</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot"></span></td><td></td></tr>
+<tr><td><strong>Juan Marin</strong></td><td>40 Farnham Ave</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot">Aug 21, 05:09 PM</span></td><td>PA Market</td></tr>
 <tr><td><strong>Jennifer Torres</strong></td><td>1154 Jackson St</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot">Jul 10, 09:21 PM</span></td><td>Jeff (NJ)</td></tr>
 <tr><td><strong>Mason Hahn</strong></td><td>202 Grant Ave</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot"></span></td><td></td></tr>
 <tr><td><strong>Kulila Austin</strong></td><td>6952 Casale Blvd</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot">Jul 28, 12:53 PM</span></td><td></td></tr>
@@ -5413,7 +5413,7 @@ section h2, h2 {
     <div class="tag-row"><span class="num">04</span><h2><span class="dot warm"></span>Dormant — Manual Call Needed</h2></div>
     <hr>
     <p style="color:var(--muted);font-size:13px;margin:0 0 12px">Leads that received all 6 SMS with no reply. Jeff calls these manually.</p>
-    <div class="lead-table"><table><thead><tr><th>Contact</th><th>Address</th><th>Stage</th><th>Reason</th><th>SMS Sent</th><th>Last Sent</th></tr></thead><tbody><tr><td><strong>(no name)</strong></td><td></td><td><span class="tag">1. Qualified</span></td><td><span class="tag warm">6 SMS no reply — call manually</span></td><td><span class="tag warm">6/6</span></td><td>Aug 12, 05:12 PM</td></tr>
+    <div class="lead-table"><table><thead><tr><th>Contact</th><th>Address</th><th>Stage</th><th>Reason</th><th>SMS Sent</th><th>Last Sent</th></tr></thead><tbody><tr><td><strong>James Sammarco</strong></td><td>1513 Country Mill Dr</td><td><span class="tag">1. Qualified</span></td><td><span class="tag warm">6 SMS no reply — call manually</span></td><td><span class="tag warm">6/6</span></td><td>Aug 12, 05:12 PM</td></tr>
 <tr><td><strong>Denise Lannon</strong></td><td>412 South Coles Avenue</td><td><span class="tag">1. Qualified</span></td><td><span class="tag warm">6 SMS no reply — call manually</span></td><td><span class="tag warm">6/6</span></td><td>Aug 05, 04:42 PM</td></tr></tbody></table></div>
   </section>
 
@@ -5468,14 +5468,14 @@ section h2, h2 {
 <tr><td><strong>Jay Wassell</strong></td><td>508 Auckland Avenue</td><td>NJ</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">1</span></td><td>Aug 24, 12:01 PM</td><td>Jeff (NJ)</td></tr>
 <tr><td><strong>Ernesto Roque</strong></td><td>728 N 9th St</td><td>NJ</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">1</span></td><td>Aug 20, 02:18 PM</td><td>Jeff (NJ)</td></tr>
 <tr><td><strong>Giuseppe Donatiello</strong></td><td>41 Reid St</td><td>NJ</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">1</span></td><td>Aug 19, 02:14 PM</td><td>Jeff (NJ)</td></tr>
-<tr><td><strong>(no name)</strong></td><td></td><td></td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">1</span></td><td>Aug 19, 02:14 PM</td><td>Jeff (NJ)</td></tr>
-<tr><td><strong>(no name)</strong></td><td></td><td></td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">2</span></td><td>Aug 21, 02:18 PM</td><td>Jeff (NJ)</td></tr>
-<tr><td><strong>(no name)</strong></td><td></td><td></td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">2</span></td><td>Aug 21, 02:18 PM</td><td>Jeff (NJ)</td></tr>
-<tr><td><strong>(no name)</strong></td><td></td><td></td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>(no name)</strong></td><td></td><td></td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>(no name)</strong></td><td></td><td></td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">2</span></td><td>Aug 19, 03:46 PM</td><td>Jeff (NJ)</td></tr>
-<tr><td><strong>(no name)</strong></td><td></td><td></td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">4</span></td><td>Aug 18, 11:53 AM</td><td>PA Market</td></tr>
-<tr><td><strong>(no name)</strong></td><td></td><td></td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
+<tr><td><strong>Hyacinth Cummings</strong></td><td>52 Francis Ave</td><td>NJ</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">1</span></td><td>Aug 19, 02:14 PM</td><td>Jeff (NJ)</td></tr>
+<tr><td><strong>Kenny Lozano</strong></td><td>2234 41st St</td><td>NJ</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">2</span></td><td>Aug 21, 02:18 PM</td><td>Jeff (NJ)</td></tr>
+<tr><td><strong>Glenn Mallery</strong></td><td>44 Annabelle Ave</td><td>NJ</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">2</span></td><td>Aug 21, 02:18 PM</td><td>Jeff (NJ)</td></tr>
+<tr><td><strong>Angela Patnaude</strong></td><td>7 Jefferson Dr</td><td>NJ</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
+<tr><td><strong>Raymond Brandefine</strong></td><td>532 Halsey Rd</td><td>NJ</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
+<tr><td><strong>Anwar Khan</strong></td><td>407 Genesee St</td><td>NJ</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">2</span></td><td>Aug 19, 03:46 PM</td><td>Jeff (NJ)</td></tr>
+<tr><td><strong>Jamal Jackson</strong></td><td></td><td></td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">4</span></td><td>Aug 18, 11:53 AM</td><td>PA Market</td></tr>
+<tr><td><strong>Robert Gancitano</strong></td><td>66 Pirogue St</td><td>NJ</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
 <tr><td><strong>Giovanna Tomaselli</strong></td><td>1601 Blossom Cir</td><td>NJ</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
 <tr><td><strong>Frank Musero</strong></td><td>803 United States Ave</td><td>NJ</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">3</span></td><td>Aug 24, 12:01 PM</td><td>Jeff (NJ)</td></tr>
 <tr><td><strong>Kimberly Clarke</strong></td><td>133 Maplewood Ave</td><td>NJ</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
@@ -6002,7 +6002,7 @@ new Chart(document.getElementById('stageChart'), {
 
 new Chart(document.getElementById('stateChart'), {
   type: 'bar',
-  data: { labels: ["NJ", "PA", "AL", "OH", "UNKNOWN", "WI", "IN", "TX", "TN", "MI"], datasets: [{ data: [422, 123, 77, 54, 31, 9, 3, 2, 1, 1], backgroundColor: '#C9A52A', borderRadius: 4 }] },
+  data: { labels: ["NJ", "PA", "AL", "OH", "UNKNOWN", "WI", "IN", "TX", "TN", "MI"], datasets: [{ data: [435, 124, 77, 54, 17, 9, 3, 2, 1, 1], backgroundColor: '#C9A52A', borderRadius: 4 }] },
   options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { precision: 0, color: '#6B7591' }, grid: { color: 'rgba(26,40,64,0.06)' } }, x: { ticks: { color: '#455066' }, grid: { display: false } } } }
 });
 
