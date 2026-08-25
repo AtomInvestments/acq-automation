@@ -4190,7 +4190,7 @@ section h2, h2 {
   <header class="masthead">
     <div class="brandrow">
       <span class="brand">Atom Investments · APG Operations</span>
-      <span>Last updated Aug 25, 2026 02:05 PM ET</span>
+      <span>Last updated Aug 25, 2026 02:33 PM ET</span>
     </div>
     <h1>Active <span class="accent">Deals.</span></h1>
     <p class="dek">Every property currently in stages 1-7 of the ACQ pipeline. Sorted by call rating within each stage so the strongest deals surface first.</p>
@@ -5154,7 +5154,7 @@ section h2, h2 {
   <header class="masthead">
     <div class="brandrow">
       <span class="brand">Atom Investments · APG Operations</span>
-      <span>Last updated Aug 25, 2026 02:04 PM ET</span>
+      <span>Last updated Aug 25, 2026 02:32 PM ET</span>
     </div>
     <h1>SMS <span class="accent">Follow-Ups.</span></h1>
     <p class="dek">Action queue for Jeff and Mike — replies to call back, leads gone dormant, and everything still cycling through the SMS sequence.</p>
@@ -5174,17 +5174,17 @@ section h2, h2 {
     <a href="sms-test.html">SMS Test</a>
   </nav>
 
-  <details class="run-grid-collapsed"><summary>All 5 cron jobs OK on last run — click for timestamps</summary><div class="run-grid"><div class="run-row"><span class="tag green">OK</span><span class="run-name">ACQ Call Recording Automation</span><span class="run-ts">Aug 25, 01:44 PM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">ACQ SMS Follow-Up + Dashboard</span><span class="run-ts">Aug 25, 01:17 PM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">APG Slack Scraper</span><span class="run-ts">Aug 25, 01:20 PM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">dashboard (script)</span><span class="run-ts">Aug 25, 02:01 PM</span><span class="run-detail">dashboard updated</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">sms (script)</span><span class="run-ts">Aug 25, 02:01 PM</span><span class="run-detail">{&quot;wait&quot;: 494, &quot;skipped-tag-prebail&quot;: 197, &quot;sent#1&quot;: 3, &quot;skipped&quot;: 25, &quot;no-phone&quot;: 6}</span></div></div></details><div class="status-banner on"><div class="status-text"><span class="pulse"></span>SMS Automation: <span style="color:var(--green);font-weight:800">ACTIVE</span></div><a class="btn btn-kill" href="https://docs.google.com/spreadsheets/d/1wc3Pt46ze-ejLaryL8WIRQf4OjEkirolc4-O8lsRQZY/edit#gid=0" target="_blank">EMERGENCY KILL SWITCH</a></div>
+  <details class="run-grid-collapsed"><summary>All 5 cron jobs OK on last run — click for timestamps</summary><div class="run-grid"><div class="run-row"><span class="tag green">OK</span><span class="run-name">ACQ Call Recording Automation</span><span class="run-ts">Aug 25, 02:04 PM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">ACQ SMS Follow-Up + Dashboard</span><span class="run-ts">Aug 25, 02:05 PM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">APG Slack Scraper</span><span class="run-ts">Aug 25, 02:19 PM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">dashboard (script)</span><span class="run-ts">Aug 25, 02:29 PM</span><span class="run-detail">dashboard updated</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">sms (script)</span><span class="run-ts">Aug 25, 02:29 PM</span><span class="run-detail">{&quot;wait&quot;: 495, &quot;skipped-tag-prebail&quot;: 197, &quot;sent#1&quot;: 1, &quot;skipped&quot;: 25, &quot;replied-positive&quot;: 1, &quot;no-phone&quot;: 6}</span></div></div></details><div class="status-banner on"><div class="status-text"><span class="pulse"></span>SMS Automation: <span style="color:var(--green);font-weight:800">ACTIVE</span></div><a class="btn btn-kill" href="https://docs.google.com/spreadsheets/d/1wc3Pt46ze-ejLaryL8WIRQf4OjEkirolc4-O8lsRQZY/edit#gid=0" target="_blank">EMERGENCY KILL SWITCH</a></div>
 
   <section class="sec">
     <div class="tag-row"><span class="num">01</span><h2>At a Glance</h2></div>
     <hr>
     <div class="stat-row">
       <div class="stat"><div class="lab">Total Leads</div><div class="v">725</div><div class="sub">across all stages</div></div>
-      <div class="stat"><div class="lab">In Sequence</div><div class="v">503</div><div class="sub">SMS scheduled</div></div>
-      <div class="stat hot"><div class="lab">Replied — Call Now</div><div class="v">200</div><div class="sub">Jeff has tasks</div></div>
+      <div class="stat"><div class="lab">In Sequence</div><div class="v">502</div><div class="sub">SMS scheduled</div></div>
+      <div class="stat hot"><div class="lab">Replied — Call Now</div><div class="v">201</div><div class="sub">Jeff has tasks</div></div>
       <div class="stat warm"><div class="lab">Dormant — Manual Call</div><div class="v">2</div><div class="sub">no reply after sequence</div></div>
-      <div class="stat green"><div class="lab">Reply Rate</div><div class="v">28.4%</div><div class="sub">replied / total touched</div></div>
+      <div class="stat green"><div class="lab">Reply Rate</div><div class="v">28.5%</div><div class="sub">replied / total touched</div></div>
     </div>
   </section>
 
@@ -5290,6 +5290,7 @@ section h2, h2 {
 <tr><td><strong>Mark Hall (Referred by Phil)</strong></td><td>1819 W 6th St,</td><td><span class="tag">2. LAO</span></td><td><span class="tag hot"></span></td><td></td></tr>
 <tr><td><strong>John Harrington</strong></td><td>1211 Jersey St</td><td><span class="tag">2. LAO</span></td><td><span class="tag hot"></span></td><td></td></tr>
 <tr><td><strong>Kahalil Ameen</strong></td><td>8039 7th Ave S,</td><td><span class="tag">2. LAO</span></td><td><span class="tag hot">Aug 24, 12:18 PM</span></td><td>AL Market</td></tr>
+<tr><td><strong>Carl Mccall</strong></td><td>48 Edgemere Ave</td><td><span class="tag">2. LAO</span></td><td><span class="tag hot">Aug 25, 01:58 PM</span></td><td>PA Market</td></tr>
 <tr><td><strong>Marcus Patterson</strong></td><td>5900 Court M</td><td><span class="tag">2. LAO</span></td><td><span class="tag hot"></span></td><td>AL Market</td></tr>
 <tr><td><strong>Carla Ider Clyde Limited Partnership</strong></td><td>118 66TH PL N</td><td><span class="tag">2. LAO</span></td><td><span class="tag hot">May 13, 08:17 PM</span></td><td></td></tr>
 <tr><td><strong>Beata Szyffer-Hopkins</strong></td><td>412 Neadow Woods lane</td><td><span class="tag">2. LAO</span></td><td><span class="tag hot"></span></td><td></td></tr>
@@ -5451,7 +5452,7 @@ section h2, h2 {
 <tr><td><strong>Karim Mohammad</strong></td><td>1410 Pennington Avenue</td><td>NJ</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
 <tr><td><strong>William Babuschak</strong></td><td>301 Lakeside Blvd</td><td>NJ</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
 <tr><td><strong>Miguel</strong></td><td>216 Tioga St</td><td>NJ</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Edward Balut</strong></td><td>460 Mine Road</td><td>NJ</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
+<tr><td><strong>Edward Balut</strong></td><td>460 Mine Road</td><td>NJ</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">1</span></td><td>Aug 25, 02:19 PM</td><td>Jeff (NJ)</td></tr>
 <tr><td><strong>Vladen Bray</strong></td><td>150 Willow Turn</td><td>NJ</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">1</span></td><td>Aug 25, 01:51 PM</td><td>Jeff (NJ)</td></tr>
 <tr><td><strong>Salvatore Rizzo</strong></td><td>295 Cross Keys Rd</td><td>NJ</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">1</span></td><td>Aug 25, 01:51 PM</td><td>Jeff (NJ)</td></tr>
 <tr><td><strong>Rickie Banks</strong></td><td>4915 N 17th St</td><td>PA</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">1</span></td><td>Aug 25, 01:51 PM</td><td>PA Market</td></tr>
@@ -5497,7 +5498,6 @@ section h2, h2 {
 <tr><td><strong>Derek Harris</strong></td><td>Camden</td><td>NJ</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">3</span></td><td>Aug 20, 12:20 PM</td><td>Jeff (NJ)</td></tr>
 <tr><td><strong>Victor Demeski</strong></td><td>Hamilton Township</td><td>NJ</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">3</span></td><td>Aug 20, 12:20 PM</td><td>Jeff (NJ)</td></tr>
 <tr><td><strong>Lawrence Craver</strong></td><td>Trenton</td><td>NJ</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">3</span></td><td>Aug 20, 12:20 PM</td><td>Jeff (NJ)</td></tr>
-<tr><td><strong>Carl Mccall</strong></td><td>48 Edgemere Ave</td><td>NJ</td><td><span class="tag">2. LAO</span></td><td><span class="tag green">4</span></td><td>Aug 24, 11:07 AM</td><td>PA Market</td></tr>
 <tr><td><strong>Tina Goins</strong></td><td>606 Penn Ave</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
 <tr><td><strong>Joe / Margaret Gurganus</strong></td><td>213 Fairview Ave</td><td>PA</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
 <tr><td><strong>Robert Lawless</strong></td><td>Philadelphia</td><td>PA</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
@@ -5957,7 +5957,9 @@ section h2, h2 {
 <tr><td><strong>Michael McCown</strong></td><td>917 Woodland Avenue</td><td>REVIEW: Did Jeff call Michael McCown back?</td><td><span class="tag">Mike</span></td><td>Aug 25, 01:01 PM</td></tr>
 <tr><td><strong>Michael McCown</strong></td><td>917 Woodland Avenue</td><td>Call back: Michael McCown (917 Woodland Avenue)</td><td><span class="tag">Jeff</span></td><td>Aug 24, 01:01 PM</td></tr>
 <tr><td><strong>Kevin Dalton</strong></td><td>55 Boulevard E</td><td>REVIEW: Did Jeff call Kevin Dalton back?</td><td><span class="tag">Mike</span></td><td>Aug 25, 01:02 PM</td></tr>
-<tr><td><strong>Kevin Dalton</strong></td><td>55 Boulevard E</td><td>Call back: Kevin Dalton (55 Boulevard E)</td><td><span class="tag">Jeff</span></td><td>Aug 24, 01:02 PM</td></tr></tbody></table></div>
+<tr><td><strong>Kevin Dalton</strong></td><td>55 Boulevard E</td><td>Call back: Kevin Dalton (55 Boulevard E)</td><td><span class="tag">Jeff</span></td><td>Aug 24, 01:02 PM</td></tr>
+<tr><td><strong>Carl Mccall</strong></td><td>48 Edgemere Ave</td><td>REVIEW: Did Jeff call Carl Mccall back?</td><td><span class="tag">Mike</span></td><td>Aug 26, 02:21 PM</td></tr>
+<tr><td><strong>Carl Mccall</strong></td><td>48 Edgemere Ave</td><td>Call back: Carl Mccall (48 Edgemere Ave)</td><td><span class="tag">Jeff</span></td><td>Aug 25, 02:21 PM</td></tr></tbody></table></div>
   </section>
 
   <section class="sec">
@@ -6003,13 +6005,13 @@ new Chart(document.getElementById('stateChart'), {
 
 new Chart(document.getElementById('progressChart'), {
   type: 'bar',
-  data: { labels: ['0','1','2','3','4','5','6'], datasets: [{ label: 'Contacts', data: [651, 29, 7, 30, 4, 2, 2], backgroundColor: '#1A2840', borderRadius: 4 }] },
+  data: { labels: ['0','1','2','3','4','5','6'], datasets: [{ label: 'Contacts', data: [650, 30, 7, 30, 4, 2, 2], backgroundColor: '#1A2840', borderRadius: 4 }] },
   options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { precision: 0, color: '#6B7591' }, grid: { color: 'rgba(26,40,64,0.06)' } }, x: { ticks: { color: '#455066' }, grid: { display: false } } } }
 });
 
 new Chart(document.getElementById('numberChart'), {
   type: 'bar',
-  data: { labels: ["Jeff (NJ)", "PA Market", "AL Market", "TN Market", "WI Market", "IN Market"], datasets: [{ data: [48, 11, 11, 2, 1, 1], backgroundColor: palette, borderRadius: 4 }] },
+  data: { labels: ["Jeff (NJ)", "PA Market", "AL Market", "TN Market", "WI Market", "IN Market"], datasets: [{ data: [49, 11, 11, 2, 1, 1], backgroundColor: palette, borderRadius: 4 }] },
   options: { indexAxis: 'y', plugins: { legend: { display: false } }, scales: { x: { beginAtZero: true, ticks: { precision: 0, color: '#6B7591' }, grid: { color: 'rgba(26,40,64,0.06)' } }, y: { ticks: { color: '#455066' }, grid: { display: false } } } }
 });
 
