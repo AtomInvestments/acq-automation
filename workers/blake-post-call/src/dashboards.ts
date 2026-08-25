@@ -4190,7 +4190,7 @@ section h2, h2 {
   <header class="masthead">
     <div class="brandrow">
       <span class="brand">Atom Investments · APG Operations</span>
-      <span>Last updated Aug 25, 2026 01:17 PM ET</span>
+      <span>Last updated Aug 25, 2026 02:05 PM ET</span>
     </div>
     <h1>Active <span class="accent">Deals.</span></h1>
     <p class="dek">Every property currently in stages 1-7 of the ACQ pipeline. Sorted by call rating within each stage so the strongest deals surface first.</p>
@@ -5154,7 +5154,7 @@ section h2, h2 {
   <header class="masthead">
     <div class="brandrow">
       <span class="brand">Atom Investments · APG Operations</span>
-      <span>Last updated Aug 25, 2026 01:15 PM ET</span>
+      <span>Last updated Aug 25, 2026 02:04 PM ET</span>
     </div>
     <h1>SMS <span class="accent">Follow-Ups.</span></h1>
     <p class="dek">Action queue for Jeff and Mike — replies to call back, leads gone dormant, and everything still cycling through the SMS sequence.</p>
@@ -5174,7 +5174,7 @@ section h2, h2 {
     <a href="sms-test.html">SMS Test</a>
   </nav>
 
-  <details class="run-grid-collapsed"><summary>All 5 cron jobs OK on last run — click for timestamps</summary><div class="run-grid"><div class="run-row"><span class="tag green">OK</span><span class="run-name">ACQ Call Recording Automation</span><span class="run-ts">Aug 25, 01:05 PM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">ACQ SMS Follow-Up + Dashboard</span><span class="run-ts">Aug 25, 12:21 PM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">APG Slack Scraper</span><span class="run-ts">Aug 25, 12:21 PM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">dashboard (script)</span><span class="run-ts">Aug 25, 01:12 PM</span><span class="run-detail">dashboard updated</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">sms (script)</span><span class="run-ts">Aug 25, 01:12 PM</span><span class="run-detail">{&quot;wait&quot;: 497, &quot;skipped-tag-prebail&quot;: 197, &quot;skipped&quot;: 25, &quot;no-phone&quot;: 6}</span></div></div></details><div class="status-banner on"><div class="status-text"><span class="pulse"></span>SMS Automation: <span style="color:var(--green);font-weight:800">ACTIVE</span></div><a class="btn btn-kill" href="https://docs.google.com/spreadsheets/d/1wc3Pt46ze-ejLaryL8WIRQf4OjEkirolc4-O8lsRQZY/edit#gid=0" target="_blank">EMERGENCY KILL SWITCH</a></div>
+  <details class="run-grid-collapsed"><summary>All 5 cron jobs OK on last run — click for timestamps</summary><div class="run-grid"><div class="run-row"><span class="tag green">OK</span><span class="run-name">ACQ Call Recording Automation</span><span class="run-ts">Aug 25, 01:44 PM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">ACQ SMS Follow-Up + Dashboard</span><span class="run-ts">Aug 25, 01:17 PM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">APG Slack Scraper</span><span class="run-ts">Aug 25, 01:20 PM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">dashboard (script)</span><span class="run-ts">Aug 25, 02:01 PM</span><span class="run-detail">dashboard updated</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">sms (script)</span><span class="run-ts">Aug 25, 02:01 PM</span><span class="run-detail">{&quot;wait&quot;: 494, &quot;skipped-tag-prebail&quot;: 197, &quot;sent#1&quot;: 3, &quot;skipped&quot;: 25, &quot;no-phone&quot;: 6}</span></div></div></details><div class="status-banner on"><div class="status-text"><span class="pulse"></span>SMS Automation: <span style="color:var(--green);font-weight:800">ACTIVE</span></div><a class="btn btn-kill" href="https://docs.google.com/spreadsheets/d/1wc3Pt46ze-ejLaryL8WIRQf4OjEkirolc4-O8lsRQZY/edit#gid=0" target="_blank">EMERGENCY KILL SWITCH</a></div>
 
   <section class="sec">
     <div class="tag-row"><span class="num">01</span><h2>At a Glance</h2></div>
@@ -5452,9 +5452,9 @@ section h2, h2 {
 <tr><td><strong>William Babuschak</strong></td><td>301 Lakeside Blvd</td><td>NJ</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
 <tr><td><strong>Miguel</strong></td><td>216 Tioga St</td><td>NJ</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
 <tr><td><strong>Edward Balut</strong></td><td>460 Mine Road</td><td>NJ</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Vladen Bray</strong></td><td>150 Willow Turn</td><td>NJ</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Salvatore Rizzo</strong></td><td>295 Cross Keys Rd</td><td>NJ</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Rickie Banks</strong></td><td>4915 N 17th St</td><td>PA</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
+<tr><td><strong>Vladen Bray</strong></td><td>150 Willow Turn</td><td>NJ</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">1</span></td><td>Aug 25, 01:51 PM</td><td>Jeff (NJ)</td></tr>
+<tr><td><strong>Salvatore Rizzo</strong></td><td>295 Cross Keys Rd</td><td>NJ</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">1</span></td><td>Aug 25, 01:51 PM</td><td>Jeff (NJ)</td></tr>
+<tr><td><strong>Rickie Banks</strong></td><td>4915 N 17th St</td><td>PA</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">1</span></td><td>Aug 25, 01:51 PM</td><td>PA Market</td></tr>
 <tr><td><strong>Natan Nisimov</strong></td><td>302 Pennington Ave</td><td>NJ</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">1</span></td><td>Aug 24, 05:49 PM</td><td>Jeff (NJ)</td></tr>
 <tr><td><strong>Sabyasachi Chakraborty</strong></td><td>10 Vetter Ct</td><td>NJ</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">1</span></td><td>Aug 24, 02:20 PM</td><td>Jeff (NJ)</td></tr>
 <tr><td><strong>Martin Jomar Realty LLC</strong></td><td>2046 E Monmouth St</td><td>PA</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">1</span></td><td>Aug 24, 02:20 PM</td><td>PA Market</td></tr>
@@ -6003,13 +6003,13 @@ new Chart(document.getElementById('stateChart'), {
 
 new Chart(document.getElementById('progressChart'), {
   type: 'bar',
-  data: { labels: ['0','1','2','3','4','5','6'], datasets: [{ label: 'Contacts', data: [654, 26, 7, 30, 4, 2, 2], backgroundColor: '#1A2840', borderRadius: 4 }] },
+  data: { labels: ['0','1','2','3','4','5','6'], datasets: [{ label: 'Contacts', data: [651, 29, 7, 30, 4, 2, 2], backgroundColor: '#1A2840', borderRadius: 4 }] },
   options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { precision: 0, color: '#6B7591' }, grid: { color: 'rgba(26,40,64,0.06)' } }, x: { ticks: { color: '#455066' }, grid: { display: false } } } }
 });
 
 new Chart(document.getElementById('numberChart'), {
   type: 'bar',
-  data: { labels: ["Jeff (NJ)", "AL Market", "PA Market", "TN Market", "WI Market", "IN Market"], datasets: [{ data: [46, 11, 10, 2, 1, 1], backgroundColor: palette, borderRadius: 4 }] },
+  data: { labels: ["Jeff (NJ)", "PA Market", "AL Market", "TN Market", "WI Market", "IN Market"], datasets: [{ data: [48, 11, 11, 2, 1, 1], backgroundColor: palette, borderRadius: 4 }] },
   options: { indexAxis: 'y', plugins: { legend: { display: false } }, scales: { x: { beginAtZero: true, ticks: { precision: 0, color: '#6B7591' }, grid: { color: 'rgba(26,40,64,0.06)' } }, y: { ticks: { color: '#455066' }, grid: { display: false } } } }
 });
 
