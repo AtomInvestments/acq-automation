@@ -4190,7 +4190,7 @@ section h2, h2 {
   <header class="masthead">
     <div class="brandrow">
       <span class="brand">Atom Investments · APG Operations</span>
-      <span>Last updated Aug 26, 2026 07:58 AM ET</span>
+      <span>Last updated Aug 26, 2026 08:30 AM ET</span>
     </div>
     <h1>Active <span class="accent">Deals.</span></h1>
     <p class="dek">Every property currently in stages 1-7 of the ACQ pipeline. Sorted by call rating within each stage so the strongest deals surface first.</p>
@@ -5167,7 +5167,7 @@ section h2, h2 {
   <header class="masthead">
     <div class="brandrow">
       <span class="brand">Atom Investments · APG Operations</span>
-      <span>Last updated Aug 26, 2026 07:57 AM ET</span>
+      <span>Last updated Aug 26, 2026 08:28 AM ET</span>
     </div>
     <h1>SMS <span class="accent">Follow-Ups.</span></h1>
     <p class="dek">Action queue for Jeff and Mike — replies to call back, leads gone dormant, and everything still cycling through the SMS sequence.</p>
@@ -5187,7 +5187,7 @@ section h2, h2 {
     <a href="sms-test.html">SMS Test</a>
   </nav>
 
-  <details class="run-grid-collapsed"><summary>All 5 cron jobs OK on last run — click for timestamps</summary><div class="run-grid"><div class="run-row"><span class="tag green">OK</span><span class="run-name">ACQ Call Recording Automation</span><span class="run-ts">Aug 26, 07:24 AM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">ACQ SMS Follow-Up + Dashboard</span><span class="run-ts">Aug 26, 07:24 AM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">APG Slack Scraper</span><span class="run-ts">Aug 26, 07:17 AM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">dashboard (script)</span><span class="run-ts">Aug 26, 07:53 AM</span><span class="run-detail">dashboard updated</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">sms (script)</span><span class="run-ts">Aug 26, 07:51 AM</span><span class="run-detail">outside business hours (hour=7 ET)</span></div></div></details><div class="status-banner on"><div class="status-text"><span class="pulse"></span>SMS Automation: <span style="color:var(--green);font-weight:800">ACTIVE</span></div><a class="btn btn-kill" href="https://docs.google.com/spreadsheets/d/1wc3Pt46ze-ejLaryL8WIRQf4OjEkirolc4-O8lsRQZY/edit#gid=0" target="_blank">EMERGENCY KILL SWITCH</a></div>
+  <details class="run-grid-collapsed"><summary>All 5 cron jobs OK on last run — click for timestamps</summary><div class="run-grid"><div class="run-row"><span class="tag green">OK</span><span class="run-name">ACQ Call Recording Automation</span><span class="run-ts">Aug 26, 07:54 AM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">ACQ SMS Follow-Up + Dashboard</span><span class="run-ts">Aug 26, 07:58 AM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">APG Slack Scraper</span><span class="run-ts">Aug 26, 08:21 AM</span><span class="run-detail">success</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">dashboard (script)</span><span class="run-ts">Aug 26, 08:23 AM</span><span class="run-detail">dashboard updated</span></div><div class="run-row"><span class="tag green">OK</span><span class="run-name">sms (script)</span><span class="run-ts">Aug 26, 08:21 AM</span><span class="run-detail">outside business hours (hour=8 ET)</span></div></div></details><div class="status-banner on"><div class="status-text"><span class="pulse"></span>SMS Automation: <span style="color:var(--green);font-weight:800">ACTIVE</span></div><a class="btn btn-kill" href="https://docs.google.com/spreadsheets/d/1wc3Pt46ze-ejLaryL8WIRQf4OjEkirolc4-O8lsRQZY/edit#gid=0" target="_blank">EMERGENCY KILL SWITCH</a></div>
 
   <section class="sec">
     <div class="tag-row"><span class="num">01</span><h2>At a Glance</h2></div>
@@ -5234,8 +5234,8 @@ section h2, h2 {
 <tr><td><strong>Shahbaz Zubairi</strong></td><td>358 Bromley Pl</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot"></span></td><td></td></tr>
 <tr><td><strong>Juan Marin</strong></td><td>40 Farnham Ave</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot">Aug 21, 05:09 PM</span></td><td>PA Market</td></tr>
 <tr><td><strong>Jennifer Torres</strong></td><td>1154 Jackson St</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot">Jul 10, 09:21 PM</span></td><td>Jeff (NJ)</td></tr>
-<tr><td><strong>(no name)</strong></td><td></td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot"></span></td><td></td></tr>
-<tr><td><strong>(no name)</strong></td><td></td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot">Jul 28, 12:53 PM</span></td><td></td></tr>
+<tr><td><strong>Mason Hahn</strong></td><td>202 Grant Ave</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot"></span></td><td></td></tr>
+<tr><td><strong>Kulila Austin</strong></td><td>6952 Casale Blvd</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot">Jul 28, 12:53 PM</span></td><td></td></tr>
 <tr><td><strong>Corey Delp</strong></td><td>10 Bay Ave</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot"></span></td><td></td></tr>
 <tr><td><strong>Kenneth Bajek</strong></td><td>406 Adeline St</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot"></span></td><td></td></tr>
 <tr><td><strong>Gary Rogan</strong></td><td>30 Taylor Rd</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot">Jul 28, 12:50 PM</span></td><td></td></tr>
@@ -5263,11 +5263,11 @@ section h2, h2 {
 <tr><td><strong>Christopher Ascencio</strong></td><td>129 Lakeview Ave</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot"></span></td><td></td></tr>
 <tr><td><strong>Donnie Johnson</strong></td><td>1484 Stuyvesant Ave</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot">Aug 17, 01:49 PM</span></td><td>Jeff (NJ)</td></tr>
 <tr><td><strong>Vance Stephens</strong></td><td>32 Cavell St</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot"></span></td><td></td></tr>
-<tr><td><strong>(no name)</strong></td><td></td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot"></span></td><td></td></tr>
-<tr><td><strong>(no name)</strong></td><td></td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot">Jul 31, 10:06 AM</span></td><td></td></tr>
-<tr><td><strong>(no name)</strong></td><td></td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot">Jul 29, 04:31 PM</span></td><td>PA Market</td></tr>
-<tr><td><strong>(no name)</strong></td><td></td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot">May 09, 01:57 PM</span></td><td></td></tr>
-<tr><td><strong>(no name)</strong></td><td></td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot"></span></td><td></td></tr>
+<tr><td><strong>Venkata Bandaru</strong></td><td>35 George Davison Rd</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot"></span></td><td></td></tr>
+<tr><td><strong>Cheryl Weisenberg</strong></td><td>810 3rd St</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot">Jul 31, 10:06 AM</span></td><td></td></tr>
+<tr><td><strong>Erick Serrano</strong></td><td>494 Neville St</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot">Jul 29, 04:31 PM</span></td><td>PA Market</td></tr>
+<tr><td><strong>Jimmie Brown</strong></td><td>4114 8th Ave</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot">May 09, 01:57 PM</span></td><td></td></tr>
+<tr><td><strong>Jeanette Nazon</strong></td><td>203 W Hanover St</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot"></span></td><td></td></tr>
 <tr><td><strong>Erica &amp; Stuart Smith</strong></td><td>4725 7th Ave</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot"></span></td><td></td></tr>
 <tr><td><strong>Keith E Amiano</strong></td><td>1097 State Route 173</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot"></span></td><td>Jeff (NJ)</td></tr>
 <tr><td><strong>Chuck  Pagano</strong></td><td>31 CHESTNUT ST</td><td><span class="tag">1. Qualified</span></td><td><span class="tag hot">Aug 02, 01:06 PM</span></td><td></td></tr>
@@ -5342,8 +5342,8 @@ section h2, h2 {
 <tr><td><strong>Joshua Jenner</strong></td><td>35 Benson St</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot"></span></td><td></td></tr>
 <tr><td><strong>Mike</strong></td><td>2001 Lincoln St</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot">Apr 23, 04:16 PM</span></td><td></td></tr>
 <tr><td><strong>Raymond Bowman Sr</strong></td><td>118 SHIP AVE</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot"></span></td><td></td></tr>
-<tr><td><strong>Frankie</strong></td><td>300 Broad St</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot">Aug 06, 05:22 PM</span></td><td></td></tr>
-<tr><td><strong>Dennis Gilmore</strong></td><td>39 Forge Hill Rd</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot"></span></td><td></td></tr>
+<tr><td><strong>(no name)</strong></td><td></td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot">Aug 06, 05:22 PM</span></td><td></td></tr>
+<tr><td><strong>(no name)</strong></td><td></td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot"></span></td><td></td></tr>
 <tr><td><strong>Pankaj Varshney</strong></td><td>1101 Jesse Way</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot"></span></td><td></td></tr>
 <tr><td><strong>Mario Toledo</strong></td><td>42 Harrison St</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot">Jun 25, 06:01 PM</span></td><td></td></tr>
 <tr><td><strong>Dimitrios Lemoniotis</strong></td><td>9 N SOVEREIGN AVE</td><td><span class="tag">Dead Deals</span></td><td><span class="tag hot"></span></td><td></td></tr>
@@ -5489,9 +5489,9 @@ section h2, h2 {
 <tr><td><strong>Frank Musero</strong></td><td>803 United States Ave</td><td>NJ</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">3</span></td><td>Aug 24, 12:01 PM</td><td>Jeff (NJ)</td></tr>
 <tr><td><strong>Kimberly Clarke</strong></td><td>133 Maplewood Ave</td><td>NJ</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
 <tr><td><strong>David Williams</strong></td><td>435 KERRIGAN BLVD</td><td>NJ</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">3</span></td><td>Aug 24, 11:06 AM</td><td>Jeff (NJ)</td></tr>
-<tr><td><strong>(no name)</strong></td><td></td><td></td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">4</span></td><td>Aug 24, 11:06 AM</td><td>TN Market</td></tr>
-<tr><td><strong>(no name)</strong></td><td></td><td></td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">4</span></td><td>Aug 24, 11:06 AM</td><td>PA Market</td></tr>
-<tr><td><strong>(no name)</strong></td><td></td><td></td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">3</span></td><td>Aug 24, 12:01 PM</td><td>Jeff (NJ)</td></tr>
+<tr><td><strong>Ben Clay</strong></td><td>206 16TH AVE S</td><td>AL</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">4</span></td><td>Aug 24, 11:06 AM</td><td>TN Market</td></tr>
+<tr><td><strong>Chris Brindley</strong></td><td>41 JULIA AVE</td><td>NJ</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">4</span></td><td>Aug 24, 11:06 AM</td><td>PA Market</td></tr>
+<tr><td><strong>Andres Morales</strong></td><td>808 Lamberton St</td><td>NJ</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">3</span></td><td>Aug 24, 12:01 PM</td><td>Jeff (NJ)</td></tr>
 <tr><td><strong>Monique Johnson</strong></td><td>5136 N 32nd St</td><td>WI</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">3</span></td><td>Aug 20, 12:19 PM</td><td>WI Market</td></tr>
 <tr><td><strong>Douglas Rice</strong></td><td>316 Lincoln Ave</td><td>NJ</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">3</span></td><td>Aug 20, 12:19 PM</td><td>Jeff (NJ)</td></tr>
 <tr><td><strong>Joel  Lowe</strong></td><td>1240 Princeton Avenue Southwest</td><td>AL</td><td><span class="tag">1. Qualified</span></td><td><span class="tag green">3</span></td><td>Aug 20, 12:19 PM</td><td>AL Market</td></tr>
@@ -5680,8 +5680,8 @@ section h2, h2 {
 <tr><td><strong>Neil Ferrick</strong></td><td>540 Cranbury Rd Apt 132</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
 <tr><td><strong>(no name)</strong></td><td>6615 US HIGHWAY 9</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
 <tr><td><strong>Glenn Jacobs</strong></td><td>1317 Heck Ave</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Vincent Cuseglio</strong></td><td>3419 MARITIME DR</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
-<tr><td><strong>Jose Clavijo</strong></td><td>432 Greylock Pkwy</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
+<tr><td><strong>(no name)</strong></td><td></td><td></td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
+<tr><td><strong>(no name)</strong></td><td></td><td></td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
 <tr><td><strong>Paul Pitterson</strong></td><td>172 Watchung Ave</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
 <tr><td><strong>Keith Peckman</strong></td><td>209 N 3rd Ave</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
 <tr><td><strong>Krishna Deonandan</strong></td><td>189 DUNCAN AVE</td><td>NJ</td><td><span class="tag">Dead Deals</span></td><td><span class="tag green">0</span></td><td></td><td>—</td></tr>
@@ -6012,7 +6012,7 @@ new Chart(document.getElementById('stageChart'), {
 
 new Chart(document.getElementById('stateChart'), {
   type: 'bar',
-  data: { labels: ["NJ", "PA", "AL", "OH", "UNKNOWN", "WI", "IN", "TX", "TN", "MI"], datasets: [{ data: [425, 124, 75, 54, 27, 9, 3, 2, 1, 1], backgroundColor: '#C9A52A', borderRadius: 4 }] },
+  data: { labels: ["NJ", "PA", "AL", "OH", "UNKNOWN", "WI", "IN", "TX", "TN", "MI"], datasets: [{ data: [429, 124, 77, 54, 21, 9, 3, 2, 1, 1], backgroundColor: '#C9A52A', borderRadius: 4 }] },
   options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { precision: 0, color: '#6B7591' }, grid: { color: 'rgba(26,40,64,0.06)' } }, x: { ticks: { color: '#455066' }, grid: { display: false } } } }
 });
 
