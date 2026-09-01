@@ -583,6 +583,83 @@
     "match_confidence": "high",
     "summary": "Jen Guydos confirmed she is an investor looking to buy properties in NJ, not selling."
   },
+  "C05MP6K9RNV:1788289639.251539": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": "Active cash buyer building inventory across multiple states",
+      "reason_for_selling": null,
+      "timeline": "90 days"
+    },
+    "match_cid": "sHVtK2sKOwxt03qqgrVe",
+    "match_confidence": "high",
+    "summary": "Timothy Turner confirmed he's an active buyer purchasing multiple property types across multiple states, but just bought in Florida and is taking 3-4 months off before buying again."
+  },
+  "C05MP6K9RNV:1788293035.422279": {
+    "field_updates": {
+      "asking_price": 120000,
+      "motivation": "investing in Camden, NJ",
+      "reason_for_selling": null,
+      "timeline": "ASAP"
+    },
+    "match_cid": "qXfYWHU4WnKOQ7iDAPqm",
+    "match_confidence": "high",
+    "summary": "Buyer Gabriel Arroyo is ready now, looking for 3-4 bed, 1 bath properties in Camden, NJ with max price of $120k."
+  },
+  "C05MP6K9RNV:1788293128.736109": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": null,
+      "reason_for_selling": null,
+      "timeline": null
+    },
+    "match_cid": "0hj1PM6gYO5sDaTyhiYb",
+    "match_confidence": "high",
+    "summary": "Buyer interested in Camden, NJ properties but has not yet provided specific buying criteria; follow-up needed for buy box details."
+  },
+  "C05MP6K9RNV:1788293226.753999": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": null,
+      "reason_for_selling": null,
+      "timeline": null
+    },
+    "match_cid": "9TqYp3Gla9AoMigPBw9P",
+    "match_confidence": "high",
+    "summary": "Vincent Buenaparte is a buyer interested in Camden area properties and has requested info on buy box criteria including price range, property types, rehab tolerance, close timeline, and proof of funds."
+  },
+  "C05MP6K9RNV:1788293261.287059": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": null,
+      "reason_for_selling": null,
+      "timeline": null
+    },
+    "match_cid": "NW60mtftHcMG8P4IaDUg",
+    "match_confidence": "high",
+    "summary": "New buyer contact Anna Blowr made initial contact but buy box details not yet captured."
+  },
+  "C05MP6K9RNV:1788293261.485379": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": null,
+      "reason_for_selling": null,
+      "timeline": "90 days"
+    },
+    "match_cid": "sHVtK2sKOwxt03qqgrVe",
+    "match_confidence": "high",
+    "summary": "Timothy Turner just purchased a property in Florida and is pausing acquisitions for 3-4 months before buying again."
+  },
+  "C05MP6K9RNV:1788293360.500699": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": null,
+      "reason_for_selling": null,
+      "timeline": null
+    },
+    "match_cid": "eO4qhhtQOdKWSMfhZ9Q8",
+    "match_confidence": "high",
+    "summary": "Buyer Shakirah Salaam is looking for properties in desirable Camden areas with strong resale demand and solid renovated comps, willing to do full gut rehabs."
+  },
   "C06MM4DQZ28:1777658714.176449": {
     "field_updates": {
       "asking_price": 784000,
