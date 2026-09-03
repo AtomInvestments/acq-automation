@@ -748,6 +748,17 @@
     "match_confidence": "high",
     "summary": "Buyer Ahikam Ben Naim was contacted but buy box details not yet captured, needs follow-up for buying criteria."
   },
+  "C05MP6K9RNV:1788395603.597109": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": null,
+      "reason_for_selling": null,
+      "timeline": null
+    },
+    "match_cid": "KBapMuEwJEL2P4QpU8nq",
+    "match_confidence": "high",
+    "summary": "Buyer Kathy Dougherty was contacted and provided email and phone number but buy box details have not yet been captured."
+  },
   "C06MM4DQZ28:1777658714.176449": {
     "field_updates": {
       "asking_price": 784000,
