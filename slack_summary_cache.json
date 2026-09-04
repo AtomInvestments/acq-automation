@@ -891,6 +891,39 @@
     "match_confidence": "high",
     "summary": "Buyer Steven DeLeon inquired about a Camden SFH property and provided contact info, with Adam assigned to send property details same day."
   },
+  "C05MP6K9RNV:1788545387.978879": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": null,
+      "reason_for_selling": null,
+      "timeline": null
+    },
+    "match_cid": "6gJ8JcYgZyAMx8NM6fsO",
+    "match_confidence": "high",
+    "summary": "William Sokol was contacted about a property at Whitely Terrace in Camden and expressed interest but buy box criteria not yet captured."
+  },
+  "C05MP6K9RNV:1788545468.430579": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": null,
+      "reason_for_selling": null,
+      "timeline": "30 days"
+    },
+    "match_cid": "swZ3g7gqldualGsXzfuF",
+    "match_confidence": "high",
+    "summary": "Calvin Coley is a cash buyer in NJ interested in light cosmetic rehab properties, willing to close in 30+ days, but still needs to provide price range, areas, property types, and proof of funds."
+  },
+  "C05MP6K9RNV:1788545578.550629": {
+    "field_updates": {
+      "asking_price": null,
+      "motivation": null,
+      "reason_for_selling": null,
+      "timeline": null
+    },
+    "match_cid": "jXKGkzeNsN4n6K0ekpI1",
+    "match_confidence": "high",
+    "summary": "Buyer Najeh Farhat captured with buy box criteria: looking for properties in Camden area with light cosmetic rehab only."
+  },
   "C06MM4DQZ28:1777658714.176449": {
     "field_updates": {
       "asking_price": 784000,
